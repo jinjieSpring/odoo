@@ -5,6 +5,7 @@ from collections import namedtuple
 
 from ast import literal_eval
 from collections import defaultdict
+from markupsafe import escape
 from psycopg2 import Error
 
 from odoo import _, api, fields, models, SUPERUSER_ID
@@ -232,7 +233,7 @@ class StockQuant(models.Model):
                 continue
             quant.inventory_quantity = quant.inventory_quantity_auto_apply
             quant_to_inventory |= quant
-        quant_to_inventory.action_apply_inventory()
+        quant_to_inventory.with_context({'set_inventory_quantity_auto_apply': True}).action_apply_inventory()
 
     def _search_on_hand(self, operator, value):
         """Handle the "on_hand" filter, indirectly calling `_get_domain_locations`."""
@@ -419,11 +420,12 @@ class StockQuant(models.Model):
             'help': """
                 <p class="o_view_nocontent_smiling_face">
                     {}
-                </p><p>
-                    {} <span class="fa fa-long-arrow-right"/> {}</p>
-                """.format(_('Your stock is currently empty'),
-                           _('Press the CREATE button to define quantity for each product in your stock or import them from a spreadsheet throughout Favorites'),
-                           _('Import')),
+                </p>
+                <p>
+                    {} <span class="fa fa-cog"/>
+                </p>
+                """.format(escape(_('Your stock is currently empty')),
+                           escape(_('Press the "New" button to define the quantity for a product in your stock or import quantities from a spreadsheet via the Actions menu'))),
         }
         return action
 
@@ -442,28 +444,29 @@ class StockQuant(models.Model):
         ctx = dict(self.env.context or {})
         ctx['default_quant_ids'] = self.ids
         quants_outdated = self.filtered(lambda quant: quant.is_outdated)
-        if quants_outdated:
-            ctx['default_quant_to_fix_ids'] = quants_outdated.ids
-            return {
-                'name': _('Conflict in Inventory Adjustment'),
-                'type': 'ir.actions.act_window',
-                'view_mode': 'form',
-                'views': [(False, 'form')],
-                'res_model': 'stock.inventory.conflict',
-                'target': 'new',
-                'context': ctx,
-            }
-        if products_tracked_without_lot:
-            ctx['default_product_ids'] = products_tracked_without_lot
-            return {
-                'name': _('Tracked Products in Inventory Adjustment'),
-                'type': 'ir.actions.act_window',
-                'view_mode': 'form',
-                'views': [(False, 'form')],
-                'res_model': 'stock.track.confirmation',
-                'target': 'new',
-                'context': ctx,
-            }
+        if not self.env.context.get('set_inventory_quantity_auto_apply'):
+            if quants_outdated:
+                ctx['default_quant_to_fix_ids'] = quants_outdated.ids
+                return {
+                    'name': _('Conflict in Inventory Adjustment'),
+                    'type': 'ir.actions.act_window',
+                    'view_mode': 'form',
+                    'views': [(False, 'form')],
+                    'res_model': 'stock.inventory.conflict',
+                    'target': 'new',
+                    'context': ctx,
+                }
+            if products_tracked_without_lot:
+                ctx['default_product_ids'] = products_tracked_without_lot
+                return {
+                    'name': _('Tracked Products in Inventory Adjustment'),
+                    'type': 'ir.actions.act_window',
+                    'view_mode': 'form',
+                    'views': [(False, 'form')],
+                    'res_model': 'stock.track.confirmation',
+                    'target': 'new',
+                    'context': ctx,
+                }
         self._apply_inventory()
         self.inventory_quantity_set = False
 

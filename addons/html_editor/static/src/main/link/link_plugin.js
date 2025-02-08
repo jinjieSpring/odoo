@@ -1,6 +1,6 @@
 import { Plugin } from "@html_editor/plugin";
 import { unwrapContents } from "@html_editor/utils/dom";
-import { closestElement } from "@html_editor/utils/dom_traversal";
+import { closestElement, selectElements } from "@html_editor/utils/dom_traversal";
 import { findInSelection, callbacksForCursorUpdate } from "@html_editor/utils/selection";
 import { _t } from "@web/core/l10n/translation";
 import { LinkPopover } from "./link_popover";
@@ -12,6 +12,7 @@ import { KeepLast } from "@web/core/utils/concurrency";
 import { rpc } from "@web/core/network/rpc";
 import { memoize } from "@web/core/utils/functions";
 import { withSequence } from "@html_editor/utils/resource";
+import { isBlock } from "@html_editor/utils/blocks";
 
 /**
  * @typedef {import("@html_editor/core/selection_plugin").EditorSelection} EditorSelection
@@ -124,7 +125,16 @@ async function fetchAttachmentMetaData(url, ormService) {
 
 export class LinkPlugin extends Plugin {
     static id = "link";
-    static dependencies = ["dom", "history", "input", "selection", "split", "lineBreak", "overlay"];
+    static dependencies = [
+        "dom",
+        "history",
+        "input",
+        "selection",
+        "split",
+        "lineBreak",
+        "overlay",
+        "color",
+    ];
     // @phoenix @todo: do we want to have createLink and insertLink methods in link plugin?
     static shared = ["createLink", "insertLink", "getPathAsUrlCommand"];
     resources = {
@@ -316,7 +326,7 @@ export class LinkPlugin extends Plugin {
         this.type = type;
     }
 
-    normalizeLink() {
+    normalizeLink(root) {
         const { anchorNode } = this.dependencies.selection.getEditableSelection();
         const linkEl = closestElement(anchorNode, "a");
         if (linkEl && linkEl.isContentEditable) {
@@ -324,6 +334,26 @@ export class LinkPlugin extends Plugin {
             const url = deduceURLfromText(label, linkEl);
             if (url) {
                 linkEl.setAttribute("href", url);
+            }
+        }
+        for (const anchorEl of selectElements(root, "a")) {
+            const { color } = anchorEl.style;
+            const childNodes = [...anchorEl.childNodes];
+            // For each anchor element, if it has an inline color style,
+            // (converted from an external style), remove it from the anchor,
+            // create a font tag inside it, and move the color to the font tag.
+            // This ensures the color is applied to the font element instead of
+            // the anchor element itself.
+            if (color && childNodes.every((n) => !isBlock(n))) {
+                anchorEl.style.removeProperty("color");
+                const font = selectElements(anchorEl, "font").next().value;
+                if (font && anchorEl.textContent === font.textContent) {
+                    continue;
+                }
+                const newFont = this.document.createElement("font");
+                newFont.append(...childNodes);
+                anchorEl.appendChild(newFont);
+                this.dependencies.color.colorElement(newFont, color, "color");
             }
         }
     }
@@ -628,12 +658,34 @@ export class LinkPlugin extends Plugin {
     }
 
     onBeforeInput(ev) {
-        if (
-            ev.inputType === "insertParagraph" ||
-            ev.inputType === "insertLineBreak" ||
-            (ev.inputType === "insertText" && ev.data === " ")
-        ) {
-            this.handleAutomaticLinkInsertion();
+        if (ev.inputType === "insertParagraph" || ev.inputType === "insertLineBreak") {
+            const nodeForSelectionRestore = this.handleAutomaticLinkInsertion();
+            if (nodeForSelectionRestore) {
+                this.dependencies.selection.setCursorStart(nodeForSelectionRestore);
+                this.dependencies.history.addStep();
+            }
+        }
+        if (ev.inputType === "insertText" && ev.data === " ") {
+            const nodeForSelectionRestore = this.handleAutomaticLinkInsertion();
+            if (nodeForSelectionRestore) {
+                // Since we manually insert a space here, we will be adding a history step
+                // after link creation with selection at the end of the link and another
+                // after inserting the space. So first undo will remove the space, and the
+                // second will undo the link creation.
+                this.dependencies.selection.setSelection({
+                    anchorNode: nodeForSelectionRestore,
+                    anchorOffset: 0,
+                });
+                this.dependencies.history.addStep();
+                nodeForSelectionRestore.textContent =
+                    "\u00A0" + nodeForSelectionRestore.textContent;
+                this.dependencies.selection.setSelection({
+                    anchorNode: nodeForSelectionRestore,
+                    anchorOffset: 1,
+                });
+                this.dependencies.history.addStep();
+                ev.preventDefault();
+            }
         }
     }
     /**
@@ -671,8 +723,7 @@ export class LinkPlugin extends Plugin {
                 const textNodeToReplace = selection.anchorNode.splitText(startOffset);
                 textNodeToReplace.splitText(match[0].length);
                 selection.anchorNode.parentElement.replaceChild(link, textNodeToReplace);
-                this.dependencies.selection.setCursorStart(nodeForSelectionRestore);
-                this.dependencies.history.addStep();
+                return nodeForSelectionRestore;
             }
         }
     }
