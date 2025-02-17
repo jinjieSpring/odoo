@@ -9,6 +9,7 @@
 # Kostas Goutoudis <goutoudis@gmail.com>, 2024
 # Martin Trigaux, 2024
 # George Tarasidis <george_tarasidis@yahoo.com>, 2024
+# Anastasia Mimou, 2025
 # Charalampos Loukas, 2025
 # 
 msgid ""
@@ -548,7 +549,7 @@ msgstr ""
 #. module: payment
 #: model:payment.method,name:payment.payment_method_bank_transfer
 msgid "Bank Transfer"
-msgstr ""
+msgstr "Τραπεζική Μεταφορά"
 
 #. module: payment
 #: model:payment.method,name:payment.payment_method_bank_of_ayudhya
@@ -1165,7 +1166,7 @@ msgstr ""
 #. module: payment
 #: model:ir.model,name:payment.model_ir_http
 msgid "HTTP Routing"
-msgstr ""
+msgstr "HTTP Routing"
 
 #. module: payment
 #: model:ir.model.fields,field_description:payment.field_payment_capture_wizard__has_draft_children
