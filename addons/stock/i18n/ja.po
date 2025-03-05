@@ -2531,7 +2531,7 @@ msgstr "日"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_warehouse_orderpoint__days_to_order
 msgid "Days To Order"
-msgstr "注文する日付"
+msgstr "オーダまでの日数"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type__reservation_days_before_priority
@@ -4061,7 +4061,7 @@ msgstr "チェックを外すと、削除せずに規則を非表示にするこ
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_backorder_confirmation_line__backorder_confirmation_id
 msgid "Immediate Transfer"
-msgstr "今すぐ移動"
+msgstr "今すぐ転送"
 
 #. module: stock
 #. odoo-javascript
@@ -4105,7 +4105,7 @@ msgid ""
 "        In case of incoming flow, validate the transfer before this date in order to have these products in stock at the date promised by the supplier"
 msgstr ""
 "出荷フローの場合は、この期日までに転送を検証し、顧客に約束の期日に配送できるようにします。\n"
-"       入荷フローがある場合、仕入先が約束した期日にこれらのプロダクトを在庫しておくために、この期日までに運送を検証して下さい。"
+"       入荷フローがある場合、仕入先が約束した期日にこれらのプロダクトを在庫しておくために、この期日までに転送を検証して下さい。"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.quant_package_search_view
@@ -6179,7 +6179,7 @@ msgstr "梱包参照"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_quant_package_form
 msgid "Package Transfers"
-msgstr "梱包移動"
+msgstr "梱包転送"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_packaging__package_type_id
@@ -6577,7 +6577,7 @@ msgstr "プロデュースライン"
 #. odoo-python
 #: code:addons/stock/models/product.py:0
 msgid "Produced Qty"
-msgstr "製品数量"
+msgstr "プロダクト数量"
 
 #. module: stock
 #. odoo-javascript
@@ -6624,7 +6624,7 @@ msgstr "プロダクト"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking__products_availability
 msgid "Product Availability"
-msgstr "製品在庫"
+msgstr "プロダクト在庫"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_storage_category__product_capacity_ids
@@ -6678,7 +6678,7 @@ msgstr "プロダクトラベル"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.search_product_lot_filter
 msgid "Product Lots Filter"
-msgstr "製品ロットのフィルタ"
+msgstr "プロダクトロットのフィルタ"
 
 #. module: stock
 #: model:ir.model,name:stock.model_stock_move_line
@@ -6842,7 +6842,7 @@ msgstr "製品の入手可能性の状態"
 msgid ""
 "Products will be reserved first for the transfers with the highest "
 "priorities."
-msgstr "製品は、最も優先度の高い転送のために最初に予約されます。"
+msgstr "プロダクトは、最も優先度の高い転送のために最初に引当されます。"
 
 #. module: stock
 #. odoo-python
@@ -8973,7 +8973,7 @@ msgstr "の予測在庫"
 #. odoo-python
 #: code:addons/stock/models/stock_orderpoint.py:0
 msgid "The inter-warehouse transfers have been generated"
-msgstr "倉庫間移動が発生しました。"
+msgstr "倉庫間転送が発生しました。"
 
 #. module: stock
 #. odoo-python
@@ -9785,7 +9785,7 @@ msgstr "廃棄プロダクトの補充トリガー"
 #. odoo-javascript
 #: code:addons/stock/static/src/stock_forecasted/stock_forecasted.js:0
 msgid "Try to add some incoming or outgoing transfers."
-msgstr "入荷または出荷の移動を追加してみてください。"
+msgstr "入荷または出荷の転送を追加してみてください。"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_barcode_rule__type
@@ -10007,7 +10007,7 @@ msgid ""
 "\n"
 "To avoid this, please discard the source location change before saving."
 msgstr ""
-"この転送のロケーションを更新すると、現在割当てられている項目の予約が解除されます。新しいロケーションで項目の引当が試みられ、以前の運送とのリンクは破棄されます。\n"
+"この転送のロケーションを更新すると、現在割当てられている項目の予約が解除されます。新しいロケーションで項目の引当が試みられ、以前の転送とのリンクは破棄されます。\n"
 "\n"
 "これを回避するには、保存する前に移動元ロケーションの変更を破棄して下さい。"
 
@@ -10892,7 +10892,7 @@ msgstr "同じシリアル番号を2回使用することはできません。�
 msgid ""
 "You cannot validate a transfer if no quantities are reserved. To force the "
 "transfer, encode quantities."
-msgstr "数量が予約されていない場合、転送を検証することはできません。転送を強制するには、数量をエンコードして下さい。"
+msgstr "数量が引当されていない場合、転送を検証することはできません。転送を強制するには、数量をエンコードして下さい。"
 
 #. module: stock
 #. odoo-python
