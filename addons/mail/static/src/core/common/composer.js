@@ -200,6 +200,14 @@ export class Composer extends Component {
         onWillUnmount(() => {
             this.props.composer.isFocused = false;
         });
+        useEffect(
+            (composerThread, replyToThread) => {
+                if (replyToThread && replyToThread !== composerThread) {
+                    this.props.messageToReplyTo.cancel();
+                }
+            },
+            () => [this.props.composer.thread, this.props.messageToReplyTo?.thread]
+        );
     }
 
     get pickerSettings() {
@@ -479,6 +487,9 @@ export class Composer extends Component {
             case "Enter": {
                 if (isEventHandled(ev, "NavigableList.select") || !this.state.active) {
                     ev.preventDefault();
+                    return;
+                }
+                if (this.isMobileOS) {
                     return;
                 }
                 const shouldPost = this.props.mode === "extended" ? ev.ctrlKey : !ev.shiftKey;

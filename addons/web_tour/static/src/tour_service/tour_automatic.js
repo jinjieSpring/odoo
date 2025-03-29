@@ -53,7 +53,6 @@ export class TourAutomatic {
                     },
                 },
                 {
-                    initialDelay: () => (this.previousStepIsJustACheck ? 0 : null),
                     trigger: step.trigger ? () => step.findTrigger() : null,
                     timeout:
                         step.pause && this.debugMode
@@ -63,19 +62,18 @@ export class TourAutomatic {
                         if (delayToCheckUndeterminisms > 0) {
                             await step.checkForUndeterminisms(trigger, delayToCheckUndeterminisms);
                         }
-                        this.previousStepIsJustACheck = !step.hasAction;
+                        const result = await step.doAction();
                         if (this.debugMode) {
-                            console.log(step.element);
+                            console.log(trigger);
                             if (step.skipped) {
                                 console.log("This step has been skipped");
                             } else {
                                 console.log("This step has run successfully");
                             }
                             console.groupEnd();
-                        }
-                        const result = await step.doAction();
-                        if (step.pause && this.debugMode) {
-                            await this.pause();
+                            if (step.pause) {
+                                await this.pause();
+                            }
                         }
                         tourState.setCurrentIndex(step.index + 1);
                         return result;
