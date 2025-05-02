@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Raz Omer Hussein, 2025
+# Thomas Becquevort, 2025
 # 
 msgid ""
 msgstr ""
@@ -11,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-07 20:36+0000\n"
 "PO-Revision-Date: 2024-09-25 09:41+0000\n"
-"Last-Translator: Raz Omer Hussein, 2025\n"
+"Last-Translator: Thomas Becquevort, 2025\n"
 "Language-Team: Kurdish (https://app.transifex.com/odoo/teams/41243/ku/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -60,7 +61,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/account/models/account_lock_exception.py:0
 msgid " for '%s'"
-msgstr ""
+msgstr "'%s'بۆ"
 
 #. module: account
 #. odoo-python
@@ -87,13 +88,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:account.field_res_partner__supplier_invoice_count
 #: model:ir.model.fields,field_description:account.field_res_users__supplier_invoice_count
 msgid "# Vendor Bills"
-msgstr ""
+msgstr "# پسوڵەی فرۆشیار"
 
 #. module: account
 #. odoo-python
 #: code:addons/account/models/account_move.py:0
 msgid "#Created by: %s"
-msgstr ""
+msgstr "%s#دروستکراوی:"
 
 #. module: account
 #. odoo-python
@@ -131,7 +132,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/account/models/account_lock_exception.py:0
 msgid "%(exception)s for %(user)s%(end_datetime_string)s%(reason)s."
-msgstr ""
+msgstr "%(exception)sبۆ%(user)s%(end_datetime_string)s%(reason)s"
 
 #. module: account
 #. odoo-python
@@ -173,13 +174,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/account/models/account_move.py:0
 msgid "%(ref)s (%(currency_amount)s)"
-msgstr ""
+msgstr "(%(currency_amount)s)%(ref)s"
 
 #. module: account
 #. odoo-python
 #: code:addons/account/models/account_account_tag.py:0
 msgid "%(tag)s (%(country_code)s)"
-msgstr ""
+msgstr "(%(country_code)s)%(tag)s"
 
 #. module: account
 #. odoo-python
@@ -190,19 +191,19 @@ msgstr ""
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_automatic_entry_wizard_form
 msgid "%<span class=\"px-3\"/>("
-msgstr ""
+msgstr "٪<span class=\"px-3\"/>("
 
 #. module: account
 #. odoo-python
 #: code:addons/account/wizard/account_automatic_entry_wizard.py:0
 msgid "%d moves"
-msgstr ""
+msgstr "%dدەجوڵێت"
 
 #. module: account
 #. odoo-python
 #: code:addons/account/models/account_tax.py:0
 msgid "%s (Copy)"
-msgstr ""
+msgstr "%s(کۆپی بکە)"
 
 #. module: account
 #. odoo-python
@@ -1056,7 +1057,9 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:account.report_invoice_document
 #: model_terms:ir.ui.view,arch_db:account.report_payment_receipt_document
 msgid "<span>Amount</span>"
-msgstr "بڕ"
+msgstr ""
+"<span>بڕ</span>\n"
+" "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
@@ -1714,20 +1717,20 @@ msgstr "ئاماری هەژمار"
 #. module: account
 #: model:ir.model,name:account.model_account_account_tag
 msgid "Account Tag"
-msgstr ""
+msgstr "تاگی هەژمار"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_product_product__account_tag_ids
 #: model:ir.model.fields,field_description:account.field_product_template__account_tag_ids
 msgid "Account Tags"
-msgstr ""
+msgstr "تاگەکانی هەژمار"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_tax_view_tree
 #: model_terms:ir.ui.view,arch_db:account.view_tax_form
 #: model_terms:ir.ui.view,arch_db:account.view_tax_tree
 msgid "Account Tax"
-msgstr ""
+msgstr "باجی هەژمار"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_tax_group_form
@@ -1744,7 +1747,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:account.field_account_automatic_entry_wizard__account_type
 #: model_terms:ir.ui.view,arch_db:account.view_account_search
 msgid "Account Type"
-msgstr ""
+msgstr "جۆری هەژمار"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_account__account_type
@@ -1758,7 +1761,7 @@ msgstr ""
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_report__filter_account_type
 msgid "Account Types"
-msgstr ""
+msgstr "جۆرەکانی هەژمار"
 
 #. module: account
 #: model:ir.model,name:account.model_account_root
@@ -1772,6 +1775,8 @@ msgid ""
 "Account codes must be unique. You can't create accounts with these duplicate"
 " codes: %s"
 msgstr ""
+"%sکۆدی هەژمارەکان دەبێت تایبەت بن. ناتوانیت بەم کۆدە دووبارانە ئەکاونت دروست"
+" بکەیت:"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_res_config_settings__account_journal_early_pay_discount_loss_account_id
@@ -1789,12 +1794,12 @@ msgstr ""
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_group_search
 msgid "Account group"
-msgstr ""
+msgstr "گروپی هەژمار"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_group_search
 msgid "Account groups"
-msgstr ""
+msgstr "گروپەکانی هەژمار"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_setup_bank_manual_config__acc_holder_name
@@ -1822,22 +1827,22 @@ msgstr ""
 #. module: account
 #: model:ir.model.fields,help:account.field_account_tax_repartition_line__account_id
 msgid "Account on which to post the tax amount"
-msgstr ""
+msgstr "هەژمارێک کە بڕی باجەکەی لەسەر پۆست دەکرێت"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_account__group_id
 msgid "Account prefixes can determine account groups."
-msgstr ""
+msgstr "پێشگرەکانی هەژمار دەتوانن گروپەکانی ئەژمارەکان دیاری بکەن."
 
 #. module: account
 #: model:ir.model,name:account.model_report_account_report_invoice_with_payments
 msgid "Account report with payment lines"
-msgstr ""
+msgstr "ڕاپۆرتی هەژمار لەگەڵ هێڵەکانی پارەدان"
 
 #. module: account
 #: model:ir.model,name:account.model_report_account_report_invoice
 msgid "Account report without payment lines"
-msgstr ""
+msgstr "ڕاپۆرتی هەژمار بەبێ هێڵی پارەدان"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_res_company__account_cash_basis_base_account_id
@@ -1897,7 +1902,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:account.view_account_form
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 msgid "Accounting"
-msgstr ""
+msgstr "ژمێریاری"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_journal__accounting_date
@@ -1905,7 +1910,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:account.view_invoice_tree
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 msgid "Accounting Date"
-msgstr ""
+msgstr "بەرواری ژمێریاری"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_partner_property_form
@@ -1920,7 +1925,7 @@ msgstr ""
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_journal_form
 msgid "Accounting Information"
-msgstr ""
+msgstr "زانیاری ژمێریاری"
 
 #. module: account
 #. odoo-python
@@ -1931,7 +1936,7 @@ msgstr ""
 #. module: account
 #: model:ir.model,name:account.model_account_report
 msgid "Accounting Report"
-msgstr ""
+msgstr "ڕاپۆرتی ژمێریاری"
 
 #. module: account
 #: model:ir.model,name:account.model_account_report_column
@@ -1956,7 +1961,7 @@ msgstr ""
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_line_form
 msgid "Accounting documents"
-msgstr ""
+msgstr "بەڵگەنامەکانی ژمێریاری"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.res_config_settings_view_form
@@ -1972,7 +1977,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:account.selection__account_account_tag__applicability__accounts
 #: model_terms:ir.ui.view,arch_db:account.view_account_search
 msgid "Accounts"
-msgstr ""
+msgstr "هەژمارەکان"
 
 #. module: account
 #: model:ir.model,name:account.model_account_fiscal_position_account
@@ -4244,7 +4249,7 @@ msgstr "یەکەیەکی بازرگانی"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_move_line__commercial_partner_country
 msgid "Commercial Partner Country"
-msgstr ""
+msgstr "Welatê Hevkarê Bazirganî"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_journal__invoice_reference_model
@@ -4553,7 +4558,7 @@ msgstr ""
 #: code:addons/account/models/account_report.py:0
 msgid "Could not determine carryover target automatically for expression %s."
 msgstr ""
-"نەتوانرا ئامانجی گواستنەوە بە شێوەیەکی ئۆتۆماتیکی بۆ دەربڕین دیاری بکات"
+"%sنەتوانرا ئامانجی گواستنەوە بە شێوەیەکی ئۆتۆماتیکی بۆ دەربڕین دیاری بکات"
 
 #. module: account
 #. odoo-javascript

@@ -30,7 +30,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/web/controllers/export.py:0
 msgid "%(property_string)s (%(parent_name)s)"
-msgstr ""
+msgstr "(%(parent_name)s)%(property_string)s"
 
 #. module: web
 #. odoo-javascript
@@ -529,7 +529,7 @@ msgstr ""
 #. module: web
 #: model_terms:ir.ui.view,arch_db:web.report_invoice_wizard_preview
 msgid "<span>Amount</span>"
-msgstr "بڕ"
+msgstr "<span>بڕ</span>"
 
 #. module: web
 #: model_terms:ir.ui.view,arch_db:web.report_invoice_wizard_preview

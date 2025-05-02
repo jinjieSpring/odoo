@@ -8,6 +8,7 @@ import { floatIsZero, roundPrecision } from "@web/core/utils/numbers";
 import { roundCurrency } from "@point_of_sale/app/models/utils/currency";
 import { computeComboItems } from "./utils/compute_combo_items";
 import { accountTaxHelpers } from "@account/helpers/account_tax";
+import { toRaw } from "@odoo/owl";
 
 const { DateTime } = luxon;
 const formatCurrency = registry.subRegistries.formatters.content.monetary[1];
@@ -18,7 +19,7 @@ export class PosOrder extends Base {
     setup(vals) {
         super.setup(vals);
 
-        if (!this.session_id && (!this.finalized || typeof this.id !== "number")) {
+        if (!this.session_id?.id && (!this.finalized || typeof this.id !== "number")) {
             this.update({ session_id: this.session });
 
             if (this.state === "draft" && this.lines.length == 0 && this.payment_ids.length == 0) {
@@ -1087,6 +1088,7 @@ export class PosOrder extends Base {
             })),
             change: this.get_change() && formatCurrency(this.get_change()),
             generalNote: this.general_note || "",
+            qrPaymentData: toRaw(this.get_selected_paymentline()?.qrPaymentData),
         };
     }
     getFloatingOrderName() {

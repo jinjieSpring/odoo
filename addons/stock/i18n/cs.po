@@ -8,8 +8,8 @@
 # Wil Odoo, 2025
 # Aleš Fiala <f.ales1@seznam.cz>, 2025
 # Denis Gobin, 2025
-# Vojtěch Olšan, 2025
 # Radim Bílý, 2025
+# Vojtěch Olšan, 2025
 # Marta Wacławek, 2025
 # 
 msgid ""
@@ -396,7 +396,7 @@ msgstr ""
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.report_generic_barcode
 msgid "1234567890"
-msgstr ""
+msgstr "1234567890"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.report_lot_label
@@ -2546,7 +2546,7 @@ msgstr "Dny s hvězdičkou"
 #: model:ir.model.fields,field_description:stock.field_stock_move__date_deadline
 #: model:ir.model.fields,field_description:stock.field_stock_picking__date_deadline
 msgid "Deadline"
-msgstr "Uzávěrka"
+msgstr "Termín"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_picking_internal_search
