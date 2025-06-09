@@ -1266,7 +1266,7 @@ msgstr "Počisti filtre"
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_res_config_settings__module_website_sale_collect
 msgid "Click & Collect"
-msgstr ""
+msgstr "Klikni in prevzemi"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.products
@@ -4871,7 +4871,7 @@ msgstr "Kaj je treba storiti pri \"Dodaj v košarico\"?"
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.product_share_buttons
 msgid "WhatsApp"
-msgstr ""
+msgstr "WhatsApp"
 
 #. module: website_sale
 #: model:ir.model.fields,help:website_sale.field_product_tag__visible_on_ecommerce

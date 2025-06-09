@@ -28,7 +28,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-14 20:46+0000\n"
+"POT-Creation-Date: 2025-05-23 18:38+0000\n"
 "PO-Revision-Date: 2024-09-25 09:42+0000\n"
 "Last-Translator: Baskhuu Lodoikhuu <baskhuujacara@gmail.com>, 2025\n"
 "Language-Team: Mongolian (https://app.transifex.com/odoo/teams/41243/mn/)\n"
@@ -6039,7 +6039,7 @@ msgstr "Одоо байгаа талбарууд"
 #. odoo-javascript
 #: code:addons/website/static/src/components/resource_editor/utils.js:0
 msgid "Expected %(char)s"
-msgstr ""
+msgstr "Тооцоолсон %(char)s"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_numbers_grid
@@ -11318,6 +11318,11 @@ msgid "Punchy Image"
 msgstr ""
 
 #. module: website
+#: model:ir.model.fields,field_description:website.field_website__domain_punycode
+msgid "Punycode Domain"
+msgstr ""
+
+#. module: website
 #: model_terms:ir.ui.view,arch_db:website.cookie_policy
 msgid "Purpose"
 msgstr ""
@@ -12868,7 +12873,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website.snippets
 #: model_terms:ir.ui.view,arch_db:website.step_wizard
 msgid "Steps"
-msgstr ""
+msgstr "Алхам"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_table_of_content_options

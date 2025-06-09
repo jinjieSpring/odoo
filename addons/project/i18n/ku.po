@@ -3559,7 +3559,7 @@ msgstr ""
 #. module: project
 #: model:ir.model.fields.selection,name:project.selection__project_project__rating_status_period__quarterly
 msgid "Quarterly"
-msgstr ""
+msgstr "چارەک"
 
 #. module: project
 #: model_terms:digest.tip,tip_description:project.digest_tip_project_0
@@ -3640,7 +3640,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:project.field_project_task__rating_ids
 #: model:ir.model.fields,field_description:project.field_project_update__rating_ids
 msgid "Ratings"
-msgstr ""
+msgstr "هەڵسەنگاندنەکان"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_milestone__is_reached
@@ -3761,7 +3761,7 @@ msgstr ""
 #. module: project
 #: model:ir.ui.menu,name:project.menu_project_report
 msgid "Reporting"
-msgstr ""
+msgstr "ڕاپۆرتکردن"
 
 #. module: project
 #. odoo-javascript
@@ -3798,7 +3798,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:project.field_project_task__activity_user_id
 #: model:ir.model.fields,field_description:project.field_project_update__activity_user_id
 msgid "Responsible User"
-msgstr ""
+msgstr "بەکارهێنەری بەرپرسیار"
 
 #. module: project
 #. odoo-javascript
@@ -3938,7 +3938,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/project/static/src/project_sharing/components/chatter/chatter_composer.xml:0
 msgid "Send"
-msgstr ""
+msgstr "ناردن"
 
 #. module: project
 #: model:ir.actions.act_window,name:project.action_send_mail_project_project
@@ -3954,7 +3954,7 @@ msgstr ""
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_task_type__sequence
 msgid "Sequence"
-msgstr ""
+msgstr "زنجیرە"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_task_kanban
@@ -4033,7 +4033,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project.view_project_project_filter
 #: model_terms:ir.ui.view,arch_db:project.view_task_search_form
 msgid "Show all records which has next action date is before today"
-msgstr ""
+msgstr "هەموو تۆمارەکان پیشان بدە کە بەرواری کارکردنی پێش ئەمڕۆیە"
 
 #. module: project
 #. odoo-javascript
@@ -4164,7 +4164,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:project.field_project_task_burndown_chart_report__state
 #: model:ir.model.fields,field_description:project.field_report_project_task_user__state
 msgid "State"
-msgstr ""
+msgstr "دۆخ"
 
 #. module: project
 #. odoo-javascript
@@ -4181,7 +4181,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project.view_project_calendar
 #: model_terms:ir.ui.view,arch_db:project.view_project_project_filter
 msgid "Status"
-msgstr ""
+msgstr "دۆخ"
 
 #. module: project
 #. odoo-python
@@ -4199,6 +4199,10 @@ msgid ""
 "Today: Activity date is today\n"
 "Planned: Future activities."
 msgstr ""
+"دۆخەکان لەسەر بنەمای چالاکییەکان\n"
+"دواکەوتوو: بەرواری کۆتایی هاتنی لە ئێستاوە تێپەڕیوە\n"
+"ئەمڕۆ: بەرواری چالاکی ئەمڕۆیە\n"
+"پلان بۆ داڕێژراو: چالاکییەکانی داهاتوو."
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project__duration_tracking
@@ -4252,7 +4256,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project.view_project_project_filter
 #: model_terms:ir.ui.view,arch_db:project.view_task_search_form_base
 msgid "Tags"
-msgstr ""
+msgstr "تاگەکان"
 
 #. module: project
 #: model:ir.model,name:project.model_project_task
@@ -4642,7 +4646,7 @@ msgstr ""
 #: model:project.task.type,name:project.project_personal_stage_admin_3
 #: model:project.task.type,name:project.project_personal_stage_demo_3
 msgid "This Month"
-msgstr ""
+msgstr "ئەم مانگە"
 
 #. module: project
 #. odoo-python
@@ -4652,7 +4656,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project.project_sharing_project_task_view_search
 #: model_terms:ir.ui.view,arch_db:project.view_task_search_form_project_base
 msgid "This Week"
-msgstr ""
+msgstr "ئەم هەفتەیە"
 
 #. module: project
 #. odoo-javascript
@@ -4797,7 +4801,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/project/static/src/components/project_right_side_panel/components/project_profitability.xml:0
 msgid "To Invoice"
-msgstr ""
+msgstr "بۆ فاکتورەکردن"
 
 #. module: project
 #. odoo-javascript
@@ -4829,19 +4833,19 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project.project_sharing_project_task_view_search
 #: model_terms:ir.ui.view,arch_db:project.view_task_search_form_project_base
 msgid "Today"
-msgstr ""
+msgstr "ئەمڕۆ"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_project_project_filter
 #: model_terms:ir.ui.view,arch_db:project.view_task_search_form
 msgid "Today Activities"
-msgstr ""
+msgstr "چالاکییەکانی ئەمڕۆ"
 
 #. module: project
 #. odoo-javascript
 #: code:addons/project/static/src/components/project_right_side_panel/components/project_profitability.xml:0
 msgid "Total"
-msgstr ""
+msgstr "کۆ"
 
 #. module: project
 #. odoo-javascript
@@ -5058,7 +5062,7 @@ msgstr "بەکارهێنەر"
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_project_kanban
 msgid "View"
-msgstr ""
+msgstr "بینین"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_sharing_project_task_view_form
@@ -5103,7 +5107,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:project.field_project_project__website_message_ids
 #: model:ir.model.fields,field_description:project.field_project_update__website_message_ids
 msgid "Website Messages"
-msgstr ""
+msgstr "پەیامەکانی ماڵپەڕ"
 
 #. module: project
 #. odoo-javascript
@@ -5117,7 +5121,7 @@ msgstr ""
 #: model:ir.model.fields,help:project.field_project_task__website_message_ids
 #: model:ir.model.fields,help:project.field_project_update__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "مێژووی پەیوەندی ماڵپەڕ"
 
 #. module: project
 #: model:ir.model.fields.selection,name:project.selection__project_project__rating_status_period__weekly
@@ -5198,7 +5202,7 @@ msgstr ""
 #. module: project
 #: model:ir.model.fields.selection,name:project.selection__project_project__rating_status_period__yearly
 msgid "Yearly"
-msgstr ""
+msgstr "ساڵانە"
 
 #. module: project
 #: model:ir.model.fields.selection,name:project.selection__project_task__repeat_unit__year
@@ -5408,7 +5412,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:project.edit_project
 #: model_terms:ir.ui.view,arch_db:project.project_project_view_form_simplified
 msgid "e.g. mycompany.com"
-msgstr ""
+msgstr "بۆ نموونە. mycompany.com"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_project_view_form_simplified
