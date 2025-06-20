@@ -626,6 +626,9 @@ msgid ""
 "            Egypt Tax Authority Invoice Integration\n"
 "        "
 msgstr ""
+"\n"
+"            دمج فواتير هيئة الضرائب المصرية\n"
+"        "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_ke_edi_oscu
@@ -4756,6 +4759,8 @@ msgid ""
 "\n"
 "E-invoice implementation for Saudi Arabia; Integration with ZATCA\n"
 msgstr ""
+"\n"
+"تطبيق نظام الفواتير الإلكترونية في المملكة العربية السعودية؛ التكامل مع هيئة الزكاة والضريبة والجمارك\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_sa_edi_pos
@@ -7559,6 +7564,8 @@ msgid ""
 "\n"
 "Module for ledger reports\n"
 msgstr ""
+"\n"
+"Module for ledger reports\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_recruitment_integration_monster
@@ -13981,6 +13988,8 @@ msgid ""
 "<span invisible=\"evaluation_type != 'value' or update_field_type in "
 "['one2many', 'many2many']\">to</span>"
 msgstr ""
+"<span invisible=\"evaluation_type != 'value' or update_field_type in "
+"['one2many', 'many2many']\">إلى</span>"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_server_action_form
@@ -13988,6 +13997,8 @@ msgid ""
 "<span invisible=\"evaluation_type != 'value' or update_field_type not in "
 "['one2many', 'many2many']\">by</span>"
 msgstr ""
+"<span invisible=\"evaluation_type != 'value' or update_field_type not in "
+"['one2many', 'many2many']\">بواسطة</span> "
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
@@ -14584,7 +14595,7 @@ msgstr "A payment provider covering India."
 #. module: base
 #: model:ir.module.module,summary:base.module_payment_nuvei
 msgid "A payment provider covering Latin America."
-msgstr ""
+msgstr "A payment provider covering Latin America."
 
 #. module: base
 #: model:ir.module.module,summary:base.module_payment_mercado_pago
@@ -15450,7 +15461,7 @@ msgstr "مكون إضافي لتطبيق الطلب الذاتي يتيح للع
 #. module: base
 #: model:ir.module.module,description:base.module_tests
 msgid "Addons to test Odoo industries code."
-msgstr ""
+msgstr "مكونات إضافية لاختبار الكود الخاص بقطاعات الأعمال في أودو. "
 
 #. module: base
 #. odoo-python
@@ -17636,7 +17647,7 @@ msgstr "أرمينيا"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_art_craft
 msgid "Arts & Crafts Store"
-msgstr ""
+msgstr "متجر أدوات حرفية "
 
 #. module: base
 #: model:res.country,name:base.aw
@@ -22345,7 +22356,7 @@ msgstr "D - الكهرباء، الغاز، البخار، والتكييف "
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_dhl
 msgid "DHL Express Shipping (Legacy)"
-msgstr ""
+msgstr "الشحن عن طريق DHL Express (القديم) "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_din5008
@@ -25121,7 +25132,7 @@ msgstr "قم بتصدير قيود العمل إلى ADP "
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_acerta
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_acerta
 msgid "Export Work Entries to Acerta"
-msgstr ""
+msgstr "قم بتصدير قيود العمل إلى Acerta "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_group_s
@@ -25139,7 +25150,7 @@ msgstr "قم بتصدير قيود العمل إلى Partena "
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_prisma
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_prisma
 msgid "Export Work Entries to Prisma"
-msgstr ""
+msgstr "قم بتصدير قيود العمل إلى Prisma "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_sd_worx
@@ -27054,7 +27065,7 @@ msgstr "وكيل الجهاز "
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hardware_shop
 msgid "Hardware Store"
-msgstr "محد معدات "
+msgstr "متجر معدات "
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_reset_view_arch_wizard__has_diff
@@ -27687,7 +27698,7 @@ msgstr "كود ISO"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_it_hardware
 msgid "IT Hardware & Support"
-msgstr ""
+msgstr "أجهزة تكنولوجيا المعلومات والدعم "
 
 #. module: base
 #: model:res.partner.industry,name:base.res_partner_industry_J
@@ -28618,7 +28629,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_pine_labs
 msgid "Integrate your POS with Pine Labs payment terminals"
-msgstr ""
+msgstr "قم بدمج نقاط البيع الخاصة بك مع أجهزة دفع Pine Labs "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_paytm
@@ -30283,7 +30294,7 @@ msgstr "تطبيق يربط بين pos_sale و l10n_be "
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_event_sale
 msgid "Link module between pos_sale and pos_event"
-msgstr ""
+msgstr "تطبيق يربط بين pos_sale و pos_event "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_sale_loyalty
@@ -31357,7 +31368,7 @@ msgstr "المراسلات الجماعية عن طريق الرسائل الن�
 #: model:ir.module.module,description:base.module_hr_recruitment_sms
 #: model:ir.module.module,summary:base.module_hr_recruitment_sms
 msgid "Mass mailing sms to job applicants"
-msgstr ""
+msgstr "المراسلات الجماعية عن طريق الرسائل النصية القصيرة للمتقدمين للوظائف "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mrp_mps
@@ -33829,7 +33840,7 @@ msgstr "التطبيق الأساسي لأودو على الهاتف المحم�
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_mobile
 msgid "Odoo Mobile Point of Sale module"
-msgstr ""
+msgstr "تطبيق نقطة بيع أودو على الهاتف المحمول "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_odoo_partner
@@ -36820,7 +36831,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_event_sale
 msgid "PoS - Event Sale"
-msgstr ""
+msgstr "نقطة البيع - بيع الفعالية "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_order_tracking_display
@@ -36874,7 +36885,7 @@ msgstr "خصومات نقطة البيع "
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_mobile
 msgid "Point of Sale Mobile"
-msgstr ""
+msgstr "نقطة البيع المتنقلة "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_sale_stock_renting
@@ -39322,7 +39333,7 @@ msgstr "Sale modifications for Brazil"
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_it_edi_sale
 msgid "Sale modifications for Italy E-invoicing"
-msgstr ""
+msgstr "Sale modifications for Italy E-invoicing"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_spreadsheet_sale_management
@@ -40332,7 +40343,7 @@ msgstr "عرض العملات النشطة"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_bank_search
 msgid "Show inactive bank account"
-msgstr ""
+msgstr "إظهار الحساب البنكي غير النشط "
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_currency_search
@@ -43844,7 +43855,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/image.py:0
 msgid "Too large image (above %sMpx), reduce the image size."
-msgstr ""
+msgstr "الصورة كبيرة جداً (أعلى من %sميغابكسل)، قم بتصغير حجم الصورة. "
 
 #. module: base
 #. odoo-python

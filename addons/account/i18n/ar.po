@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-30 18:36+0000\n"
+"POT-Creation-Date: 2025-06-13 18:36+0000\n"
 "PO-Revision-Date: 2024-09-25 09:41+0000\n"
 "Last-Translator: Malaz Abuidris <msea@odoo.com>, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/odoo/teams/41243/ar/)\n"
@@ -1385,7 +1385,7 @@ msgstr "<span>تحذير: قد يكون هذا المستند نسخة مكرر�
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_invoice_document
 msgid "<strong class=\"d-block mt-3\">Shipping Address</strong>"
-msgstr ""
+msgstr "<strong class=\"d-block mt-3\">عنوان الشحن</strong> "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_invoice_document
@@ -2569,7 +2569,7 @@ msgstr "خيارات متقدمة"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_journal_form
 msgid "Advanced Settings"
-msgstr "إعدادات متقدمة"
+msgstr "الإعدادات المتقدمة"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_tax__include_base_amount
@@ -3512,7 +3512,7 @@ msgstr "الحساب البنكي"
 #. odoo-python
 #: code:addons/account/models/res_partner_bank.py:0
 msgid "Bank Account %(link)s with number %(number)s archived"
-msgstr ""
+msgstr "تم أرشفة الحساب البنكي %(link)s ورقمه %(number)s "
 
 #. module: account
 #. odoo-python
@@ -4109,7 +4109,7 @@ msgstr "لا يمكن الحصول على تفاصيل التوزيع من بن�
 #. odoo-python
 #: code:addons/account/models/account_move_send.py:0
 msgid "Cannot identify the invoices in the generated PDF: %s"
-msgstr ""
+msgstr "لا يمكن تمييز الفواتير في ملف PDF الذي تم إنشاؤه: %s "
 
 #. module: account
 #: model:account.account,name:account.1_capital
@@ -4999,6 +4999,8 @@ msgid "Create Automatic Entries"
 msgstr "إنشاء قيود تلقائية"
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/chart_template.py:0
 #: model:account.reconcile.model,name:account.1_reconcile_bill
 msgid "Create Bill"
 msgstr "إنشاء فاتورة"
@@ -15274,7 +15276,7 @@ msgstr "لم يتم تطبيق تركيبة نموذج المرجع مع نوع 
 #: code:addons/account/models/partner.py:0
 msgid ""
 "The commercial partner has been updated for all related accounting entries."
-msgstr ""
+msgstr "لقد قام الشريك التجاري بتحديث كافة القيود المحاسبية. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_tax_repartition_line__company_id
@@ -18465,6 +18467,8 @@ msgid ""
 "You cannot set a partner as an invoicing address of another if they have a "
 "different %(vat_label)s."
 msgstr ""
+"لا يمكنك تعيين شريك كعنوان للفوترة لشريك آخر إذا كان لديه عنوان مختلف "
+"%(vat_label)s. "
 
 #. module: account
 #. odoo-python
@@ -18550,14 +18554,6 @@ msgstr ""
 "لا يمكنك تصديق فاتورة عميل بها مبلغ كلي سلبي. عليك إنشاء إشعار دائن عوضاً عن"
 " ذلك. استخدم قائمة الإجراءات لتحويلها إلى إشعار دائن أو عملية استرداد "
 "الأموال. "
-
-#. module: account
-#. odoo-python
-#: code:addons/account/models/partner.py:0
-msgid ""
-"You do not have permission to mark this partner as the main commercial "
-"partner."
-msgstr ""
 
 #. module: account
 #. odoo-python

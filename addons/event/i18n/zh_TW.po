@@ -3530,7 +3530,7 @@ msgstr "標記為確認出席"
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.view_event_registration_form
 msgid "Marketing"
-msgstr "市場行銷"
+msgstr "市場推廣"
 
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.event_event_ticket_view_tree_from_event
@@ -4689,7 +4689,7 @@ msgstr "時區"
 #. module: event
 #: model:ir.model.fields,field_description:event.field_event_question__title
 msgid "Title"
-msgstr "稱謂"
+msgstr "標題"
 
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.view_event_search
