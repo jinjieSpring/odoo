@@ -558,7 +558,7 @@ msgstr "Ekipman Kategorisi"
 #. module: maintenance
 #: model:ir.model.fields,field_description:maintenance.field_maintenance_equipment_category__equipment_count
 msgid "Equipment Count"
-msgstr ""
+msgstr "Ekipman Sayısı"
 
 #. module: maintenance
 #: model:res.groups,name:maintenance.group_equipment_manager
@@ -708,7 +708,8 @@ msgid ""
 "ID of the parent record holding the alias (example: project holding the task"
 " creation alias)"
 msgstr ""
-"Rumuzu tutan üst kayıt ID (örnek: görev oluşturma rumuzunu tutan proje)"
+"Takma adı barındıran üst kayıt kimliği (örnek: görev oluşturma takma adını "
+"barındıran proje)"
 
 #. module: maintenance
 #: model:ir.model.fields,field_description:maintenance.field_maintenance_equipment__activity_exception_icon
@@ -1153,6 +1154,9 @@ msgid ""
 "attached, even if they did not reply to it. If set, this will disable the "
 "creation of new records completely."
 msgstr ""
+"Gelen tüm mesajların, yanıt verilmemiş olsa bile ekleneceği bir iş "
+"parçacığının (kayıt) isteğe bağlı kimliği. Ayarlandığı durumlarda yeni "
+"kayıtların oluşturulması tamamen devre dışı bırakılır."
 
 #. module: maintenance
 #: model:ir.ui.menu,name:maintenance.menu_m_reports_oee
@@ -1559,6 +1563,8 @@ msgid ""
 "Track equipment and link it to an employee or department.\n"
 "                You will be able to manage allocations, issues and maintenance of your equipment."
 msgstr ""
+"Ekipmanı takip edin ve bir çalışan veya departmanla ilişkilendirin.\n"
+"                Ekipmanınızın tahsisatlarını, sorunlarını ve bakımını yönetebileceksiniz."
 
 #. module: maintenance
 #: model:ir.model.fields,help:maintenance.field_maintenance_equipment__activity_exception_decoration

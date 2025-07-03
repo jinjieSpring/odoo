@@ -84,7 +84,7 @@ msgstr "Son Güncelleme"
 #. odoo-python
 #: code:addons/hr_recruitment_skills/models/hr_job.py:0
 msgid "Matching Candidates"
-msgstr ""
+msgstr "Eşleşen Adaylar"
 
 #. module: hr_recruitment_skills
 #: model:ir.model.fields,field_description:hr_recruitment_skills.field_hr_candidate__matching_score
@@ -186,3 +186,5 @@ msgid ""
 "We do not have any candidates who meet the skill requirements for this job "
 "position in the database at the moment."
 msgstr ""
+"Şu anda veri tabanımızda bu pozisyonun beceri gereksinimlerini karşılayan "
+"herhangi bir aday bulunmamaktadır."

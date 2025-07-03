@@ -9,7 +9,6 @@
 # Levent Karakaş <levent@mektup.at>, 2024
 # Murat Kaplan <muratk@projetgrup.com>, 2024
 # Ertuğrul Güreş <ertugrulg@projetgrup.com>, 2024
-# Umur Akın <umura@projetgrup.com>, 2024
 # Martin Trigaux, 2024
 # Deniz Guvener_Odoo <degu@odoo.com>, 2025
 # 
@@ -82,8 +81,8 @@ msgid ""
 "Careful, the Code is used in many references, changing it could lead to "
 "unwanted changes."
 msgstr ""
-"Dikkatli olun, Kod birçok referansta kullanılır, değiştirilmesi istenmeyen "
-"değişikliklere yol açabilir."
+"Dikkat edin. Bu Koda atıfta bulunan pek çok öğe mevcut; değiştirmeniz "
+"durumunda istenmeyen değişiklikler de meydana gelebilir."
 
 #. module: hr_work_entry
 #: model:ir.model.fields,field_description:hr_work_entry.field_hr_work_entry__color
@@ -232,6 +231,8 @@ msgid ""
 "If the active field is set to false, it will allow you to hide the work "
 "entry type without removing it."
 msgstr ""
+"Etkin alan 'yanlış' olarak ayarlanırsa, iş girişi türünü kaldırmadan "
+"gizlemenize olanak tanır."
 
 #. module: hr_work_entry
 #: model:ir.model.fields,field_description:hr_work_entry.field_hr_user_work_entry_employee__write_uid
@@ -326,7 +327,7 @@ msgid ""
 "The ISO country code in two chars. \n"
 "You can use this field for quick search."
 msgstr ""
-"İki karakterde ISO ülke kodu.\n"
+"İki karakterden oluşan ISO ülke kodu. \n"
 "Hızlı arama için bu alanı kullanabilirsiniz."
 
 #. module: hr_work_entry
@@ -357,6 +358,8 @@ msgid ""
 "Try to add some records, or make sure that there is no active filter in the "
 "search bar."
 msgstr ""
+"Birkaç kayıt eklemeyi deneyin veya arama çubuğunda etkin bir filtre "
+"olmadığından emin olun."
 
 #. module: hr_work_entry
 #: model_terms:ir.ui.view,arch_db:hr_work_entry.hr_work_entry_view_search
@@ -451,6 +454,9 @@ msgid ""
 "You can't change the Country of this work entry type cause it's currently "
 "used by the system. You need to delete related working entries first."
 msgstr ""
+"Şu anda sistem tarafından kullanılmakta olduğundan bu iş girişi türünün "
+"Ülkesini değiştiremezsiniz. Öncelikle ilgili iş girişlerini silmeniz "
+"gerekir."
 
 #. module: hr_work_entry
 #. odoo-python

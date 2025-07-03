@@ -38,7 +38,7 @@ msgstr "%s (kopija)"
 #. module: hr
 #: model:ir.actions.report,print_report_name:hr.hr_employee_print_badge
 msgid "'Badge - %s' % (object.name).replace('/', '')"
-msgstr ""
+msgstr "'Značka - %s' % (object.name).replace('/', '')"
 
 #. module: hr
 #: model_terms:hr.job,job_details:hr.job_ceo
@@ -590,7 +590,7 @@ msgstr "Odsoten"
 #. module: hr
 #: model:ir.model.fields.selection,name:hr.selection__hr_employee__certificate__bachelor
 msgid "Bachelor"
-msgstr ""
+msgstr "Diploma"
 
 #. module: hr
 #: model_terms:hr.job,website_description:hr.job_ceo
@@ -2039,7 +2039,7 @@ msgstr "Poročen"
 #. module: hr
 #: model:ir.model.fields.selection,name:hr.selection__hr_employee__certificate__master
 msgid "Master"
-msgstr ""
+msgstr "Mojster"
 
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_department__master_department_id
@@ -3698,7 +3698,7 @@ msgstr "km"
 #. module: hr
 #: model:ir.model.fields.selection,name:hr.selection__hr_employee__distance_home_work_unit__miles
 msgid "mi"
-msgstr ""
+msgstr "mi"
 
 #. module: hr
 #. odoo-python

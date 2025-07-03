@@ -6,17 +6,17 @@
 # Yenthe Van Ginneken <yenthespam@gmail.com>, 2024
 # Martin Trigaux, 2024
 # Jolien De Paepe, 2024
-# Manon Rondou, 2025
 # Wil Odoo, 2025
 # Erwin van der Ploeg <erwin@odooexperts.nl>, 2025
+# Manon Rondou, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-13 18:36+0000\n"
+"POT-Creation-Date: 2025-06-27 18:38+0000\n"
 "PO-Revision-Date: 2024-09-25 09:42+0000\n"
-"Last-Translator: Erwin van der Ploeg <erwin@odooexperts.nl>, 2025\n"
+"Last-Translator: Manon Rondou, 2025\n"
 "Language-Team: Dutch (https://app.transifex.com/odoo/teams/41243/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -943,9 +943,8 @@ msgid ""
 "<br/>This is a simple hero unit, a simple jumbotron-style component for "
 "calling extra attention to featured content or information.<br/><br/>"
 msgstr ""
-"<br/>Dit is een eenvoudige heldeneenheid, een eenvoudig jumbotron-achtig "
-"onderdeel om extra aandacht te vestigen op uitgelichte inhoud of "
-"informatie.<br/><br/>"
+"<br/>Dit is een eenvoudige hero unit: een jumbotron-achtig onderdeel om "
+"extra aandacht te vestigen op uitgelichte inhoud of informatie.<br/><br/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
@@ -1945,6 +1944,16 @@ msgid ""
 msgstr ""
 "<span class=\"s_number display-1-fs\">8+</span><br/>\n"
 "                                <span class=\"h5-fs\">Verbazingwekkende pagina's</span>"
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">25%</span>"
+msgstr ""
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">80%</span>"
+msgstr ""
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_progress_bar
@@ -12795,12 +12804,12 @@ msgstr "Meer zien <i class=\"fa fa-long-arrow-right\" role=\"img\"/>"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_references_grid
 msgid "See our case studies"
-msgstr "Bekijk onze casestudies"
+msgstr "Bekijk onze casestudy's"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_references
 msgid "See our case studies <i class=\"fa fa-long-arrow-right ms-2\"/>"
-msgstr "Bekijk onze casestudies <i class=\"fa fa-long-arrow-right ms-2\"/>"
+msgstr "Bekijk onze casestudy's <i class=\"fa fa-long-arrow-right ms-2\"/>"
 
 #. module: website
 #. odoo-javascript
@@ -16990,7 +16999,7 @@ msgid ""
 "customers, clients, sponsors, partners, supporters, case-studies, "
 "collaborators, associations, associates, testimonials, endorsements"
 msgstr ""
-"klanten, klanten, sponsors, partners, supporters, casestudies, medewerkers, "
+"klanten, klanten, sponsors, partners, supporters, casestudy's, medewerkers, "
 "verenigingen, geassocieerden, getuigenissen, goedkeuringen"
 
 #. module: website
@@ -16999,7 +17008,7 @@ msgid ""
 "customers, clients, sponsors, partners, supporters, case-studies, "
 "collaborators, associations, associates, testimonials, endorsements, social"
 msgstr ""
-"klanten, klanten, sponsors, partners, supporters, casestudies, medewerkers, "
+"klanten, klanten, sponsors, partners, supporters, casestudy's, medewerkers, "
 "verenigingen, geassocieerden, getuigenissen, steunbetuigingen, sociale "
 "media, enz"
 

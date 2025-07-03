@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-13 18:36+0000\n"
+"POT-Creation-Date: 2025-06-27 18:38+0000\n"
 "PO-Revision-Date: 2024-09-25 09:42+0000\n"
 "Last-Translator: Thi Huong Nguyen, 2025\n"
 "Language-Team: Vietnamese (https://app.transifex.com/odoo/teams/41243/vi/)\n"
@@ -1750,7 +1750,7 @@ msgid ""
 msgstr ""
 "<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
 "                        <small class=\"text-muted\">Ngày 3/4/2024</small>\n"
-"                        <strong>Tính năng Trang chủ mới cho Báo cáo tùy chỉnh</strong>"
+"                        <strong>Tính năng Bảng điều khiển mới cho Báo cáo tùy chỉnh</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline_list
@@ -1945,6 +1945,16 @@ msgid ""
 msgstr ""
 "<span class=\"s_number display-1-fs\">8+</span><br/>\n"
 "                                <span class=\"h5-fs\">trang tuyệt đẹp</span>"
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">25%</span>"
+msgstr ""
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">80%</span>"
+msgstr ""
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_progress_bar
@@ -16145,7 +16155,7 @@ msgstr "Website: Phân tích"
 #. module: website
 #: model:ir.actions.server,name:website.ir_actions_server_website_dashboard
 msgid "Website: Dashboard"
-msgstr "Website: Trang chủ"
+msgstr "Website: Bảng điều khiển"
 
 #. module: website
 #: model:ir.actions.act_window,name:website.action_website_list

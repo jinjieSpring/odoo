@@ -50,7 +50,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-13 18:36+0000\n"
+"POT-Creation-Date: 2025-06-27 18:38+0000\n"
 "PO-Revision-Date: 2024-09-25 09:42+0000\n"
 "Last-Translator: Deniz Guvener_Odoo <degu@odoo.com>, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/odoo/teams/41243/tr/)\n"
@@ -1807,6 +1807,16 @@ msgid ""
 msgstr ""
 
 #. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">25%</span>"
+msgstr ""
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">80%</span>"
+msgstr ""
+
+#. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_progress_bar
 msgid "<span class=\"s_progress_bar_text small\">80%</span>"
 msgstr ""
@@ -2363,6 +2373,9 @@ msgid ""
 "move columns, select the column and use the top icons to perform your "
 "action."
 msgstr ""
+"Bu üç sütunu tasarım ihtiyaçlarınıza göre uyarlayın. Sütunları çoğaltmak, "
+"silmek veya taşımak için sütunu seçin ve üstteki simgeleri kullanarak işlemi"
+" gerçekleştirin."
 
 #. module: website
 #. odoo-javascript
@@ -4546,12 +4559,14 @@ msgid ""
 "                            better site experiences and tools in the future."
 msgstr ""
 "Çerezler, hizmetlerimize eriştiğinizde sunucularımız tarafından bilgisayarınıza veya cihazınıza gönderilen küçük metin parçalarıdır.\n"
-"                            Bunlar tarayıcınızda saklanır ve daha sonra bağlamsal içerik sağlayabilmemiz için sunucularımıza geri gönderilir.\n"
+"                            Çerezler tarayıcınızda saklanır ve daha sonra sunucularımıza geri gönderilir, böylece size bağlamsal içerik sunabiliriz.\n"
 "                            Çerezler olmadan, web'i kullanmak çok daha sinir bozucu bir deneyim olurdu.\n"
-"                            Bunları web sitemizdeki faaliyetlerinizi desteklemek için kullanıyoruz. Örneğin, oturumunuz (böylece tekrar giriş yapmanız gerekmez) veya alışveriş sepetiniz.                            <br/>Çerezler ayrıca web sitemizdeki önceki veya mevcut etkinliklere (sahip olduğunuz sayfalar) dayalı tercihlerinizi anlamamıza yardımcı olmak için de kullanılır.\n"
-"                            visited), size daha iyi hizmetler sunmamızı sağlayan diliniz ve ülkeniz.\n"
-"                            Çerezleri, site trafiği ve site etkileşimi hakkında toplu verileri derlememize yardımcı olması için de kullanırız, böylece şunları sunabiliriz:\n"
-"                            gelecekte daha iyi site deneyimleri ve araçları."
+"                            Çerezleri, web sitemizdeki faaliyetlerinizi desteklemek için kullanıyoruz. Örneğin, oturumunuz (böylece tekrar giriş yapmanız gerekmez) veya alışveriş sepetiniz.\n"
+"                            <br/>\n"
+"                            Çerezler ayrıca, web sitemizdeki önceki veya mevcut faaliyetlerinize (ziyaret ettiğiniz sayfalar),dilinize ve ülkenize dayalı olarak \n"
+"                            tercihlerinizi anlamamıza yardımcı olmak için kullanılır, bu da size daha iyi hizmetler sunmamızı sağlar.\n"
+"                            Ayrıca, gelecekte daha iyi site deneyimleri ve araçlar sunabilmemiz için site trafiği ve site etkileşimi hakkında toplu veriler derlememize\n"
+"                            yardımcı olmak için çerezleri kullanırız."
 
 #. module: website
 #. odoo-javascript
@@ -5096,6 +5111,8 @@ msgid ""
 "Delete the above image or replace it with a picture that illustrates your "
 "message. Click on the picture to change its <em>rounded corner</em> style."
 msgstr ""
+"Yukarıdaki resmi silin veya mesajınızı açıklayan bir resimle değiştirin. "
+"Resmin <em>köşelerini yuvarlatmak</em> için resmin üzerine tıklayın."
 
 #. module: website
 #. odoo-javascript
@@ -6759,6 +6776,9 @@ msgid ""
 "He loves to keep his hands full by participating in the development of the "
 "software, marketing, and customer experience strategies."
 msgstr ""
+"Kurucu ve baş vizyoner olan Tony, şirketin arkasındaki itici güçtür. Yazılım"
+" geliştirme, pazarlama ve müşteri deneyimi stratejilerine katılarak kendini "
+"meşgul tutmayı sever."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.new_page_template_team_s_media_list
@@ -9536,6 +9556,9 @@ msgid ""
 "Commercial Director in the software industry, Mich has helped the company to"
 " get where it is today. Mich is among the best minds."
 msgstr ""
+"Mich zorlu görevleri severek üstlenir. Yazılım sektöründe Ticari Direktör "
+"olarak uzun yıllara dayanan deneyimi ile Mich, şirketin bugünkü konumuna "
+"gelmesine katkıda bulunmuştur. Mich en kıymetli beyinler arasındadır."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
@@ -10495,6 +10518,8 @@ msgid ""
 "Our Coaching combines personalized fitness plans with mindfulness practices,"
 " ensuring you achieve harmony in your body and peace in your mind."
 msgstr ""
+"Koçluğumuz, kişiselleştirilmiş fitness planlarını farkındalık "
+"uygulamalarıyla birleştirerek bedeninizde denge, zihninizde huzur sağlar."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_links
@@ -10643,6 +10668,9 @@ msgid ""
 "driven by a relentless pursuit of innovation and a commitment to exceeding "
 "expectations."
 msgstr ""
+"Misyonumuz, yenilikçiliğe olan durmak bilmeyen tutkumuz ve beklentileri aşma"
+" taahhüdümüz sayesinde dönüştürücü deneyimler yaratmak ve büyümeyi teşvik "
+"etmektir."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_process_steps
@@ -10730,6 +10758,9 @@ msgid ""
 "providing exceptional service. They reflect our dedication to integrity, "
 "collaboration, and client satisfaction."
 msgstr ""
+"Değerlerimiz kültürümüzü şekillendirir, kararlarımızı etkiler ve olağanüstü "
+"hizmet sunmamızda bize rehberlik eder. Bu değerler; dürüstlük, iş birliği ve"
+" müşteri memnuniyetine olan bağlılığımızı yansıtır."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_list
@@ -13070,6 +13101,9 @@ msgid ""
 "innovative force. Our journey, born in a garage, reflects the power of "
 "passion and hard work."
 msgstr ""
+"Geçmişimize adım atın ve basit bir fikrin yenilikçi bir güce dönüşümüne "
+"tanık olun. Bir garajda başlayan yolculuğumuz, tutku ve sıkı çalışmanın "
+"gücünü yansıtıyor."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -13784,6 +13818,9 @@ msgid ""
 "nutrition guidance, and expert coaching. Elevate your fitness level and "
 "achieve feats you never thought possible."
 msgstr ""
+"Bu koçluk programı; özel olarak güç odaklı antrenmanlar, beslenme rehberliği"
+" ve uzman koçluk hizmetleri sunar. Fitness seviyenizi yükseltin ve hiç "
+"mümkün olmadığını düşündüğünüz başarıları elde edin."
 
 #. module: website
 #: model:ir.model.fields,help:website.field_res_config_settings__favicon
@@ -14110,6 +14147,9 @@ msgid ""
 "right icon of each block. Then, duplicate one of the columns to create a new"
 " one as a copy."
 msgstr ""
+"Dördüncü bir sütun eklemek için, her bloğun sağındaki simgeyi kullanarak bu "
+"üç sütunun boyutunu küçültün. Ardından, sütunlardan birini kopyalayıp yeni "
+"bir sütun oluşturun."
 
 #. module: website
 #. odoo-javascript
@@ -15748,6 +15788,9 @@ msgid ""
 " support, you'll shed unwanted pounds while building healthy habits that "
 "last."
 msgstr ""
+"Kişiselleştirilmiş fitness planları, özel beslenme rehberliği ve sürekli "
+"destek sayesinde, kalıcı sağlıklı alışkanlıklar geliştirirken istenmeyen "
+"kilolardan kurtulacaksınız."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mega_menu_menus_logos

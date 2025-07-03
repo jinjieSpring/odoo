@@ -92,42 +92,9 @@ const {
  * } & Partial<T>} KwArgs
  */
 
-const READ_GROUP_NUMBER_GRANULARITY = [
-    "year_number",
-    "quarter_number",
-    "month_number",
-    "iso_week_number",
-    "day_of_year",
-    "day_of_month",
-    "day_of_week",
-    "hour_number",
-    "minute_number",
-    "second_number",
-];
-
-const DATE_FORMAT = {
-    day: (date) => date.toFormat("yyyy-MM-dd"),
-    day_of_week: (date) => date.weekday % 7, // number of days after the first day of the week (assumed to be Sunday)
-    day_of_month: (date) => date.day,
-    day_of_year: (date) => date.ordinal,
-    week: (date) => `W${date.toFormat("WW kkkk")}`,
-    iso_week_number: (date) => date.weekNumber,
-    month_number: (date) => date.month,
-    quarter: (date) => `Q${date.toFormat("q yyyy")}`,
-    quarter_number: (date) => date.quarter,
-    year: (date) => date.toFormat("yyyy"),
-    year_number: (date) => date.year,
-};
-
-const DATETIME_FORMAT = {
-    ...DATE_FORMAT,
-    second_number: (date) => date.second,
-    minute_number: (date) => date.minute,
-    // The year is added to the format because is needed to correctly compute the
-    // domain and the range (startDate and endDate).
-    hour: (date) => date.toFormat("HH:00 dd MMM yyyy"),
-    hour_number: (date) => date.hour,
-};
+//-----------------------------------------------------------------------------
+// Local helpers
+//-----------------------------------------------------------------------------
 
 /**
  * @param {Iterable<[FieldDefinition, string, Aggregator?]>} aggregatedFields
@@ -517,13 +484,13 @@ function getView(model, args, kwargs) {
     let [requestViewId, viewType] = args;
     if (!requestViewId) {
         const contextKey = `${viewType}_view_ref`;
-        if (contextKey in kwargs.context) {
+        if (kwargs.context && contextKey in kwargs.context) {
             requestViewId = kwargs.context[contextKey];
         }
     }
     const [arch, viewId] = findView(model, viewType, requestViewId);
-    const view = parseView(model, { arch, context: kwargs.context });
-    if (kwargs.options.toolbar) {
+    const view = parseView(model, { arch });
+    if (kwargs.options?.toolbar) {
         view.toolbar = model._toolbar;
     }
     if (viewId !== undefined) {
@@ -913,11 +880,11 @@ function parseView(model, params) {
         if (node.nodeType !== Node.ELEMENT_NODE) {
             return false;
         }
-        ["required", "readonly", "invisible", "column_invisible"].forEach((attr) => {
+        for (const attr of ["required", "readonly", "invisible", "column_invisible"]) {
             if (/^(true|1)$/i.test(node.getAttribute(attr))) {
                 node.setAttribute(attr, "True");
             }
-        });
+        }
         const isField = getTag(node) === "field";
         const isGroupby = getTag(node) === "groupby";
         if (isField) {
@@ -1341,6 +1308,34 @@ function viewNotFoundError(modelName, viewType, viewId, consequence) {
     return new MockServerError(message);
 }
 
+//-----------------------------------------------------------------------------
+// Local constants
+//-----------------------------------------------------------------------------
+
+/** @type {Record<string, (date: luxon["DateTime"]["prototype"]) => string | number>} */
+const DATE_FORMAT = {
+    day_of_month: (date) => date.day,
+    day_of_week: (date) => date.weekday % 7, // number of days after the first day of the week (assumed to be Sunday)
+    day_of_year: (date) => date.ordinal,
+    day: (date) => date.toFormat("yyyy-MM-dd"),
+    iso_week_number: (date) => date.weekNumber,
+    month_number: (date) => date.month,
+    quarter_number: (date) => date.quarter,
+    quarter: (date) => `Q${date.toFormat("q yyyy")}`,
+    week: (date) => `W${date.toFormat("WW kkkk")}`,
+    year_number: (date) => date.year,
+    year: (date) => date.toFormat("yyyy"),
+};
+/** @type {Record<string, (date: luxon["DateTime"]["prototype"]) => string | number>} */
+const DATETIME_FORMAT = {
+    ...DATE_FORMAT,
+    hour_number: (date) => date.hour,
+    // The year is added to the format because is needed to correctly compute the
+    // domain and the range (startDate and endDate).
+    hour: (date) => date.toFormat("HH:00 dd MMM yyyy"),
+    minute_number: (date) => date.minute,
+    second_number: (date) => date.second,
+};
 const INHERITED_OBJECT_KEYS = [
     ["_computes", null],
     ["_fields", deepCopy],
@@ -1356,12 +1351,18 @@ const INHERITED_PRIMITIVE_KEYS = [
     ["_rec_name", null],
     ["_related", (set) => new Set(set)],
 ];
-
-// Other constants
-const R_AGGREGATE_FUNCTION = /(\w+)(?::(\w+)(?:\((\w+)\))?)?/;
-const R_CAMEL_CASE = /([a-z])([A-Z])/g;
-const R_DATE = /\d{4}-\d{2}-\d{2}/;
-const R_DATE_TIME = /\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/;
+const READ_GROUP_NUMBER_GRANULARITY = [
+    "day_of_month",
+    "day_of_week",
+    "day_of_year",
+    "hour_number",
+    "iso_week_number",
+    "minute_number",
+    "month_number",
+    "quarter_number",
+    "second_number",
+    "year_number",
+];
 /** @type {Aggregator[]} */
 const VALID_AGGREGATE_FUNCTIONS = [
     "array_agg",
@@ -1375,6 +1376,12 @@ const VALID_AGGREGATE_FUNCTIONS = [
     "sum",
 ];
 
+// Regular expressions
+const R_AGGREGATE_FUNCTION = /(\w+)(?::(\w+)(?:\((\w+)\))?)?/;
+const R_CAMEL_CASE = /([a-z])([A-Z])/g;
+const R_DATE = /\d{4}-\d{2}-\d{2}/;
+const R_DATE_TIME = /\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/;
+
 /** @type {Record<string, Record<ViewKey, string>>} */
 const inlineViewArchs = Object.create(null);
 const domParser = new DOMParser();
@@ -1385,6 +1392,10 @@ const xmlSerializer = new XMLSerializer();
  * is only meant to be applied on automatic array creations (e.g. when calling `.filter()`).
  */
 let modelInstanceLock = 0;
+
+//-----------------------------------------------------------------------------
+// Exports
+//-----------------------------------------------------------------------------
 
 /**
  * @param {string} modelName
@@ -1561,7 +1572,7 @@ export class Model extends Array {
     _views = {};
 
     get env() {
-        return MockServer.current.env;
+        return MockServer.env;
     }
 
     // Default fields, common to all models
@@ -1749,8 +1760,8 @@ export class Model extends Array {
     }
 
     /**
-     * @param {Iterable<string>} fieldNames
-     * @param {Iterable<string>} attributes
+     * @param {Iterable<string>} [fieldNames]
+     * @param {Iterable<string>} [attributes]
      */
     fields_get(fieldNames, attributes) {
         const kwargs = getKwArgs(arguments, "allfields", "attributes");
@@ -1793,7 +1804,7 @@ export class Model extends Array {
 
         // For each model, fetch the information of the fields used in the views only
         for (const [modelName, value] of Object.entries(modelFields)) {
-            models[modelName] = { fields: MockServer.env[modelName].fields_get(value.fields) };
+            models[modelName] = { fields: this.env[modelName].fields_get(value.fields) };
         }
 
         if (options.load_filters && "search" in result) {
@@ -2583,7 +2594,7 @@ export class Model extends Array {
         }
 
         // update value of relationnal fields pointing to the deleted records
-        for (const model of Object.values(MockServer.current.models)) {
+        for (const model of Object.values(MockServer.current._models)) {
             for (const [fieldName, field] of Object.entries(model._fields)) {
                 const coModel = getRelation(field);
                 if (coModel?._name === this._name) {
@@ -2740,6 +2751,7 @@ export class Model extends Array {
     //-------------------------------------------------------------------------
 
     /**
+     * @private
      * @param {Record<string, ModelRecord>} [originalRecords={}]
      */
     _applyComputesAndValidate(originalRecords = {}) {
@@ -2773,6 +2785,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {ModelRecord} record
      * @param {Context} [context]
      */
@@ -2789,7 +2802,9 @@ export class Model extends Array {
             }
             if (fieldName === "create_uid") {
                 // "Created by" field
-                record[fieldName] = this.env.uid;
+                if ("res.users" in MockServer.current._models) {
+                    record[fieldName] = this.env.uid;
+                }
                 continue;
             }
             const fieldDef = this._fields[fieldName];
@@ -2806,6 +2821,9 @@ export class Model extends Array {
         }
     }
 
+    /**
+     * @private
+     */
     _compute_display_name() {
         if (this._rec_name) {
             for (const record of this) {
@@ -2820,6 +2838,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {string} fieldName
      */
     _compute_related_field(fieldName) {
@@ -2848,6 +2867,7 @@ export class Model extends Array {
      * that if we have an 'active' field, we implicitely add active = true in
      * the domain.
      *
+     * @private
      * @param {DomainListRepr} [domain]
      * @param {{ active_test?: boolean }} [options]
      */
@@ -2941,6 +2961,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {ModelRecord} record
      * @param {string[]} fieldNames
      * @returns {[any, FieldType]}
@@ -2971,11 +2992,15 @@ export class Model extends Array {
         return [value, currentField?.type];
     }
 
+    /**
+     * @private
+     */
     _getNextId() {
         return Math.max(0, ...this.map((record) => record?.id || 0)) + 1;
     }
 
     /**
+     * @private
      * @param {FieldDefinition} field
      * @param {ModelRecord} record
      */
@@ -2992,6 +3017,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {MaybeIterable<number>} idOrIds
      * @param {Iterable<string>} [fnames=[]]
      * @param {string | false} [load="_classic_read"]
@@ -3092,6 +3118,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {SearchParams} params
      */
     _search(params) {
@@ -3108,6 +3135,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {Record<string, any>} spec
      * @param {ModelRecord[]} records
      */
@@ -3208,6 +3236,7 @@ export class Model extends Array {
     }
 
     /**
+     * @private
      * @param {ModelRecord} values
      * @param {number} id
      */

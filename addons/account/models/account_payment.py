@@ -943,6 +943,15 @@ class AccountPayment(models.Model):
             })
         return vals_list
 
+    def _message_mail_after_hook(self, mails):
+        for payment, mail in zip(self, mails):
+            if (
+                not payment.message_main_attachment_id
+                and (attachments_to_link := mail.attachment_ids.filtered(lambda a: a.res_model == 'mail.message'))
+            ):
+                attachments_to_link.write({'res_model': self._name, 'res_id': payment.id})
+        return super()._message_mail_after_hook(mails)
+
     # -------------------------------------------------------------------------
     # SYNCHRONIZATION account.payment -> account.move
     # -------------------------------------------------------------------------
@@ -983,7 +992,7 @@ class AccountPayment(models.Model):
             pay.move_id \
                 .with_context(skip_invoice_sync=True) \
                 .write({
-                'name': '/',  # Set the name to '/' to allow it to be changed
+                'name': pay.name if pay.name else '/',  # Set the name to '/' to allow it to be changed
                 'date': pay.date,
                 'partner_id': pay.partner_id.id,
                 'currency_id': pay.currency_id.id,

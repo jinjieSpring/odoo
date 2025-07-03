@@ -48,6 +48,15 @@ msgid ""
 "            <h6>4 Days after Interview</h6>\n"
 "        "
 msgstr ""
+"\n"
+"            <span class=\"text-muted small\">Yanıtlama Süresi</span>\n"
+"            <h6>2 açık gün</h6>\n"
+"            <span class=\"text-muted small\">Süreç</span>\n"
+"            <h6>1 Telefon</h6>\n"
+"            <h6>1 Yerinde Mülakat</h6>\n"
+"            <span class=\"text-muted small\">Teklif almak için beklenecek Gün sayısı</span>\n"
+"            <h6>Mülakattan sonra 4 Gün</h6>\n"
+"        "
 
 #. module: website_hr_recruitment
 #. odoo-python
@@ -427,6 +436,11 @@ msgid ""
 "                    Several activities are often organized all over the year, such as weekly\n"
 "                    sports sessions, team building events, monthly drink, and much more"
 msgstr ""
+"Her bir çalışan, çalışmasının sonuçlarını ve yarattığı etkiyi görebilir.\n"
+"                    Şirketin başarısına somut bir biçimde katkı sunabilirsiniz.\n"
+"                    <br/>\n"
+"                    Yıl boyunca haftalık spor seansları, ekibin bağlarını kuvvetlendirme\n"
+"                    etkinlikleri, aylık içki partileri gibi çeşitli etkinlikler düzenlenmektedir"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.default_website_description
@@ -496,6 +510,13 @@ msgid ""
 "                                                feedback</strong> or if you don't get news from me\n"
 "                                                quickly enough."
 msgstr ""
+"Genellikle <strong>başvurulara üç gün içinde yanıt veririm</strong>.\n"
+"                                                <br/><br/>\n"
+"                                                Sonraki adım ya bir telefon görüşmesi ya da ofisimizde yüz yüze bir görüşme olacaktır.\n"
+"                                                <br/><br/>\n"
+"                                                <strong>Daha hızlı geri bildirim\n"
+"                                                isterseniz</strong>veya benden yeterince hızlı dönüş almazsanız\n"
+"                                                dilediğiniz zaman benimle iletişime geçebilirsiniz."
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.apply
@@ -825,6 +846,8 @@ msgid ""
 "There are currently no open job opportunities,<br class=\"mb-2\"/>\n"
 "                                            but feel free to <span class=\"fw-bold\">contact us</span> for a spontaneous application."
 msgstr ""
+"Şu anda açık iş pozisyonumuz yok,<br class=\"mb-2\"/>\n"
+"                                            ancak bize doğrudan başvurmak isterseniz<span class=\"fw-bold\">bizimle iletişime geçmekten</span> çekinmeyin."
 
 #. module: website_hr_recruitment
 #. odoo-javascript
@@ -873,6 +896,8 @@ msgid ""
 "We found a recent application with a similar name, email, phone number. You "
 "can continue if it's not a mistake."
 msgstr ""
+"Benzer isim, e-posta ve telefon numarasıyla yakın zamanda yapılmış bir "
+"başvuru bulduk. Bu bir hata değilse devam edebilirsiniz."
 
 #. module: website_hr_recruitment
 #. odoo-python
@@ -881,6 +906,8 @@ msgid ""
 "We've found a previous closed application in our system within the last 6 "
 "months. Please consider before applying in order not to duplicate efforts."
 msgstr ""
+"Sistemimizde son 6 ay içinde kapatılmış bir başvuru bulduk. Çabaların "
+"tekrarlanmaması için başvurmadan önce lütfen bunu göz önünde bulundurun."
 
 #. module: website_hr_recruitment
 #: model:ir.model,name:website_hr_recruitment.model_website
@@ -968,6 +995,8 @@ msgid ""
 "e.g. Summarize the position in one or two lines that will be displayed on "
 "the Jobs list page..."
 msgstr ""
+"örn. İş Pozisyonları listesi sayfasında kullanılacak şekilde bir veya iki "
+"satırda pozisyonu özetleyin..."
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.apply
@@ -987,7 +1016,7 @@ msgstr "iş bağlantısı"
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.index
 msgid "open position"
-msgstr ""
+msgstr "açık pozisyon"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.index

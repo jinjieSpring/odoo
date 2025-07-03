@@ -652,13 +652,11 @@ describe("shortcut", () => {
 
 describe("link preview", () => {
     test("test internal link preview", async () => {
-        onRpc("/html_editor/link_preview_internal", () => {
-            return {
-                description: markup("Test description"),
-                link_preview_name: "Task name | Project name",
-            };
-        });
-        onRpc("/odoo/project/1/tasks/8", () => new Response("", { status: 200 }));
+        onRpc("/html_editor/link_preview_internal", () => ({
+            description: markup("Test description"),
+            link_preview_name: "Task name | Project name",
+        }));
+        onRpc("/odoo/project/1/tasks/8", () => "", { pure: true });
         const { editor, el } = await setupEditor(`<p>[]</p>`);
         await insertText(editor, "/link");
         await animationFrame();
@@ -678,17 +676,15 @@ describe("link preview", () => {
         expect(cleanLinkArtifacts(el.textContent)).toBe("Task name | Project name");
     });
     test("test external link preview", async () => {
-        onRpc("/html_editor/link_preview_external", () => {
-            return {
-                og_description:
-                    "From ERP to CRM, eCommerce and CMS. Download Odoo or use it in the cloud. Grow Your Business.",
-                og_image: "https://www.odoo.com/web/image/41207129-1abe7a15/homepage-seo.png",
-                og_title: "Open Source ERP and CRM | Odoo",
-                og_type: "website",
-                og_site_name: "Odoo",
-                source_url: "http://odoo.com/",
-            };
-        });
+        onRpc("/html_editor/link_preview_external", () => ({
+            og_description:
+                "From ERP to CRM, eCommerce and CMS. Download Odoo or use it in the cloud. Grow Your Business.",
+            og_image: "https://www.odoo.com/web/image/41207129-1abe7a15/homepage-seo.png",
+            og_title: "Open Source ERP and CRM | Odoo",
+            og_type: "website",
+            og_site_name: "Odoo",
+            source_url: "http://odoo.com/",
+        }));
         const { editor } = await setupEditor(`<p>[]</p>`);
         await insertText(editor, "/link");
         await animationFrame();
@@ -710,7 +706,7 @@ describe("link preview", () => {
                 link_preview_name: "Task name | Project name",
             };
         });
-        onRpc("/odoo/cachetest/8", () => new Response("", { status: 200 }));
+        onRpc("/odoo/cachetest/8", () => "", { pure: true });
         const { editor } = await setupEditor(`<p>abc[]</p>`);
         await insertText(editor, "/link");
         await animationFrame();
@@ -751,11 +747,15 @@ describe("link preview", () => {
         });
 
         const currentProtocol = window.location.protocol;
-        onRpc("/odoo/cachetest/8", (mockRequest) => {
-            const urlProtocol = new URL(mockRequest.url).protocol;
-            expect(urlProtocol).toBe(currentProtocol);
-            return new Response("", { status: 200 });
-        });
+        onRpc(
+            "/odoo/cachetest/8",
+            (request) => {
+                const urlProtocol = new URL(request.url).protocol;
+                expect(urlProtocol).toBe(currentProtocol);
+                return "";
+            },
+            { pure: true }
+        );
 
         const { editor } = await setupEditor(`<p>abc[]</p>`);
         await insertText(editor, "/link");
@@ -951,6 +951,17 @@ describe("links with inline image", () => {
             `<p>ab<a href="#">c</a>]d<img src="${base64Img}">exxf<img src="${base64Img}">g[<a href="#">h</a>i</p>`
         );
     });
+    test("link elelment should be removed and popover should close when image is deleted from a image link ", async () => {
+        const { el } = await setupEditor(`<p>ab<a href="#"><img src="${base64Img}">[]</a>c</p>`);
+        await click("img");
+        await waitFor(".o-we-toolbar");
+        await waitFor(".o-we-linkpopover");
+
+        await click("button[name='image_delete']");
+        await waitForNone(".o-we-linkpopover", { timeout: 1500 });
+
+        expect(cleanLinkArtifacts(getContent(el))).toBe(`<p>ab[]c</p>`);
+    });
 });
 
 describe("readonly mode", () => {
@@ -1030,13 +1041,24 @@ describe("upload file via link popover", () => {
     });
 
     test("popover in preview mode should display the file's mimetype as favicon", async () => {
-        onRpc("/web/dataset/call_kw/ir.attachment/read", () => {
-            return [{ name: "file.txt", mimetype: "text/plain" }];
-        });
+        onRpc("ir.attachment", "read", () => [{ name: "file.txt", mimetype: "text/plain" }]);
         await setupEditor(
             '<p><a href="/web/content/1?download=true&unique=123">file.txt[]</a></p>'
         );
         const favIcon = await waitFor(".o_we_preview_favicon span.o_image");
         expect(favIcon).toHaveAttribute("data-mimetype", "text/plain");
+    });
+
+    describe("hidden label field", () => {
+        test("label field should be hidden if <a> content is not text only", async () => {
+            await setupEditor(`<a href="http://test.com/"><img src="${base64Img}">te[]xt</a>`);
+            await waitFor(".o-we-linkpopover");
+            expect(".o-we-linkpopover").toHaveCount(1);
+            // open edit mode and check if label input is hidden
+            await click(".o_we_edit_link");
+            await waitFor(".input-group");
+            expect(".o_we_label_link").not.toBeVisible();
+            expect(".o_we_href_input_link").toHaveValue("http://test.com/");
+        });
     });
 });

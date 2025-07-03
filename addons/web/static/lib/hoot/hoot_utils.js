@@ -106,6 +106,7 @@ const {
     PromiseRejectionEvent,
     Reflect: { ownKeys: $ownKeys },
     RegExp,
+    requestAnimationFrame,
     Set,
     setTimeout,
     String,
@@ -130,42 +131,6 @@ const $writeText = $clipboard?.writeText.bind($clipboard);
 //-----------------------------------------------------------------------------
 // Internal
 //-----------------------------------------------------------------------------
-
-/**
- * Returns the constructor of the given value, and if it is "Object": tries to
- * infer the actual constructor name from the string representation of the object.
- *
- * This is needed for cursed JavaScript objects such as "Arguments", which is an
- * array-like object without a proper constructor.
- *
- * @param {any} value
- */
-function getConstructor(value) {
-    const { constructor } = value;
-    if (constructor !== Object) {
-        return constructor || { name: null };
-    }
-    const str = value.toString();
-    const match = str.match(R_OBJECT);
-    if (!match || match[1] === "Object") {
-        return constructor;
-    }
-
-    // Custom constructor
-    const className = match[1];
-    if (!objectConstructors.has(className)) {
-        objectConstructors.set(
-            className,
-            class {
-                static name = className;
-                constructor(...values) {
-                    $assign(this, ...values);
-                }
-            }
-        );
-    }
-    return objectConstructors.get(className);
-}
 
 /**
  * @param {(...args: any[]) => any} fn
@@ -205,6 +170,30 @@ function makeObjectCache() {
         add: (...values) => values.forEach((value) => cache.add(value)),
         has: (...values) => values.every((value) => cache.has(value)),
     };
+}
+
+/**
+ * @template T
+ * @param {T | (() => T)} value
+ * @returns {T}
+ */
+function resolve(value) {
+    if (typeof value === "function") {
+        return value();
+    } else {
+        return value;
+    }
+}
+
+/**
+ * Useful to deal with symbols as primitives
+ * @param {unknown} a
+ * @param {unknown} b
+ */
+function stringSort(a, b) {
+    const strA = String(a).toLowerCase();
+    const strB = String(b).toLowerCase();
+    return strA > strB ? 1 : strA < strB ? -1 : 0;
 }
 
 /**
@@ -323,6 +312,9 @@ function _deepEqual(a, b, ignoreOrder, partial, cache) {
  * @returns {[string, number]}
  */
 function _formatHumanReadable(value, length, cache) {
+    if (!isSafe(value)) {
+        return `<cannot read value of ${getConstructor(value).name}>`;
+    }
     // Primitives
     switch (typeof value) {
         case "function": {
@@ -424,6 +416,9 @@ function _formatHumanReadable(value, length, cache) {
  * @returns {string}
  */
 function _formatTechnical(value, depth, isObjectValue, cache) {
+    if (!isSafe(value)) {
+        return `<cannot read value of ${getConstructor(value).name}>`;
+    }
     if (value === S_ANY || value === S_NONE) {
         // Special case: internal symbols
         return "";
@@ -475,10 +470,15 @@ function _formatTechnical(value, depth, isObjectValue, cache) {
     // Non-iterable objects
     const proto = !constructor.name || constructor.name === "Object" ? "" : `${constructor.name} `;
     const content = $ownKeys(value)
-        .sort()
+        .sort(stringSort)
         .map(
             (key) =>
-                `${startIndent}${key}: ${_formatTechnical(value[key], depth + 1, true, cache)},\n`
+                `${startIndent}${String(key)}: ${_formatTechnical(
+                    value[key],
+                    depth + 1,
+                    true,
+                    cache
+                )},\n`
         );
     return `${baseIndent}${proto}{${content.length ? `\n${content.join("")}${endIndent}` : ""}}`;
 }
@@ -618,9 +618,8 @@ export function createJobScopedGetter(instanceGetter, afterCallback) {
             instances.set(currentJob, instanceGetter(parentInstance, ...args));
 
             if (canCallAfter) {
-                runner.after(() => {
+                runner.after(function instanceGetterCleanup() {
                     instances.delete(currentJob);
-
                     canCallAfter = false;
                     afterCallback?.();
                     canCallAfter = true;
@@ -954,6 +953,42 @@ export function generateHash(...strings) {
 }
 
 /**
+ * Returns the constructor of the given value, and if it is "Object": tries to
+ * infer the actual constructor name from the string representation of the object.
+ *
+ * This is needed for cursed JavaScript objects such as "Arguments", which is an
+ * array-like object without a proper constructor.
+ *
+ * @param {unknown} value
+ */
+export function getConstructor(value) {
+    const { constructor } = value;
+    if (constructor !== Object) {
+        return constructor || { name: null };
+    }
+    const str = value.toString();
+    const match = str.match(R_OBJECT);
+    if (!match || match[1] === "Object") {
+        return constructor;
+    }
+
+    // Custom constructor
+    const className = match[1];
+    if (!objectConstructors.has(className)) {
+        objectConstructors.set(
+            className,
+            class {
+                static name = className;
+                constructor(...values) {
+                    $assign(this, ...values);
+                }
+            }
+        );
+    }
+    return objectConstructors.get(className);
+}
+
+/**
  * This function computes a score that represent the fact that the
  * string contains the pattern, or not
  *
@@ -1098,6 +1133,20 @@ export function isOfType(value, type) {
 }
 
 /**
+ * @param {unknown} value
+ */
+export function isSafe(value) {
+    if (value && typeof value.valueOf === "function") {
+        try {
+            value.valueOf();
+        } catch {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * Returns the edit distance between 2 strings
  *
  * @param {string} a
@@ -1155,7 +1204,11 @@ export function lookup(parsedQuery, items, property = "key") {
             }
         }
         if (isPartial) {
-            result.sort((a, b) => fuzzyScoreMap[b[property]] - fuzzyScoreMap[a[property]]);
+            result.sort(
+                (a, b) =>
+                    fuzzyScoreMap[b[property].toLowerCase()] -
+                    fuzzyScoreMap[a[property].toLowerCase()]
+            );
         }
         items = result;
     }
@@ -1402,6 +1455,23 @@ export function stringToNumber(string) {
 }
 
 /**
+ * @template {(...args: any[]) => any} T
+ * @param {T} fn
+ * @returns {T}
+ */
+export function throttle(fn) {
+    let canRun = true;
+    return function throttled(...args) {
+        if (!canRun) {
+            return;
+        }
+        canRun = false;
+        requestAnimationFrame(() => (canRun = true));
+        return fn(...args);
+    };
+}
+
+/**
  * @param {string} string
  */
 export function title(string) {
@@ -1433,13 +1503,12 @@ export function toExplicitString(value) {
  * @param {{ el?: HTMLElement }} ref
  */
 export function useAutofocus(ref) {
-    let displayed = new Set();
-    useEffect(() => {
-        if (!ref.el) {
-            return;
-        }
+    /**
+     * @param {HTMLElement} el
+     */
+    function autofocus(el) {
         const nextDisplayed = new Set();
-        for (const element of ref.el.querySelectorAll("[autofocus]")) {
+        for (const element of el.querySelectorAll("[autofocus]")) {
             if (!displayed.has(element)) {
                 element.focus();
                 if (["INPUT", "TEXTAREA"].includes(element.tagName)) {
@@ -1450,7 +1519,10 @@ export function useAutofocus(ref) {
             nextDisplayed.add(element);
         }
         displayed = nextDisplayed;
-    });
+    }
+
+    let displayed = new Set();
+    useEffect(autofocus, () => [ref.el]);
 }
 
 /** @type {EventTarget["addEventListener"]} */
@@ -1471,12 +1543,8 @@ export class Callbacks {
     add(type, callback, once) {
         if (callback instanceof Promise) {
             const promiseValue = callback;
-            callback = function () {
-                return Promise.resolve(promiseValue).then((result) => {
-                    if (typeof result === "function") {
-                        result();
-                    }
-                });
+            callback = function waitForPromise() {
+                return Promise.resolve(promiseValue).then(resolve);
             };
         } else if (typeof callback !== "function") {
             return;
@@ -1838,6 +1906,11 @@ export const CASE_EVENT_TYPES = {
         value: 0b100000,
         icon: "fa-arrow-right text-sm",
         color: "orange",
+    },
+    time: {
+        value: 0b1000000,
+        icon: "fa fa-hourglass text-sm",
+        color: "blue",
     },
 };
 export const DEFAULT_EVENT_TYPES = CASE_EVENT_TYPES.assertion.value | CASE_EVENT_TYPES.error.value;

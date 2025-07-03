@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-13 18:36+0000\n"
+"POT-Creation-Date: 2025-06-27 18:38+0000\n"
 "PO-Revision-Date: 2024-09-25 09:42+0000\n"
 "Last-Translator: Aleš Pipan, 2025\n"
 "Language-Team: Slovenian (https://app.transifex.com/odoo/teams/41243/sl/)\n"
@@ -360,22 +360,22 @@ msgstr "/contactus"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_key_images
 msgid "01"
-msgstr ""
+msgstr "01"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_key_images
 msgid "02"
-msgstr ""
+msgstr "02"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_key_images
 msgid "03"
-msgstr ""
+msgstr "03"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_key_images
 msgid "04"
-msgstr ""
+msgstr "04"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
@@ -486,7 +486,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_features_wave
 msgid "24/7 Customer Support"
-msgstr ""
+msgstr "24/7 Podpora strankam"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_key_benefits
@@ -938,7 +938,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
 msgid "<i class=\"fa fa-1x fa-fw fa-phone me-1\"/>͏"
-msgstr ""
+msgstr "<i class=\"fa fa-1x fa-fw fa-phone me-1\"/>͏"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_controller_pages_kanban_view
@@ -1400,11 +1400,13 @@ msgid ""
 "<small><i class=\"fa fa-1x fa-fw fa-envelope me-1\"/> "
 "info@yourcompany.example.com</small>"
 msgstr ""
+"<small><i class=\"fa fa-1x fa-fw fa-envelope me-1\"/> "
+"info@vasepodjetje.primer.si</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
 msgid "<small>Free Returns and Standard Shipping</small>"
-msgstr ""
+msgstr "<small>Brezplačna vračila in standardna dostava</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.color_combinations_debug_view
@@ -1663,7 +1665,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
 msgid "<span class=\"o_force_ltr\">+1 555-555-5556</span>"
-msgstr ""
+msgstr "<span class=\"o_force_ltr\">01 555-5556</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_quotes_carousel
@@ -1759,6 +1761,16 @@ msgstr ""
 msgid ""
 "<span class=\"s_number display-1-fs\">8+</span><br/>\n"
 "                                <span class=\"h5-fs\">Amazing pages</span>"
+msgstr ""
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">25%</span>"
+msgstr ""
+
+#. module: website
+#: model_terms:ir.ui.view,arch_db:website.s_numbers_charts
+msgid "<span class=\"s_progress_bar_text small d-none\">80%</span>"
 msgstr ""
 
 #. module: website
@@ -4857,7 +4869,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_badge_options
 msgid "Dark"
-msgstr ""
+msgstr "Temno"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippet_options_border_line_widgets
@@ -6929,7 +6941,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
 msgid "Getting Started"
-msgstr ""
+msgstr "Začetek"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
@@ -15906,7 +15918,7 @@ msgstr "YouTube"
 #. odoo-javascript
 #: code:addons/website/static/src/js/send_mail_form.js:0
 msgid "Your Company"
-msgstr ""
+msgstr "Vaše podjetje"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_dynamic_snippet_template

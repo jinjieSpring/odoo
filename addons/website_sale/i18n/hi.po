@@ -8,6 +8,7 @@
 # Wil Odoo, 2024
 # Jaisal Shah <jaisal13shah@gmail.com>, 2025
 # Manav Shah, 2025
+# Ujjawal Pathak, 2025
 # 
 msgid ""
 msgstr ""
@@ -15,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-19 20:36+0000\n"
 "PO-Revision-Date: 2024-09-25 09:42+0000\n"
-"Last-Translator: Manav Shah, 2025\n"
+"Last-Translator: Ujjawal Pathak, 2025\n"
 "Language-Team: Hindi (https://app.transifex.com/odoo/teams/41243/hi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -388,6 +389,8 @@ msgstr ""
 #: model_terms:web_tour.tour,rainbow_man_message:website_sale.test_01_admin_shop_tour
 msgid "<span><b>Good job!</b> You went through all steps of this tour.</span>"
 msgstr ""
+"<span><b>शाबाश!</b> आपने इस पूरे गाइड या प्रक्रिया के सारे कदम सफलतापूर्वक "
+"पूरे कर लिए हैं.</span>"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.address
@@ -429,7 +432,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.total
 msgid "<strong>Total</strong>"
-msgstr ""
+msgstr "<strong>कुल</strong>"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.cart_lines
@@ -602,7 +605,7 @@ msgstr "कार्रवाई"
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_product_template__message_needaction
 msgid "Action Needed"
-msgstr ""
+msgstr "कार्रवाई की ज़रूरत है"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
@@ -689,7 +692,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_sale.product_template_form_view
 #: model_terms:ir.ui.view,arch_db:website_sale.products_attributes
 msgid "All"
-msgstr ""
+msgstr "सभी "
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.products_categories_list
@@ -766,7 +769,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.coupon_form
 msgid "Apply"
-msgstr ""
+msgstr "अप्लाई करें"
 
 #. module: website_sale
 #. odoo-javascript
@@ -787,7 +790,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_product_template__message_attachment_count
 msgid "Attachment Count"
-msgstr ""
+msgstr "अटैचमेंट काउंट"
 
 #. module: website_sale
 #: model:ir.ui.menu,name:website_sale.menu_product_attribute_action
@@ -1176,7 +1179,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.address
 msgid "City"
-msgstr ""
+msgstr "शहर"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.o_wsale_offcanvas
@@ -1249,12 +1252,12 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
 msgid "Color"
-msgstr ""
+msgstr "कलर"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
 msgid "Columns"
-msgstr ""
+msgstr "कॉलम"
 
 #. module: website_sale
 #: model:ir.ui.menu,name:website_sale.menu_product_combos
@@ -1271,7 +1274,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_res_company
 msgid "Companies"
-msgstr ""
+msgstr "कंपनियां"
 
 #. module: website_sale
 #. odoo-javascript
@@ -1345,7 +1348,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_res_config_settings
 msgid "Config Settings"
-msgstr ""
+msgstr "कॉन्फ़िगरेशन सेटिंग"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.res_config_settings_view_form
@@ -1470,7 +1473,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_sale.field_website_base_unit__create_date
 #: model:ir.model.fields,field_description:website_sale.field_website_sale_extra_field__create_date
 msgid "Created on"
-msgstr ""
+msgstr "इस तारीख को बनाया गया"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.view_sales_order_filter_ecommerce_abondand
@@ -1572,7 +1575,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
 msgid "Default"
-msgstr ""
+msgstr "डिफ़ॉल्ट"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
@@ -1707,7 +1710,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_digest_digest
 msgid "Digest"
-msgstr ""
+msgstr "डाइजेस्ट"
 
 #. module: website_sale
 #: model:ir.model.fields.selection,name:website_sale.selection__res_config_settings__account_on_checkout__disabled
@@ -1719,7 +1722,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/website_sale/static/src/xml/website_sale_reorder_modal.xml:0
 msgid "Discard"
-msgstr ""
+msgstr "खारिज करें"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.coupon_form
@@ -1744,7 +1747,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_sale.field_website_base_unit__display_name
 #: model:ir.model.fields,field_description:website_sale.field_website_sale_extra_field__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "डिस्प्ले नाम"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.res_config_settings_view_form
@@ -1754,7 +1757,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
 msgid "Display Type"
-msgstr ""
+msgstr "डिस्प्ले टाइप"
 
 #. module: website_sale
 #: model:ir.model.fields,help:website_sale.field_product_product__base_unit_count
@@ -1782,6 +1785,8 @@ msgstr ""
 #: code:addons/website_sale/models/digest.py:0
 msgid "Do not have access, skip this data for user's digest email"
 msgstr ""
+"अगर किसी डेटा तक ऐक्सेस नहीं है, तो उस डेटा को उपयोगकर्ता को भेजे जाने वाले "
+"डाइजेस्ट ईमेल में शामिल न करें."
 
 #. module: website_sale
 #. odoo-javascript
@@ -2015,7 +2020,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_website_sale_extra_field__field_id
 msgid "Field"
-msgstr ""
+msgstr "फ़ील्ड"
 
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_website_sale_extra_field__label
@@ -2052,7 +2057,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_website__fiscal_position_id
 msgid "Fiscal Position"
-msgstr ""
+msgstr "वित्तीय स्थिति"
 
 #. module: website_sale
 #: model:product.public.category,name:website_sale.public_category_desks_foldable
@@ -2062,12 +2067,12 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_product_template__message_follower_ids
 msgid "Followers"
-msgstr ""
+msgstr "फ़ॉलोवर"
 
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_product_template__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "फ़ॉलोवर (पार्टनर)"
 
 #. module: website_sale
 #: model:product.public.category,name:website_sale.public_category_bins_storage
@@ -2185,7 +2190,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_sale.field_website_base_unit__id
 #: model:ir.model.fields,field_description:website_sale.field_website_sale_extra_field__id
 msgid "ID"
-msgstr ""
+msgstr "आईडी"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.product_tag_form_view_inherit_website_sale
@@ -2381,7 +2386,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_account_move
 msgid "Journal Entry"
-msgstr ""
+msgstr "जर्नल एंट्री"
 
 #. module: website_sale
 #: model:product.public.category,name:website_sale.public_category_cabinets_kitchen
@@ -3713,7 +3718,7 @@ msgstr ""
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_sale_order
 msgid "Sales Order"
-msgstr ""
+msgstr "सेल्स ऑर्डर"
 
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_sale_order_line
@@ -4860,7 +4865,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.address
 msgid "Zip Code"
-msgstr ""
+msgstr "पिन कोड"
 
 #. module: website_sale
 #: model:ir.ui.menu,name:website_sale.menu_delivery_zip_prefix

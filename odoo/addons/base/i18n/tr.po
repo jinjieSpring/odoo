@@ -501,9 +501,9 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"* Arjantin'de yasal bir zorunluluk olan ve belirli bir zaman diliminde yapılan satış veya satın almaların KDV detay bilgilerini içeren KDV Defteri raporunu ekleyin.\n"
-"* Faturalandırmayı analiz etmek için kullanılan bir KDV özet raporu ekleyin\n"
-"* AFIP'de içe aktarılacak TXT dosyaları oluşturmamıza izin veren Dijital KDV Defteri işlevi eklendi. Uyguladıklarımız şunlardır:\n"
+"* Arjantin'de yasal bir zorunluluk olan KDV Defteri raporu eklendi; bu rapor belirli bir dönem içerisinde yapılan satış veya alış işlemlerine ait KDV detaylarını içerir.\n"
+"* Faturalandırmayı analiz etmek için kullanılan bir KDV özet raporu eklendi\n"
+"* AFIP'e aktarılmak üzere TXT dosyalarının oluşturulmasına imkân tanıyan Dijital KDV Defteri özelliği eklendi. Uygulamasını yaptığımız dosyalar şunlardır:\n"
 "\n"
 "    * LIBRO_IVA_DIGITAL_VENTAS_CBTE\n"
 "    * LIBRO_IVA_DIGITAL_VENTAS_ALICUOTAS\n"
@@ -511,11 +511,11 @@ msgstr ""
 "    * LIBRO_IVA_DIGITAL_COMPRAS_ALICUOTAS\n"
 "    * LIBRO_IVA_DIGITAL_IMPORTACION_BIENES_ALICUOTA\n"
 "\n"
-"Resmi Belgeler AFIP\n"
+"Resmi AFIP Dokümantasyonu\n"
 "\n"
-"* Dijital KDV Defteri - kayıt tasarımı https://www.afip.gob.ar/libro-iva-digital/documentos/libro-iva-digital-diseno-registros.pdf\n"
-"* CITI - kayıt tasarımı (Dijital KDV Kitabı ile aynı): https://www.afip.gob.ar/comprasyventas/documentos/RegimendeInformaciondeComprasyVentasDisenosdeRegistros1.xls\n"
-"* CITI - spesifikasyonu (sayıların ve sayısal / alfanümerik alanların doldurulmasının nasıl biçimlendirileceği hakkında daha fazla bilgi sağlar): https://www.afip.gob.ar/comprasyventas/documentos/Regimen-Informacion-Compras-Ventas-Especaciones .doc\n"
+"* Dijital KDV Defteri – kayıt tasarımı: https://www.afip.gob.ar/libro-iva-digital/documentos/libro-iva-digital-diseno-registros.pdf\n"
+"* CITI – kayıt tasarımı (Dijital KDV Defteri ile aynı): https://www.afip.gob.ar/comprasyventas/documentos/RegimendeInformaciondeComprasyVentasDisenosdeRegistros1.xls\n"
+"* CITI – teknik özellikler (sayıların ve alfa/sayısal alanların biçimlendirilmesine dair detayları içerir): https://www.afip.gob.ar/comprasyventas/documentos/Regimen-Informacion-Compras-Ventas-Especificaciones.doc\n"
 "\n"
 
 #. module: base
@@ -4564,20 +4564,20 @@ msgstr ""
 "Fonksiyonel\n"
 "----------\n"
 "\n"
-"Arjantin ve Şili dahil olmak üzere bazı Latin Amerika ülkelerinde, faturalar ve satıcı faturaları gibi bazı muhasebe işlemleri, hükümetin mali makamları tarafından tanımlanan bir belge türüne göre sınıflandırılır (Arjantin örneğinde AFIP, Şili örneği SII).\n"
+"Arjantin ve Şili de dahil olmak üzere bazı Latin Amerika ülkelerinde faturalar ve satıcı faturaları gibi bazı muhasebe işlemleri, hükümetin mali otoriteleri (Arjantin'de AFIP, Şili'de SII) tarafından tanımlanan belge türlerine göre sınıflandırılır.\n"
 "\n"
-"Bu modül, bu belge tiplerini yönetmek için yerelleştirmelerle genişletilmeye yönelik olup, fatura setinde ve hesap hareketlerinde, basılı raporlarda gösterilmesi ve kolayca tanımlanması gereken temel bir bilgidir.\n"
+"Bu modül, bu belge türlerini yönetmek için yerelleştirmelerle genişletilebilir ve basılı raporlarda görüntülenmesi ve fatura seti ile hesap hareketleri içinde kolayca tanımlanabilmesi gereken önemli bir bilgidir.\n"
 "\n"
-"Her belge türünün kendi kuralları ve sıra numarası vardır, bu sonuncusu, yerelleştirme kullanıcısı için kolay olması için fatura numarası ve günlük sırası ile entegre edilmiştir. Bu belge türlerini desteklemek veya desteklememek için bir Derginin belgeyi kullanıp kullanmamaya izin veren yeni bir seçeneği vardır.\n"
+"Her belge türünün kendi kuralları ve sıra numarası mevcuttur. Sonuncusu, yerelleştirme kullanıcısının işini kolaylaştırmak için fatura numarası ve günlük sırası ile entegre edilmiştir. Bu belge türlerini desteklemek veya desteklememek için Günlük'te belgeyi kullanıp kullanmama opsiyonu sunan yeni bir seçenek bulunmaktadır.\n"
 "\n"
 "Teknik\n"
 "---------\n"
 "\n"
-"Yerelleştirmeniz bu mantığı gerektiriyorsa, bu modülü bağımlılık olarak eklemeniz ve yerelleştirme modülünüze genişletmeniz gerekir:\n"
+"Yerelleştirme ihtiyaçlarınız bu mantığı gerektiriyorsa, bu modülü bağımlılık olarak eklemeniz ve yerelleştirme modülünüzde genişletmeniz gerekecektir:\n"
 "\n"
-"* şirketin _localization_use_documents() yöntemini genişletin.\n"
-"* belirli bir ülke için var olan belge türlerinin verilerini oluşturun. Belge türünün bir ülke alanı var\n"
-" \n"
+"* şirketin _yerelleştirme_kullanım_belgeleri() yöntemini genişletin.\n"
+"* belirli bir ülke için mevcut olan belge türlerinin verilerini oluşturun. Belge türü bir ülke alanına sahiptir \n"
+"\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ar
@@ -4726,12 +4726,16 @@ msgid ""
 "Both goals and badges are flexibles and can be adapted to a large range of modules and actions. When installed, this module creates easy goals to help new users to discover Odoo and configure their user profile.\n"
 msgstr ""
 "\n"
-"Oyunlaştırma Süreci\n"
-"Oyunlaştırma modülü Odoo kullanıcılarını motive etmek ve değerlendirme için yollar sağlar.\n"
-"Kullanıcılar ulaştıkları amaçları ve görev sayıları ile değerlendirilebilir.\n"
-"** Hedefler **, bir takımın üyelerini birbirleriyle ve zaman içinde değerlendirmek ve karşılaştırmak için ** zorluklar ** üzerinden atanır.\n"
-"Sayısal olmayan başarılar için, kullanıcılara ** rozetler ** verilebilir. Basit bir \"teşekkür\" den olağanüstü bir başarıya kadar, bir rozet iyi bir iş için bir kullanıcıya minnettarlık etmenin kolay bir yoludur.\n"
-"Hem hedefler hem de rozetler esnek ve çok çeşitli modüller ve eylemlere uyarlanabilir. Yüklendiğinde, bu modül yeni kullanıcıların Odoo'yu keşfetmesine ve kullanıcı profilini yapılandırmasına yardımcı olmak için kolay hedefler oluşturur.\n"
+"Oyunlaştırma süreci\n"
+"====================\n"
+"Gamification (Oyunlaştırma) modülü, Odoo kullanıcılarını değerlendirmek ve motive etmek için yöntemler sunar.\n"
+"\n"
+"Kullanıcılar, ulaşmaları gereken hedefler ve sayısal amaçlar üzerinden değerlendirilebilir.\n"
+"**Hedefler**, **meydan okumalar** aracılığıyla atanır ve ekip üyelerinin birbirleriyle ve zaman içinde karşılaştırılmasını sağlar.\n"
+"\n"
+"Sayısal olmayan başarılar için ise kullanıcılara **rozetler** verilebilir. Basit bir \"teşekkür\"den olağanüstü bir başarıya kadar, rozetler iyi bir iş için kullanıcıya takdir göstermek adına kolay bir yöntemdir.\n"
+"\n"
+"Hem hedefler hem de rozetler esnektir ve birçok modül ve eyleme uyarlanabilir. Bu modül yüklendiğinde, yeni kullanıcıların Odoo’yu keşfetmeleri ve kullanıcı profillerini yapılandırmaları için basit hedefler oluşturur.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_attendance_gantt
@@ -6177,36 +6181,42 @@ msgid ""
 "If required, you can manually adjust the descriptions via the CODA configuration menu.\n"
 msgstr ""
 "\n"
-"CODA banka hesaplarını içe aktarmak için modül.\n"
+"CODA Banka Ekstrelerini İçe Aktarma Modülü\n"
+".\n"
+"======================================\n"
 "\n"
-"Desteklenenler, Belçika banka hesaplarından V2 formatında CODA düz dosyalarıdır.\n"
+"Bu modül, Belçika banka hesaplarına ait V2 formatındaki CODA düz dosyalarının içe aktarımını destekler.\n"
+"----------------------------------------------------------------------\n"
+"    * CODA v1 desteği.\n"
+"    * CODA v2.2 desteği.\n"
+"    * Yabancı Para Birimi desteği.\n"
+"    * Tüm veri kayıt türleri için destek (0, 1, 2, 3, 4, 8, 9).\n"
+"    * Tüm İşlem Kodlarının ve Yapılandırılmış Açıklamaların ayrıştırılması ve loglanması.\n"
+"    * CODA yapılandırma parametreleri üzerinden Otomatik Mali Günlük ataması.\n"
+"    * Tek bir Banka Hesap Numarası için birden fazla Günlük desteği.\n"
+"    * Tek bir CODA dosyasında birden fazla banka hesabına ait ekstrelerin desteklenmesi.\n"
+"    * Yalnızca “ayrıştırma” amaçlı tanımlanmış CODA Banka Hesapları için destek (CODA Banka Hesabı yapılandırma kayıtlarında type='info' olarak tanımlanır).\n"
+"    * Çok dilli CODA ayrıştırma desteği; yapılandırma verileri İngilizce, Flamanca ve Fransızca olarak sağlanır.\n"
 "\n"
-"* CODA v1 desteği\n"
-"* CODA v2.2 desteği\n"
-"* Yabancı para birimi desteği\n"
-"* Tüm veri kayıt türleri için destek (0,1,2,3,4,8,9).\n"
-"* Tüm İşlem Kodlarının ve Yapılandırılmış Format İletişiminin ayrıştırılması ve günlüğe kaydedilmesi\n"
-"* CODA konfigürasyon parametreleri ile Otomatik Finans Yevmiye ataması\n"
-"* Banka Hesap Numarası başına çoklu yevmiye desteği.\n"
-"* Tek bir CODA dosyasında farklı banka hesaplarından çoklu hesap için destek.\n"
-"* CODA Banka Hesaplarını '' sadece ayrıştırma '' desteği (CODA Banka Hesabı konfigürasyon kayıtlarında type = 'info' olarak tanımlanmıştır).\n"
-"* Çoklu dil CODA ayrıştırma, EN, NL, FR için ayrışmış yapılandırma verileri sağlanır.\n"
+"Makine tarafından okunabilir CODA dosyaları ayrıştırılarak, okunabilir formatta CODA Banka Ekstreleri olarak saklanır. Ayrıca, muhasebe kayıtlarının oluşturulması için gereken işlem satırlarını içeren standart Banka Ekstreleri de oluşturulur. CODA Banka Ekstresi salt-okunur (read-only) bir nesnedir ve bu sayede orijinal CODA dosyasının güvenilir bir temsili olarak kalır. Buna karşılık, muhasebe iş süreçleri gereği, standart Banka Ekstresi üzerinde değişiklik yapılabilir.\n"
 "\n"
-"Makine tarafından okunabilir CODA Dosyaları, CODA Bankası Tablolarında insan tarafından okunabilir formatta ayrıştırılır ve depolanır. Ayrıca, CODA bilgilerinin bir alt kümesini (sadece Finansal Muhasebe kayıtlarının oluşturulması için gereken işlem satırlarını) içeren Banka Hesapları oluşturulmaktadır. CODA Bankası Beyanı 'salt okunur' bir nesnedir, bu nedenle orijinal CODA dosyasının güvenilir bir temsilini korurken Banka Beyanı muhasebe iş süreçlerinin gerektirdiği şekilde değiştirilir.\n"
+"“Bilgi” tipi olarak yapılandırılmış CODA Banka Hesapları yalnızca CODA Banka Ekstrelerini üretir.\n"
 "\n"
-"\"Bilgi\" türü olarak yapılandırılan CODA Banka Hesapları sadece CODA Banka Beyanları oluşturacaktır.\n"
+"CODA işleminde herhangi bir nesnenin silinmesi, ona bağlı tüm nesnelerin de silinmesiyle \n"
+"sonuçlanır. Birden fazla Banka Ekstresi içeren bir CODA dosyasının silinmesi,\n"
+"ilgili ekstrelerin de silinmesine neden olur.\n"
 "\n"
-"CODA işleminde bir nesnenin kaldırılması, ilişkili nesnelerin kaldırılmasıyla sonuçlanır.\n"
+"Oluşturulmuş Banka Ekstrelerini manuel olarak düzenlemek yerine, eksik bilgileri \n"
+"OpenERP veri tabanına girdikten sonra aynı CODA dosyasını tekrar içe aktararak\n"
+"otomatik mutabakatın sağlanmasını mümkün kılabilirsiniz.\n"
 "\n"
-"Birden fazla Banka Hesabı içeren bir CODA Dosyasının kaldırılması, ilgili ilişkili ifadeleri de kaldıracaktır.\n"
-"\n"
-"Oluşturulan BankaHesaplarının manuel olarak ayarlanması yerine, OpenERP veritabanını otomatik denkleştirme sağlamak için eksik olan bilgilerle güncelledikten sonra CODA'yı yeniden içe aktarabilirsiniz.\n"
-"\n"
-"CODA V1 desteği hakkında açıklama:\n"
-"\n"
-"Bazı durumlarda bir işlem kodu, işlem kategorisi veya yapılandırılmış iletişim kodu, CODA V2'de yeni veya daha açık bir tanım verilmiştir.\n"
-"CODA yapılandırma tabloları tarafından sağlanan açıklama, CODA V2.2 özelliklerine dayanmaktadır.\n"
-"Gerekirse, açıklamaları CODA yapılandırma menüsü üzerinden elle ayarlayabilirsiniz.\n"
+"CODA V1 Desteği Hakkında Not:\n"
+"~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+"Bazı durumlarda, bir işlem kodu, işlem kategorisi veya yapılandırılmış açıklama kodu \n"
+"CODA V2 ile birlikte yeni veya daha açıklayıcı bir tanım kazanmıştır.  \n"
+"CODA yapılandırma tabloları tarafından sağlanan açıklamalar, CODA V2.2 teknik  \n"
+"dokümantasyonuna dayanmaktadır. Gerekirse, bu açıklamaları CODA yapılandırma \n"
+"menüsü aracılığıyla manuel olarak güncelleyebilirsiniz.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_account_bank_statement_import_csv
@@ -6378,15 +6388,27 @@ msgid ""
 "  need or want an online import can avoid it being available to users.\n"
 msgstr ""
 "\n"
-"Odoo için yeni uzatılabilir dosya içe aktarımı\n"
+"Odoo için Yeni Genişletilebilir Dosya İçe Aktarma Sistemi\n"
+"======================================\n"
 "\n"
-"Odoo'nun dosya aktarım sistemini yeniden uygulayın:\n"
+"Odoo’nun dosya içe aktarma sistemi yeniden tasarlandı:\n"
 "\n"
-"Sunucu tarafı, önceki sistem, mantığın çoğunu (müşteriler arasında) çabaları kopyalayan müşteriye zorlar, ithalat sistemini bir müşteri (doğrudan RPC veya diğer otomasyon türleri) olmadan kullanmayı çok daha zor hale getirir ve içe aktarma hakkında bilgi verir ve ihracat sistemi 3+ farklı projeye yayılmış olarak toplamak için çok daha zordur. \n"
+"* Sunucu tarafında, önceki sistemin mantığı büyük ölçüde istemci tarafına \n"
+"  yüklenmişti. Bu durum, farklı istemciler arasında fazladan iş yüküne  \n"
+"  neden oluyor, istemci kullanmadan (doğrudan RPC ya da diğer \n"
+"  otomasyon yöntemleriyle) içe aktarma sistemini kullanmayı zorlaştırıyor  \n"
+"  ve içe/dışa aktarma sistemine dair bilgilerin 3’ten fazla farklı projeye \n"
+"  dağılması nedeniyle bu bilgilere ulaşmayı güçleştiriyordu.\n"
 "\n"
-"* Daha genişletilebilir bir şekilde, kullanıcılar ve iş ortakları kendi iş akışlarında veya veri üretme kaynaklarından işlemek için daha basit olabilecek diğer dosya biçimlerinden (örn. OpenDocument dosyaları) içe aktarmak için kendi ön uçlarını oluşturabilirler.\n"
+"* Yeni sistem, daha genişletilebilir bir yapıyla geliştirildi. Böylece \n"
+"  kullanıcılar ve iş ortakları, kendi dosya formatlarına (örneğin \n"
+"  OpenDocument dosyaları gibi) uygun özel arayüzler geliştirerek  \n"
+"  iş akışlarına ya da veri kaynaklarına daha uygun çözümler oluşturabilir.\n"
 "\n"
-"* Bir modülde, Odoo'nun yöneticileri ve kullanıcıları, çevrimiçi bir içe aktarmaya ihtiyaç duymayan veya istemeyen kullanıcılara sunulmasını engelleyebilir.\n"
+"* Bu işlevsellik bir modül haline getirildi; böylece çevrim içi içe aktarma \n"
+"  özelliğine ihtiyaç duymayan ya da bu özelliği kullanmak istemeyen \n"
+"  yönetici ve kullanıcılar, bu özelliğin kullanıcılar için erişilebilir olmasını \n"
+"  engelleyebilir.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ng
@@ -6565,40 +6587,40 @@ msgid ""
 "  * Those operations can be done with multiple checks at once\n"
 msgstr ""
 "\n"
-"Kendi Çek Yönetimi\n"
+"Kendi Çeklerinin Yönetimi\n"
 "---------------------\n"
 "\n"
-"Daha fazla özellikle kendi kontrollerini yönetmek için 'Check Printing Base' modülünü genişletir:\n"
+"Bu modül, 'Çek Yazdırma Tabanı' modülünü genişleterek kendi çeklerinizi daha fazla özellikle yönetmenizi sağlar:\n"
 "\n"
-"* yazdırılmayan ancak kullanıcı tarafından manuel olarak doldurulan kendi çeklerinin kullanılmasına izin verin\n"
-"* Ertelenmiş veya elektronik çeklerin kullanılmasına izin verin\n"
-"  * yazdırma devre dışı bırakıldı\n"
-"  * Kontrol numarası kullanıcı tarafından manuel olarak ayarlanır\n"
-"* İleri tarihli çekler için isteğe bağlı bir \"Check Cash-In Date\" ekleyin (ertelenmiş ödemeler)\n"
-"* Kendi kontrollerini izlemek için bir menü ekleyin\n"
+"* kullanıcı tarafından elle doldurulan, yazdırılmayan kendi çeklerin kullanımına izin verir\n"
+"* vadeli veya elektronik çeklerin kullanımına izin verir\n"
+"  * yazdırma işlemi devre dışı bırakılır\n"
+"  * çek numarası kullanıcı tarafından manuel olarak girilir\n"
+"* vadeli çekler (ertelenmiş ödemeler) için isteğe bağlı bir “Çekin Tahsil Tarihi” alanı ekler\n"
+"* kendi çeklerinizi takip edebilmeniz için özel bir menü ekler\n"
 "\n"
-"Üçüncü Taraf Kontrol Yönetimi\n"
+"Üçüncü Taraf Çeklerinin Yönetimi\n"
 "-----------------------------\n"
 "\n"
-"Yeni \"Üçüncü taraf kontrol yönetimi\" özelliği ekleyin.\n"
+"Yeni \"Üçüncü Taraf Çek Yönetimi\" özelliği eklenmiştir.\n"
 "\n"
-"2 ana Ödeme Yöntemi eklemesi vardır:\n"
+"İki ana yeni Ödeme Yöntemi türü sunulur:\n"
 "\n"
-"* Yeni Üçüncü Taraf Kontrolleri:\n"
+"* Yeni Üçüncü Taraf Çekleri:\n"
 "\n"
-"* Bu ödeme yönteminin ödemeleri, ödeme alırken bir müşteriden aldığınız çeki temsil eder (faturadan veya manuel ödemeden)\n"
+"  * Bu ödeme yöntemiyle yapılan ödemeler, bir müşteriden tahsilat (örneğin fatura veya manuel ödeme) sırasında alınan çekleri temsil eder\n"
 "\n"
-"* Mevcut Üçüncü Taraf kontrolü.\n"
+"* Mevcut Üçüncü Taraf Çeki.\n"
 "\n"
-"* Bu ödeme yönteminin ödemeleri, çekin hareketlerini izlemek içindir, örneğin:\n"
+"  * Bu ödeme yöntemi, aşağıdaki gibi çek hareketlerini izlemek amacıyla kullanılır:\n"
 "\n"
-"* Bir satıcıya ödeme yapmak için bir çek kullanın\n"
-"    * Çeki bankaya yatırın\n"
-"    * Çeki bankadan geri alın (reddetme)\n"
-"    * Çeki satıcıdan geri alın (reddetme veya iade)\n"
-"    * Çeki bir üçüncü taraf çek günlüğünden diğerine aktarın (bir mağazadan diğerine)\n"
+"    * Tedarikçiye ödeme yapmak için çekin kullanılması\n"
+"    * Çekin bankaya yatırılması\n"
+"    * Çekin bankadan geri alınması (reddedilme)\n"
+"    * Çekin tedarikçiden geri alınması (reddetme veya iade)\n"
+"    * Çekin bir üçüncü taraf çek günlüğünden diğerine aktarılması (örneğin bir mağazadan başka bir mağazaya)\n"
 "\n"
-"* Bu işlemler aynı anda birden fazla kontrol ile yapılabilir\n"
+"  * Bu işlemler, birden fazla çek için toplu olarak gerçekleştirilebilir\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mrp_workorder_plm
@@ -8340,7 +8362,7 @@ msgid ""
 "This module adapts the behavior of the PoS when the pos_hr and pos_restaurant are installed.\n"
 msgstr ""
 "\n"
-"Bu modül, pos_hr ve pos_restaurant kurulduğunda PoS'un davranışını uyarlar.\n"
+"Bu modül, pos_ik ve pos_restoran kurulduğunda Satış Noktası'nın davranışını uygun hale getirir. \n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_account_edi_ubl_cii_tax_extension
@@ -10245,6 +10267,26 @@ msgid ""
 "This module ensures compliance with ONSS electronic declaration\n"
 "requirements and reduces manual interaction with the SFTP portal.\n"
 msgstr ""
+"\n"
+"ONSS portalına DmfA senkronizasyonu\n"
+"===============================\n"
+"\n"
+"Bu yeni modül, Belçika resmi SFTP portalına DmfA ONSS beyannamelerinin senkronizasyonunu otomatikleştirir.\n"
+"\n"
+"`l10n_be_hr_payroll` ve \n"
+"`l10n_be_hr_payroll_dmfa` modülleriyle entegre çalışarak:\n"
+"\n"
+"- FO, FS ve GO dosyalarını doğru ONSS ortam klasörüne (IN, INTEST, INTEST-S) yükler\n"
+"- OUT klasörlerini (OUT, OUTTEST, OUTTEST-S) gelen dosyalar için kontrol eder.\n"
+"- Gelen dosyaları, varsa, ilgili beyannamelere ve çalışanlara bağlar.\n"
+"\n"
+"Teknik özellikler şunları içerir:\n"
+"- Özel anahtar ve teknik kullanıcı bilgileri ile güvenli bağlantı.\n"
+"- ACRF ve bildirim dosyaları için XML dosya ayrıştırma.\n"
+"- Klasör eksikliği veya bozuk dosyalar için hata yönetimi ve günlükleme.\n"
+"\n"
+"Bu modül, ONSS elektronik beyan gerekliliklerine uyumu sağlar ve\n"
+"SFTP portalıyla manuel etkileşimi azaltır.\n"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_delivery_mondialrelay
@@ -10288,7 +10330,7 @@ msgstr "%(company_currency_name)s başına %(rate_currency_name)s"
 #. odoo-python
 #: code:addons/base/models/res_currency.py:0
 msgid "%(integral_amount)s %(currency_unit)s"
-msgstr ""
+msgstr "%(integral_amount)s %(currency_unit)s"
 
 #. module: base
 #. odoo-python
@@ -11335,80 +11377,79 @@ msgid ""
 ".. figure:: static/description/invoice_custom_xml.png\n"
 msgstr ""
 "==========================================\n"
-"Stok/İniş için Odoo Mexico Yerelleştirmesi\n"
+"Meksika Stok/İthalat Maliyeti Yerelleştirmesi\n"
 "==========================================\n"
 "\n"
-"Bu modül, Meksika yerelleştirmesinin işlevselliğini destekleyecek şekilde genişletir.\n"
-"elektronik belgeyi oluşturduğunuzda, gümrükleme maliyetleriyle ilgili gümrük numaraları\n"
-"fatura.\n"
+"Bu modül, Meksika yerelleştirmesinin işlevselliğini, elektronik fatura oluştururken ilişkili gümrük numaralarını (pedimento) \n"
+"ithalat maliyetleriyle\n"
+"destekleyecek şekilde genişletir.\n"
 "\n"
-"kullanım\n"
+"Kullanım\n"
 "=====\n"
 "\n"
-"Bu modülü kullanmak için yapmanız gerekenler:\n"
+"Bu modülü kullanmak için aşağıdaki adımları takip edin:\n"
 "\n"
-"* Yurt dışından bir ürün için yeni satınalma siparişi oluşturun. Arsa maliyetleri\n"
-"  yalnızca \"otomatik\" değerleme ile yapılandırılan ürünler için mümkündür.\n"
-"  'FIFO' maliyet yöntemi. Maliyetlendirme yöntemi üründe yapılandırılmıştır.\n"
-"  kategori.\n"
+"* Yurtdışından bir ürün için yeni bir satın alma siparişi oluşturun. İthalat maliyetleri yalnızca \n"
+"  ‘otomatik’ değerleme yöntemi ve ‘FIFO’ maliyetleme yöntemiyle yapılandırılmış\n"
+"  ürünler için mümkündür. Maliyet yöntemi, ürün kategorisinde \n"
+"  tanımlanır. \n"
 "\n"
-".. şekil:: statik/açıklama/purchase_order_new.png\n"
+".. figure:: static/description/purchase_order_new.png\n"
 "\n"
-"* Satın alma siparişinin ürününü alın\n"
+"* Satın alma siparişi kapsamındaki ürünü teslim alın\n"
 "\n"
-".. şekil:: static/description/picking_done_purchase.png\n"
+".. figure:: static/description/picking_done_purchase.png\n"
 "\n"
-"* Envanter -> Envanter kontrolü -> İthalat Maliyeti'ne gidin\n"
+"* Envanter -> Stok Kontrolü -> İthalat Maliyeti menüsüne gidin\n"
 "\n"
-"* Satınalma siparişinin toplanmasını gösteren yeni bir ithalat maliyeti oluşturun\n"
-"  ve gümrük bilgilerinin numarası (altlık). Arsa maliyetleri\n"
-"  sadece gerçek zamanlı değerleme ile gerçek zamanlı değerlemede yapılandırılmış ürünler için mümkündür\n"
-"  fiyat maliyet yöntemi. Maliyetlendirme yöntemi üründe yapılandırılmıştır\n"
-"  kategori\n"
+"* Yeni bir ithalat maliyeti kaydı oluşturun, burada satın alma siparişiyle ilgili teslimatı\n"
+"  ve gümrük bilgisi (pedimento) numarasını belirtin. İthalat maliyetleri yalnızca\n"
+"  gerçek zamanlı değerleme ve gerçek maliyet yöntemi ile yapılandırılmış ürünler için mümkündür\n"
+"  Maliyet yöntemi ürün kategorisi üzerinden\n"
+"  yapılandırılır.\n"
 "\n"
-".. şekil:: static/description/landed_cost_picking.png\n"
+".. figure:: static/description/landed_cost_picking.png\n"
 "\n"
-"* Çeşitli Landed'lerinizi belirtmek için belirli ürünler oluşturarak başlayın\n"
-"  Navlun, sigorta veya gümrük vergileri gibi maliyetler.\n"
+"* Navlun, sigorta veya gümrük vergileri gibi farklı ithalat maliyetlerinizi tanımlamak\n"
+"  için özel ürünler oluşturarak başlayın.\n"
 "\n"
-"  Envanter -> Konfigürasyon -> İthalat Maliyeti türleri'ne gidin. Arsa maliyetleri\n"
-"  sadece gerçek zamanlı değerleme ile gerçek zamanlı değerlemede yapılandırılmış ürünler için mümkündür\n"
-"  fiyat maliyet yöntemi. Maliyetlendirme yöntemi üründe yapılandırılmıştır\n"
-"  kategori.\n"
+"  Envanter -> Yapılandırma -> İthalat Maliyeti Türleri menüsüne gidin. İthalat maliyetleri yalnızca\n"
+"  gerçek zamanlı değerleme ve gerçek maliyet yöntemi ile yapılandırılmış ürünler için\n"
+"  mümkündür. Maliyet yöntemi ürün kategorisinde\n"
+"  tanımlanır.\n"
 "\n"
-".. şekil:: static/description/product_landed_cost.png\n"
+".. figure:: static/description/product_landed_cost.png\n"
 "\n"
-"* İthalat maliyetlerinin nasıl bölüneceğini görmek için Hesapla düğmesini tıklayın\n"
-"  toplama hatları.\n"
+"* İthalat maliyetlerinin teslimat kalemleri arasında nasıl dağıtılacağını görmek için Hesapla\n"
+"  düğmesine tıklayın.\n"
 "\n"
-".. şekil:: static/description/compute_landed_cost.png\n"
+".. figure:: static/description/compute_landed_cost.png\n"
 "\n"
-"* İthalat maliyetleri ilişkilendirmesini onaylamak için Doğrula düğmesine tıklayın.\n"
+"* Maliyetlerin dağıtımını onaylamak için Doğrula düğmesine tıklayın.\n"
 "\n"
-".. şekil:: static/description/validate_landed_cost.png\n"
+".. figure:: static/description/validate_landed_cost.png\n"
 "\n"
-"* Yurt dışından alınan ürün için satış siparişi oluşturun\n"
+"* Yurtdışından satın alınan ürün için bir satış siparişi oluşturun\n"
 "\n"
-".. şekil:: static/description/sale_order_new.png\n"
+".. figure:: static/description/sale_order_new.png\n"
 "\n"
-"* Satış siparişi ile ilgili ürünün teslimatı\n"
+"* Satış siparişiyle ilişkili ürünü sevk edin\n"
 "\n"
-".. şekil:: statik/açıklama/picking_done_sale.png\n"
+".. figure:: static/description/picking_done_sale.png\n"
 "\n"
-"* Satış siparişiyle ilişkili yeni bir fatura oluşturun ve doğrulayın\n"
+"* Satış siparişiyle bağlantılı yeni bir fatura oluşturun ve doğrulayın\n"
 "\n"
-".. şekil:: statik/açıklama/validate_invoice_customs.png\n"
+".. figure:: static/description/validate_invoice_customs.png\n"
 "\n"
-"* Gümrük bilgileri ilgili faturanın satırlarında bulunur\n"
-"  her ürünle.\n"
+"* Her ürünle ilişkili olarak faturanın satırlarında gümrük bilgileri\n"
+"   yer alır.\n"
 "\n"
-".. şekil:: statik/açıklama/invoice_custom_pedimento.png\n"
+".. figure:: static/description/invoice_custom_pedimento.png\n"
 "\n"
-"* Düğümün bulunduğu ürünle ilişkili elektronik faturayı kontrol edin\n"
-"  gümrük bilgilerinin görüntülenmesi\n"
+"* Ürünle bağlantılı elektronik faturayı kontrol edin; burada gümrük bilgi düğümü\n"
+"  XML içinde görüntülenir.\n"
 "\n"
-".. şekil:: statik/açıklama/invoice_custom_xml.png\n"
-" \n"
+".. figure:: static/description/invoice_custom_xml.png\n"
 
 #. module: base
 #: model:res.partner.industry,full_name:base.res_partner_industry_A
@@ -11997,21 +12038,25 @@ msgid ""
 "\n"
 "Note: total digits configured by default are 6.\n"
 msgstr ""
-"Hollanda için hesap planı\n"
+"Hollanda Muhasebe Planı\n"
+"================================\n"
 "\n"
-"Bu modül, Hollanda'nın en iyi adetlerine göre muhasebe fonksiyonlarını yönetmek için özel olarak hazırlanmıştır.\n"
+"Bu modül, Hollanda’daki örnek muhasebe uygulamalarına uygun şekilde muhasebe işlevlerinin yönetilmesini sağlamak amacıyla özel olarak geliştirilmiştir.\n"
 "\n"
-"Bu modül, Hollanda Hesapları Planını ve vergi şemasını içerir.\n"
-"Bu şema en yaygın şirketler için üretilmiştir ve bu nedenle hemen hemen her şirket için kullanılmaya uygundur.\n"
+"Modül, Hollanda’ya özgü Hesap Planı (Chart of Accounts) ve KDV şemasını içerir.\n"
+"Bu şema, en yaygın şirket türleri dikkate alınarak oluşturulmuştur ve bu nedenle\n"
+"hemen hemen tüm şirketler tarafından kullanılmaya uygundur.\n"
 "\n"
-"Gerekli raporları çabucak oluşturmak için vergi hesapları bağlantılıdır. Bu raporların örnekleri, ilişkili işlemleri içerir.\n"
+"KDV hesapları, gerekli raporların (örneğin AB içi işlemler raporu gibi) üretimini sağlamak \n"
+"üzere doğrudan bağlanmıştır.\n"
 "\n"
-"Bu modülün kurulumundan sonra yapılandırma aktif hale getirilecektir.\n"
-"\"Hollanda - Muhasebe\" adlı Hesap Planı'nı seçin.\n"
+"Bu modül kurulduktan sonra ilgili yapılandırma otomatik olarak etkinleştirilir.\n"
+"“Hollanda – Muhasebe” adlı Hesap Planı'nı seçin.\n"
 "\n"
-"Bundan sonra, şirketin adını, hesap planının toplam rakamını, banka hesap numarasını ve varsayılan para birimini girin.\n"
+"Ardından, Şirket Sdı, Hesap Planı Toplam Basamak Sayısı,\n"
+"Banka Hesap Numarası ve Varsayılan Para Birimini girin.\n"
 "\n"
-"Not: Varsayılan olarak yapılandırılan toplam rakam 6'dır.\n"
+"Not: Hesap planı için varsayılan basamak sayısı 6’dır.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_br_reports
@@ -12663,14 +12708,14 @@ msgstr ""
 "\n"
 "Güvenlik Hususları:\n"
 "------------------------\n"
-"Kullanıcıların LDAP şifreleri Odoo veritabanında asla saklanmaz. Kimlik doğrulama \n"
+"Kullanıcıların LDAP şifreleri Odoo veri tabanında asla saklanmaz. Kimlik doğrulama \n"
 "gerektiğinde LDAP sunucusuna gerçek zamanlı sorgu yapılır. Şifre kopyalanmaz;\n"
 "şifreler yalnızca LDAP sunucusunda yönetilir.\n"
 "\n"
 "Odoo, LDAP üzerindeki şifre değişikliklerini yönetmez; bu nedenle şifre değişiklikleri\n"
 "doğrudan LDAP dizini üzerinden yapılmalıdır (LDAP kullanıcıları için geçerlidir).\n"
 "\n"
-"Odoo veritabanında LDAP ile kimlik doğrulanan kullanıcıların yanı sıra\n"
+"Odoo veri tabanında LDAP ile kimlik doğrulanan kullanıcıların yanı sıra\n"
 "yerel kullanıcılar da bulunabilir. Örneğin, Yönetici (Administrator) hesabı varsayılan olarak yerel bir hesaptır.\n"
 "\n"
 "Nasıl Çalışır?\n"
@@ -16274,17 +16319,17 @@ msgstr "Belçika - Bordro - Acerta'ya Aktarım"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_group_s
 msgid "Belgium - Payroll - Export to Group S"
-msgstr ""
+msgstr "Belçika - Bordro - S Grubuna Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_partena
 msgid "Belgium - Payroll - Export to Partena"
-msgstr ""
+msgstr "Belçika - Bordro - Partena'ya Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_prisma
 msgid "Belgium - Payroll - Export to Prisma"
-msgstr ""
+msgstr "Belçika - Bordro - Prisma'ya Dışa Aktar "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_sd_worx
@@ -16294,7 +16339,7 @@ msgstr "Belçika - Bordro - SD Worx’e Aktar"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_ucm
 msgid "Belgium - Payroll - Export to UCM"
-msgstr ""
+msgstr "Belçika - Bordro - UCM'e Dışa Aktar "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_fleet
@@ -16641,8 +16686,8 @@ msgid ""
 "Bridge created to add the number of contracts linked to an AA to a project "
 "form"
 msgstr ""
-"AA'ya bağlı sözleşmelerin sayısını proje formuna eklemek için oluşturulan "
-"köprü"
+"Onaylayıcı eylem ile bağlantılı sözleşmelerin sayısını proje formuna eklemek"
+" için oluşturulan köprü"
 
 #. module: base
 #: model:ir.module.module,description:base.module_project_hr_expense
@@ -16650,7 +16695,8 @@ msgid ""
 "Bridge created to add the number of expenses linked to an AA to a project "
 "form"
 msgstr ""
-"AA'ya bağlı giderlerin sayısını proje formuna eklemek için oluşturulan köprü"
+"Onaylayıcı eylem ile bağlantılı giderlerin sayısını proje formuna eklemek "
+"için oluşturulan köprü"
 
 #. module: base
 #: model:ir.module.module,description:base.module_project_sale_subscription
@@ -16698,7 +16744,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_holidays_contract
 msgid "Bridge module between time off and contract"
-msgstr ""
+msgstr "İzin ve sözleşme arasında köprü modülü"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_event_booth_sale_exhibitor
@@ -16712,7 +16758,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_test_hr_contract_calendar
 msgid "Bridge module calendar, contract"
-msgstr ""
+msgstr "Köprü modülü, takvim, sözleşme"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mrp_subcontracting_enterprise
@@ -16772,6 +16818,7 @@ msgstr ""
 #: model:ir.module.module,summary:base.module_hr_holidays_contract_gantt
 msgid "Bridge module linking Holidays Gantt and Contracts modules"
 msgstr ""
+"Tatiller Gantt ve Sözleşmeler modüllerini birbirine bağlayan köprü modülü"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_event_social
@@ -18830,7 +18877,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_work_entry_contract_planning_attendance
 msgid "Create work entries from attendances based on employee's planning"
-msgstr ""
+msgstr "Çalışanın planlamasına göre devamlılıklardan iş girişleri oluşturun"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_work_entry_contract_attendance
@@ -19047,12 +19094,12 @@ msgstr "Hırvatistan"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hr
 msgid "Croatia - Accounting (Euro)"
-msgstr ""
+msgstr "Hırvatistan - Muhasebe (Euro)"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hr_kuna
 msgid "Croatia - Accounting (Kuna)"
-msgstr ""
+msgstr "Hırvatistan - Muhasebe (Kuna)"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hr_reports
@@ -22122,31 +22169,31 @@ msgstr ""
 #: model:ir.module.module,description:base.module_l10n_us_hr_payroll_adp
 #: model:ir.module.module,summary:base.module_l10n_us_hr_payroll_adp
 msgid "Export Work Entries to ADP"
-msgstr ""
+msgstr "İş Girişlerini ADP'ye Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_acerta
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_acerta
 msgid "Export Work Entries to Acerta"
-msgstr ""
+msgstr "İş Girişlerini Acerta'ya Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_group_s
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_group_s
 msgid "Export Work Entries to Group S"
-msgstr ""
+msgstr "İş Girişlerini Grup S'ye Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_partena
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_partena
 msgid "Export Work Entries to Partena"
-msgstr ""
+msgstr "İş Girişlerini Partena'ya Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_prisma
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_prisma
 msgid "Export Work Entries to Prisma"
-msgstr ""
+msgstr "İş Girişlerini Prisma'ya Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_sd_worx
@@ -22158,7 +22205,7 @@ msgstr "Çalışma Girdilerini SD Worx’e Aktar"
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_ucm
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_ucm
 msgid "Export Work Entries to UCM"
-msgstr ""
+msgstr "İş Girişlerini UCM'e Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_in_enet_batch_payment
@@ -22312,6 +22359,8 @@ msgstr "Ek Araçlar"
 #: model:ir.module.module,summary:base.module_hr_recruitment_extract
 msgid "Extract data from CV scans to fill candidate forms automatically"
 msgstr ""
+"Aday formlarını otomatik olarak doldurmak için CV taramalarından veri "
+"ayıklayın"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_account_bank_statement_extract
@@ -23144,7 +23193,7 @@ msgstr "Fransa - Muhasebe ile Bordro"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_hr_holidays
 msgid "France - Time Off"
-msgstr ""
+msgstr "Fransa - İzin"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_pos_cert
@@ -23157,7 +23206,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_hr_work_entry_holidays
 msgid "France - Work Entries Time Off"
-msgstr ""
+msgstr "Fransa - İş Girişleri İzin"
 
 #. module: base
 #: model:res.country,name:base.gf
@@ -23381,7 +23430,7 @@ msgstr "Ödüllendirme"
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_attendance_gantt
 msgid "Gantt view for Attendance"
-msgstr ""
+msgstr "Çalışan Devam Kontrolü için Gantt görünümü "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_holidays_gantt
@@ -23943,7 +23992,7 @@ msgstr "Birleşik Krallık Vergi Dairesi"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_livechat
 msgid "HR - Livechat"
-msgstr ""
+msgstr "İK - Canlı Sohbet"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_holidays_attendance
@@ -24389,7 +24438,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hk_hr_payroll
 msgid "Hong Kong - Payroll"
-msgstr ""
+msgstr "Hong Kong - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hk_hr_payroll_account
@@ -24440,7 +24489,7 @@ msgstr "İK Masraf Tahmini ürünü"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_holidays_contract
 msgid "Hr Holidays Contract"
-msgstr ""
+msgstr "İK Tatil Sözleşmesi"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_recruitment_extract
@@ -26416,7 +26465,7 @@ msgstr "Bağlı satın alma siparişleri ve onarım emirlerini takip edin"
 #. module: base
 #: model:ir.module.module,summary:base.module_appointment_hr_recruitment
 msgid "Keep track of recruitment appointments"
-msgstr ""
+msgstr "İşe alım randevularını kolaya takip edin"
 
 #. module: base
 #: model:res.country,name:base.ke
@@ -26441,7 +26490,7 @@ msgstr "Kenya - Bordro"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ke_hr_payroll_shif
 msgid "Kenya - Payroll SHIF"
-msgstr ""
+msgstr "Kenya - Bordro SHIF"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ke_hr_payroll_account
@@ -27023,7 +27072,7 @@ msgstr "Daha Fazla Bilgi"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_in_hr_holidays
 msgid "Leave Management of Indian Localization"
-msgstr ""
+msgstr "Hindistan Yerelleştirmesi için İzin Yönetimi"
 
 #. module: base
 #: model:res.country,name:base.lb
@@ -27105,6 +27154,8 @@ msgstr ""
 msgid ""
 "Let your employees share job positions and refer their friends by WhatsApp"
 msgstr ""
+"Çalışanlarınız WhatsApp üzerinden iş pozisyonlarını paylaşsın ve "
+"arkadaşlarını yönlendirsin"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_sale_mondialrelay
@@ -27344,7 +27395,7 @@ msgstr "Litvanya - Muhasebe Raporları"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_hr_payroll
 msgid "Lithuania - Payroll"
-msgstr ""
+msgstr "Litvanya - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_hr_payroll_account
@@ -27828,7 +27879,7 @@ msgstr "Kişi Unvanlarını ve kısaltmalarını yönetin (örn. \"Mr.\", \"Mrs.
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_recruitment_integration_website
 msgid "Manage Job board integrations with website"
-msgstr ""
+msgstr "İş ilanları panosunun web sitesi ile entegrasyonunu yönetin"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_room
@@ -27838,12 +27889,12 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_recruitment_integration_skills_monster
 msgid "Manage Monster Job board integrations with skills"
-msgstr ""
+msgstr "Monster İş İlanları Panosu ile becerilerin entegrasyonunu yönetin"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_recruitment_integration_website_monster
 msgid "Manage Monster Job board integrations with website"
-msgstr ""
+msgstr "Monster İş İlanları Panosu ile web sitesi entegrasyonunu yönetin"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_recruitment
@@ -28163,7 +28214,7 @@ msgstr "Stok ve lojistik aktivitelerini yönetin"
 #: model:ir.module.module,summary:base.module_l10n_fr_hr_holidays
 #: model:ir.module.module,summary:base.module_l10n_fr_hr_work_entry_holidays
 msgid "Management of leaves for part-time workers in France"
-msgstr ""
+msgstr "Fransa'da yarı zamanlı çalışanların izin yönetimi"
 
 #. module: base
 #: model:res.currency,currency_unit_label:base.AZN
@@ -28341,7 +28392,7 @@ msgstr "Satış siparişlerinde toplu postalama sms"
 #: model:ir.module.module,description:base.module_hr_recruitment_sms
 #: model:ir.module.module,summary:base.module_hr_recruitment_sms
 msgid "Mass mailing sms to job applicants"
-msgstr ""
+msgstr "İş başvurusu sahiplerine toplu SMS gönderimi"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mrp_mps
@@ -28515,7 +28566,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mx_hr_payroll
 msgid "Mexico - Payroll"
-msgstr ""
+msgstr "Meksika - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mx_hr_payroll_localisation
@@ -28654,6 +28705,71 @@ msgid ""
 "perspectiva contable íntegramente. Por lo tanto, este PCGE no debe ser considerado en ningún aspecto\n"
 "como una guía con propósitos distintos del contable.\n"
 msgstr ""
+"Peru'da çalışmaya başlamak için gereken asgari hesap planı (CoA).\n"
+"=================================================\n"
+"\n"
+"Bu hesap planının kullanımı, Peru Ekonomi ve Maliye Bakanlığı'nın (MEF) resmi dokümantasyonuna dayanmaktadır. .\n"
+"\n"
+"https://www.mef.gob.pe/contenidos/conta_publ/documentac/VERSION_MODIFICADA_PCG_EMPRESARIAL.pdf\n"
+"https://www.mef.gob.pe/contenidos/conta_publ/documentac/PCGE_2019.pdf\n"
+"\n"
+"Tüm hukuki referanslara buradan ulaşılabilir.\n"
+"\n"
+"http://www.sunat.gob.pe/legislacion/general/index.html\n"
+"\n"
+"Dikkat Edilmesi Gerekenler.\n"
+"===============\n"
+"\n"
+"Hesap planı:\n"
+"-----------------\n"
+"\n"
+"Hesap planı ağacı, hesap grupları kullanılarak oluşturulmuştur. \n"
+"En yaygın hesaplar ilgili gruplarının altında tanımlıdır. Yeni bir hesap oluşturmak isterseniz, referans olarak bu grupları kullanmalısınız. \n"
+"\n"
+"Vergiler:\n"
+"------\n"
+"\n"
+"'IGV': {'name': 'VAT', 'code': 'S'},\n"
+"'IVAP': {'name': 'VAT', 'code': ''},\n"
+"'ISC': {'name': 'EXC', 'code': 'S'},\n"
+"'ICBPER': {'name': 'OTH', 'code': ''},\n"
+"'EXP': {'name': 'FRE', 'code': 'G'},\n"
+"'GRA': {'name': 'FRE', 'code': 'Z'},\n"
+"'EXO': {'name': 'VAT', 'code': 'E'},\n"
+"'INA': {'name': 'FRE', 'code': 'O'},\n"
+"'OTHERS': {'name': 'OTH', 'code': 'S'},\n"
+"\n"
+"Bu modülde, EDI imzası için gerekli olan üç kavram da vergi yapısına eklenmiştir\n"
+"\n"
+"EDI Peru Kodu: SUNAT sistemine göre vergi türünü seçmek için kullanılır\n"
+"EDI UNECE Kodu: Birleşmiş Milletler Avrupa Ekonomik Komisyonu'na göre vergi türünü tanımlar\n"
+"DI Etki Nedeni: IGV üzerindeki etkilenme tipini, Katalog 07’ye göre belirtir\n"
+"\n"
+"Ürünler:\n"
+"---------\n"
+"\n"
+"EDI’de kullanılacak ürün kodları burada mevcuttur. Hangi verginin uygulanacağını belirlemek için\n"
+"ürün koduna göre seçim yapılır:  Referans alınacak belgeler ve ilgili Python kodu bağlantıda yer almaktadır. \n"
+"\n"
+"https://docs.google.com/spreadsheets/d/1f1fxV8uGhA-Qz9-R1L1-dJirZ8xi3Wfg/edit#gid=662652969\n"
+"\n"
+"**Nota:**\n"
+"---------\n"
+"\n"
+"**RELACIÓN ENTRE EL PCGE Y LA LEGISLACIÓN TRIBUTARIA:**\n"
+"\n"
+"Este PCGE ha sido preparado como una herramienta de carácter contable, para acumular información que\n"
+"requiere ser expuesta en el cuerpo de los estados financieros o en las notas a dichos estados. Esa acumulación se\n"
+"efectúa en los libros o registros contables, cuya denominación y naturaleza depende de las actividades que se\n"
+"efectúen, y que permiten acciones de verificación, control y seguimiento. Las NIIF completas y la NIIF PYMES no\n"
+"contienen prescripciones sobre teneduría de libros, y consecuentemente, sobre los libros y otros registros\n"
+"de naturaleza contable. Por otro lado, si bien es cierto la contabilidad es también un insumo, dentro de otros, para\n"
+"labores de cumplimiento tributario, este PCGE no ha sido elaborado para satisfacer prescripciones tributarias ni su\n"
+"verificación. No obstante ello, donde no hubo oposición entre la contabilidad financiera prescrita por las NIIF y\n"
+"la legislación tributaria, este PCGE ha incluido subcuentas, divisionarias y sub divisionarias, para\n"
+"distinguir componentes con validez tributaria, dentro del conjunto de componentes que corresponden a una\n"
+"perspectiva contable íntegramente. Por lo tanto, este PCGE no debe ser considerado en ningún aspecto\n"
+"como una guía con propósitos distintos del contable.\n"
 
 #. module: base
 #: model:res.partner.industry,name:base.res_partner_industry_B
@@ -29091,7 +29207,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ma_hr_payroll
 msgid "Morocco - Payroll"
-msgstr ""
+msgstr "Fas - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ma_hr_payroll_account
@@ -29347,7 +29463,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_nl_hr_payroll
 msgid "Netherlands - Payroll"
-msgstr ""
+msgstr "Hollanda - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_nl_hr_payroll_account
@@ -30360,62 +30476,64 @@ msgstr ""
 "Odoo Üretim Kaynak Planlaması\n"
 "------------------------------------\n"
 "\n"
-"Malzeme Listesini yönetin, üretim siparişlerini planlayın, iş emirlerini\n"
-"Odoo <a href=\"https://www.odoo.com/app/manufacturing\">Açık Kaynak MRP</a> uygulaması.\n"
-"\n"
-"Tüm montaj veya üretim operasyonlarınızın Odoo tarafından yönetilmesini sağlayın. Tarife\n"
-"üretim emirleri ve iş emirleri otomatik olarak. Önerilen gözden geçirme\n"
-"akıllı kanban ve gantt görünümleriyle planlama. Gelişmiş analitiği kullanın\n"
-"kaynak kapasitelerindeki ve envanter konumlarındaki darboğazı tespit etme özellikleri.\n"
+"Odoo <a href=\"https://www.odoo.com/app/manufacturing\">Açık Kaynak MRP</a> uygulaması ile\n"
+"malzeme listelerini yönetin, üretim siparişlerini planlayın, iş emirlerini takip edin.\n"
+"Tüm montaj veya üretim operasyonlarınızı Odoo ile yönetin. Üretim\n"
+"siparişlerini ve iş emirlerini otomatik olarak planlayın. Akıllı kanban ve\n"
+"gantt görünümleriyle önerilen planlamayı inceleyin. Gelişmiş analiz özelliklerini kullanarak\n"
+"kaynak kapasitelerindeki ve envanter konumlarındaki darboğazları tespit edin.\n"
 "\n"
 "Üretim Siparişlerini Verimli Bir Şekilde Planlayın\n"
 "-----------------------------------------\n"
 "\n"
-"Üretim siparişlerini ve iş emirlerini sizin için otomatik olarak planlayın\n"
-"tedarik kuralları, tahmin edilen miktarlar ve bağımlı talep (bunun için talep)\n"
-"onu tüketen başka bir parçaya dayanan kısım).\n"
+"Satın alma kurallarınıza, tahmin edilen miktarlara ve bağımlı talebe (bu parçaya olan talep, \n"
+"onu tüketen başka bir parçaya bağlıdır) göre üretim siparişlerini ve iş emirlerini \n"
+"otomatik olarak planlayın.\n"
 "\n"
 "Esnek Ana Verileri Tanımlayın\n"
 "---------------------------\n"
 "\n"
-"Çok seviyeli malzeme listesi, isteğe bağlı yönlendirme oluşturma esnekliğine sahip olun,\n"
-"versiyon değişiklikleri ve hayali malzeme listesi. BoM'u kitler için veya\n"
-"üretim emirleri.\n"
+"Çok seviyeli malzeme listeleri, isteğe bağlı yönlendirme, sürüm değişiklikleri ve hayali malzeme listeleri\n"
+"oluşturma esnekliğine sahip olun. BoM'yi kitler veya üretim siparişleri\n"
+"için kullanabilirsiniz.\n"
 "\n"
-"Tüm Operasyonlarda Esneklik Elde Edin\n"
+"Tüm İşlemlerde Esneklik Elde Edin\n"
 "---------------------------------\n"
 "\n"
-"İlerlemenin herhangi bir düzeyinde önerilen tüm işlemleri el ile düzenleyin. Odoo ile,\n"
-"katı bir sistem tarafından hayal kırıklığına uğramayacaksınız.\n"
+"Herhangi bir aşamada önerilen tüm işlemleri manuel olarak düzenleyin. Odoo ile\n"
+"katı bir sistemden dolayı hayal kırıklığına uğramayacaksınız.\n"
 "\n"
-"İş Emirlerini Zamanlama\n"
+"İş Emirlerini Planlayın\n"
 "--------------------\n"
 "\n"
-"Kaynak kapasitelerini kontrol edin ve darboğazları düzeltin.  Yönlendirmeleri tanımlayın ve\n"
-"kaynaklarınızın çalışma süresi ve kapasitesi. Kaynağı hızla tanımlayın\n"
-"üretiminizin teslimatınızı karşıladığından emin olmak için gereksinimler ve darboğazlar\n"
-"zamanlama tarihleri.\n"
+"Kaynak kapasitelerini kontrol edin ve darboğazları giderin. Yönlendirmeleri tanımlayın  \n"
+"ve kaynaklarınızın çalışma süresini ve kapasitesini planlayın.\n"
+"Kaynak gereksinimlerini ve darboğazları hızlı bir şekilde belirleyerek üretiminizin teslimat tarihlerine uygun\n"
+"olmasını sağlayın.\n"
+"\n"
 "\n"
 "Üretken Bir Kullanıcı Arayüzü\n"
 "---------------------------\n"
 "\n"
-"Üretim siparişlerini ve iş emirlerini istediğiniz gibi düzenleyin. Sonraki işlem\n"
-"liste görünümünden siparişler, takvim görünümünde kontrol ve önerilen düzenleme\n"
-"Gantt görünümünde zamanlama.\n"
+"Üretim siparişlerini ve iş emirlerini istediğiniz şekilde düzenleyin. Liste \n"
+"görünümünden sonraki siparişleri işleyin, takvim görünümünden kontrol edin ve\n"
+"Gantt görünümünden önerilen programı düzenleyin.\n"
+"\n"
 "\n"
 "Envanter ve Üretim Analitiği\n"
 "-----------------------------------\n"
 "\n"
-"Üretim seviyesine göre stok değerinin gelişimini izleyin\n"
-"dönüşüm sürecinde ilerledikçe faaliyetler.\n"
+"Dönüşüm sürecinde ilerleyen üretim faaliyetlerinin düzeyine göre\n"
+"stok değerinin gelişimini takip edin.\n"
 "\n"
 "Operasyonlarla Tam Entegre\n"
 "--------------------------------\n"
 "\n"
-"Tam entegrasyonu ile üretim kaynak planlamanızı doğru yapın\n"
-"satış ve satın alma uygulamaları ile. Muhasebe entegrasyonu gerçek zamanlı sağlar\n"
-"muhasebe değerlemesi ve maliyetler ve gelirler hakkında daha derin raporlama\n"
-"üretim operasyonları. \n"
+"Satış ve satın alma uygulamalarıyla tam entegrasyon sayesinde\n"
+"üretim kaynak planlamanızı doğru bir şekilde yapın. Muhasebe entegrasyonu, üretim operasyonlarınızın\n"
+"maliyetleri ve gelirleri hakkında gerçek zamanlı muhasebe değerlemesi ve daha\n"
+"ayrıntılı raporlama sağlar.\n"
+"\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mass_mailing
@@ -31135,7 +31253,7 @@ msgstr "OdooBot"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mail_bot_hr
 msgid "OdooBot - HR"
-msgstr ""
+msgstr "OdooBot - İK"
 
 #. module: base
 #: model:res.partner.category,name:base.res_partner_category_12
@@ -31482,39 +31600,44 @@ msgid ""
 "\n"
 "You can activate a blog for each event allowing you to communicate on specific events. Visitors can subscribe to news to get informed."
 msgstr ""
-"Etkinlikleri, Çalışmaları & Webinarları Organize Edin\n"
+"Etkinlikler, Eğitimler ve Web Seminerleri Düzenleyin\n"
+"-------------------------------------\n"
 "\n"
-"Planlayın, Tanıtın, Satın, Organize Edin\n"
+"### Planlayın, Tanıtın, Satın, Düzenleyin\n"
 "\n"
-"Etkinlik başına ekstra özellik elde edin; birden çok sayfa, sponsorlar, çoklu konuşma, teklif formunu konuşun, ajanda, etkinlikle ilgili haberleri, belgeleri (sunum slaytları), etkinlik özel menüleri.\n"
+"Etkinlik bazında ekstra özellikler elde edin; birden fazla sayfa, sponsorlar, birden fazla konuşma, konuşma öneri formu, gündem, etkinlikle ilgili haberler, belgeler (sunum slaytları), etkinliğe özel menüler.\n"
 "\n"
-"Takiplerinizi Organize Edin\n"
+"Konularınızı Düzenleyin\n"
+"--------------------\n"
 "\n"
-"Konuşma teklifinden yayına\n"
+"### Konuşma önerisinden yayımlanmaya kadar\n"
 "\n"
-"Ziyaretçilerin konuşmaları ve konuşmacıları göndermesine izin vermek için etkinliklerinize bir konuşma teklifi formu ekleyin. Her konuşmanın onaylama sürecini düzenleyin ve kolayca programlayın.\n"
+"Ziyaretçilerin konuşma ve konuşmacı önerilerini gönderebilmeleri için etkinliklerinize konuşma öneri formu ekleyin. Her konuşmanın onay sürecini düzenleyin ve kolayca planlayın.\n"
 "\n"
-"Odoo'nun benzersiz ön ve arka uç entegrasyonu organizasyon yapmayı ve yayınlamayı çok kolaylaştırıyor. Güzel konuşmacı biyografilerini kolayca tasarlayın ve açıklamaları açıklayın.\n"
+"Odoo'nun benzersiz ön uç ve arka uç entegrasyonu, organizasyon ve yayını çok kolay hale getirir. Kolaylıkla göze hitap eden konuşmacı biyografileri ve konuşma açıklamaları tasarlayın.\n"
 "\n"
-"Ajanda ve Konuşma Listesi\n"
+"Gündem ve Konuşma Listesi\n"
+"------------------------\n"
 "\n"
-"Güçlü bir kullanıcı arayüzü\n"
+"### Güçlü bir kullanıcı arayüzü\n"
 "\n"
-"Web sitenizde otomatik olarak yayınlanan her etkinlik için güzel bir ajanda yapın. Ziyaretçilerin görüşmeleri kolayca aramasına ve göz atmasına izin verin, etiketlere, yerlere veya konuşmacılara göre filtreleyin.\n"
+"Her etkinlik için ilgi çekici bir gündem oluşturun ve web sitenizde otomatik olarak yayımlayın. Ziyaretçilerinizin konuşmaları kolayca arayıp onlara göz atabilmelerini, konuşmaları etiketlere, konumlara veya konuşmacılara göre filtreleyebilmelerini sağlayın.\n"
 "\n"
 "Sponsorları Yönetin\n"
+"---------------\n"
 "\n"
-"Sponsorluk satın, sponsorlarınızı tanıtın\n"
+"### Sponsorluk satışı yapın, sponsorlarınızı tanıtın\n"
 "\n"
-"Etkinliğinize sponsorlar ekleyin ve etkinliğin her sayfasının altındaki seviyeye (örneğin bronz, gümüş, altın) sponsorlar yayınlayın.\n"
+"Etkinliklerinize sponsorlar ekleyin ve her etkinliğin sayfasının altında sponsorları seviyeye göre (ör. bronz, gümüş, altın) yayımlayın.\n"
 "\n"
-"Tam bir satış döngüsü entegrasyonu için Odoo eCommerce üzerinden sponsorluk paketlerini online olarak satın.\n"
+"Tam bir satış döngüsü entegrasyonu için Odoo eTicaret aracılığıyla çevrim içi sponsorluk paketleri satın.\n"
 "\n"
-"Verimli Bir Şekilde İletişim Kurun\n"
+"Verimli İletişim\n"
+"-----------------------\n"
 "\n"
-"Bazı etkinlikler için bir blog etkinleştirin\n"
+"### Bazı etkinlikler için bir blog etkinleştirin\n"
 "\n"
-"Belirli etkinlikler hakkında iletişim kurmanızı sağlayan her etkinlik için bir blogu etkinleştirebilirsiniz. Ziyaretçiler bilgi almak için haberlere abone olabilirler."
+"Her etkinlik için bir blog etkinleştirerek belirli etkinlikler hakkında iletişim kurabilirsiniz. Ziyaretçiler bilgi edinmek amacıyla haberlere abone olabilir."
 
 #. module: base
 #: model:ir.module.module,description:base.module_website_event
@@ -33153,7 +33276,7 @@ msgstr "Polonya - JPK_VAT Satış Noktası (Kurumsal)"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_pl_hr_payroll
 msgid "Poland - Payroll"
-msgstr ""
+msgstr "Polonya - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_pl_hr_payroll_account
@@ -33526,7 +33649,7 @@ msgstr "Proje - Satış - Masraf"
 #: model:ir.module.module,shortdesc:base.module_project_enterprise_hr_skills
 #: model:ir.module.module,shortdesc:base.module_project_hr_skills
 msgid "Project - Skills"
-msgstr ""
+msgstr "Proje - Beceriler"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_project_account_asset
@@ -34494,12 +34617,12 @@ msgstr "İşe Alım Entegrasyonu Monster"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_recruitment_integration_skills_monster
 msgid "Recruitment Integration Skills Monster"
-msgstr ""
+msgstr "İşe Alım Entegrasyonu Beceriler Monster"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_recruitment_integration_website_monster
 msgid "Recruitment Integration Website Monster"
-msgstr ""
+msgstr "İşe Alım Entegrasyonu Web Sitesi Monster"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_recruitment_integration_website
@@ -34519,7 +34642,7 @@ msgstr "Belgelerden işe alım özgeçmişleri ve mektuplar"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_appointment_hr_recruitment
 msgid "Recruitment tracking on appointments"
-msgstr ""
+msgstr "Randevularda işe alım takibi"
 
 #. module: base
 #. odoo-python
@@ -34640,7 +34763,7 @@ msgstr "Uzaktan Çalışma"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_homeworking_calendar
 msgid "Remote Work with calendar"
-msgstr ""
+msgstr "Takvim ile uzaktan çalışma"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_asset__directive__remove
@@ -35023,7 +35146,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_hr_payroll
 msgid "Romania - Payroll"
-msgstr ""
+msgstr "Romanya - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_hr_payroll_account
@@ -35369,7 +35492,7 @@ msgstr "Salary Configurator (Belgium)"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_contract_salary_mobility_budget
 msgid "Salary Configurator (Belgium) - Mobility Budget"
-msgstr ""
+msgstr "Maaş Yapılandırıcısı (Belçika) - Hareketlilik Bütçesi"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_contract_salary_holidays
@@ -35737,12 +35860,12 @@ msgstr "Suudi Arabistan - E-faturalama (Basitleştirilmiş)"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_hr_payroll
 msgid "Saudi Arabia - Payroll"
-msgstr ""
+msgstr "Suudi Arabistan - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_hr_payroll_account
 msgid "Saudi Arabia - Payroll with Accounting"
-msgstr ""
+msgstr "Suudi Arabistan - Muhasebe ile Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_pos
@@ -36196,6 +36319,11 @@ msgid ""
 "emails are compromised. Once verified, you can activate the ability to send "
 "money."
 msgstr ""
+"Sahte hesap numarası içeren düzmece faturalar göndermek, yaygın bir kimlik "
+"avı yöntemidir. Kendinizi korumak için yeni banka hesap numaralarını her "
+"zaman doğrulayın, tercihen satıcıyı arayarak, çünkü kimlik avı genellikle "
+"e-postaları ele geçirildiğinde gerçekleşir. Doğrulama yapıldıktan sonra, "
+"para gönderme özelliğini etkinleştirebilirsiniz."
 
 #. module: base
 #: model:res.currency,currency_subunit_label:base.WST
@@ -36701,7 +36829,7 @@ msgstr "Slovakya"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sk_hr_payroll
 msgid "Slovakia - Payroll"
-msgstr ""
+msgstr "Slovakya - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sk_hr_payroll_account
@@ -37188,7 +37316,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_spreadsheet_dashboard_hr_payroll
 msgid "Spreadsheet dashboard for payroll"
-msgstr ""
+msgstr "Maaş bordrosu için elektronik çizelge paneli"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_spreadsheet_dashboard_pos_hr
@@ -37691,7 +37819,7 @@ msgstr "İsviçre - Muhasebe Raporları"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ch_hr_payroll
 msgid "Switzerland - Payroll"
-msgstr ""
+msgstr "İsviçre - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ch_hr_payroll_account
@@ -38106,7 +38234,7 @@ msgstr "HTTP'yi test edin"
 #: model:ir.module.module,shortdesc:base.module_test_l10n_hk_hr_payroll_account
 #: model:ir.module.module,summary:base.module_test_l10n_hk_hr_payroll_account
 msgid "Test Hong Kong Payroll"
-msgstr ""
+msgstr "Test Hong Kong Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_test_main_flows
@@ -38167,13 +38295,13 @@ msgstr ""
 #: model:ir.module.module,shortdesc:base.module_test_l10n_ch_hr_payroll_account
 #: model:ir.module.module,summary:base.module_test_l10n_ch_hr_payroll_account
 msgid "Test Swiss Payroll"
-msgstr ""
+msgstr "Test İsviçre Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_test_l10n_us_hr_payroll_account
 #: model:ir.module.module,summary:base.module_test_l10n_us_hr_payroll_account
 msgid "Test US Payroll"
-msgstr ""
+msgstr "Test ABD Bordro"
 
 #. module: base
 #: model:ir.module.module,description:base.module_test_data_module_install
@@ -39361,8 +39489,8 @@ msgid ""
 "This module adds the OdooBot state and notifications in the user form "
 "modified by hr."
 msgstr ""
-"This module adds the OdooBot state and notifications in the user form "
-"modified by hr."
+"Bu modül, İK tarafından değiştirilen kullanıcı formuna OdooBot durumunu ve "
+"bildirimlerini ekler."
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_codabox
@@ -39401,6 +39529,9 @@ msgid ""
 "and keep track of application submissions easily. It comes as an add-on of "
 "*Recruitment* app."
 msgstr ""
+"Bu modül, mevcut iş pozisyonlarını web sitenizde yayımlamanıza ve başvuru "
+"gönderimlerini kolayca takip etmenize olanak tanır. *İşe Alım* uygulamasının"
+" bir eklentisi olarak sunulmaktadır."
 
 #. module: base
 #: model:ir.module.module,description:base.module_product_barcodelookup
@@ -39678,7 +39809,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_account_online_synchronization
 msgid "This module is used for Online bank synchronization."
-msgstr ""
+msgstr "Bu modül, çevrim içi banka senkronizasyonu için kullanılır."
 
 #. module: base
 #: model:ir.module.module,summary:base.module_account_peppol
@@ -39790,7 +39921,7 @@ msgstr "İşletme Maaş Bordrosunda İzin Süresi"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_holidays_contract_gantt
 msgid "Time off - Contract Gantt"
-msgstr ""
+msgstr "İzin - Sözleşme Gantt"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_holidays_gantt
@@ -40633,7 +40764,7 @@ msgstr "Birleşik Arap Emirlikleri - Bordro"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ae_hr_payroll_account
 msgid "United Arab Emirates - Payroll with Accounting"
-msgstr ""
+msgstr "Birleşik Arap Emirlikleri - Muhasebe ile Bordro"
 
 #. module: base
 #: model:res.country,name:base.uk
@@ -40663,17 +40794,17 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_us_hr_payroll
 msgid "United States - Payroll"
-msgstr ""
+msgstr "Amerika Birleşik Devletleri - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_us_hr_payroll_adp
 msgid "United States - Payroll - Export to ADP"
-msgstr ""
+msgstr "Amerika Birleşik Devletleri - Bordro - ADP'ye Dışa Aktar"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_us_hr_payroll_state_calculation
 msgid "United States - Payroll - State Calculation"
-msgstr ""
+msgstr "Amerika Birleşik Devletleri - Bordro - Eyalet Hesaplaması"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_us_hr_payroll_account
@@ -41005,6 +41136,11 @@ msgid ""
 "This allow the user to send badges to employees instead of simple users.\n"
 "Badge received are displayed on the user profile.\n"
 msgstr ""
+"Oyunlaştırma süreci için İK kaynaklarını kullanın.\n"
+"\n"
+"İK sorumlusu artık mücadeleleri ve rozetleri yönetebilir.\n"
+"Bu da, kullanıcının basit kullanıcılar yerine çalışanlara rozet göndermesini sağlar.\n"
+"Alınan rozetler kullanıcı profilinde gösterilir.\n"
 
 #. module: base
 #. odoo-python
@@ -41929,7 +42065,7 @@ msgstr "WhatsApp"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_whatsapp_hr_referral
 msgid "WhatsApp - Employee Referral"
-msgstr ""
+msgstr "WhatsApp - Çalışan Yönlendirme"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_whatsapp
@@ -42882,7 +43018,7 @@ msgstr "delivery_mondialrelay"
 #. module: base
 #: model:ir.module.module,summary:base.module_test_hr_contract_calendar
 msgid "display working hours from employee's contracts"
-msgstr ""
+msgstr "çalışanın sözleşmesinden çalışma saatlerinin görülebilmesi"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.wizard_lang_export
