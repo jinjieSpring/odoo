@@ -1958,7 +1958,7 @@ msgstr "Περισσότερες Πληροφορίες"
 #: model_terms:ir.ui.view,arch_db:project.view_project
 #: model_terms:ir.ui.view,arch_db:project.view_project_calendar
 msgid "Favorite"
-msgstr ""
+msgstr "Αγαπημένη"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_task_search_form_base
@@ -3126,7 +3126,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/project/controllers/portal.py:0
 msgid "Others"
-msgstr ""
+msgstr "Άλλοι"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_sharing_project_task_view_search

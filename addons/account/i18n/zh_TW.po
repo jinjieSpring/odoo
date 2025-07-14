@@ -5,17 +5,17 @@
 # Translators:
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2025
 # 晨知 吳, 2025
-# Wil Odoo, 2025
 # Pak Wai Ho, 2025
 # Tony Ng, 2025
+# Wil Odoo, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-27 18:38+0000\n"
+"POT-Creation-Date: 2025-07-11 18:38+0000\n"
 "PO-Revision-Date: 2024-09-25 09:41+0000\n"
-"Last-Translator: Tony Ng, 2025\n"
+"Last-Translator: Wil Odoo, 2025\n"
 "Language-Team: Chinese (Taiwan) (https://app.transifex.com/odoo/teams/41243/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -930,22 +930,9 @@ msgstr "<span class=\"figure-caption\">利用自動報表及警報，永遠不�
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 msgid ""
-"<span class=\"o_form_label mx-3 oe_edit_only\" groups=\"account.group_account_readonly\" invisible=\"move_type == 'entry'\">\n"
-"                                        <span groups=\"base.group_multi_currency\">in </span>\n"
-"                                    </span>"
+"<span class=\"o_form_label mx-3 oe_edit_only text-center\" style=\"width: "
+"6ch;\" invisible=\"state != 'draft' or invoice_payment_term_id\">or</span>"
 msgstr ""
-"<span class=\"o_form_label mx-3 oe_edit_only\" groups=\"account.group_account_readonly\" invisible=\"move_type == 'entry'\">\n"
-"                                        <span groups=\"base.group_multi_currency\">貨幣 </span>\n"
-"                                    </span>"
-
-#. module: account
-#: model_terms:ir.ui.view,arch_db:account.view_move_form
-msgid ""
-"<span class=\"o_form_label mx-3 oe_edit_only\" invisible=\"state != 'draft' "
-"or invoice_payment_term_id\"> or </span>"
-msgstr ""
-"<span class=\"o_form_label mx-3 oe_edit_only\" invisible=\"state != 'draft' "
-"or invoice_payment_term_id\"> 或 </span>"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_reconcile_model_line_form
@@ -1180,11 +1167,6 @@ msgid "<span> (DR)</span>"
 msgstr "<span> (借)</span>"
 
 #. module: account
-#: model_terms:ir.ui.view,arch_db:account.view_move_form
-msgid "<span> = </span>"
-msgstr "<span> = </span>"
-
-#. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_payment_form
 msgid "<span> Bill</span>"
 msgstr "<span>賬單</span>"
@@ -1217,8 +1199,8 @@ msgstr "<span>$ <span class=\"oe_currency_value\">19,250.00</span></span>"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
-msgid "<span>1 </span>"
-msgstr "<span>1 </span>"
+msgid "<span>1</span>"
+msgstr ""
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.bill_preview
@@ -1229,6 +1211,11 @@ msgstr "<span>5.00</span>"
 #: model_terms:web_tour.tour,rainbow_man_message:account.account_tour
 msgid "<span><b>Good job!</b> You went through all steps of this tour.</span>"
 msgstr "<span><b>做得好！</b>你已完成本次導覽的所有步驟。</span>"
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.view_move_form
+msgid "<span>=</span>"
+msgstr ""
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_payment_receipt_document
@@ -2434,7 +2421,7 @@ msgstr "在你的應收憑單上增加支付二維碼"
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_cash_rounding__strategy__add_invoice_line
 msgid "Add a rounding line"
-msgstr "增加捨入明細"
+msgstr "新增捨入資料行"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
@@ -6989,6 +6976,12 @@ msgid "Excluded Journals"
 msgstr "已排除的日記帳"
 
 #. module: account
+#: model:ir.model.fields,field_description:account.field_account_bank_statement_line__expected_currency_rate
+#: model:ir.model.fields,field_description:account.field_account_move__expected_currency_rate
+msgid "Expected Currency Rate"
+msgstr ""
+
+#. module: account
 #: model:ir.model.fields,field_description:account.field_res_company__expects_chart_of_accounts
 msgid "Expects a Chart of Accounts"
 msgstr "預期有會計賬目總表"
@@ -9825,7 +9818,7 @@ msgstr "損失"
 #: model:ir.model.fields,field_description:account.field_account_cash_rounding__loss_account_id
 #: model:ir.model.fields,field_description:account.field_account_journal__loss_account_id
 msgid "Loss Account"
-msgstr "損失項目"
+msgstr "虧損賬戶"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_res_company__expense_currency_exchange_account_id
@@ -10263,7 +10256,7 @@ msgstr "模型名稱"
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_cash_rounding__strategy__biggest_tax
 msgid "Modify tax amount"
-msgstr "修改稅金金額"
+msgstr "修改稅項金額"
 
 #. module: account
 #: model:ir.model,name:account.model_ir_module_module
@@ -11969,6 +11962,12 @@ msgid "Phishing risk: Medium"
 msgstr "網絡釣魚風險：中"
 
 #. module: account
+#. odoo-javascript
+#: code:addons/account/static/src/components/account_pick_currency_rate/account_pick_currency_rate.xml:0
+msgid "Pick the rate on a certain date"
+msgstr ""
+
+#. module: account
 #. odoo-python
 #: code:addons/account/models/company.py:0
 msgid "Please contact your accountant to print the Hash integrity result."
@@ -12296,7 +12295,7 @@ msgstr "利潤及虧損(損益表)"
 #: model:ir.model.fields,field_description:account.field_account_cash_rounding__profit_account_id
 #: model:ir.model.fields,field_description:account.field_account_journal__profit_account_id
 msgid "Profit Account"
-msgstr "利潤科目"
+msgstr "利潤賬戶"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_res_partner__property_inbound_payment_method_line_id
@@ -12623,6 +12622,11 @@ msgid ""
 "Reference of the document used to issue this payment. Eg. check number, file"
 " name, etc."
 msgstr "有問題的付款的相關單據. 比如校驗碼、檔名等."
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.view_move_form
+msgid "Refresh currency rate to the invoice date"
+msgstr ""
 
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_tax_repartition_line__document_type__refund
@@ -13214,7 +13218,7 @@ msgstr "儲存"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.res_config_settings_view_form
 msgid "Save this page and come back here to set up the feature."
-msgstr "儲存這個頁面並返回來設定這個特性。"
+msgstr "請儲存變更，然後返回此處，進一步設定功能。"
 
 #. module: account
 #. odoo-javascript
@@ -17446,7 +17450,7 @@ msgstr "當日記帳被散列鎖定時，您不能按日期重新排序."
 msgid ""
 "You can only change the period/account for items that are not yet "
 "reconciled."
-msgstr "您只能更改尚未對帳項目的期間/科目."
+msgstr "對於未對賬的項目，你只可更改期間或記賬賬戶。"
 
 #. module: account
 #. odoo-python
@@ -18357,6 +18361,11 @@ msgstr "已套用。"
 #: model_terms:ir.ui.view,arch_db:account.view_account_position_form
 msgid "here"
 msgstr "此處"
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.view_move_form
+msgid "in"
+msgstr "網誌："
 
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_reconcile_model__payment_tolerance_type__fixed_amount

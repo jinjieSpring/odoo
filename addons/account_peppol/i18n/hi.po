@@ -117,7 +117,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/account_peppol/static/src/components/peppol_info/peppol_info.js:0
 msgid "Activate"
-msgstr ""
+msgstr "ऐक्टिवेट"
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
@@ -481,7 +481,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_peppol.field_res_partner__invoice_sending_method
 #: model:ir.model.fields,field_description:account_peppol.field_res_users__invoice_sending_method
 msgid "Invoice sending"
-msgstr ""
+msgstr "इनवॉइस भेजा जा रहा है"
 
 #. module: account_peppol
 #: model:ir.model.fields,help:account_peppol.field_account_peppol_service_wizard__service_json
@@ -504,14 +504,14 @@ msgstr "जर्नल एंट्री"
 #: model:ir.model.fields,field_description:account_peppol.field_account_peppol_service_wizard__write_uid
 #: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "इन्होंने आखिरी बार अपडेट किया"
 
 #. module: account_peppol
 #: model:ir.model.fields,field_description:account_peppol.field_account_peppol_service__write_date
 #: model:ir.model.fields,field_description:account_peppol.field_account_peppol_service_wizard__write_date
 #: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "आखिरी बार अपडेट हुआ"
 
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__peppol_registration__edi_mode__prod
@@ -654,12 +654,12 @@ msgstr ""
 #. module: account_peppol
 #: model:ir.model,name:account_peppol.model_peppol_registration
 msgid "Peppol Registration"
-msgstr ""
+msgstr "Peppol रजिस्ट्रेशन"
 
 #. module: account_peppol
 #: model:ir.model,name:account_peppol.model_account_peppol_service
 msgid "Peppol Service"
-msgstr ""
+msgstr "Peppol सर्विस"
 
 #. module: account_peppol
 #: model:ir.model,name:account_peppol.model_account_peppol_service_wizard
@@ -730,6 +730,9 @@ msgid ""
 "For example: +32123456789, where +32 is the country code.\n"
 "Currently, only European countries are supported."
 msgstr ""
+"कृपया मोबाइल नंबर सही अंतरराष्ट्रीय तरीके से दर्ज़ करें.\n"
+"उदाहरण के लिए: +32123456789.  यहां +32 कंट्री कोड नंबर है. \n"
+"अभी सिर्फ़ यूरोपीय देश ही मान्य हैं."
 
 #. module: account_peppol
 #. odoo-python
@@ -805,7 +808,7 @@ msgstr ""
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__res_company__account_peppol_proxy_state__rejected
 msgid "Rejected"
-msgstr ""
+msgstr "अस्वीकार किया गया"
 
 #. module: account_peppol
 #. odoo-javascript
@@ -1020,7 +1023,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/account_peppol/models/account_move_send.py:0
 msgid "View Partner(s)"
-msgstr ""
+msgstr "पार्टनर देखें"
 
 #. module: account_peppol
 #. odoo-python
@@ -1051,7 +1054,7 @@ msgstr ""
 #. module: account_peppol
 #: model:ir.model.fields,field_description:account_peppol.field_account_peppol_service__wizard_id
 msgid "Wizard"
-msgstr ""
+msgstr "विज़ार्ड"
 
 #. module: account_peppol
 #. odoo-python
