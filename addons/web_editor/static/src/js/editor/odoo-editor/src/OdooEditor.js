@@ -2295,6 +2295,10 @@ export class OdooEditor extends EventTarget {
             && (startBlock.tagName !== 'TD' && endBlock.tagName !== 'TD')
             && !(firstLeafOfStartBlock === start && lastLeafOfEndBlock === end);
         let next = nextLeaf(end, this.editable);
+        if (isBlock(end)) {
+            // end can be block so we take the next leaf at the endOffset
+            next = nextLeaf(end.childNodes[endOffset], this.editable);
+        }
 
         // Get the boundaries of the range so as to get the state to restore.
         if (end.nodeType === Node.TEXT_NODE) {
@@ -2415,6 +2419,7 @@ export class OdooEditor extends EventTarget {
             doJoin &&
             next &&
             !(next.previousSibling && next.previousSibling === joinWith) &&
+            !(joinWith.nodeType === Node.ELEMENT_NODE && joinWith.contains(next) && childNodeIndex(next) === range.endOffset) &&
             this.editable.contains(next) && (closestElement(joinWith, 'TD') === closestElement(next, 'TD'))
         ) {
             const restore = preserveCursor(this.document);
@@ -4218,7 +4223,7 @@ export class OdooEditor extends EventTarget {
     _onKeyDown(ev) {
         delete this._isNavigatingByMouse;
         const selection = this.document.getSelection();
-        if (selection.anchorNode && isProtected(selection.anchorNode)) {
+        if ((!selection?.anchorNode) || (isProtected(selection.anchorNode))) {
             return;
         }
         if (this.document.querySelector(".transfo-container")) {
@@ -4277,13 +4282,13 @@ export class OdooEditor extends EventTarget {
             const sel = this.document.getSelection();
             const closestUnbreakable = closestElement(sel.anchorNode, isUnbreakable);
             const closestTableOrLi = closestElement(sel.anchorNode, 'table, li');
-            const closestUnbreakableOrLi = closestElement(sel.anchorNode, ["li", closestUnbreakable.nodeName].join(","));
+            const closestUnbreakableOrLi = closestElement(sel.anchorNode, ["li", closestUnbreakable?.nodeName].join(","));
             if (closestTableOrLi && closestTableOrLi.nodeName === 'TABLE') {
                 this._onTabulationInTable(ev);
             } else if (
                 !ev.shiftKey &&
                 sel.isCollapsed &&
-                closestUnbreakableOrLi.nodeName !== 'LI'
+                closestUnbreakableOrLi?.nodeName !== 'LI'
             ) {
                 // Indent text (collapsed selection).
                 this.execCommand('insert', parseHTML(this.document, tabHtml));
