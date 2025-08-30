@@ -38,6 +38,7 @@ from odoo.tools import (
 )
 from odoo.tools.mail import email_re, email_split, is_html_empty, generate_tracking_message_id
 from odoo.tools.misc import StackMap
+from odoo.tools.safe_eval import safe_eval
 
 
 _logger = logging.getLogger(__name__)
@@ -802,16 +803,20 @@ class AccountMove(models.Model):
             move.payment_reference = move._get_invoice_computed_reference()
         self._inverse_payment_reference()
 
+    def _get_accounting_date_source(self):
+        self.ensure_one()
+        return self.invoice_date or self.date
+
     @api.depends('invoice_date', 'company_id', 'move_type')
     def _compute_date(self):
         for move in self:
-            if not move.invoice_date or not move.is_invoice(include_receipts=True):
+            accounting_date = move._get_accounting_date_source()
+            if not accounting_date or not move.is_invoice(include_receipts=True):
                 if not move.date:
                     move.date = fields.Date.context_today(self)
                 continue
-            accounting_date = move.invoice_date
             if not move.is_sale_document(include_receipts=True):
-                accounting_date = move._get_accounting_date(move.invoice_date, move._affect_tax_report())
+                accounting_date = move._get_accounting_date(accounting_date, move._affect_tax_report())
             if accounting_date and accounting_date != move.date:
                 move.date = accounting_date
                 # _affect_tax_report may trigger premature recompute of line_ids.date
@@ -1144,8 +1149,8 @@ class AccountMove(models.Model):
     def _compute_payment_state(self):
         groups = self.grouped(lambda move:
             'legacy' if move.payment_state == 'invoicing_legacy' else
-            'posted_invoice' if move.state == 'posted' and move.is_invoice(True) else
             'blocked' if move.payment_state == 'blocked' else
+            'posted_invoice' if move.state == 'posted' and move.is_invoice(True) else
             'unpaid'
         )
         groups.get('unpaid', self.browse()).payment_state = 'not_paid'
@@ -1233,6 +1238,24 @@ class AccountMove(models.Model):
     def _compute_status_in_payment(self):
         for move in self:
             move.status_in_payment = move.state if move.state in ('draft', 'cancel') else move.payment_state
+
+    def _field_to_sql(self, alias: str, fname: str, query=None, flush: bool = True) -> SQL:
+        if fname == 'status_in_payment':
+            return SQL(
+                "CASE "
+                f"WHEN {alias}.state = 'draft' THEN 'draft' "
+                f"WHEN {alias}.state = 'cancel' THEN 'cancel' "
+                f"ELSE {alias}.payment_state "
+                "END"
+            )
+        elif fname == 'move_sent_values':
+            return SQL(
+                "CASE "
+                f"WHEN {alias}.is_move_sent THEN 'sent' "
+                f"ELSE 'not_sent' "
+                "END"
+            )
+        return super()._field_to_sql(alias, fname, query=query, flush=flush)
 
     @api.depends('matched_payment_ids')
     def _compute_payment_count(self):
@@ -1857,23 +1880,26 @@ class AccountMove(models.Model):
         self.env["account.move"].flush_model(used_fields)
 
         move_table_and_alias = SQL("account_move AS move")
-        if not moves[0].id:  # check if record is under creation/edition in UI
+        if not all(move.id for move in moves):  # check if record is under creation/edition in UI
             # New record aren't searchable in the DB and record in edition aren't up to date yet
             # Replace the table by safely injecting the values in the query
-            values = {
-                field_name: moves._fields[field_name].convert_to_write(moves[field_name], moves) or None
-                for field_name in used_fields
-            }
-            values["id"] = moves._origin.id or 0
-            # The amount total depends on the field line_ids and is calculated upon saving, we needed a way to get it even when the
-            # invoices has not been saved yet.
-            values['amount_total'] = self.tax_totals.get('total_amount_currency', 0)
-            casted_values = SQL(', ').join(
-                SQL("%s::%s", value, SQL.identifier(moves._fields[field_name].column_type[0]))
-                for field_name, value in values.items()
-            )
-            column_names = SQL(', ').join(SQL.identifier(field_name) for field_name in values)
-            move_table_and_alias = SQL("(VALUES (%s)) AS move(%s)", casted_values, column_names)
+            all_values = []
+            for move in moves:
+                values = {
+                    field_name: move._fields[field_name].convert_to_write(move[field_name], move) or None
+                    for field_name in used_fields
+                }
+                values["id"] = move._origin.id or 0
+                # The amount total depends on the field line_ids and is calculated upon saving,
+                # we needed a way to get it even when the invoices has not been saved yet.
+                values['amount_total'] = move.tax_totals.get('total_amount_currency', 0)
+                casted_values = SQL(', ').join(
+                    SQL("%s::%s", value, SQL.identifier(move._fields[field_name].column_type[0]))
+                    for field_name, value in values.items()
+                )
+                all_values.append(SQL("(%s)", casted_values))
+            column_names = SQL(', ').join(SQL.identifier(field_name) for field_name in used_fields + ("id",))
+            move_table_and_alias = SQL("(VALUES %s) AS move(%s)", SQL(', ').join(all_values), column_names)
 
         to_query = []
         out_moves = moves.filtered(lambda m: m.move_type in ('out_invoice', 'out_refund'))
@@ -2428,6 +2454,19 @@ class AccountMove(models.Model):
                     raise ValidationError(_("This entry contains taxes that are not compatible with your fiscal position. Check the country set in fiscal position and in your tax configuration."))
                 raise ValidationError(_("This entry contains one or more taxes that are incompatible with your fiscal country. Check company fiscal country in the settings and tax country in taxes configuration."))
 
+    @api.constrains('invoice_currency_rate')
+    def _check_invoice_currency_rate(self):
+        """Ensure the currency rate is strictly positive when invoice currency differs from company currency."""
+        for move in self:
+            if (
+                move.currency_id
+                and move.company_id
+                and move.currency_id != move.company_id.currency_id
+                and move.is_invoice(include_receipts=True)
+                and move.invoice_currency_rate <= 0
+            ):
+                raise ValidationError(_("The currency rate must be strictly positive."))
+
     # -------------------------------------------------------------------------
     # CATALOG
     # -------------------------------------------------------------------------
@@ -2549,7 +2588,11 @@ class AccountMove(models.Model):
             and (
                 not reference_date
                 or not self.invoice_date
-                or reference_date <= fields.first(payment_terms).discount_date
+                or (
+                    (existing_discount_date := fields.first(payment_terms).discount_date)
+                    and
+                    reference_date <= existing_discount_date
+                )
             ) \
             and not (payment_terms.sudo().matched_debit_ids + payment_terms.sudo().matched_credit_ids)
 
@@ -3132,7 +3175,7 @@ class AccountMove(models.Model):
                     if command == Command.CREATE
                 ]
             elif move.move_type == 'entry':
-                if 'partner_id' not in vals:
+                if 'partner_id' not in vals or not self._context.get('move_reverse_cancel'):
                     vals['partner_id'] = False
             user_fiscal_lock_date = move.company_id._get_user_fiscal_lock_date(move.journal_id)
             if (default_date or move.date) <= user_fiscal_lock_date:
@@ -4414,6 +4457,13 @@ class AccountMove(models.Model):
         else:
             cash_discount_account = company.account_journal_early_pay_discount_gain_account_id
 
+        epd_analytic_distribution = self.env['account.analytic.distribution.model']._get_distribution({
+            'account_prefix': cash_discount_account.code,
+            'company_id': self.company_id.id,
+            'partner_id': self.commercial_partner_id.id,
+            'partner_category_id': self.partner_id.category_id.ids,
+        })
+
         bases_details = {}
 
         term_amount_currency = payment_term_line.amount_currency - payment_term_line.discount_amount_currency
@@ -4432,7 +4482,7 @@ class AccountMove(models.Model):
                     'partner_id': base_line['partner_id'].id,
                     'currency_id': base_line['currency_id'].id,
                     'account_id': cash_discount_account.id,
-                    'analytic_distribution': base_line['analytic_distribution'],
+                    'analytic_distribution': base_line['analytic_distribution'] or epd_analytic_distribution,
                 }
                 base_detail = resulting_delta_base_details.setdefault(frozendict(grouping_dict), {
                     'balance': 0.0,
@@ -4511,6 +4561,7 @@ class AccountMove(models.Model):
                 'currency_id': payment_term_line.currency_id.id,
                 'amount_currency': term_amount_currency,
                 'balance': term_balance,
+                'analytic_distribution': epd_analytic_distribution,
             }
 
         return res
@@ -4944,7 +4995,7 @@ class AccountMove(models.Model):
             affects_tax_report = move._affect_tax_report()
             lock_dates = move._get_violated_lock_dates(move.date, affects_tax_report)
             if lock_dates:
-                move.date = move._get_accounting_date(move.invoice_date or move.date, affects_tax_report, lock_dates=lock_dates)
+                move.date = move._get_accounting_date(move._get_accounting_date_source(), affects_tax_report, lock_dates=lock_dates)
 
         # Create the analytic lines in batch is faster as it leads to less cache invalidation.
         to_post.line_ids._create_analytic_lines()
@@ -5215,13 +5266,8 @@ class AccountMove(models.Model):
             message loaded by default
         """
         self.ensure_one()
-
         report_action = self.action_send_and_print()
-        if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
-            report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
-            report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
-
-        return report_action
+        return self._get_action_with_base_document_layout_configurator(report_action)
 
     def action_invoice_download_pdf(self):
         return {
@@ -5232,7 +5278,8 @@ class AccountMove(models.Model):
 
     def action_print_pdf(self):
         self.ensure_one()
-        return self.env.ref('account.account_invoices').report_action(self.id)
+        report_action = self.env.ref('account.account_invoices').report_action(self.id, config=False)
+        return self._get_action_with_base_document_layout_configurator(report_action)
 
     def preview_invoice(self):
         self.ensure_one()
@@ -5308,6 +5355,7 @@ class AccountMove(models.Model):
         self.line_ids.analytic_line_ids.with_context(skip_analytic_sync=True).unlink()
         self.mapped('line_ids').remove_move_reconcile()
         self.state = 'draft'
+        self.sending_data = False
 
         self._detach_attachments()
 
@@ -5506,14 +5554,13 @@ class AccountMove(models.Model):
                 },
             ]
 
+        domain = [
+            ('sending_data', '!=', False),
+            ('state', '=', 'posted'),
+        ]
         limit = job_count + 1
-        to_process = self.env['account.move'].search(
-            [('sending_data', '!=', False)],
-            limit=limit,
-        )
-        total_to_process = self.env['account.move'].search_count(
-            [('sending_data', '!=', False)],
-        )
+        to_process = self.env['account.move'].search(domain, limit=limit)
+        total_to_process = self.env['account.move'].search_count(domain)
 
         need_retrigger = len(to_process) > job_count
         if not to_process:
@@ -5588,6 +5635,19 @@ class AccountMove(models.Model):
 
     def is_outbound(self, include_receipts=True):
         return self.move_type in self.get_outbound_types(include_receipts)
+
+    def _get_action_with_base_document_layout_configurator(self, report_action):
+        if (
+            self.env.is_admin()
+            and not self.env.company.external_report_layout_id
+            and not self.env.context.get('discard_logo_check')
+        ):
+            report_action = self.env['ir.actions.report']._action_configure_external_report_layout(
+                report_action,
+                "account.action_base_document_layout_configurator",
+            )
+            report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
+        return report_action
 
     def _get_installments_data(self):
         self.ensure_one()
@@ -5852,7 +5912,7 @@ class AccountMove(models.Model):
 
     def _get_invoice_legal_documents(self, filetype, allow_fallback=False):
         """ Retrieve the invoice legal document of type filetype.
-        :param filetype: the type of legal document to retrieve. Example: 'pdf', 'all'.
+        :param filetype: the type of legal document to retrieve. Example: 'pdf'.
         :param bool allow_fallback: if True, returns a Proforma if the PDF invoice doesn't exist.
         :return dict: the invoice PDF data such as
         {'filename': 'INV_2024_0001.pdf', 'filetype': 'pdf', 'content':...}
@@ -5868,8 +5928,6 @@ class AccountMove(models.Model):
                 }
             elif allow_fallback:
                 return self._get_invoice_pdf_proforma()
-        elif filetype == 'all':
-            return self._get_invoice_legal_documents_all(allow_fallback=allow_fallback)
 
     def _get_invoice_legal_documents_all(self, allow_fallback=False):
         """ Retrieve the invoice legal attachments: PDF, XML, ...
@@ -5894,7 +5952,9 @@ class AccountMove(models.Model):
     def _get_invoice_report_filename(self, extension='pdf'):
         """ Get the filename of the generated invoice report with extension file. """
         self.ensure_one()
-        return f"{self.name.replace('/', '_')}.{extension}"
+        report_id = self.partner_id.invoice_template_pdf_report_id or self.env.ref('account.account_invoices')
+        file_name = safe_eval(report_id.print_report_name, {'object': self})
+        return f"{file_name.replace('/', '_')}.{extension}"
 
     def _get_invoice_proforma_pdf_report_filename(self):
         """ Get the filename of the generated proforma PDF invoice report. """
@@ -6192,7 +6252,7 @@ class AccountMove(models.Model):
             force_email_company=force_email_company, force_email_lang=force_email_lang
         )
         record = render_context['record']
-        subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id else record.name]
+        subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
         if self.is_invoice(include_receipts=True):
             # Only show the amount in emails for non-miscellaneous moves. It might confuse recipients otherwise.
             if self.invoice_date_due and self.payment_state not in ('in_payment', 'paid'):

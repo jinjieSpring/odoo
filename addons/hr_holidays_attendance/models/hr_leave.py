@@ -52,7 +52,7 @@ class HRLeave(models.Model):
         # If the type of leave is overtime deductible, we have to check that the employee has enough extra hours
         for leave in leaves:
             if not leave.overtime_deductible:
-                leave.overtime_id.sudo().unlink()
+                leave.sudo().overtime_id.unlink()
                 continue
             employee = leave.employee_id.sudo()
             duration = leave.number_of_hours
@@ -71,7 +71,7 @@ class HRLeave(models.Model):
     def action_reset_confirm(self):
         overtime_leaves = self.filtered('overtime_deductible')
         res = super().action_reset_confirm()
-        overtime_leaves.overtime_id.sudo().unlink()
+        self._check_overtime_deductible(self)
         return res
     
     def action_confirm(self):

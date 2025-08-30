@@ -38,6 +38,34 @@ export function selectFloatingOrder(index) {
         },
     ];
 }
+
+export function checkFloatingOrderCount(expectedCount) {
+    return [
+        {
+            isActive: ["mobile"],
+            trigger: ".fa-caret-down",
+            run: "click",
+        },
+        {
+            content: `check there are ${expectedCount} floating order`,
+            trigger: ".list-container-items .btn",
+            run: () => {
+                const btns = document.querySelectorAll(".list-container-items .btn");
+                if (btns.length !== expectedCount) {
+                    throw new Error(
+                        `Expected ${expectedCount} floating order buttons, found ${btns.length}`
+                    );
+                }
+            },
+        },
+        {
+            isActive: ["mobile"],
+            trigger: ".modal-header .oi-arrow-left",
+            run: "click",
+        },
+    ];
+}
+
 /**
  * Generates a sequence of actions to click on a displayed product, with optional additional
  * checks based on specific needs such as the next quantity and the next price.
@@ -377,6 +405,14 @@ export function checkFiscalPosition(name) {
             run: () => {},
         },
         Dialog.cancel(),
+    ];
+}
+export function checkFiscalPositionButton() {
+    return [
+        {
+            content: "click fiscal position button",
+            trigger: ".o_fiscal_position_button",
+        },
     ];
 }
 export function closeWithCashAmount(val) {
