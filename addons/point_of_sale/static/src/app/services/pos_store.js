@@ -331,7 +331,7 @@ export class PosStore extends WithLazyGetterTrap {
 
     async closingSessionNotification(data) {
         if (
-            parseInt(data.device_identifier) === this.device.identifier ||
+            data.device_identifier === this.device.identifier ||
             this.session.id !== parseInt(data.session_id)
         ) {
             return;
@@ -1138,7 +1138,7 @@ export class PosStore extends WithLazyGetterTrap {
         return this.user;
     }
     getCashierUserId() {
-        return this.user.id;
+        return this.user?.id;
     }
     cashierHasPriceControlRights() {
         return !this.config.restrict_price_control || this.getCashier()._role == "manager";
