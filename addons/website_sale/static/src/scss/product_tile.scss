@@ -239,7 +239,7 @@
         order: var(--o-wsale-card-info-order, 4);
     }
     .o_wsale_products_item_title {
-        font-size: var(--o-wsale-card-info-title-font-size, inherit);
+        font-size: var(--o-wsale-card-info-title-font-size, 1.1em);
         font-weight: var(--o-wsale-card-info-title-font-weight, 500);
         margin-bottom:  var(--o-wsale-card-info-title-margin-bottom, #{map-get($spacers, 2)});
 
@@ -297,7 +297,7 @@
         justify-content: var(--o-wsale-card-price-justify-content);
         gap: 0 map-get($spacers, 2);
         min-width: var(--o-wsale-card-price-min-width);
-        font-size: var(--o-wsale-card-price-font-size);
+        font-size: var(--o-wsale-card-price-font-size, 0.94em);
         order: var(--o-wsale-card-price-order, 6);
         flex-wrap: wrap;
     }
@@ -744,9 +744,9 @@
     --o-wsale-card-offset-x: 3%;
     --o-wsale-card-overlay: "";
     --o-wsale-card-overlay-background: linear-gradient(-120deg,
-        rgba(var(--o-wsale-card-cc-bg-rgb), .35),
-        rgba(var(--o-wsale-card-cc-bg-rgb), .35),
-        rgba(var(--o-wsale-card-cc-bg-rgb), .46)
+        rgba(var(--o-wsale-card-cc-bg-rgb), .55),
+        rgba(var(--o-wsale-card-cc-bg-rgb), .55),
+        rgba(var(--o-wsale-card-cc-bg-rgb), .66)
     );
 
     // o_label equivalent
