@@ -3782,6 +3782,7 @@ class BaseModel(metaclass=MetaModel):
         This method is implemented thanks to methods :meth:`_search` and
         :meth:`_fetch_query`, and should not be overridden.
         """
+        self = self._origin  # noqa: PLW0642 filtered out new records
         if not self or not (field_names is None or field_names):
             return
 
@@ -4328,7 +4329,7 @@ class BaseModel(metaclass=MetaModel):
         return True
 
     def write(self, vals: ValuesType) -> typing.Literal[True]:
-        """ Uppdate all records in ``self`` with the provided values.
+        """ Update all records in ``self`` with the provided values.
 
         :param vals: fields to update and the value to set on them
         :raise AccessError: if user is not allowed to modify the specified records/fields
