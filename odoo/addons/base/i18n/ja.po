@@ -10,13 +10,14 @@
 # Noma Yuki, 2023
 # Ryoko Tsuda <ryoko@quartile.co>, 2023
 # "Dylan Kiss (dyki)" <dyki@odoo.com>, 2025.
+# "Junko Augias (juau)" <juau@odoo.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-12 13:52+0000\n"
-"PO-Revision-Date: 2025-09-14 21:18+0000\n"
-"Last-Translator: \"Dylan Kiss (dyki)\" <dyki@odoo.com>\n"
+"PO-Revision-Date: 2025-09-24 19:22+0000\n"
+"Last-Translator: \"Junko Augias (juau)\" <juau@odoo.com>\n"
 "Language-Team: Japanese <https://translate.odoo.com/projects/odoo-19/base/ja/"
 ">\n"
 "Language: ja\n"
@@ -3551,7 +3552,7 @@ msgid ""
 "Auto-complete partner companies' data\n"
 msgstr ""
 "\n"
-"取引先企業のデータをオートコンプリートする\n"
+"取引先企業のデータを自動入力する\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_dimona
@@ -19634,7 +19635,7 @@ msgstr "連絡先にタグを割り当てて、整理、フィルタリング、
 #. module: base
 #: model:ir.module.module,summary:base.module_google_address_autocomplete
 msgid "Assist with automatic completion & suggestions when filling address"
-msgstr "住所を入力する際の自動補完と入力候補の表示をサポートします"
+msgstr "住所を入力する際の自動入力と入力候補の表示をサポートします"
 
 #. module: base
 #: model:ir.module.module,description:base.module_website_sale_autocomplete
@@ -20043,7 +20044,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_partner_autocomplete
 msgid "Auto-complete partner companies' data"
-msgstr "パートナー企業のデータをオートコンプリートする"
+msgstr "取引先企業のデータを自動入力する"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_payroll_sale_commission
@@ -39642,7 +39643,7 @@ msgstr "価格精度"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_company__primary_color
 msgid "Primary Color"
-msgstr "原色"
+msgstr "メインカラー"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_ca_check_printing
@@ -42303,7 +42304,7 @@ msgstr "複数選択の検索パネルアイテムにドメインを含めるこ
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_company__secondary_color
 msgid "Secondary Color"
-msgstr "二次色"
+msgstr "サブカラー"
 
 #. module: base
 #: model:ir.ui.menu,name:base.menu_security
@@ -44806,7 +44807,7 @@ msgstr "テスト ディスカス用スイート 企業版"
 #. module: base
 #: model:ir.module.module,summary:base.module_test_sale_product_configurators
 msgid "Test Suite for Sale Product Configurator"
-msgstr "テスト 販売プロダクトコンフィギュレータ用 スイート"
+msgstr "販売プロダクトコンフィギュレータ用テストスイート"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_test_website_sale_full

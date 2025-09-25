@@ -16,7 +16,7 @@ import { debounce } from "@web/core/utils/timing";
 import { loadBundle, loadJS } from "@web/core/assets";
 import { memoize } from "@web/core/utils/functions";
 import { url } from "@web/core/utils/urls";
-import { isMobileOS } from "@web/core/browser/feature_detection";
+import { isBrowserSafari, isMobileOS } from "@web/core/browser/feature_detection";
 import { CallAction } from "./call_actions";
 
 let sequence = 1;
@@ -395,14 +395,6 @@ export class Rtc extends Record {
             isFullscreen: false,
         });
         this.blurManager = undefined;
-        browser.navigator.permissions?.query({ name: "microphone" }).then((status) => {
-            this.microphonePermission = status.state;
-            status.onchange = () => (this.microphonePermission = status.state);
-        });
-        browser.navigator.permissions?.query({ name: "camera" }).then((status) => {
-            this.cameraPermission = status.state;
-            status.onchange = () => (this.cameraPermission = status.state);
-        });
     }
 
     start() {
@@ -832,6 +824,14 @@ export class Rtc extends Record {
                 audio: audio ? this.store.settings.audioConstraints : false,
                 video: video ? this.store.settings.cameraConstraints : false,
             });
+            if (isBrowserSafari() || isMobileOS()) {
+                if (audio) {
+                    this.microphonePermission = "granted";
+                }
+                if (video) {
+                    this.cameraPermission = "granted";
+                }
+            }
             closeStream(stream);
         } catch {
             this.showMediaUnavailableWarning({ microphone: audio, camera: video });
@@ -2354,6 +2354,14 @@ export const rtcService = {
                     rtc.state.screenTrack.enabled = true;
                 }
             }
+        });
+        browser.navigator.permissions?.query({ name: "microphone" }).then((status) => {
+            rtc.microphonePermission = status.state;
+            status.onchange = () => (rtc.microphonePermission = status.state);
+        });
+        browser.navigator.permissions?.query({ name: "camera" }).then((status) => {
+            rtc.cameraPermission = status.state;
+            status.onchange = () => (rtc.cameraPermission = status.state);
         });
         rtc.p2pService = services["discuss.p2p"];
         rtc.p2pService.acceptOffer = async (id, sequence) => {
