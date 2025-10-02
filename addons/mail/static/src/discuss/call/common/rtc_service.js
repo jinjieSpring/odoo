@@ -574,6 +574,7 @@ export class Rtc extends Record {
 
     async openPip(options) {
         if (this.isHost) {
+            this.exitFullscreen();
             await this.pipService.openPip(options);
             return;
         }
@@ -1341,7 +1342,7 @@ export class Rtc extends Record {
                 const session = await this.store["discuss.channel.rtc.session"].getWhenReady(
                     Number(id)
                 );
-                if (!session || !this.channel) {
+                if (!session || session.eq(this.localSession) || !this.channel) {
                     return;
                 }
                 // `isRaisingHand` is turned into the Date `raisingHand`
