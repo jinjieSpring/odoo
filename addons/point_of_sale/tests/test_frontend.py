@@ -2396,6 +2396,9 @@ class TestUi(TestPointOfSaleHttpCommon):
         self.assertAlmostEqual(lines[3].balance, 352.59)
         self.assertAlmostEqual(lines[4].balance, 7771.01)
 
+    def test_ctrl_number_ignored(self):
+        self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'test_ctrl_number_ignored', login="pos_user")
+
     def test_click_all_orders_keep_customer(self):
         """Verify that clicking on 'All Orders' keeps the customer selected."""
         self.main_pos_config.with_user(self.pos_user).open_ui()
@@ -3030,6 +3033,17 @@ class TestUi(TestPointOfSaleHttpCommon):
         })
         self.main_pos_config.with_user(self.pos_user).open_ui()
         self.start_pos_tour('test_preset_customer_selection')
+
+    def test_pos_large_amount_confirmation_dialog(self):
+        """Test that the Large amount confirmation dialog appears
+        and closes properly after clicking 'OK'."""
+        self.env['product.product'].create({
+            'name': 'Overpay Test Product',
+            'list_price': 1.0,
+            'available_in_pos': True,
+        })
+        self.main_pos_config.with_user(self.pos_user).open_ui()
+        self.start_pos_tour('test_pos_large_amount_confirmation_dialog')
 
 
 # This class just runs the same tests as above but with mobile emulation

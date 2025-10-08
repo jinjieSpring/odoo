@@ -3,6 +3,7 @@
 from base64 import b64decode
 from cups import IPPError, IPP_JOB_COMPLETED, IPP_JOB_PROCESSING, IPP_JOB_PENDING, CUPS_FORMAT_AUTO
 from escpos import printer
+from escpos.escpos import EscposIO
 import escpos.exceptions
 import logging
 import netifaces as ni
@@ -145,18 +146,20 @@ class PrinterDriver(PrinterDriverBase):
         title, body = self._printer_status_content()
 
         commands = self.RECEIPT_PRINTER_COMMANDS[self.receipt_protocol]
-        dev = self.escpos_device
-        if dev:
-            dev.set(align='center', double_height=True, double_width=True)
-            dev.textln(title.decode())
-            dev.set_with_default(align='center', double_height=False, double_width=False)
-            for elem in body.decode().split('\n'):
-                dev.textln(elem)
-            dev.qr(f"http://{helpers.get_ip()}", size=6)
-            dev.cut()
-        else:
-            title = commands['title'] % title
-            self.print_raw(commands['center'] + title + b'\n' + body + commands['cut'])
+        if self.escpos_device:
+            try:
+                with EscposIO(self.escpos_device) as dev:
+                    dev.printer.set(align='center', double_height=True, double_width=True)
+                    dev.printer.textln(title.decode())
+                    dev.printer.set_with_default(align='center', double_height=False, double_width=False)
+                    dev.writelines(body.decode())
+                    dev.printer.qr(f"http://{helpers.get_ip()}", size=6)
+                return
+            except (escpos.exceptions.Error, OSError, AssertionError):
+                _logger.warning("Failed to print QR status receipt, falling back to simple receipt")
+
+        title = commands['title'] % title
+        self.print_raw(commands['center'] + title + b'\n' + body + commands['cut'])
 
     def print_status_zpl(self):
         iot_status = self._get_iot_status()
@@ -200,7 +203,7 @@ class PrinterDriver(PrinterDriverBase):
             )
 
         if iot_status['ssid']:
-            wlan = '\nWireless network:\n%s\n\n' % iot_status["ssid"]
+            wlan = '\nWireless network:\n%s\n' % iot_status["ssid"]
 
         ips = iot_status["ips"]
         if len(ips) == 0:
@@ -216,7 +219,7 @@ class PrinterDriver(PrinterDriverBase):
         if len(ips) >= 1:
             identifier = '\nIdentifier:\n%s\n' % iot_status["identifier"]
             mac_address = '\nMac Address:\n%s\n' % iot_status["mac_address"]
-            homepage = '\nIoT Box Homepage:\nhttp://%s:8069\n\n' % ips[0]
+            homepage = '\nIoT Box Homepage:\nhttp://%s:8069\n' % ips[0]
 
         title = b'IoT Box Connected' if helpers.get_odoo_server_url() else b'IoT Box Status'
         body = pairing_code + wlan + identifier + mac_address + ip + homepage
