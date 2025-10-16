@@ -562,6 +562,12 @@ class TestPointOfSaleHttpCommon(AccountTestInvoicingHttpCommon):
             'available_pricelist_ids': [(4, pricelist.id) for pricelist in all_pricelists],
         })
 
+        cls.printer = cls.env['pos.printer'].create({
+            'name': 'Printer',
+            'printer_type': 'epson_epos',
+            'epson_printer_ip': '0.0.0.0',
+        })
+
         # Set customers
         partners = cls.env['res.partner'].create([
             {'name': 'Partner Test 1'},
@@ -1418,6 +1424,36 @@ class TestUi(TestPointOfSaleHttpCommon):
         self.main_pos_config.with_user(self.pos_user).open_ui()
         self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'test_restricted_categories_combo_product', login="pos_user")
 
+    def test_printer_restricts_to_allowed_categories_for_combo(self):
+        setup_product_combo_items(self)
+        self.printer.write({
+            'product_categories_ids': [Command.set(self.env['pos.category'].search([('name', '=', 'Category 2')]).ids)],
+        })
+        self.main_pos_config.write({
+            'is_order_printer': True,
+            'printer_ids': [Command.set(self.printer.ids)],
+        })
+        self.main_pos_config.with_user(self.pos_user).open_ui()
+        self.start_pos_tour('test_printer_restricts_to_allowed_categories_for_combo', login="pos_user")
+
+    def test_printer_not_linked_to_any_combo_category(self):
+        setup_product_combo_items(self)
+        new_category = self.env['pos.category'].create({
+            'name': 'New Category',
+        })
+        self.wall_shelf.write({
+            'pos_categ_ids': [Command.set(new_category.ids)],
+        })
+        self.printer.write({
+            'product_categories_ids': [Command.set(new_category.ids)],
+        })
+        self.main_pos_config.write({
+            'is_order_printer': True,
+            'printer_ids': [Command.set(self.printer.ids)],
+        })
+        self.main_pos_config.with_user(self.pos_user).open_ui()
+        self.start_pos_tour('test_printer_not_linked_to_any_combo_category', login="pos_user")
+
     def test_multi_product_options(self):
         self.pos_user.write({
             'group_ids': [
@@ -1651,7 +1687,6 @@ class TestUi(TestPointOfSaleHttpCommon):
         })
         self.env['product.pricelist.item'].create({
             'pricelist_id': sale_10_pl.id,
-            'base': 'pricelist',
             'compute_price': 'percentage',
             'applied_on': '3_global',
             'percent_price': 10,
@@ -1901,6 +1936,40 @@ class TestUi(TestPointOfSaleHttpCommon):
 
     def test_product_search(self):
         """Verify that the product search works correctly"""
+        product_with_variant = self.env['product.template'].create({
+            'name': 'Product with Variant',
+            'available_in_pos': True,
+            'list_price': 10,
+            'taxes_id': False,
+            'barcode': '1234567',
+        })
+
+        color_attribute = self.env['product.attribute'].create({
+            'name': 'Color always',
+            'create_variant': 'always',
+            'value_ids': [(0, 0, {
+                'name': 'Red',
+                'sequence': 1,
+            }), (0, 0, {
+                'name': 'Blue',
+                'sequence': 2,
+            })],
+        })
+
+        self.env['product.template.attribute.line'].create({
+            'product_tmpl_id': product_with_variant.id,
+            'attribute_id': color_attribute.id,
+            'value_ids': [(6, 0, color_attribute.value_ids.ids)]
+        })
+        product_with_variant.product_variant_ids[0].write({
+            "barcode": "variant_barcode_1",
+            "default_code": "VARIANT_1"
+        })
+        product_with_variant.product_variant_ids[1].write({
+            "barcode": "variant_barcode_2",
+            "default_code": "VARIANT_2"
+        })
+
         self.env['product.product'].create([
             {
                 'name': 'Test Product 1',
@@ -1926,6 +1995,12 @@ class TestUi(TestPointOfSaleHttpCommon):
             },
             {
                 'name': 'galaxy',
+                'list_price': 100,
+                'taxes_id': False,
+                'available_in_pos': True,
+            },
+            {
+                'name': '1234567890123',
                 'list_price': 100,
                 'taxes_id': False,
                 'available_in_pos': True,
@@ -3044,6 +3119,15 @@ class TestUi(TestPointOfSaleHttpCommon):
         })
         self.main_pos_config.with_user(self.pos_user).open_ui()
         self.start_pos_tour('test_pos_large_amount_confirmation_dialog')
+
+    def test_add_money_button_with_different_decimal_separator(self):
+        """
+        Tests that the buttons such as +10 or +50 work even in languages such as
+        french that have ',' as a decimal separator.
+        """
+        self.env['res.lang']._activate_lang('fr_BE')
+        self.pos_user.write({'lang': 'fr_BE'})
+        self.start_tour(f"/pos/ui?config_id={self.main_pos_config.id}", 'test_add_money_button_with_different_decimal_separator', login="pos_user")
 
 
 # This class just runs the same tests as above but with mobile emulation

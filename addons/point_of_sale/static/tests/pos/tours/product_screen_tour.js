@@ -397,10 +397,52 @@ registry.category("web_tour.tours").add("test_restricted_categories_combo_produc
             ProductScreen.clickDisplayedProduct("Office Combo"),
             combo.select("Combo Product 5"),
             Dialog.confirm(),
-            checkPreparationTicketData([
-                { name: "Office Combo", qty: 1 },
-                { name: "Combo Product 5", qty: 1 },
-            ]),
+            Chrome.endTour(),
+        ].flat(),
+});
+
+registry.category("web_tour.tours").add("test_printer_restricts_to_allowed_categories_for_combo", {
+    steps: () =>
+        [
+            Chrome.startPoS(),
+            Dialog.confirm("Open Register"),
+            ProductScreen.clickDisplayedProduct("Office Combo"),
+            combo.select("Combo Product 3"),
+            combo.select("Combo Product 5"),
+            combo.select("Combo Product 8"),
+            Dialog.confirm(),
+            checkPreparationTicketData(
+                [
+                    { name: "Office Combo", qty: 1 },
+                    { name: "Combo Product 5", qty: 1 },
+                ],
+                {
+                    invisibleInDom: ["Combo Product 3", "Combo Product 8"],
+                }
+            ),
+            Chrome.endTour(),
+        ].flat(),
+});
+
+registry.category("web_tour.tours").add("test_printer_not_linked_to_any_combo_category", {
+    steps: () =>
+        [
+            Chrome.startPoS(),
+            Dialog.confirm("Open Register"),
+            ProductScreen.clickDisplayedProduct("Office Combo"),
+            combo.select("Combo Product 3"),
+            combo.select("Combo Product 5"),
+            combo.select("Combo Product 8"),
+            Dialog.confirm(),
+            ProductScreen.clickDisplayedProduct("Wall Shelf Unit"),
+            checkPreparationTicketData([{ name: "Wall Shelf Unit", qty: 1 }], {
+                invisibleInDom: [
+                    "Office Combo",
+                    "Combo Product 5",
+                    "Combo Product 3",
+                    "Combo Product 8",
+                ],
+            }),
             Chrome.endTour(),
         ].flat(),
 });
@@ -593,6 +635,26 @@ registry.category("web_tour.tours").add("ProductSearchTour", {
             ProductScreen.searchProduct("galaxy variant"),
             ProductScreen.productIsDisplayed("galaxy").map(negateStep),
             ProductScreen.productIsDisplayed("Test Product variant"),
+            ProductScreen.searchProduct("1234567890123"),
+            ProductScreen.productIsDisplayed("Test Product 1"),
+            ProductScreen.productIsDisplayed("Test Product 2").map(negateStep),
+            ProductScreen.productIsDisplayed("1234567890123"),
+            ProductScreen.searchProduct("Red"),
+            ProductScreen.productIsDisplayed("Product with Variant"),
+            ProductScreen.productIsDisplayed("Test Product 1").map(negateStep),
+            ProductScreen.productIsDisplayed("Test Product 2").map(negateStep),
+            ProductScreen.productIsDisplayed("Apple").map(negateStep),
+            ProductScreen.productIsDisplayed("1234567890123").map(negateStep),
+            ProductScreen.searchProduct("variant_barcode_1"),
+            ProductScreen.productIsDisplayed("Product with Variant"),
+            ProductScreen.searchProduct("variant_barcode_2"),
+            ProductScreen.productIsDisplayed("Product with Variant"),
+            ProductScreen.searchProduct("Product with Variant"),
+            ProductScreen.productIsDisplayed("Product with Variant"),
+            ProductScreen.searchProduct("VARIANT_1"),
+            ProductScreen.productIsDisplayed("Product with Variant"),
+            ProductScreen.searchProduct("VARIANT_2"),
+            ProductScreen.productIsDisplayed("Product with Variant"),
         ].flat(),
 });
 registry.category("web_tour.tours").add("SortOrderlinesByCategories", {
