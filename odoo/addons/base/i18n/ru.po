@@ -4,22 +4,23 @@
 #
 # Translators:
 # "Dylan Kiss (dyki)" <dyki@odoo.com>, 2025.
+# "Anastasiia Koroleva (koan)" <koan@odoo.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-09 12:16+0000\n"
-"PO-Revision-Date: 2025-09-16 02:37+0000\n"
-"Last-Translator: \"Dylan Kiss (dyki)\" <dyki@odoo.com>\n"
-"Language-Team: Russian <https://translate.odoo.com/projects/odoo-19/base/ru/"
-">\n"
+"PO-Revision-Date: 2025-10-24 08:47+0000\n"
+"Last-Translator: \"Anastasiia Koroleva (koan)\" <koan@odoo.com>\n"
+"Language-Team: Russian <https://translate.odoo.com/projects/odoo-19/base/ru/>"
+"\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || ("
+"n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Generator: Weblate 5.12.2\n"
 
 #. module: base
@@ -10571,9 +10572,9 @@ msgstr ""
 "Руководство по доставке необходимо в качестве доказательства\n"
 "того, что вы отправляете товары между пунктами А и Б.\n"
 "\n"
-"Для партнера можно настроить, нужны ли цены в\n"
-"руководстве по доставке и должны ли они быть взяты из заказа на продажу\n"
-"или из карточки товара.\n"
+"Для каждого партнера можно настроить, включать ли цены в\n"
+"руководство по доставке и какой источник использовать – заказ на продажу\n"
+"или карточку товара.\n"
 "\n"
 "Только после подтверждения заказа на доставку можно создать руководство по "
 "доставке.\n"
@@ -23234,7 +23235,7 @@ msgstr ""
 #. module: base
 #: model:res.partner.category,name:base.res_partner_category_8
 msgid "Consulting Services"
-msgstr "Консультационные услуги"
+msgstr "Консалтинговые услуги"
 
 #. module: base
 #: model:ir.model,name:base.model_res_partner
@@ -47618,6 +47619,20 @@ msgid ""
 "- 'Multi Actions': define an action that triggers several other server "
 "actions\n"
 msgstr ""
+"Тип действия сервера. Доступны следующие значения:\n"
+"- 'Обновить запись': обновить значения полей выбранной записи\n"
+"- 'Создать дело': запланировать дело (модуль Обсуждения)\n"
+"- 'Отправить e-mail': опубликовать сообщение или отправить e-mail (модуль "
+"Обсуждения)\n"
+"- 'Отправить СМС': отправить СМС и внести заметку в документ\n"
+"- 'Добавить/удалить наблюдателей': добавить или удалить пользователей, "
+"которые следят за данной записью (модуль Обсуждения)\n"
+"- 'Создать запись': создать новую запись с новыми значениями\n"
+"- 'Выполнить код': выполнить блок Python-кода\n"
+"- 'Отправить вебхук-уведомление': отправить POST-запрос во внешнюю систему "
+"(вебхук)\n"
+"- 'Групповое действие': определите действие, которое запускает сразу "
+"несколько действий сервера\n"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_constraint__type
@@ -49574,11 +49589,11 @@ msgid ""
 "number upon assignment, there can still be gaps in the sequence if records "
 "are deleted. The 'no gap' implementation is slower than the standard one."
 msgstr ""
-"При присвоении порядкового номера записи реализация последовательности \"без "
-"пробелов\" гарантирует, что все предыдущие номера уже были назначены. Хотя "
+"При присвоении порядкового номера записи реализация последовательности «без "
+"пробелов» гарантирует, что все предыдущие номера уже были назначены. Хотя "
 "эта реализация не пропускает номера при назначении, пробелы в "
-"последовательности все же могут возникать при удалении записей. Реализация "
-"\"без пробелов\" работает медленнее стандартной."
+"последовательности все же могут возникать при удалении записей. Реализация «"
+"без пробелов» работает медленнее стандартной."
 
 #. module: base
 #: model:res.partner.industry,name:base.res_partner_industry_G
@@ -50410,7 +50425,7 @@ msgstr "например, \"B2B\", \"VIP\", \"Консалтинг\", ..."
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_category_form
 msgid "e.g. \"Consulting Services\""
-msgstr "например, \"Консалтинговые услуги\""
+msgstr "например, «Консалтинговые услуги»"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_category_list
