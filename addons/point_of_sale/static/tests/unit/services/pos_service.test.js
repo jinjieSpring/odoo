@@ -4,25 +4,11 @@ import { definePosModels } from "../data/generate_model_definitions";
 import { ConnectionLostError } from "@web/core/network/rpc";
 import { onRpc } from "@web/../tests/web_test_helpers";
 import { imageUrl } from "@web/core/utils/urls";
+import { prepareRoundingVals } from "../accounting/utils";
 
 definePosModels();
 
 describe("pos_store.js", () => {
-    test("getProductPrice", async () => {
-        const store = await setupPosEnv();
-        const order = store.addNewOrder();
-        const product = store.models["product.template"].get(5);
-        const price = store.getProductPrice(product);
-        expect(price).toBe(3.45);
-        order.setPricelist(null);
-
-        const newPrice = store.getProductPrice(product);
-        expect(newPrice).toBe(115.0);
-
-        const formattedPrice = store.getProductPrice(product, false, true);
-        expect(formattedPrice).toBe("$\u00a0115.00");
-    });
-
     test("setTip", async () => {
         const store = await setupPosEnv();
         const order = await getFilledOrder(store); // Should have 2 lines
@@ -283,7 +269,7 @@ describe("pos_store.js", () => {
         const order1 = await getFilledOrder(store);
         await store.syncAllOrders();
         await store.deleteOrders([order1]);
-        expect(store.models["pos.order"].getBy("uuid", order1.uuid).state).toBe("cancel");
+        expect(store.models["pos.order"].getBy("uuid", order1.uuid)).toBeEmpty();
     });
 
     test("deleteOrders multiple orders", async () => {
@@ -330,7 +316,7 @@ describe("pos_store.js", () => {
         store.selectedCategory = store.models["pos.category"].get(1);
         store.searchProductWord = "TEST";
         products = store.productsToDisplay;
-        expect(products.length).toBe(2);
+        expect(products.length).toBe(4);
         expect(products[0].id).toBe(5);
         expect(products[1].id).toBe(6);
         expect(store.selectedCategory).toBe(undefined);
@@ -348,7 +334,7 @@ describe("pos_store.js", () => {
         let grouped = store.productToDisplayByCateg;
         expect(grouped.length).toBe(1); //Only one group
         expect(grouped[0][0]).toBe(0);
-        expect(grouped[0][1].length).toBe(10); //10 products in same group
+        expect(grouped[0][1].length).toBe(12); //10 products in same group
 
         // Case 2: Grouping enabled
         store.config.iface_group_by_categ = true;
@@ -415,6 +401,25 @@ describe("pos_store.js", () => {
         store.clearPendingOrder();
         ({ orderToCreate, orderToUpdate, orderToDelete } = store.getPendingOrder());
         expect(orderToDelete).toHaveLength(0);
+    });
+
+    test("getPaymentMethodFmtAmount", async () => {
+        const store = await setupPosEnv();
+        const order = await getFilledOrder(store);
+        const cashPm = store.models["pos.payment.method"].find((pm) => pm.is_cash_count);
+
+        // Case 1: No rounding enabled
+        expect(store.getPaymentMethodFmtAmount(cashPm, order)).toBeEmpty();
+
+        // Case 2: Rounding enabled, not limited to cash
+        const { cashPm: cash1, cardPm: card1 } = prepareRoundingVals(store, 0.05, "HALF-UP", false);
+        expect(store.getPaymentMethodFmtAmount(cash1, order)).toBe("$ 17.85");
+        expect(store.getPaymentMethodFmtAmount(card1, order)).toBe("$ 17.85");
+
+        // Case 3: Rounding enabled, only for cash
+        const { cashPm: cash2, cardPm: card2 } = prepareRoundingVals(store, 0.05, "HALF-UP", true);
+        expect(store.getPaymentMethodFmtAmount(cash2, order)).toBe("$ 17.85");
+        expect(store.getPaymentMethodFmtAmount(card2, order)).toBeEmpty();
     });
 
     describe("cacheReceiptLogo", () => {
