@@ -626,6 +626,7 @@ class AccountMove(models.Model):
         ],
         string='Sent',
         compute='compute_move_sent_values',
+        search='_search_move_sent_values',
     )
     invoice_user_id = fields.Many2one(
         string='Salesperson',
@@ -798,6 +799,14 @@ class AccountMove(models.Model):
     def compute_move_sent_values(self):
         for move in self:
             move.move_sent_values = 'sent' if move.is_move_sent else 'not_sent'
+
+    def _search_move_sent_values(self, operator, value):
+        if operator in ('=', '!='):
+            if value == 'sent':
+                return [('is_move_sent', operator, True)]
+            if value == 'not_sent':
+                return [('is_move_sent', operator, False)]
+        raise NotImplementedError
 
     def _compute_payment_reference(self):
         for move in self.filtered(lambda m: (
@@ -1762,7 +1771,7 @@ class AccountMove(models.Model):
         for move in self.filtered(lambda move: move.is_invoice()):
             move.access_url = '/my/invoices/%s' % (move.id)
 
-    @api.depends('move_type', 'partner_id', 'company_id')
+    @api.depends('move_type', 'partner_id', 'partner_id.lang', 'company_id')
     def _compute_narration(self):
         use_invoice_terms = self.env['ir.config_parameter'].sudo().get_param('account.use_invoice_terms')
         invoice_to_update_terms = self.filtered(lambda m: use_invoice_terms and m.is_sale_document(include_receipts=True))
@@ -3986,7 +3995,7 @@ class AccountMove(models.Model):
         chains_to_hash = self._get_chains_to_hash(**kwargs)
         grant_secure_group_access = False
         for chain in chains_to_hash:
-            move_hashes = chain['moves']._calculate_hashes(chain['previous_hash'])
+            move_hashes = chain['moves'].sudo()._calculate_hashes(chain['previous_hash'])
             for move, move_hash in move_hashes.items():
                 move.inalterable_hash = move_hash
             # If any secured entries belong to journals without 'hash on post', the user should be granted access rights
@@ -5649,7 +5658,11 @@ class AccountMove(models.Model):
             ('state', '=', 'posted'),
         ]
         limit = job_count + 1
-        to_process = self.env['account.move'].search(domain, limit=limit)
+        to_process = self.env['account.move'].search(
+            domain,
+            order='date asc, invoice_date asc, sequence_number asc, id asc',
+            limit=limit,
+        )
         total_to_process = self.env['account.move'].search_count(domain)
 
         need_retrigger = len(to_process) > job_count

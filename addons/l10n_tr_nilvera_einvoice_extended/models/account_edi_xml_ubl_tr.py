@@ -229,7 +229,7 @@ class AccountEdiXmlUblTr(models.AbstractModel):
                     "taxable_amount": get_withholding_taxable_amount() if withholding else vals.get("base_amount_currency"),
                     "tax_amount": abs(vals.get("tax_amount_currency")),
                     "tax_category_vals": tax_category_vals,
-                    "percent": subtotal_percent if withholding else tax_category_vals.get("percent"),
+                    "percent": subtotal_percent if withholding else vals.get("_tax_category_vals_", {}).get("percent"),
                 },
             )
 
@@ -284,6 +284,15 @@ class AccountEdiXmlUblTr(models.AbstractModel):
             vals["line_delivery_vals"] = self._get_invoice_line_delivery_vals(line)
         if line.move_id.l10n_tr_gib_invoice_type == "TEVKIFAT":
             vals['withholding_tax_total_vals_list'] = self._get_tr_tax_totals(line.move_id, taxes_vals, withholding=True)
+        return vals
+
+    def _get_invoice_monetary_total_vals(self, invoice, taxes_vals, line_extension_amount, allowance_total_amount, charge_total_amount):
+        # EXTENDS account.edi.xml.ubl_20
+        vals = super()._get_invoice_monetary_total_vals(invoice, taxes_vals, line_extension_amount, allowance_total_amount, charge_total_amount)
+        # UBL TR: If the Invoice Type is IHRACKAYITLI (Registered for Export), then the cbc:PayableAmount node
+        # should have tax exclusive amount instead of tax inclusive amount.
+        if invoice.l10n_tr_gib_invoice_type == 'IHRACKAYITLI':
+            vals["payable_amount"] = vals["tax_exclusive_amount"]
         return vals
 
     @api.model

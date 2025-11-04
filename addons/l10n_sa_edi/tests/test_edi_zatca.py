@@ -7,7 +7,7 @@ from lxml import etree
 from pytz import timezone
 from odoo import Command
 
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from odoo.tests import tagged
 from odoo.tools import misc
 from odoo.addons.l10n_sa_edi.tests.common import TestSaEdiCommon
@@ -204,6 +204,38 @@ class TestEdiZatca(TestSaEdiCommon):
             freeze_time_at=datetime(2022, 9, 5, 8, 20, 2, tzinfo=timezone('Etc/GMT-3'))
         )
 
+    def testInvoiceWithZeroTax(self):
+        """Test invoice generation with 0% tax on a line."""
+        tax_0 = self.env['account.tax'].create({
+            'name': 'Tax 0',
+            'amount_type': 'percent',
+            'amount': 0,
+        })
+        invoice = self._create_invoice(
+            name='INV/2022/00014',
+            invoice_date='2022-09-05',
+            invoice_date_due='2022-09-22',
+            partner_id=self.partner_sa,
+            invoice_line_ids=[{
+                'product_id': self.product_a.id,
+                'price_unit': 500,
+                'tax_ids': self.tax_15.ids,
+            }, {
+                'product_id': self.product_b.id,
+                'price_unit': -100,
+                'tax_ids': tax_0.ids,
+            }],
+        )
+
+        invoice.action_post()
+        xml_content = self.env['account.edi.format']._l10n_sa_generate_zatca_template(invoice)
+        xml_root = etree.fromstring(xml_content)
+        taxable_amount = xml_root.xpath(
+            "(//cac:TaxSubtotal)[2]/cbc:TaxableAmount",
+            namespaces=self.env['account.edi.xml.ubl_21.zatca']._l10n_sa_get_namespaces()
+        )[0].text.strip()
+        self.assertEqual(taxable_amount, '-100.00')
+
     def testInvoiceWithDownpayment(self):
         """Test invoice generation with downpayment scenarios."""
         if 'sale' not in self.env["ir.module.module"]._installed():
@@ -353,3 +385,35 @@ class TestEdiZatca(TestSaEdiCommon):
         qr_company_name = decoded_qr[2:2 + length].decode()
 
         self.assertEqual(xml_company_name, qr_company_name, "Seller name on the xml does not match the seller name on the QR code")
+
+    def test_company_missing_country_on_standard_invoice(self):
+        """Test standard invoice generation when the company does not have a country set."""
+        # setup new company to prevent errors in other tests
+        vals = self._get_company_vals({"name": "SA Company (Minus Country)"})
+        new_company = self._create_company(**vals)
+
+        new_company_customer_invoice_journal = self.env['account.journal'].search([
+            ('company_id', '=', new_company.id),
+            ('type', '=', 'sale'),
+        ], limit=1)
+        new_company_customer_invoice_journal._l10n_sa_load_edi_demo_data()
+
+        new_company.country_id = False
+
+        # missing tax should always cause a user error, even if the country is blank
+        move_data = {
+            'name': 'INV/2022/00014',
+            'invoice_date': '2022-09-05',
+            'invoice_date_due': '2022-09-22',
+            'company_id': new_company,
+            'partner_id': self.partner_sa,
+            'invoice_line_ids': [{
+                'product_id': self.product_a.id,
+                'price_unit': self.product_a.standard_price,
+                'tax_ids': False,
+            }],
+        }
+
+        invoice = self._create_invoice(**move_data)
+        with self.assertRaises(UserError):
+            invoice.action_post()

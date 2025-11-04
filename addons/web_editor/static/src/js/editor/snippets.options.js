@@ -66,7 +66,7 @@ const clearServiceCache = () => {
 // regex patterns in Python are slightly different from those in JavaScript.
 // See : controllers/main.py
 const CSS_ANIMATION_RULE_REGEX =
-    /(?<declaration>animation(?:-duration)?: .*?)(?<value>(?:\d+(?:\.\d+)?)|(?:\.\d+))(?<unit>ms|s)(?<separator>\s|;|"|$)/gm;
+    /(?<declaration>animation(?:-duration)?:\s*.*?)(?<value>(?:\d+(?:\.\d+)?)|(?:\.\d+))(?<unit>ms|s)(?<separator>\s|;|"|$)/gm;
 const SVG_DUR_TIMECOUNT_VAL_REGEX =
     /(?<attribute_name>\sdur="\s*)(?<value>(?:\d+(?:\.\d+)?)|(?:\.\d+))(?<unit>h|min|ms|s)?\s*"/gm;
 const CSS_ANIMATION_RATIO_REGEX = /(--animation_ratio: (?<ratio>\d*(\.\d+)?));/m;
@@ -564,7 +564,11 @@ const UserValueWidget = publicWidget.Widget.extend({
                 this._triggerWidgetsValues.push(...dataValue.split(/\s*,\s*/g));
             } else if (validMethodNames.includes(key)) {
                 this._methodsNames.push(key);
-                this._methodsParams.optionsPossibleValues[key] = dataValue.split(/\s*\|\s*/g);
+                if (this._methodsParams.noSplit) {
+                    this._methodsParams.optionsPossibleValues[key] = [dataValue];
+                } else {
+                    this._methodsParams.optionsPossibleValues[key] = dataValue.split(/\s*\|\s*/g);
+                }
             } else {
                 this._methodsParams[key] = dataValue;
             }
@@ -6855,7 +6859,7 @@ registry.ImageTools = ImageHandlerOption.extend({
         // If the shape needs the image to be square (1:1 ratio) and if not
         // already the case, crop the image before applying the shape.
         const isCropRequired = params.unstretch;
-        if ((isCropRequired && img.dataset.aspectRatio !== "1/1" && previewMode !== "reset")
+        if ((isCropRequired && img.dataset.isManualCrop !== "true" && img.dataset.aspectRatio !== "1/1" && previewMode !== "reset")
                 || this.hasCroppedPreview) {
             // Preserve the cursor to be able to replace the image afterwards.
             const restoreCursor = preserveCursor(this.$target[0].ownerDocument);

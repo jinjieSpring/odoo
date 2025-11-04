@@ -963,7 +963,8 @@ class AccountTax(models.Model):
         :return:                    The tax amount or None if it has be evaluated later.
         """
         if self.amount_type == 'fixed':
-            return evaluation_context['quantity'] * self.amount
+            sign = -1 if evaluation_context['price_unit'] < 0.0 else 1
+            return sign * evaluation_context['quantity'] * self.amount
 
     def _eval_tax_amount_price_included(self, batch, raw_base, evaluation_context):
         """ Eval the tax amount for a single tax during the descending order for price-included taxes.
@@ -2471,8 +2472,8 @@ class AccountTax(models.Model):
 
             # Compute the display base amounts.
             if set(involved_taxes.mapped('amount_type')) == {'fixed'}:
-                display_base_amount = None
-                display_base_amount_currency = None
+                display_base_amount = False
+                display_base_amount_currency = False
             elif set(involved_taxes.mapped('amount_type')) == {'division'} and all(involved_taxes.mapped('price_include')):
                 display_base_amount = 0.0
                 display_base_amount_currency = 0.0
@@ -2493,7 +2494,7 @@ class AccountTax(models.Model):
                 display_base_amount = values['base_amount']
                 display_base_amount_currency = values['base_amount_currency']
 
-            if display_base_amount_currency is not None:
+            if display_base_amount_currency is not False:
                 encountered_base_amounts.add(float_repr(display_base_amount_currency, currency.decimal_places))
 
             # Order of the subtotals.
