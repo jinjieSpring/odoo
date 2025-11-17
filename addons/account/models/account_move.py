@@ -1167,6 +1167,15 @@ class AccountMove(models.Model):
         'line_ids.full_reconcile_id',
         'state')
     def _compute_amount(self):
+        self.line_ids.fetch([
+            'debit',
+            'balance',
+            'amount_currency',
+            'amount_residual',
+            'amount_residual_currency',
+            'display_type',
+            'tax_repartition_line_id'
+        ])
         for move in self:
             total_untaxed, total_untaxed_currency = 0.0, 0.0
             total_tax, total_tax_currency = 0.0, 0.0
@@ -5377,7 +5386,7 @@ class AccountMove(models.Model):
                 to_unlink += move
         to_unlink.filtered(lambda m: m.state in ('posted', 'cancel')).button_draft()
         to_unlink.filtered(lambda m: m.state == 'draft').unlink()
-        to_cancel.button_cancel()
+        to_cancel.filtered(lambda m: m.state != 'cancel').button_cancel()
         return to_reverse._reverse_moves(cancel=True)
 
     def _post(self, soft=True):

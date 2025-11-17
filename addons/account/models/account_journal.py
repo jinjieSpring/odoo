@@ -23,7 +23,7 @@ class AccountJournalGroup(models.Model):
         help="Define which company can select the multi-ledger in report filters. If none is provided, available for all companies",
         default=lambda self: self.env.company,
     )
-    excluded_journal_ids = fields.Many2many('account.journal', string="Excluded Journals")
+    excluded_journal_ids = fields.Many2many('account.journal', string="Excluded Journals", context={'active_test': False})
     sequence = fields.Integer(default=10)
 
     _uniq_name = models.Constraint(
@@ -845,7 +845,7 @@ class AccountJournal(models.Model):
 
         domain = [('alias_name', '=', alias_name)]
         if alias_domain_name:
-            domain.append(('alias_domain', '=', alias_domain_name))
+            domain.extend(['|', ('alias_domain', '=', alias_domain_name), ('alias_domain_id', '=', False)])
 
         existing_alias = self.env['mail.alias'].search_count(domain, limit=1)
 

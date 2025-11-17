@@ -14,10 +14,42 @@ patch(Thread.prototype, {
         });
         this.country_id = fields.One("res.country");
         this.livechat_channel_id = fields.One("im_livechat.channel", { inverse: "threads" });
+        this.livechat_expertise_ids = fields.Many("im_livechat.expertise");
+        /** @type {"in_progress"|"waiting"|"need_help"|undefined} */
+        this.livechat_status = fields.Attr(undefined, {
+            onUpdate() {
+                if (this.livechat_status === "need_help") {
+                    this.isLocallyPinned = true;
+                    this.wasLookingForHelp = true;
+                    this.unpinOnThreadSwitch = false;
+                    return;
+                }
+                if (this.wasLookingForHelp) {
+                    this.isLocallyPinned = this.eq(this.store.discuss?.thread);
+                    // Still the active thread; keep it pinned after leaving "need help" status.
+                    // The agent may interact with the thread, keeping it pinned, or it will be
+                    // unpinned on the next thread switch to avoid bloating the sidebar.
+                    this.unpinOnThreadSwitch = this.isLocallyPinned;
+                    this.wasLookingForHelp = false;
+                }
+            },
+        });
+        this.shadowedBySelf = false;
+        this.wasLookingForHelp = false;
+    },
+    get canLeave() {
+        return (
+            super.canLeave &&
+            (this.store.discuss.livechatLookingForHelpCategory.notEq(this.discussAppCategory) ||
+                this.self_member_id)
+        );
     },
     _computeDiscussAppCategory() {
         if (this.channel_type !== "livechat") {
             return super._computeDiscussAppCategory();
+        }
+        if (this.livechat_status === "need_help" && this.store.has_access_livechat) {
+            return this.store.discuss.livechatLookingForHelpCategory;
         }
         return (
             this.livechat_channel_id?.appCategory ?? this.appAsLivechats?.defaultLivechatCategory
@@ -68,9 +100,27 @@ patch(Thread.prototype, {
     },
 
     get inChathubOnNewMessage() {
-        return this.channel_type === "livechat" || super.inChathubOnNewMessage;
+        if (this.channel_type === "livechat") {
+            return Boolean(this.self_member_id);
+        }
+        return super.inChathubOnNewMessage;
     },
-
+    get notifyWhenOutOfFocus() {
+        if (this.channel_type === "livechat") {
+            return (
+                this.self_member_id || this.shadowedBySelf || this.eq(this.store.discuss?.thread)
+            );
+        }
+        return super.notifyWhenOutOfFocus;
+    },
+    get matchesSelfExpertise() {
+        return (
+            this.store.self_partner?.main_user_id &&
+            this.livechat_expertise_ids.some((expertise) =>
+                expertise.in(this.store.self_partner.main_user_id.livechat_expertise_ids)
+            )
+        );
+    },
     /**
      * @override
      * @param {boolean} pushState
@@ -85,6 +135,7 @@ patch(Thread.prototype, {
         if (
             this.channel_type === "livechat" &&
             this.channel_member_ids.length <= 2 &&
+            this.self_member_id &&
             !this.livechat_end_dt &&
             !force
         ) {

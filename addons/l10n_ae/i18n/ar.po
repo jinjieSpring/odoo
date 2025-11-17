@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.5a1+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-18 11:06+0000\n"
+"POT-Creation-Date: 2025-11-13 15:29+0000\n"
 "PO-Revision-Date: 2025-07-04 12:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
@@ -14,7 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: l10n_ae
 #: model:account.report.line,name:l10n_ae.tax_report_line_standard_rated_supplies
@@ -48,8 +49,14 @@ msgstr "14. الضريبة واجبة السداد عن الفترة"
 
 #. module: l10n_ae
 #: model:account.report.line,name:l10n_ae.tax_report_line_tax_refund_tourist
-msgid "2. Tax Refunds provided to Tourists under the Tax Refunds for Tourists Scheme"
+msgid ""
+"2. Tax Refunds provided to Tourists under the Tax Refunds for Tourists Scheme"
 msgstr "2. الاستردادات الضريبية المقدمة للسياح بموجب نظام رد الضريبة للسياح"
+
+#. module: l10n_ae
+#: model_terms:ir.ui.view,arch_db:l10n_ae.l10n_ae_report_invoice_document
+msgid "27.00"
+msgstr ""
 
 #. module: l10n_ae
 #: model:account.report.line,name:l10n_ae.tax_report_line_supplies_reverse_charge
@@ -60,6 +67,11 @@ msgstr "3. التوريدات الخاضعة لأحكام الاحتساب ال�
 #: model:account.report.line,name:l10n_ae.tax_report_line_zero_rated_supplies
 msgid "4. Zero-rated supplies"
 msgstr "4. التوريدات الخاضعة لنسبة الصفر"
+
+#. module: l10n_ae
+#: model_terms:ir.ui.view,arch_db:l10n_ae.l10n_ae_report_invoice_document
+msgid "4.05"
+msgstr ""
 
 #. module: l10n_ae
 #: model:account.report.line,name:l10n_ae.tax_report_line_exempt_supplies
@@ -145,6 +157,11 @@ msgid "Simplified Tax Invoice"
 msgstr "فاتورة ضريبية مبسطة"
 
 #. module: l10n_ae
+#: model_terms:ir.ui.view,arch_db:l10n_ae.l10n_ae_report_invoice_document
+msgid "Tax Credit Note"
+msgstr "إشعار دائن ضريبي"
+
+#. module: l10n_ae
 #. odoo-python
 #: code:addons/l10n_ae/models/account_move.py:0
 msgid "Tax Invoice"
@@ -205,3 +222,8 @@ msgstr "و. رأس الخيمة"
 #: model:account.report.line,name:l10n_ae.tax_report_line_standard_rated_supplies_fujairah
 msgid "g. Fujairah"
 msgstr "ز. الفجيرة"
+
+#. module: l10n_ae
+#: model_terms:ir.ui.view,arch_db:l10n_ae.l10n_ae_report_invoice_document
+msgid "إشعار دائن ضريبي"
+msgstr ""

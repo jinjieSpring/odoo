@@ -1,12 +1,13 @@
 from collections import defaultdict
 from datetime import datetime, time
+
 from dateutil.relativedelta import relativedelta
 from pytz import UTC
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, get_lang
 from odoo.tools.float_utils import float_compare, float_round
-from odoo.exceptions import UserError
 
 
 class PurchaseOrderLine(models.Model):
@@ -100,7 +101,7 @@ class PurchaseOrderLine(models.Model):
     )
     product_template_attribute_value_ids = fields.Many2many(related='product_id.product_template_attribute_value_ids', readonly=True)
     product_no_variant_attribute_value_ids = fields.Many2many('product.template.attribute.value', string='Product attribute values that do not create variants', ondelete='restrict')
-    purchase_line_warn_msg = fields.Text(related='product_id.purchase_line_warn_msg')
+    purchase_line_warn_msg = fields.Text(compute='_compute_purchase_line_warn_msg')
     parent_id = fields.Many2one(
         'purchase.order.line',
         string="Parent Section Line",
@@ -154,8 +155,7 @@ class PurchaseOrderLine(models.Model):
     def _compute_qty_invoiced(self):
         invoiced_quantities = self._prepare_qty_invoiced()
         for line in self:
-            if not line.qty_invoiced or line in invoiced_quantities:
-                line.qty_invoiced = invoiced_quantities[line]
+            line.qty_invoiced = invoiced_quantities[line]
 
             # compute qty_to_invoice
             if line.order_id.state == 'purchase':
@@ -198,6 +198,12 @@ class PurchaseOrderLine(models.Model):
             )
         else:
             return self.invoice_lines
+
+    @api.depends('product_id.purchase_line_warn_msg')
+    def _compute_purchase_line_warn_msg(self):
+        has_warning_group = self.env.user.has_group('purchase.group_warning_purchase')
+        for line in self:
+            line.purchase_line_warn_msg = line.product_id.purchase_line_warn_msg if has_warning_group else ""
 
     @api.depends('product_id', 'product_id.type')
     def _compute_qty_received_method(self):
@@ -607,7 +613,8 @@ class PurchaseOrderLine(models.Model):
         if seller and (seller.product_uom_id or seller.product_tmpl_id.uom_id) != product_uom:
             uom_po_qty = product_id.uom_id._compute_quantity(uom_po_qty, seller.product_uom_id, rounding_method='HALF-UP')
 
-        product_taxes = product_id.supplier_taxes_id.filtered(lambda x: x.company_id in company_id.parent_ids)
+        tax_domain = self.env['account.tax']._check_company_domain(company_id)
+        product_taxes = product_id.supplier_taxes_id.filtered_domain(tax_domain)
         taxes = po.fiscal_position_id.map_tax(product_taxes)
 
         if seller:

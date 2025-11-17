@@ -56,7 +56,7 @@ class HrEmployee(models.Model):
         'hr.version',
         compute='_compute_current_version_id',
         store=True,
-        groups="hr.group_hr_user",
+        bypass_search_access=True,
     )
     current_date_version = fields.Date(
         related="current_version_id.date_version",
@@ -1057,10 +1057,9 @@ class HrEmployee(models.Model):
         # cache, and interpreted as an access error
         if field_names is None:
             field_names = [field.name for field in self._determine_fields_to_fetch()]
+        field_names = [f_name for f_name in field_names if f_name != 'current_version_id']
         self._check_private_fields(field_names)
         self.flush_model(field_names)
-        # HACK: suppress warning if domain is optimized for another model
-        domain = list(domain) if isinstance(domain, Domain) else domain
         public = self.env['hr.employee.public'].search_fetch(domain, field_names, offset, limit, order)
         employees = self.browse(public._ids)
         employees._copy_cache_from(public, field_names)
@@ -1075,10 +1074,18 @@ class HrEmployee(models.Model):
         # cache, and interpreted as an access error
         if field_names is None:
             field_names = [field.name for field in self._determine_fields_to_fetch()]
+        field_names = [f_name for f_name in field_names if f_name != 'current_version_id']
         self._check_private_fields(field_names)
         self.flush_recordset(field_names)
         public = self.env['hr.employee.public'].browse(self._ids)
         public.fetch(field_names)
+        # make sure all related fields from employee are in cache
+        for field_name in field_names:
+            public_field = self.env['hr.employee.public']._fields[field_name]
+            private_field = self.env['hr.employee']._fields[field_name]
+            if (public_field.related and public_field.related_field.model_name == 'hr.employee'
+                    or private_field.inherited and private_field.inherited_field.model_name == 'hr.version'):
+                public.mapped(field_name)
         self._copy_cache_from(public, field_names)
 
     def _check_access(self, operation):
@@ -1175,12 +1182,16 @@ We can redirect you to the public employee list."""
         """
         if self.browse().has_access('read') or bypass_access:
             return super()._search(domain, offset, limit, order, bypass_access=bypass_access, **kwargs)
+        domain = Domain(domain)
+        # HACK Some fields are inherited from the `current_version_id` and may have been already
+        # optimized, showing current_version_id in the domain, but public employee does not have
+        # that field and may have fields directly on the model, just change the condition to `id` in
+        # that case.
+        domain = domain.map_conditions(lambda cond: Domain('id', cond.operator, cond.value) if cond.field_expr == 'current_version_id' else cond)
         try:
-            # HACK: suppress warning if domain is optimized for another model
-            domain = list(domain) if isinstance(domain, Domain) else domain
             ids = self.env['hr.employee.public']._search(domain, offset, limit, order, **kwargs)
-        except ValueError:
-            raise AccessError(_('You do not have access to this document.'))
+        except ValueError as e:
+            raise AccessError(self.env._('You do not have access to this document.')) from e
         # the result is expected from this table, so we should link tables
         return super(HrEmployee, self.sudo())._search([('id', 'in', ids)], order=order)
 
