@@ -2535,11 +2535,6 @@
                 "language_regex": "^(ar|fr)$"
             },
             {
-                "name": "l10n_lk",
-                "filemask": "addons/l10n_lk/i18n/*.po",
-                "new_base": "addons/l10n_lk/i18n/l10n_lk.pot"
-            },
-            {
                 "name": "l10n_lt",
                 "filemask": "addons/l10n_lt/i18n/*.po",
                 "new_base": "addons/l10n_lt/i18n/l10n_lt.pot",
@@ -2843,6 +2838,12 @@
                 "name": "l10n_tw_edi_ecpay",
                 "filemask": "addons/l10n_tw_edi_ecpay/i18n/*.po",
                 "new_base": "addons/l10n_tw_edi_ecpay/i18n/l10n_tw_edi_ecpay.pot",
+                "language_regex": "^(zh_TW)$"
+            },
+            {
+                "name": "l10n_tw_edi_ecpay_website_sale",
+                "filemask": "addons/l10n_tw_edi_ecpay_website_sale/i18n/*.po",
+                "new_base": "addons/l10n_tw_edi_ecpay_website_sale/i18n/l10n_tw_edi_ecpay_website_sale.pot",
                 "language_regex": "^(zh_TW)$"
             },
             {
