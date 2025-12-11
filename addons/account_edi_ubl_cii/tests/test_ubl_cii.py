@@ -317,7 +317,8 @@ class TestAccountEdiUblCii(AccountTestInvoicingCommon, HttpCase):
         bill = self.import_attachment(xml_attachment)
 
         self.assertRecordValues(bill.partner_id, [partner_vals])
-        self.assertEqual(bill.partner_id.contact_address, "270 rte d'Arlon\n\n8010 Strassen \nLuxembourg")
+        self.assertEqual(bill.partner_id.contact_address,
+                         "ALD Automotive LU\n270 rte d'Arlon\n\n8010 Strassen \nLuxembourg")
 
     def test_actual_delivery_date_in_cii_xml(self):
 
@@ -620,6 +621,17 @@ class TestAccountEdiUblCii(AccountTestInvoicingCommon, HttpCase):
         self.env['account.edi.common']._import_partner_bank(invoice, [acc_number])
         self.assertEqual(invoice.partner_bank_id, partner_bank, "Partner bank must be the same")
         self.assertTrue(partner_bank.active, "Partner bank must be the activated")
+
+    def test_bank_details_import_duplicate(self):
+        acc_number = '1234567890'
+        invoice = self.env['account.move'].create({
+            'partner_id': self.partner_a.id,
+            'move_type': 'in_invoice',
+            'invoice_line_ids': [Command.create({'product_id': self.product_a.id})],
+        })
+        # Importing should not try to create multiple partner bank records with the same account number.
+        # It would cause a traceback due to a unique constraint on the (sanitized) account number, partner pair.
+        self.env['account.edi.common']._import_partner_bank(invoice, [acc_number, acc_number])
 
     def test_oin_code(self):
         partner = self.partner_a
