@@ -135,6 +135,12 @@ export function clickBtn(name, { expectUnloadPage = false } = {}) {
         expectUnloadPage,
     };
 }
+export function hasBtn(name) {
+    return {
+        content: `Check button ${name} exist`,
+        trigger: `body button:contains(${name})`,
+    };
+}
 export function fillTextArea(target, value) {
     return {
         content: `Fill text area with ${value}`,
@@ -192,6 +198,12 @@ export function presetTimingSlotIs(hour) {
 }
 export function selectPresetTimingSlotHour(hour) {
     return { trigger: `.modal button:contains('${hour}')`, run: "click" };
+}
+export function presetTimingSlotHourNotExists(hour) {
+    return { trigger: negate(`.modal button:visible:contains('${hour}')`) };
+}
+export function presetTimingSlotHourExists(hour) {
+    return { trigger: `.modal button:contains('${hour}')` };
 }
 export function clickRegister() {
     return { trigger: ".pos-leftheader .register-label", run: "click" };

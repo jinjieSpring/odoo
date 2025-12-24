@@ -30,9 +30,9 @@ class PrinterDriver(PrinterDriverBase):
         self.device_name = device['device-make-and-model']
         self.ip = device.get('ip')
 
-        if any(cmd in device['device-id'] for cmd in ['CMD:STAR;', 'CMD:ESC/POS;']):
+        if any(cmd in device['device-id'] for cmd in ['CMD:STAR;', 'CMD:ESC/POS;']) or "tm-m30" in self.device_name.lower():
             self.device_subtype = "receipt_printer"
-        elif any(cmd in device['device-id'] for cmd in ['COMMAND SET:ZPL;', 'CMD:ESCLABEL;']):
+        elif any(cmd in device['device-id'] for cmd in ['COMMAND SET:ZPL;', 'CMD:ESCLABEL;']) or "zpl" in self.device_name.lower():
             self.device_subtype = "label_printer"
         else:
             self.device_subtype = "office_printer"
@@ -58,7 +58,6 @@ class PrinterDriver(PrinterDriverBase):
             return
         try:
             self.escpos_device.open()
-            self.escpos_device.set_with_default(align='center')
             self.escpos_device.close()
         except escpos.exceptions.Error as e:
             _logger.info("%s - Could not initialize escpos class: %s", self.device_name, e)
@@ -164,7 +163,7 @@ class PrinterDriver(PrinterDriverBase):
                             dev.printer.qr(wifi_qr, size=6)
                 self.send_status(status='success')
                 return
-            except (escpos.exceptions.Error, OSError, AssertionError):
+            except (escpos.exceptions.Error, OSError, AssertionError, AttributeError):
                 _logger.warning("Failed to print QR status receipt, falling back to simple receipt")
 
         title = commands['title'] % title
