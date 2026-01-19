@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server saas~18.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-30 18:36+0000\n"
-"PO-Revision-Date: 2026-01-02 10:06+0000\n"
+"POT-Creation-Date: 2026-01-15 18:36+0000\n"
+"PO-Revision-Date: 2026-01-05 04:33+0000\n"
 "Last-Translator: \"Kwanghee Park (kwpa)\" <kwpa@odoo.com>\n"
 "Language-Team: Korean <https://translate.odoo.com/projects/odoo-19/"
 "account_peppol/ko/>\n"
@@ -452,6 +452,11 @@ msgid "Active Parent Company"
 msgstr "모회사 활성화"
 
 #. module: account_peppol
+#: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__active_parent_company_name
+msgid "Active Parent Company Name"
+msgstr ""
+
+#. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
 msgid "Advanced Configuration"
 msgstr "고급 환경설정"
@@ -697,7 +702,7 @@ msgid "Company"
 msgstr "회사"
 
 #. module: account_peppol
-#: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__active_parent_company_name
+#: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__parent_company_name
 msgid "Company Name"
 msgstr "회사명"
 
@@ -819,6 +824,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_peppol.field_res_partner__display_name
 msgid "Display Name"
 msgstr "표시명"
+
+#. module: account_peppol
+#: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__display_use_parent_connection_selection
+msgid "Display Use Parent Connection Selection"
+msgstr ""
 
 #. module: account_peppol
 #: model:ir.model.fields,field_description:account_peppol.field_account_peppol_service__document_identifier
@@ -1162,9 +1172,14 @@ msgid "PEPPOL: webhook keep alive"
 msgstr "PEPPOL: 웹훅 계속 유지하기"
 
 #. module: account_peppol
+#: model:ir.model.fields,field_description:account_peppol.field_peppol_registration__parent_company_id
+msgid "Parent Company"
+msgstr ""
+
+#. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__res_partner__peppol_verification_state__not_valid_format
 msgid "Partner cannot receive format"
-msgstr ""
+msgstr "파트너 측에서 수신할 수 없는 형식입니다"
 
 #. module: account_peppol
 #. odoo-python
@@ -1180,7 +1195,7 @@ msgstr ""
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__res_partner__peppol_verification_state__valid
 msgid "Partner is on Peppol"
-msgstr ""
+msgstr "Peppol에 등록된 파트너입니다"
 
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__account_move__peppol_move_state__processing

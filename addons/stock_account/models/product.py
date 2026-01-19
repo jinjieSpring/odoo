@@ -34,6 +34,7 @@ class ProductTemplate(models.Model):
         compute='_compute_lot_valuated', store=True, readonly=False,
         help="If checked, the valuation will be specific by Lot/Serial number.",
     )
+    # TODO remove in master
     property_price_difference_account_id = fields.Many2one(
         'account.account', 'Price Difference Account', company_dependent=True, ondelete='restrict',
         check_company=True,
@@ -344,14 +345,16 @@ class ProductProduct(models.Model):
                     lot_qty = move._get_valued_qty(lot)
                     in_value = (in_value * lot_qty / in_qty) if in_qty else 0
                     in_qty = lot_qty
-                if quantity < 0 and quantity + in_qty >= 0:
-                    positive_qty = quantity + in_qty
-                    ratio = positive_qty / in_qty
-                    avco_total_value = ratio * in_value
-                else:
-                    avco_total_value += in_value
+                previous_qty = quantity
                 quantity += in_qty
-                avco_value = avco_total_value / quantity if quantity else 0
+                # Regular case, value from accumulation
+                if previous_qty > 0:
+                    avco_total_value += in_value
+                    avco_value = avco_total_value / quantity
+                # From negative quantity case, value from last_in
+                elif previous_qty <= 0:
+                    avco_value = in_value / in_qty if in_qty else avco_value
+                    avco_total_value = avco_value * quantity
             if move.is_out or move.is_dropship:
                 out_qty = move._get_valued_qty()
                 out_value = out_qty * avco_value

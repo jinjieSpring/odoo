@@ -92,11 +92,13 @@ patch(PosStore.prototype, {
                         changed = true;
                     }
                 }
+
+                const rewardLinesChanged = order._updateRewardLines();
+
                 // Rewards may impact the number of points gained
-                if (changed) {
+                if (changed || rewardLinesChanged) {
                     await this.orderUpdateLoyaltyPrograms();
                 }
-                order._updateRewardLines();
             })
         );
     },
@@ -624,6 +626,7 @@ patch(PosStore.prototype, {
                         'The reward "%s" contain an error in its domain, your domain must be compatible with the PoS client',
                         this.models["loyalty.reward"].getAll()[index].description
                     ),
+                    showReloadButton: true,
                 });
 
                 reward.delete();

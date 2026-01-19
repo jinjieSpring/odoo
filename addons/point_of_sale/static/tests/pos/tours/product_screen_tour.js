@@ -560,8 +560,23 @@ registry.category("web_tour.tours").add("PosCustomerAllFieldsDisplayed", {
             ProductScreenPartnerList.searchCustomerValueAndClear("Acity"),
             ProductScreenPartnerList.searchCustomerValueAndClear("United States"),
             ProductScreenPartnerList.searchCustomerValueAndClear("9898989899"),
+            ProductScreenPartnerList.searchCustomerValueAndClear("john@doe.com"),
             ProductScreen.clickPartnerButton(),
-            PartnerList.searchCustomerValue("john@doe.com"),
+            {
+                isActive: ["mobile"],
+                content: `Click search field`,
+                trigger: `.fa-search.undefined`,
+                run: `click`,
+            },
+            {
+                content: `Search customer with "j%hn d%e"`,
+                trigger: `.modal-dialog .input-group input`,
+                run: `edit j%hn d%e`,
+            },
+            {
+                content: `Check "John Doe" is shown`,
+                trigger: `.partner-list .partner-info:nth-child(1):contains("John Doe")`,
+            },
         ].flat(),
 });
 
@@ -917,6 +932,14 @@ registry.category("web_tour.tours").add("test_product_long_press", {
             Dialog.confirm("Open Register"),
             ProductScreen.longPressProduct("Test Product"),
             Dialog.is(),
+            {
+                content: "Check that VAT label is present in the product details popup",
+                trigger: ".section-financials .vat-label:contains('VAT')",
+            },
+            {
+                content: "Check that VAT value is correct in the product details popup",
+                trigger: ".section-financials .vat-value:contains('$ 15.00 (Parent Tax)')",
+            },
             Chrome.endTour(),
         ].flat(),
 });
