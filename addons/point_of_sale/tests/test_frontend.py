@@ -127,7 +127,7 @@ class TestPointOfSaleHttpCommon(AccountTestInvoicingHttpCommon):
         })
 
         env['res.partner'].create({
-            'name': 'Deco Addict',
+            'name': 'Acme Corporation',
         })
 
         cash_journal = journal_obj.create({
@@ -3566,10 +3566,6 @@ class MobileTestUi(TestUi):
     browser_size = '375x667'
     touch_enabled = True
     allow_inherited_tests_method = True
-
-    # Skip customer display web tests on mobile
-    def test_customer_display_popup(self):
-        return
 
 
 class TestTaxCommonPOS(TestPointOfSaleHttpCommon, TestTaxCommon):
