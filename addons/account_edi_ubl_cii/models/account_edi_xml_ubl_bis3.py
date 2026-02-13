@@ -166,10 +166,8 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
         commercial_partner = partner.commercial_partner_id
 
         if commercial_partner.peppol_endpoint:
-            party_node['cbc:EndpointID'] = {
-                '_text': commercial_partner.peppol_endpoint,
-                'schemeID': commercial_partner.peppol_eas
-            }
+            party_node['cbc:EndpointID']['_text'] = commercial_partner.peppol_endpoint
+            party_node['cbc:EndpointID']['schemeID'] = commercial_partner.peppol_eas
 
         if commercial_partner.country_code == 'NL' and commercial_partner.peppol_endpoint:
             # [UBL-SR-16] Buyer identifier shall occur maximum once
@@ -289,9 +287,6 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
         # Add 'price_amount' being the original price unit without tax.
         self._ubl_add_base_line_ubl_values_price(vals)
 
-        # Add 'item' being information about item taxes.
-        self._ubl_add_base_line_ubl_values_item(vals)
-
         # Add 'tax_currency_code'.
         self._ubl_add_values_tax_currency_code(vals)
 
@@ -377,8 +372,14 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
 
     def _add_invoice_line_item_nodes(self, line_node, vals):
         # OVERRIDE
-        item_values = vals['base_line']['_ubl_values']['item_currency']
-        line_node['cac:Item'] = self._ubl_get_line_item_node(vals, item_values)
+        sub_vals = {
+            **vals,
+            'line_node': line_node,
+            'line_vals': {
+                'base_line': vals['base_line'],
+            },
+        }
+        self._ubl_add_line_item_node(sub_vals)
 
     def _add_invoice_line_tax_category_nodes(self, line_node, vals):
         # OVERRIDE
@@ -730,6 +731,21 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
                     "The VAT number of the supplier does not seem to be valid. It should be of the form: NO179728982MVA."
                 ) if not mva.is_valid(vat) or len(vat) != 14 or vat[:2] != 'NO' or vat[-3:] != 'MVA' else "",
             })
+
+        # [PEPPOL-EN16931-R010]
+        if not vals['document_node']['cac:AccountingCustomerParty']['cac:Party']['cbc:EndpointID']['_text']:
+            constraints['ubl_peppol_en16931-r010'] = _(
+                "[PEPPOL-EN16931-R010] An electronic address (EAS) must be provided on the customer '%s'.",
+                vals['customer'].display_name,
+            )
+
+        # [PEPPOL-EN16931-R020]
+        if not vals['document_node']['cac:AccountingSupplierParty']['cac:Party']['cbc:EndpointID']['_text']:
+            constraints['ubl_peppol_en16931-r020'] = _(
+                "[PEPPOL-EN16931-R020] An electronic address (EAS) must be provided on the company '%s'.",
+                vals['supplier'].display_name,
+            )
+
         return constraints
 
     # -------------------------------------------------------------------------
@@ -754,14 +770,6 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
     # -------------------------------------------------------------------------
     # Sale/Purchase Order: Import
     # -------------------------------------------------------------------------
-
-    def _get_line_xpaths(self, document_type=False, qty_factor=1):
-        if document_type == 'order':
-            return {
-                **super()._get_line_xpaths(document_type=document_type, qty_factor=qty_factor),
-                'delivered_qty': ('./{*}Quantity'),
-            }
-        return super()._get_line_xpaths(document_type=document_type, qty_factor=qty_factor)
 
     def _import_order_payment_terms_id(self, company_id, tree, xpath):
         """ Return payment term name from given tree and try to find a match. """

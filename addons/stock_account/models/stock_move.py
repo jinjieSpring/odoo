@@ -168,8 +168,8 @@ class StockMove(models.Model):
         moves_in = moves.filtered(lambda m: m.is_in or m.is_dropship)
         moves_in._set_value()
         moves._create_account_move()
-        # Update standard price on outgoing fifo products
-        moves_out.product_id.filtered(lambda p: p.cost_method == 'fifo')._update_standard_price()
+        # Update standard price on outgoing fifo or lot valuated average products
+        moves_out.product_id.filtered(lambda p: p.cost_method == 'fifo' or (p.cost_method == 'average' and p.lot_valuated))._update_standard_price()
         (moves_in | moves_out).sudo()._create_analytic_move()
         return moves
 
@@ -239,10 +239,13 @@ class StockMove(models.Model):
         """ Returns the COGS unit price to value this stock move
         quantity should be given in product uom """
 
+        if len(self.product_id) > 1:
+            return 0
         total_qty = sum(m._get_valued_qty() for m in self)
         if not total_qty:
             return 0
-        return sum(self.mapped('value')) / total_qty if self.product_id.cost_method == 'fifo' else self.product_id.standard_price
+        return sum(self.mapped('value')) / total_qty if self.product_id.cost_method == 'fifo' or \
+            (self.product_id.lot_valuated and self.product_id.cost_method == 'average') else self.product_id.standard_price
 
     @api.model
     def _get_valued_types(self):
@@ -450,6 +453,9 @@ class StockMove(models.Model):
         std_price = std_price if std_price else self.product_id.standard_price
         if at_date and self.product_id.cost_method == 'standard':
             std_price = std_price or self.product_id._get_standard_price_at_date(at_date)
+        # If multiple lots keep standard_price from product
+        elif self.product_id.lot_valuated and len(self.lot_ids) == 1:
+            std_price = self.lot_ids.standard_price
         return {
             'value': std_price * quantity,
             'quantity': quantity,
