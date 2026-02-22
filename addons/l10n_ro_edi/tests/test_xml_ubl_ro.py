@@ -136,6 +136,11 @@ def _patch_request_ciusro_synchronize_invoices(company, session, nb_days=1):
     }
 
 
+def _patch_request_ciusro_xml_to_pdf(company, xml_data):
+    # Returns a minimal, valid PDF byte stream
+    return {'content': 'JVBERi0xLjEKMSAwIG9iaiA8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PiBlbmRvYmogMiAwIG9iaiA8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PiBlbmRvYmogMyAwIG9iaiA8PC9UeXBlL1BhZ2UvUGFyZW50IDIgMCBSL01lZGlhQm94WzAgMCAxIDEgXT4+IGVuZG9iaiB0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+PiAlJUVPRg=='}
+
+
 @tagged('post_install_l10n', 'post_install', '-at_install')
 class TestUBLRO(TestUBLCommon):
 
@@ -247,7 +252,7 @@ class TestUBLRO(TestUBLCommon):
 
     def test_export_invoice_without_country_code_prefix_in_vat(self):
         self.company_data['company'].write({'vat': '1234567897'})
-        self.partner_a.write({'vat': False})
+        self.partner_a.write({'vat': False, 'peppol_eas': False, 'peppol_endpoint': False})
         invoice = self.create_move("out_invoice", currency_id=self.company.currency_id.id)
         attachment = self.get_attachment(invoice)
         self._assert_invoice_attachment(attachment, xpaths=None, expected_file_path='from_odoo/ciusro_out_invoice_no_prefix_vat.xml')
@@ -260,7 +265,7 @@ class TestUBLRO(TestUBLCommon):
 
     def test_export_no_vat_but_have_company_registry_without_prefix(self):
         self.company_data['company'].write({'vat': False, 'company_registry': '1234567897'})
-        self.partner_a.write({'vat': False})
+        self.partner_a.write({'vat': False, 'peppol_eas': False, 'peppol_endpoint': False})
         invoice = self.create_move("out_invoice", currency_id=self.company.currency_id.id)
         attachment = self.get_attachment(invoice)
         self._assert_invoice_attachment(attachment, xpaths=None, expected_file_path='from_odoo/ciusro_out_invoice_no_prefix_company_registry.xml')
@@ -272,12 +277,12 @@ class TestUBLRO(TestUBLCommon):
             invoice._generate_and_send(allow_fallback_pdf=False, template_id=self.move_template.id)
 
     def test_export_constraints(self):
-        self.company_data['company'].company_registry = False
         for required_field in ('city', 'street', 'state_id', 'vat'):
             prev_val = self.company_data["company"][required_field]
             self.company_data["company"][required_field] = False
             invoice = self.create_move("out_invoice", send=False)
             with self.assertRaisesRegex(UserError, "required"):
+                self.company_data['company'].company_registry = False
                 invoice._generate_and_send(allow_fallback_pdf=False, template_id=self.move_template.id)
             self.company_data["company"][required_field] = prev_val
 
@@ -479,3 +484,30 @@ class TestUBLRO(TestUBLCommon):
 
         self.assertEqual(invoice.l10n_ro_edi_state, 'invoice_validated')
         self.assertEqual(len(invoice.l10n_ro_edi_document_ids), 2)
+
+    @patch('odoo.addons.l10n_ro_edi.models.account_move._request_ciusro_xml_to_pdf', new=_patch_request_ciusro_xml_to_pdf)
+    @patch('odoo.addons.l10n_ro_edi.models.account_move._request_ciusro_synchronize_invoices', new=_patch_request_ciusro_synchronize_invoices)
+    def test_ciusro_pdf_generated(self):
+        """ Test the generation of a pdf requested from ANAF when the bill we retrieve doesn't already
+            have one embedded in the xml.
+        """
+        bills = self.env['account.move'].search([
+            ('move_type', 'in', self.env['account.move'].get_purchase_types()),
+            ('company_id', '=', self.env.company.id),
+        ])
+        self.assertEqual(len(bills), 0)
+
+        self.env['account.move']._l10n_ro_edi_fetch_invoices()
+
+        bill = self.env['account.move'].search([
+            ('move_type', 'in', self.env['account.move'].get_purchase_types()),
+            ('company_id', '=', self.env.company.id),
+        ])
+        self.assertEqual(len(bill), 1)
+
+        pdf_attachment = self.env['ir.attachment'].search([
+            ('res_id', '=', bill.id),
+            ('res_model', '=', 'account.move'),
+            ('mimetype', '=', 'application/pdf'),
+        ])
+        self.assertEqual(bill.message_main_attachment_id.id, pdf_attachment.id)
