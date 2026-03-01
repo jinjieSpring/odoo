@@ -13,6 +13,7 @@ from odoo.addons.account_edi_ubl_cii.models.account_edi_common import (
 from odoo.addons.account_edi_ubl_cii.models.account_edi_xml_ubl_20 import UBL_NAMESPACES
 
 from stdnum.no import mva
+from stdnum.be import vat as be_vat
 
 CHORUS_PRO_PEPPOL_ID = "0009:11000201100044"
 
@@ -305,7 +306,7 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
         if commercial_partner.country_code == 'BE' and commercial_partner.company_registry:
             nodes.append({
                 'cbc:ID': {
-                    '_text': commercial_partner.company_registry,
+                    '_text': be_vat.compact(commercial_partner.company_registry),
                     'schemeID': '0208',
                 },
             })
@@ -388,7 +389,7 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
             nodes.append({
                 'cbc:RegistrationName': {'_text': commercial_partner.name},
                 'cbc:CompanyID': {
-                    '_text': commercial_partner.company_registry,
+                    '_text': be_vat.compact(commercial_partner.company_registry),
                     'schemeID': '0208',
                 },
             })
@@ -507,14 +508,19 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
         # EXTENDS account.edi.ubl
         node = super()._ubl_get_delivery_node_from_delivery_address(vals)
         invoice = vals.get('invoice')
-        if invoice and invoice.delivery_date:
+        if not invoice:
+            return node
+
+        if invoice.delivery_date:
             node['cbc:ActualDeliveryDate']['_text'] = invoice.delivery_date
 
         # Intracom delivery inside European area.
         customer = vals['customer']
         supplier = vals['supplier']
         if (
-            customer.country_id.code in EUROPEAN_ECONOMIC_AREA_COUNTRY_CODES
+            invoice
+            and invoice.invoice_date
+            and customer.country_id.code in EUROPEAN_ECONOMIC_AREA_COUNTRY_CODES
             and supplier.country_id.code in EUROPEAN_ECONOMIC_AREA_COUNTRY_CODES
             and supplier.country_id != customer.country_id
         ):
@@ -863,19 +869,17 @@ class AccountEdiXmlUbl_Bis3(models.AbstractModel):
                 ) if not mva.is_valid(vat) or len(vat) != 14 or vat[:2] != 'NO' or vat[-3:] != 'MVA' else "",
             })
 
-        # [PEPPOL-EN16931-R010]
-        if not vals['document_node']['cac:AccountingCustomerParty']['cac:Party']['cbc:EndpointID']['_text']:
-            constraints['ubl_peppol_en16931-r010'] = _(
-                "[PEPPOL-EN16931-R010] An electronic address (EAS) must be provided on the customer '%s'.",
-                vals['customer'].display_name,
-            )
+        if vals['supplier'].country_id.code == 'BE' and vals['supplier'].company_registry:
+            if not be_vat.is_valid(vals['supplier'].company_registry):
+                constraints.update({
+                    'PEPPOL-COMMON-R043_supplier': _('%s should have a valid KBO/BCE number in the Company ID field', vals['supplier'].display_name),
+                })
 
-        # [PEPPOL-EN16931-R020]
-        if not vals['document_node']['cac:AccountingSupplierParty']['cac:Party']['cbc:EndpointID']['_text']:
-            constraints['ubl_peppol_en16931-r020'] = _(
-                "[PEPPOL-EN16931-R020] An electronic address (EAS) must be provided on the company '%s'.",
-                vals['supplier'].display_name,
-            )
+        if vals['customer'].country_id.code == 'BE' and vals['customer'].company_registry:
+            if not be_vat.is_valid(vals['customer'].company_registry):
+                constraints.update({
+                    'PEPPOL-COMMON-R043_customer': _('%s should have a valid KBO/BCE number in the Company ID field', vals['customer'].display_name),
+                })
 
         return constraints
 

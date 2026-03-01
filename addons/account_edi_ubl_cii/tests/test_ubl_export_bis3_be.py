@@ -1,11 +1,11 @@
 from odoo import Command
 from odoo.addons.account_edi_ubl_cii.tests.common import TestUblBis3Common, TestUblCiiBECommon
-from odoo.exceptions import UserError
 try:
     from odoo.addons.test_mimetypes.tests.test_guess_mimetypes import contents
 except ImportError:
     contents = None
 
+from odoo.exceptions import UserError
 from odoo.tests import tagged
 
 
@@ -627,38 +627,6 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
         self._generate_invoice_ubl_file(invoice)
         self._assert_invoice_ubl_file(invoice, 'test_invoice_product_commodity_code_cpv')
 
-    def test_invoice_PEPPOL_EN16931_R010_R020_ensure_customer_supplier_endpoint_id(self):
-        """
-        [PEPPOL-EN16931-R010] Buyer electronic address MUST be provided.
-        [PEPPOL-EN16931-R020] Seller electronic address MUST be provided.
-        """
-        partner = self.env['res.partner'].create({
-            **self._create_partner_default_values(),
-            'name': "partner",
-            'country_id': self.env.ref('base.be').id,
-        })
-        tax_21 = self.percent_tax(21.0)
-        product = self._create_product(lst_price=10.0, taxes_id=tax_21)
-        invoice = self._create_invoice_one_line(
-            product_id=product,
-            partner_id=partner,
-            post=True,
-        )
-
-        # Check customer's endpoint.
-        with self.assertRaisesRegex(UserError, r".*\[PEPPOL\-EN16931\-R010\].*"):
-            self._generate_invoice_ubl_file(invoice)
-
-        # Check supplier's endpoint.
-        partner.peppol_eas = '0208'
-        partner.peppol_endpoint = '0477472701'
-        self.env.company.partner_id.vat = None
-        self.env.company.partner_id.company_registry = None
-        self.env.company.partner_id.peppol_eas = None
-        self.env.company.partner_id.peppol_endpoint = None
-        with self.assertRaisesRegex(UserError, r".*\[PEPPOL\-EN16931\-R020\].*"):
-            self._generate_invoice_ubl_file(invoice)
-
     def _assert_invoice_partner_party_identifiers(self, partner, test_file):
         tax_21 = self.percent_tax(21.0)
         product = self._create_product(lst_price=100.0, taxes_id=tax_21)
@@ -724,6 +692,21 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
             partner=partner_be_invoice_address,
             test_file='test_invoice_customer_party_identifiers_partner_be_invoice_address',
         )
+
+        # VAT in company_registry should render the CBE Numer only
+        self.partner_be.company_registry = 'BE0477472701'
+        self._assert_invoice_partner_party_identifiers(
+            partner=self.partner_be,
+            test_file='test_invoice_customer_party_identifiers_partner_be_vat_and_company_registry',
+        )
+
+        # Malformed company_registry should raise
+        self.partner_be.company_registry = 'BEWrongOne'
+        with self.assertRaises(UserError):
+            self._assert_invoice_partner_party_identifiers(
+                partner=self.partner_be,
+                test_file='test_invoice_customer_party_identifiers_partner_be_vat_and_company_registry',
+            )
 
     def test_invoice_customer_party_identifiers_partner_lu(self):
         # Both VAT and company registry are not set.
