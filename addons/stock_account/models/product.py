@@ -1,7 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from bisect import bisect
 from collections import defaultdict
-from datetime import datetime
+from datetime import date, datetime, time
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -47,6 +47,9 @@ class ProductTemplate(models.Model):
             raise UserError(self.env._("Only the value 'periodic' and 'real_time' are accepted to search on valuation field."))
         domain_categ = Domain([('categ_id.property_valuation', operator, value)])
         domain_company = Domain(['|', ('categ_id.property_valuation', '=', False), ('categ_id', '=', False), ('company_id.inventory_valuation', operator, value)])
+
+        if self.env.company.inventory_valuation and self.env.company.inventory_valuation == value:
+            domain_company = Domain(['|', ('categ_id.property_valuation', '=', False), ('categ_id', '=', False), '|', ('company_id.inventory_valuation', operator, value), ('company_id', '=', False)])
         return domain_company | domain_categ
 
     @api.depends('tracking')
@@ -150,6 +153,12 @@ class ProductTemplate(models.Model):
         })
         return accounts
 
+    def _get_price_diff_account(self):
+        price_diff_account = super()._get_price_diff_account()
+        if self.cost_method == 'standard':
+            price_diff_account = self.categ_id.property_price_difference_account_id
+        return price_diff_account
+
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
@@ -170,6 +179,18 @@ class ProductProduct(models.Model):
     def _compute_value(self):
         company_id = self.env.company
         self.company_currency_id = company_id.currency_id
+        products = self._with_valuation_context()
+
+        at_date = self.env.context.get('to_date')
+        original_value = at_date
+        at_date = fields.Datetime.to_datetime(at_date)
+        if (isinstance(original_value, date) and not isinstance(original_value, datetime)) or \
+            (isinstance(original_value, str) and len(original_value) == 10):
+            at_date = datetime.combine(at_date.date(), time.max)
+
+        if at_date:
+            products = products.with_context(at_date=at_date, to_date=at_date)
+
         # PERF: Pre-compute:the sum of 'total_value' of lots per product in go
         std_price_by_company_id = {}
         total_value_by_company_id = {}
@@ -180,11 +201,8 @@ class ProductProduct(models.Model):
 
             products = self.with_company(company.id).with_context(allowed_company_ids=company.ids)
             products = products._with_valuation_context()
-
-            at_date = fields.Datetime.to_datetime(self.env.context.get('to_date'))
             if at_date:
-                at_date = at_date.replace(hour=23, minute=59, second=59)
-                products = products.with_context(at_date=at_date)
+                products = products.with_context(at_date=at_date, to_date=at_date)
 
             env = products.env
 
@@ -342,7 +360,7 @@ class ProductProduct(models.Model):
 
     def _with_valuation_context(self):
         valued_locations = self.env['stock.location'].search([('is_valued_internal', '=', True)])
-        return self.with_context(location=valued_locations.ids, owners=[False, self.env.company.partner_id.id])
+        return self.with_context(location=valued_locations.ids, owners=[False, self.env.company.partner_id.id], strict=True)
 
     def _get_remaining_moves(self):
         moves_qty_by_product = {}

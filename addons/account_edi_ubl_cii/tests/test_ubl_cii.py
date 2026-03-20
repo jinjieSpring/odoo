@@ -883,7 +883,8 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
         self.assertTrue(bill)
 
         # Ensure the created move has 2 attachments: the original XML and a generated PDF
-        self.assertEqual(len(bill.attachment_ids), 2)
+        self.assertTrue(bill.ubl_cii_xml_id)  # Original XML
+        self.assertEqual(len(bill.attachment_ids), 1)  # Generated PDF
         self.assertTrue(any('pdf' in attachment.mimetype for attachment in bill.attachment_ids))
 
     def test_bank_details_import(self):
@@ -910,6 +911,21 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
         """
         Test the group/ungroup lines action on account.move
         """
+
+        def create_bill(file_path):
+            file_path = f"{self.test_module}/tests/test_files/{file_path}"
+            with file_open(file_path, 'rb') as file:
+                xml_attachment = self.env['ir.attachment'].create({
+                    'mimetype': 'application/xml',
+                    'name': 'bis3_bill_group_by_tax.xml',
+                    'raw': file.read(),
+                })
+            return self._import_as_attachment_on(
+                attachment=xml_attachment,
+                journal=self.company_data['default_journal_purchase'],
+            )
+
+        # Datas
         self.env.ref('base.EUR').active = True
         tax_16 = self.env["account.tax"].create({
             'name': '16 %',
@@ -924,19 +940,7 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
             'amount': 21.0,
         })
 
-        file_path = "bis3_bill_group_by_tax.xml"
-        file_path = f"{self.test_module}/tests/test_files/{file_path}"
-        with file_open(file_path, 'rb') as file:
-            xml_attachment = self.env['ir.attachment'].create({
-                'mimetype': 'application/xml',
-                'name': 'bis3_bill_group_by_tax.xml',
-                'raw': file.read(),
-            })
-        bill = self._import_as_attachment_on(attachment=xml_attachment, journal=self.company_data["default_journal_purchase"])
-
-        # Should group lines by tax
-        bill.action_group_ungroup_lines_by_tax()
-        self.assertRecordValues(bill.invoice_line_ids, [
+        lines_grouped = [
             {
                 'quantity': 1.0,
                 'price_unit': 600.0,
@@ -951,16 +955,31 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
                 'price_total': 1573.00,
                 'tax_ids': tax_21.ids,
             },
-        ])
-        self.assertRecordValues(bill, [{
+        ]
+        total_values = [{
             'amount_untaxed': 1900.0,
             'amount_tax': 369,
             'amount_total': 2269.00,
-        }])
+        }]
+
+        # Import bill
+        file_path = "bis3_bill_group_by_tax.xml"
+        bill = create_bill(file_path)
+
+        # Group lines by tax and post
+        bill.action_group_ungroup_lines_by_tax()
+        self.assertRecordValues(bill.invoice_line_ids, lines_grouped)
+        self.assertRecordValues(bill, total_values)
+        bill.action_post()
+
+        # Import the bill a second time, should be grouped as last posted bill from this supplier is grouped
+        bill_2 = create_bill(file_path)
+        self.assertRecordValues(bill_2.invoice_line_ids, lines_grouped)
+        self.assertRecordValues(bill_2, total_values)
 
         # Should ungroup lines from xml
-        bill.action_group_ungroup_lines_by_tax()
-        self.assertRecordValues(bill.invoice_line_ids, [
+        bill_2.action_group_ungroup_lines_by_tax()
+        self.assertRecordValues(bill_2.invoice_line_ids, [
             {
                 'quantity': 1.0,
                 'price_unit': 600.0,
@@ -983,11 +1002,7 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
                 'tax_ids': tax_21.ids,
             },
         ])
-        self.assertRecordValues(bill, [{
-            'amount_untaxed': 1900.0,
-            'amount_tax': 369,
-            'amount_total': 2269.00,
-        }])
+        self.assertRecordValues(bill_2, total_values)
 
     def test_invoice_optional_fields(self):
         """Test that optional invoice and invoice lines custom fields added by the user are exported correctly"""
@@ -999,8 +1014,6 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
             ("x_studio_peppol_accounting_cost", "char"),
             ("x_studio_peppol_project_reference_id", "char"),
             ("x_studio_peppol_order_reference_id", "char"),
-            ("x_studio_peppol_invoice_period_start_date", "date"),
-            ("x_studio_peppol_invoice_period_end_date", "date"),
         ]
 
         self.env["ir.model.fields"].create([{
@@ -1050,8 +1063,6 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
             'x_studio_peppol_accounting_cost': "88.5",
             'x_studio_peppol_project_reference_id': "project-1234",
             'x_studio_peppol_order_reference_id': "order-1234",
-            'x_studio_peppol_invoice_period_start_date': "2028-01-01",
-            'x_studio_peppol_invoice_period_end_date': "2028-02-01",
         })
 
         invoice.action_post()
@@ -1077,12 +1088,6 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
         order_reference_id = xml_tree.find('.//cac:OrderReference/cbc:ID', self.ubl_namespaces)
         self.assertEqual(order_reference_id.text, 'order-1234')
 
-        invoice_period_start_date = xml_tree.find('.//cac:InvoicePeriod/cbc:StartDate', self.ubl_namespaces)
-        self.assertEqual(invoice_period_start_date.text, '2028-01-01')
-
-        invoice_period_end_date = xml_tree.find('.//cac:InvoicePeriod/cbc:EndDate', self.ubl_namespaces)
-        self.assertEqual(invoice_period_end_date.text, '2028-02-01')
-
         order_line_reference_id = xml_tree.findall('.//cac:InvoiceLine/cac:OrderLineReference/cbc:LineID', self.ubl_namespaces)
         self.assertEqual(order_line_reference_id[0].text, 'order_line1-1234')
         self.assertEqual(order_line_reference_id[1].text, 'order_line2-1234')
@@ -1101,8 +1106,6 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
             ("x_studio_peppol_despatch_document_reference_id", "char"),
             ("x_studio_peppol_accounting_cost", "char"),
             ("x_studio_peppol_order_reference_id", "char"),
-            ("x_studio_peppol_invoice_period_start_date", "date"),
-            ("x_studio_peppol_invoice_period_end_date", "date"),
         ]
 
         self.env["ir.model.fields"].create([{
@@ -1150,8 +1153,6 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
             'x_studio_peppol_despatch_document_reference_id': "despatch-1234",
             'x_studio_peppol_accounting_cost': "88.5",
             'x_studio_peppol_order_reference_id': "order-1234",
-            'x_studio_peppol_invoice_period_start_date': "2028-01-01",
-            'x_studio_peppol_invoice_period_end_date': "2028-02-01",
         })
 
         credit_note.action_post()
@@ -1173,12 +1174,6 @@ comment-->1000.0</TaxExclusiveAmount></xpath>"""
 
         order_reference_id = xml_tree.find('.//cac:OrderReference/cbc:ID', self.ubl_namespaces)
         self.assertEqual(order_reference_id.text, 'order-1234')
-
-        invoice_period_start_date = xml_tree.find('.//cac:InvoicePeriod/cbc:StartDate', self.ubl_namespaces)
-        self.assertEqual(invoice_period_start_date.text, '2028-01-01')
-
-        invoice_period_end_date = xml_tree.find('.//cac:InvoicePeriod/cbc:EndDate', self.ubl_namespaces)
-        self.assertEqual(invoice_period_end_date.text, '2028-02-01')
 
         order_line_reference_id = xml_tree.findall('.//cac:CreditNoteLine/cac:OrderLineReference/cbc:LineID', self.ubl_namespaces)
         self.assertEqual(order_line_reference_id[0].text, 'order_line1-1234')

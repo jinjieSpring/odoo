@@ -287,8 +287,7 @@ class PosOrder(models.Model):
         return invoice_lines
 
     def _get_pos_anglo_saxon_price_unit(self, product, partner_id, quantity):
-        moves = self.filtered(lambda o: o.partner_id.id == partner_id)\
-            .mapped('picking_ids.move_ids')\
+        moves = self.mapped('picking_ids.move_ids')\
             .filtered(lambda m: m.is_valued and m.product_id.valuation == 'real_time' and m.product_id.id == product.id)\
             .sorted(lambda x: x.date)
         return moves._get_price_unit()
@@ -773,15 +772,27 @@ class PosOrder(models.Model):
         return currency.round(amount) if currency else amount
 
     def _get_partner_bank_id(self):
-        bank_partner_id = False
+        partner_bank_id = False
         amount_total = sum(order.amount_total for order in self)
+
+        def _first_allowed(bank_ids):
+            return bank_ids.filtered(lambda b: b.allow_out_payment)[:1]
+
+        # Case 1: refund / negative amount → customer bank
         if amount_total <= 0 and self.partner_id.bank_ids:
-            bank_partner_id = self.partner_id.bank_ids[0].id
-        elif amount_total >= 0 and self.payment_ids and self.payment_ids[0].payment_method_id.journal_id.bank_account_id:
-            bank_partner_id = self.payment_ids[0].payment_method_id.journal_id.bank_account_id.id
+            partner_bank_id = _first_allowed(self.partner_id.bank_ids)
+
+        # Case 2: positive amount → payment journal bank
+        elif amount_total >= 0 and self.payment_ids:
+            journal_bank = self.payment_ids[0].payment_method_id.journal_id.bank_account_id
+            if journal_bank and journal_bank.allow_out_payment:
+                partner_bank_id = journal_bank
+
+        # Case 3: fallback → company bank
         elif amount_total >= 0 and self.company_id.partner_id.bank_ids:
-            bank_partner_id = self.company_id.partner_id.bank_ids[0].id
-        return bank_partner_id
+            partner_bank_id = _first_allowed(self.company_id.partner_id.bank_ids)
+
+        return partner_bank_id.id if partner_bank_id else False
 
     def _create_invoice(self, move_vals):
         AccountMove = self.env['account.move']
@@ -1010,7 +1021,7 @@ class PosOrder(models.Model):
                         'display_type': 'rounding',
                     })
         # Stock.
-        if self.company_id.inventory_valuation == 'real_time' and self.picking_ids.ids:
+        if self.picking_ids.ids:
             stock_moves = self.env['stock.move'].sudo().search([
                 ('picking_id', 'in', self.picking_ids.ids),
                 ('product_id.valuation', '=', 'real_time'),
@@ -1566,7 +1577,7 @@ class PosOrderLine(models.Model):
 
     @api.model
     def _load_pos_data_domain(self, data, config):
-        return [('order_id', 'in', [order['id'] for order in data['pos.order']])]
+        return [('order_id', 'in', [order['id'] for order in data['pos.order']]), ('product_id.active', '=', True)]
 
     @api.model
     def _load_pos_data_fields(self, config):
@@ -1810,6 +1821,10 @@ class PosOrderLine(models.Model):
         self.ensure_one()
         return self.product_id.is_storable and self.product_id.cost_method in ['fifo', 'average']
 
+    def _get_product_cost_with_moves(self, moves):
+        self.ensure_one()
+        return moves._get_price_unit()
+
     def _compute_total_cost(self, stock_moves):
         """
         Compute the total cost of the order lines.
@@ -1818,9 +1833,9 @@ class PosOrderLine(models.Model):
         for line in self.filtered(lambda l: not l.is_total_cost_computed):
             product = line.product_id
             cost_currency = product.sudo().cost_currency_id
-            if line._is_product_storable_fifo_avco() and stock_moves:
-                moves = line._get_stock_moves_to_consider(stock_moves, product)
-                product_cost = moves._get_price_unit()
+            moves = line._get_stock_moves_to_consider(stock_moves, product) if stock_moves else None
+            if moves and line._is_product_storable_fifo_avco():
+                product_cost = line._get_product_cost_with_moves(moves)
                 if cost_currency.is_zero(product_cost) and line.order_id.shipping_date:
                     if line.refunded_orderline_id:
                         product_cost = line.refunded_orderline_id.total_cost / line.refunded_orderline_id.qty

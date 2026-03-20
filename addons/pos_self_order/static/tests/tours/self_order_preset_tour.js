@@ -106,12 +106,13 @@ registry.category("web_tour.tours").add("test_preset_takeaway_email_tour", {
         Utils.checkIsNoBtn("My Order"),
         Utils.clickBtn("Order Now"),
         LandingPage.selectLocation("Takeaway"),
-        ProductPage.clickProduct("Coca-Cola"),
+        ProductPage.clickProduct("Free"),
         Utils.clickBtn("Checkout"),
-        CartPage.checkProduct("Coca-Cola", "2.53", "1"),
+        CartPage.checkProduct("Free", "0", "1"),
         Utils.clickBtn("Order"),
         CartPage.fillInput("Name", "Public user"),
         CartPage.fillInput("Email", "public.user@test.com"),
+        CartPage.fillInput("Phone", "+32000111222"),
         Utils.clickBtn("Continue"),
         // Waiting for mail to be sent
         {
