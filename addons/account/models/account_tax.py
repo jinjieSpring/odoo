@@ -80,7 +80,7 @@ class AccountTax(models.Model):
     name = fields.Char(string='Tax Name', required=True, translate=True, tracking=True)
     type_tax_use = fields.Selection(TYPE_TAX_USE, string='Tax Type', required=True, default="sale", tracking=True,
         help="Determines where the tax is selectable. Note: 'None' means a tax can't be used by itself, however it can still be used in a group. 'adjustment' is used to perform tax adjustment.")
-    tax_scope = fields.Selection([('service', 'Services'), ('consu', 'Goods')], string="Tax Scope", help="Restrict the use of taxes to a type of product.")
+    tax_scope = fields.Selection([('service', 'Services'), ('consu', 'Goods')], string="Tax Scope")
     amount_type = fields.Selection(default='percent', string="Tax Computation", required=True, tracking=True,
         selection=[('group', 'Group of Taxes'), ('fixed', 'Fixed'), ('percent', 'Percentage'), ('division', 'Percentage Tax Included')],
         help="""
@@ -345,10 +345,9 @@ class AccountTax(models.Model):
                     WHERE EXISTS(
                         SELECT 1
                         FROM account_move_line_account_tax_rel AS line
-                        WHERE account_tax_id IN %s
-                        AND account_tax.id = line.account_tax_id
-                    ) """,
-                tuple(self.ids),
+                        WHERE account_tax.id = line.account_tax_id
+                    ) AND id IN %s
+                    """, tuple(self.ids),
             )))
             taxes_to_compute = set(self.ids) - used_taxes
 
@@ -361,10 +360,9 @@ class AccountTax(models.Model):
                         WHERE EXISTS(
                             SELECT 1
                             FROM account_reconcile_model_line_account_tax_rel AS reco
-                            WHERE account_tax_id IN %s
-                            AND account_tax.id = reco.account_tax_id
-                        ) """,
-                    tuple(taxes_to_compute)
+                            WHERE account_tax.id = reco.account_tax_id
+                        ) AND id IN %s
+                        """, tuple(taxes_to_compute)
                 )))
                 taxes_to_compute -= used_taxes
 
@@ -4998,6 +4996,11 @@ class AccountTax(models.Model):
         if is_html_empty(self.description):
             return ''
         return html2plaintext(self.description)
+
+    @api.ondelete(at_uninstall=False)
+    def unlink_except_tax_used(self):
+        if any(self.mapped('is_used')):
+            raise ValidationError(self.env._("You cannot delete taxes that are currently in use. Consider archiving them instead."))
 
 
 class AccountTaxRepartitionLine(models.Model):

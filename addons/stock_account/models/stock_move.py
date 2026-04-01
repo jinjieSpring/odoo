@@ -251,8 +251,13 @@ class StockMove(models.Model):
         total_qty = sum(m._get_valued_qty() for m in self)
         if not total_qty:
             return 0
-        return sum(self.mapped('value')) / total_qty if self.product_id.cost_method == 'fifo' or \
-            (self.product_id.lot_valuated and self.product_id.cost_method == 'average') else self.product_id.standard_price
+        valued_consigned_qty = self._get_valued_consigned_qty()
+        total_qty += valued_consigned_qty
+        if self.product_id.cost_method == 'fifo' or valued_consigned_qty or\
+            (self.product_id.lot_valuated and self.product_id.cost_method == 'average'):
+            return sum(self.mapped('value')) / total_qty
+        else:
+            return self.product_id.standard_price
 
     @api.model
     def _get_valued_types(self):
@@ -453,8 +458,9 @@ class StockMove(models.Model):
     def _get_value_from_returns(self, quantity, at_date=None):
         if self.origin_returned_move_id and self.origin_returned_move_id.is_out:
             origin_move = self.origin_returned_move_id
+            origin_valued_qty = origin_move._get_valued_qty()
             return {
-                'value': origin_move.value * quantity / origin_move._get_valued_qty(),
+                'value': 0 if self.product_uom.is_zero(origin_valued_qty) else origin_move.value * quantity / origin_valued_qty,
                 'quantity': quantity,
                 'description': _('Value based on original move %(reference)s', reference=origin_move.reference),
             }
@@ -640,3 +646,6 @@ class StockMove(models.Model):
         if valued_type == 'out':
             return self.location_dest_id and self.location_dest_id.usage == 'supplier'
         return bool(self.picking_id.return_picking_id)
+
+    def _get_valued_consigned_qty(self):
+        return sum(self.move_line_ids.filtered(lambda l: l._is_consigned_valued_line()).mapped('quantity_product_uom'))

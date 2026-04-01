@@ -312,16 +312,16 @@ test("html field in readonly with embedded components and editable descendants",
     READONLY_MAIN_EMBEDDINGS.pop();
 });
 
-test("links should open on a new tab in readonly", async () => {
+test("only external links should always open on a new tab in readonly", async () => {
     Partner._records = [
         {
             id: 1,
             txt: `
             <body>
                 <p>first</p>
-                <a href="/contactus">Relative link</a>
-                <a href="${browser.location.origin}/contactus">Internal link</a>
-                <a href="https://google.com">External link</a>
+                <a class="internal" href="/contactus">Relative link</a>
+                <a class="internal" href="${browser.location.origin}/contactus">Internal link</a>
+                <a class="external" href="https://google.com">External link</a>
             </body>`,
         },
         {
@@ -329,9 +329,9 @@ test("links should open on a new tab in readonly", async () => {
             txt: `
             <body>
                 <p>second</p>
-                <a href="/contactus2">Relative link</a>
-                <a href="${browser.location.origin}/contactus2">Internal link</a>
-                <a href="https://google2.com">External link</a>
+                <a class="internal" href="/contactus2">Relative link</a>
+                <a class="internal" href="${browser.location.origin}/contactus2">Internal link</a>
+                <a class="external" href="https://google2.com">External link</a>
             </body>`,
         },
     ];
@@ -347,16 +347,24 @@ test("links should open on a new tab in readonly", async () => {
     });
 
     expect("[name='txt'] p").toHaveText("first");
-    for (const link of queryAll("a")) {
+    for (const link of queryAll("a.external")) {
         expect(link.getAttribute("target")).toBe("_blank");
         expect(link.getAttribute("rel")).toBe("noreferrer");
+    }
+    for (const link of queryAll("a.internal")) {
+        expect(link.getAttribute("target")).toBe(null);
+        expect(link.getAttribute("rel")).toBe(null);
     }
 
     await contains(`.o_pager_next`).click();
     expect("[name='txt'] p").toHaveText("second");
-    for (const link of queryAll("a")) {
+    for (const link of queryAll("a.external")) {
         expect(link.getAttribute("target")).toBe("_blank");
         expect(link.getAttribute("rel")).toBe("noreferrer");
+    }
+    for (const link of queryAll("a.internal")) {
+        expect(link.getAttribute("target")).toBe(null);
+        expect(link.getAttribute("rel")).toBe(null);
     }
 });
 
@@ -929,10 +937,14 @@ test("Embed video by pasting video URL", async () => {
 
     // Press Enter to select first option in the powerbox ("Embed Youtube Video").
     await press("Enter");
-    await animationFrame();
+    // Insertion triggers selectionchange & addStep creates selection
+    // placeholder.fixSelectionInsideEditableRoot moves selection into it,
+    // trigger another selectionchange that removes selection placeholder.
+    // So we must wait for the o-we-hint.
+    await waitFor(".o-we-hint");
     const videoIframe = queryOne("div[data-embedded='video']");
     expect(videoIframe.nextElementSibling).toHaveOuterHTML(
-        '<div class="o-paragraph" data-selection-placeholder=""><br></div>'
+        `<div class="o-paragraph o-we-hint" o-we-hint-text="Type &quot;/&quot; for commands"><br></div>`
     );
     expect(
         `div[data-embedded='video'] iframe[data-src="https://www.youtube.com/embed/${videoId}"]`
