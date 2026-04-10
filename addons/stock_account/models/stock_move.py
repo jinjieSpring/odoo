@@ -190,7 +190,14 @@ class StockMove(models.Model):
                 move_to_link.add(move.id)
         if not aml_vals_list:
             return self.env['account.move']
+
+        move_refs = list(set(self.mapped('reference')))
+        joined_refs = ", ".join(move_refs)
+        if len(joined_refs) > 43:
+            joined_refs = joined_refs[:40] + "..."
+
         account_move = self.env['account.move'].sudo().create({
+            'ref': joined_refs,
             'journal_id': self.company_id.account_stock_journal_id.id,
             'line_ids': [Command.create(aml_vals) for aml_vals in aml_vals_list],
             'date': self.env.context.get('force_period_date') or fields.Date.context_today(self),
@@ -249,13 +256,11 @@ class StockMove(models.Model):
         if len(self.product_id) > 1:
             return 0
         total_qty = sum(m._get_valued_qty() for m in self)
-        if not total_qty:
-            return 0
         valued_consigned_qty = self._get_valued_consigned_qty()
-        total_qty += valued_consigned_qty
-        if self.product_id.cost_method == 'fifo' or valued_consigned_qty or\
-            (self.product_id.lot_valuated and self.product_id.cost_method == 'average'):
-            return sum(self.mapped('value')) / total_qty
+        total_valued_qty = total_qty + valued_consigned_qty
+        if total_valued_qty and (self.product_id.cost_method == 'fifo' or valued_consigned_qty or
+            (self.product_id.lot_valuated and self.product_id.cost_method == 'average')):
+            return sum(self.mapped('value')) / total_valued_qty
         else:
             return self.product_id.standard_price
 
