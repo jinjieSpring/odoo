@@ -22,13 +22,14 @@
 # JanaAvalah, 2023
 # Eneli Õigus <enelioigus@gmail.com>, 2023
 # Weblate <noreply-mt-weblate@weblate.org>, 2025.
+# Odoo Translation Bot <c3p@odoo.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-10 18:40+0000\n"
-"PO-Revision-Date: 2025-11-08 19:06+0000\n"
-"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
+"POT-Creation-Date: 2026-04-17 18:39+0000\n"
+"PO-Revision-Date: 2026-04-13 20:52+0000\n"
+"Last-Translator: Odoo Translation Bot <c3p@odoo.com>\n"
 "Language-Team: Estonian <https://translate.odoo.com/projects/odoo-19/web/et/"
 ">\n"
 "Language: et\n"
@@ -36,7 +37,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: web
 #. odoo-javascript
@@ -445,10 +446,8 @@ msgstr ""
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "AB"
 msgid "A"
-msgstr "AB"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -1041,10 +1040,8 @@ msgstr "Avatar"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "AB"
 msgid "B"
-msgstr "AB"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -1262,10 +1259,8 @@ msgstr "Bytes|Kb|Mb|Gb|Tb|Pb|Eb|Zb|Yb"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "CD"
 msgid "C"
-msgstr "CD"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -3181,6 +3176,12 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/fields/password/password_field.js:0
+msgid "Hide value"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/float/float_field.js:0
 #: code:addons/web/static/src/views/fields/monetary/monetary_field.js:0
 msgid ""
@@ -4072,10 +4073,8 @@ msgstr "Logo sekundaarne värv"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "AM"
 msgid "M"
-msgstr "AM"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -4813,10 +4812,8 @@ msgstr "Failide arv"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "OK"
 msgid "O"
-msgstr "OK"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -5156,10 +5153,8 @@ msgstr ""
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "PC"
 msgid "P"
-msgstr "PC"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -5214,6 +5209,8 @@ msgid "Partner"
 msgstr "Partner"
 
 #. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/password/password_field.js:0
 #: model_terms:ir.ui.view,arch_db:web.login
 msgid "Password"
 msgstr "Salasõna"
@@ -5824,6 +5821,12 @@ msgstr "Lähtesta väljend"
 #: model_terms:ir.ui.view,arch_db:web.view_base_document_layout
 msgid "Reset to logo colors"
 msgstr "Lähtesta logo värvidele"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/password/password_field.js:0
+msgid "Reveal value"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -15459,10 +15462,8 @@ msgstr "hóngbāo"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "in"
 msgid "i"
-msgstr "puhkused"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -18805,10 +18806,8 @@ msgstr "nuts"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "No"
 msgid "o"
-msgstr "Ei"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -20899,10 +20898,8 @@ msgstr "quiet"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "or"
 msgid "r"
-msgstr "või"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -25098,10 +25095,8 @@ msgstr "urn"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "tv"
 msgid "v"
-msgstr "tv"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -26486,10 +26481,8 @@ msgstr "wry"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "ox"
 msgid "x"
-msgstr "ox"
+msgstr ""
 
 #. module: web
 #. odoo-javascript

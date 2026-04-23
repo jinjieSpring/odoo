@@ -43,8 +43,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-10 18:40+0000\n"
-"PO-Revision-Date: 2026-03-25 08:41+0000\n"
+"POT-Creation-Date: 2026-04-17 18:39+0000\n"
+"PO-Revision-Date: 2026-04-13 20:48+0000\n"
 "Last-Translator: Saara Hakanen <sahak@odoo.com>\n"
 "Language-Team: Finnish <https://translate.odoo.com/projects/odoo-19/web/fi/"
 ">\n"
@@ -478,10 +478,8 @@ msgstr ""
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "AB"
 msgid "A"
-msgstr "AB"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -1076,10 +1074,8 @@ msgstr "Avatar"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "AB"
 msgid "B"
-msgstr "AB"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -1301,10 +1297,8 @@ msgstr "Bytes|Kb|Mb|Gb|Tb|Pb|Eb|Zb|Yb"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "CD"
 msgid "C"
-msgstr "CD"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -3240,6 +3234,12 @@ msgstr "Piilota lopussa olevat nollat"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/fields/password/password_field.js:0
+msgid "Hide value"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/float/float_field.js:0
 #: code:addons/web/static/src/views/fields/monetary/monetary_field.js:0
 msgid ""
@@ -4154,10 +4154,8 @@ msgstr "Logon toissijainen väri"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "AM"
 msgid "M"
-msgstr "AM"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -4897,10 +4895,8 @@ msgstr "Tiedostojen määrä"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "OK"
 msgid "O"
-msgstr "OK"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -5243,10 +5239,8 @@ msgstr "Ylivuodon tyyli"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "PC"
 msgid "P"
-msgstr "PC"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -5301,6 +5295,8 @@ msgid "Partner"
 msgstr "Kumppani"
 
 #. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/password/password_field.js:0
 #: model_terms:ir.ui.view,arch_db:web.login
 msgid "Password"
 msgstr "Salasana"
@@ -5918,6 +5914,12 @@ msgstr "Nollaa lauseke"
 #: model_terms:ir.ui.view,arch_db:web.view_base_document_layout
 msgid "Reset to logo colors"
 msgstr "Palauta logon värit"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/password/password_field.js:0
+msgid "Reveal value"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -15589,10 +15591,8 @@ msgstr "punainen kirjekuori"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "in"
 msgid "i"
-msgstr "tuumaa"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -18935,10 +18935,8 @@ msgstr "pähkinät"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "No"
 msgid "o"
-msgstr "Ei"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -21029,10 +21027,8 @@ msgstr "hiljainen"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "or"
 msgid "r"
-msgstr "tai"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -25228,10 +25224,8 @@ msgstr "uurna"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "tv"
 msgid "v"
-msgstr "tv"
+msgstr ""
 
 #. module: web
 #. odoo-javascript
@@ -26616,10 +26610,8 @@ msgstr "vino"
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
-#, fuzzy
-#| msgid "ox"
 msgid "x"
-msgstr "härkä"
+msgstr ""
 
 #. module: web
 #. odoo-javascript

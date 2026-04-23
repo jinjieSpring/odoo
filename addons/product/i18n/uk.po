@@ -10,23 +10,24 @@
 # Weblate <noreply-mt-weblate@weblate.org>, 2025.
 # Lohushchenko <nadiia.lohushchenko@self-erp.com>, 2026.
 # Odoo Translation Bot <c3p@odoo.com>, 2026.
+# Vlad Patenko <vlad.patenko@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-10 18:39+0000\n"
-"PO-Revision-Date: 2026-04-09 11:23+0000\n"
-"Last-Translator: Odoo Translation Bot <c3p@odoo.com>\n"
+"PO-Revision-Date: 2026-04-16 08:25+0000\n"
+"Last-Translator: Lohushchenko <nadiia.lohushchenko@self-erp.com>\n"
 "Language-Team: Ukrainian <https://translate.odoo.com/projects/odoo-19/"
 "product/uk/>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
-"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
-"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
-"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 "
+"? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > "
+"14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % "
+"100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 "X-Generator: Weblate 5.16.2\n"
 
 #. module: product
@@ -1699,7 +1700,7 @@ msgstr ""
 #: model:ir.model.fields,help:product.field_product_product__sequence
 #: model:ir.model.fields,help:product.field_product_template__sequence
 msgid "Gives the sequence order when displaying a product list"
-msgstr "Дає порядок послідовності при відображенні списку товарів."
+msgstr "Дає порядок послідовності при відображенні списку товарів"
 
 #. module: product
 #: model:product.attribute.value,name:product.pav_fabric_glass
@@ -2074,10 +2075,8 @@ msgstr ""
 
 #. module: product
 #: model:product.attribute.value,name:product.pav_size_l
-#, fuzzy
-#| msgid "XL"
 msgid "L"
-msgstr "XL"
+msgstr "л"
 
 #. module: product
 #: model:product.attribute.value,name:product.pav_brand_loreal
@@ -2487,7 +2486,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/product/static/src/product_catalog/kanban_renderer.xml:0
 msgid "No products could be found."
-msgstr "Неможливо знайти жоден товар"
+msgstr "Неможливо знайти жоден товар."
 
 #. module: product
 #. odoo-javascript
@@ -2780,7 +2779,7 @@ msgstr "Вкажіть товар, для якого потрібно засто
 #: code:addons/product/models/product_pricelist_item.py:0
 msgid ""
 "Please specify the product variant for which this rule should be applied"
-msgstr "Визначте варіант товару для якого це правило потрібно застосувати."
+msgstr "Визначте варіант товару для якого це правило потрібно застосувати"
 
 #. module: product
 #: model:ir.model.fields.selection,name:product.selection__res_config_settings__product_weight_in_lbs__1
@@ -3432,10 +3431,8 @@ msgstr "Порада правила"
 
 #. module: product
 #: model:product.attribute.value,name:product.pav_size_s
-#, fuzzy
-#| msgid "XS"
 msgid "S"
-msgstr "XS"
+msgstr ""
 
 #. module: product
 #: model:ir.model.fields,field_description:product.field_product_product__sale_ok
@@ -3856,7 +3853,7 @@ msgid ""
 "The value %(value)s is not defined for the attribute %(attribute)s on the "
 "product %(product)s."
 msgstr ""
-"Значення %(value)s не визначене для атрибута  %(attribute)s на товарі %"
+"Значення %(value)s не визначене для атрибута %(attribute)s на товарі %"
 "(product)s."
 
 #. module: product
