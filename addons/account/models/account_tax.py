@@ -5050,17 +5050,29 @@ class AccountTax(models.Model):
     @api.model
     def _import_retrieve_tax_from_price_include_exclude(self, tax_values):
         price_include = tax_values.get('price_include')
+        fiscal_position = tax_values.get('fiscal_position')
+
+        fpos_domain = []
+        if fiscal_position:
+            fpos_domain = Domain('fiscal_position_ids', '=', fiscal_position.id)
+            if fiscal_position.is_domestic:
+                fpos_domain |= Domain('fiscal_position_ids', '=', False)
+
         criteria = []
         if not price_include:
+            if fiscal_position:
+                criteria.append({'domain': [('price_include', '=', False)] + fpos_domain})
             criteria.append({'domain': [('price_include', '=', False)]})
         elif price_include is None or price_include:
+            if fiscal_position:
+                criteria.append({'domain': [('price_include', '=', True)] + fpos_domain})
             criteria.append({'domain': [('price_include', '=', True)]})
 
         return {'criteria': criteria}
 
     @api.model
     def _import_retrieve_tax(self, search_plan, company, tax_values_list):
-        cache = self.env.cr.cache.setdefault('retrieved_tax_map', {})
+        cache = self.env.cr.cache.setdefault('retrieved_tax_map', {}).setdefault(company.id, {})
 
         static_domain = Domain(self._check_company_domain(company))
         for tax_values in tax_values_list:
@@ -5097,7 +5109,7 @@ class AccountTax(models.Model):
                         cache_key = criteria.get('cache_key')
 
                     # Look at the cache if the value has already been tested with this key.
-                    if cache_key in cache:
+                    if cache_key and cache_key in cache:
                         if tax := cache[cache_key]:
                             tax_values['tax'] = tax
                             break

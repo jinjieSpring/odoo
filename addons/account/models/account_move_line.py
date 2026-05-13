@@ -3531,7 +3531,8 @@ class AccountMoveLine(models.Model):
         section_total = sum(l.price_total for l in children_lines)
         result = [{
             'name': self.name,
-            'taxes': [tax.tax_label for tax in children_lines.tax_ids if tax.tax_label],
+            'product': False,
+            'taxes': [tax.tax_label for tax in children_lines.tax_ids if tax.tax_label] if not self.collapse_prices else [],
             'price_subtotal': section_subtotal,
             'price_total': section_total,
             'display_type': self.display_type,
@@ -3540,20 +3541,22 @@ class AccountMoveLine(models.Model):
             'product_uom': False,
             'discount': 0.0,
         }]
+        if self.collapse_composition:
+            return result
 
-        if not self.collapse_composition:
-            for line in direct_children_lines:
-                result.append({
-                    'name': line.name,
-                    'taxes': [tax.tax_label for tax in line.tax_ids if tax.tax_label] if not self.collapse_prices else [],
-                    'price_subtotal': line.price_subtotal,
-                    'price_total': line.price_total,
-                    'display_type': line.display_type,
-                    'quantity': line.quantity,
-                    'line_uom': line.product_uom_id,
-                    'product_uom': line.product_id.uom_id,
-                    'discount': line.discount,
-                })
+        for line in direct_children_lines:
+            result.append({
+                'name': line.name,
+                'product': line.product_id,
+                'taxes': [tax.tax_label for tax in line.tax_ids if tax.tax_label],
+                'price_subtotal': line.price_subtotal,
+                'price_total': line.price_total,
+                'display_type': line.display_type,
+                'quantity': line.quantity,
+                'line_uom': line.product_uom_id,
+                'product_uom': line.product_id.uom_id,
+                'discount': line.discount,
+            })
 
         for subsection_line in subsection_lines:
             lines_in_subsection = children_lines.filtered(lambda l: l.parent_id == subsection_line)
@@ -3564,9 +3567,10 @@ class AccountMoveLine(models.Model):
                 total = sum(l.price_total for l in lines_for_tax_group)
                 if not subtotal and not tax_labels:
                     continue
-                if subsection_line.collapse_composition or self.collapse_composition:
+                if subsection_line.collapse_composition:
                     result.append({
                         'name': subsection_line.name,
+                        'product': False,
                         'taxes': tax_labels,
                         'price_subtotal': subtotal,
                         'price_total': total,
@@ -3580,7 +3584,8 @@ class AccountMoveLine(models.Model):
                     for line in subsection_line | lines_for_tax_group:
                         result.append({
                             'name': line.name,
-                            'taxes': tax_labels if line == subsection_line else [],
+                            'product': line.product_id,
+                            'taxes': tax_labels if (line == subsection_line and not self.collapse_prices) or (line != subsection_line and self.collapse_prices) else [],
                             'price_subtotal': subtotal if line == subsection_line else line.price_subtotal,
                             'price_total': total if line == subsection_line else line.price_total,
                             'display_type': line.display_type,
