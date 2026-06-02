@@ -2056,23 +2056,64 @@ class TestStockValuation(TestStockValuationCommon):
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date5)).qty_available, 85)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date5)).total_value, 1275)
 
-        # Edit the quantity done of move1, increase it.
-        # Test a limitation, you can keep the old value but you can't keep the quantity in past
         with freeze_time(date6):
             self._set_quantity(move1, 20)
         self.assertEqual(product.qty_available, 95)
         self.assertEqual(product.total_value, 1425)
 
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date1)).qty_available, 20)
-        self.assertEqual(product.with_context(to_date=Datetime.to_string(date1)).total_value, 100)
+        self.assertEqual(product.with_context(to_date=Datetime.to_string(date1)).total_value, 200)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date2)).qty_available, 30)
-        self.assertEqual(product.with_context(to_date=Datetime.to_string(date2)).total_value, 220)
+        self.assertEqual(product.with_context(to_date=Datetime.to_string(date2)).total_value, 320)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date3)).qty_available, 15)
-        self.assertEqual(product.with_context(to_date=Datetime.to_string(date3)).total_value, 145)
+        self.assertEqual(product.with_context(to_date=Datetime.to_string(date3)).total_value, 170)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date4)).qty_available, -5)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date4)).total_value, -60)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date5)).qty_available, 95)
         self.assertEqual(product.with_context(to_date=Datetime.to_string(date5)).total_value, 1425)
+
+    def test_at_date_fifo_stable_after_std_price_drift(self):
+        """ Historical FIFO valuation must remain stable when standard_price
+        drifts due to newer operations. For moves without a purchase link
+        (inventory adjustments, initial inventory), the stored move value
+        is used as the historical fallback rather than the current
+        standard_price.
+        """
+        now = Datetime.now()
+        date1 = now - timedelta(days=2)
+        date2 = now - timedelta(days=1)
+
+        product = self.product_fifo
+        with freeze_time(date1):
+            product.standard_price = 10
+
+        # First move is an inventory adjustment at std_price 10
+        with freeze_time(date1):
+            quant = self.env['stock.quant'].create({
+                'product_id': product.id,
+                'location_id': self.stock_location.id,
+                'inventory_quantity': 10,
+            })
+            quant.action_apply_inventory()
+
+        self.assertEqual(
+            product.with_context(to_date=Datetime.to_string(date1)).total_value,
+            100.0,
+        )
+
+        # Second move at a higher price shifts standard_price to 15
+        with freeze_time(date2):
+            self._make_in_move(product=product, quantity=10, unit_cost=20)
+
+        self.assertEqual(product.standard_price, 15.0)
+
+        # Historical value at date1 must still be 100 despite the drift
+        self.assertEqual(
+            product.with_context(to_date=Datetime.to_string(date1)).total_value,
+            100.0,
+            "Historical FIFO value at date1 must remain 100 regardless of "
+            "standard_price changes from later operations.",
+        )
 
     def test_inventory_fifo_1(self):
         """ Make an inventory from a location with a company set, and ensure the product has a stock
@@ -2951,11 +2992,9 @@ class TestStockValuation(TestStockValuationCommon):
             ]
         )
 
-    def test_stock_valuation_revaluation_avco_rounding_2_digits(self):
-        """
-        Check that the rounding of the new price (cost) is equivalent to the rounding of the standard price (cost)
-        The check is done indirectly via the layers valuations.
-        If correct => rounding method is correct too
+    def test_stock_valuation_revaluation_avco_2_digits(self):
+        """Check that a manual standard_price revaluation on an AVCO product
+        propagates to total_value when product price precision is 2 digits.
         """
         product = self.product_avco
         self.env['decimal.precision'].search([
@@ -2967,14 +3006,15 @@ class TestStockValuation(TestStockValuationCommon):
 
         self.assertEqual(product.standard_price, 0.022)
         self.assertEqual(product.qty_available, 10000)
+        self.assertEqual(product.total_value, 220)
 
         # Second Move
         with freeze_time(Datetime.now() + timedelta(seconds=1)):
             product.write({'standard_price': 0.053})
 
-        self.assertEqual(product.standard_price, 0.05)
+        self.assertEqual(product.standard_price, 0.053)
         self.assertEqual(product.qty_available, 10000)
-        self.assertEqual(product.total_value, 500)
+        self.assertEqual(product.total_value, 530)
 
     def test_stock_valuation_revaluation_avco_rounding_5_digits(self):
         """
