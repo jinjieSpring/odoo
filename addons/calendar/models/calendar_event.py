@@ -1235,7 +1235,8 @@ class CalendarEvent(models.Model):
                 if 'user_id' in fields:
                     activity_values['user_id'] = event.user_id.id
                 if activity_values.keys():
-                    event.activity_ids.write(activity_values)
+                    # also protect against loops in case of ill-managed timezones
+                    event.activity_ids.with_context(calendar_event_meeting_update=True).write(activity_values)
 
     @api.model
     def _get_activity_deadline_from_start(self, start, allday):
@@ -1656,7 +1657,7 @@ class CalendarEvent(models.Model):
     @api.model
     def _get_contact_details_description(self, organizer, partners):
         """Build sanitized HTML with the organizer details and the details
-        of the contact partner (the first partner which is not the organizer).
+        of the contact partner (only when there is a single non-organizer attendee).
         """
         odoobot = self.env.ref('base.user_root')
         contact_description = []
@@ -1664,11 +1665,11 @@ class CalendarEvent(models.Model):
         if organizer and organizer != odoobot:
             contact_description.extend(self._prepare_partner_contact_details_html(_("Organized by"), organizer.partner_id))
         # First contact partner
-        first_partner = partners.filtered(lambda partner: partner not in (odoobot.partner_id + organizer.partner_id))[:1]
-        if first_partner:
+        contact_partners = partners.filtered(lambda partner: partner not in (odoobot.partner_id + organizer.partner_id))
+        if len(contact_partners) == 1:
             if contact_description:
                 contact_description.append("")  # To add a blank line between the organizer and partner details
-            contact_description.extend(self._prepare_partner_contact_details_html(_("Contact Details"), first_partner))
+            contact_description.extend(self._prepare_partner_contact_details_html(_("Contact Details"), contact_partners))
         return Markup("<br/>").join(contact_description)
 
     @api.model

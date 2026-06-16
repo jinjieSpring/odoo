@@ -5,6 +5,7 @@ from xml.dom.minidom import parseString
 from dateutil.relativedelta import relativedelta
 from lxml import etree
 from stdnum.pl.nip import compact
+from decimal import Decimal
 
 from odoo import Command, api, fields, models
 from odoo.exceptions import UserError
@@ -269,6 +270,7 @@ class AccountMove(models.Model):
             'correction_info': correction_info,
             'special_transactions': {'OSS_Base', 'OSS_Tax', 'Triangular Sale'} & invoice_tag_names,
             'triangular_transaction': '1' if 'Triangular Sale' in invoice_tag_names else '2',
+            'prefiks_podatnika': bool({'K_21', 'K_12', 'Triangular Sale'} & invoice_tag_names),
         }
 
     def _l10n_pl_edi_render_xml(self):
@@ -503,6 +505,9 @@ class AccountMove(models.Model):
                         raise UserError(self.env._("Tax corresponding to '%s' required to derive the net unit price from gross price during KSeF import was not found in the mapping.", tax_name))
                 else:
                     raise UserError(self.env._("No net or gross unit price found in the FA (3) for the line with product '%s'.", name))
+
+                if P_10 := get_value(line_node, '{*}P_10'):
+                    price_unit = float(Decimal(str(price_unit)) - Decimal(P_10))
 
                 lines.append(
                     {
