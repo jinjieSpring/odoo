@@ -5,10 +5,14 @@ from odoo import api, fields, models
 
 from odoo.addons.iap.tools import iap_tools
 from odoo.addons.l10n_fr_pdp.tools.demo_utils import handle_demo
+from odoo.exceptions import UserError
 
 PDP_identifier_re = re.compile(r'^([0-9]{9})(_[0-9]{14})?(_.+)?$')
 
 _logger = logging.getLogger(__name__)
+
+ENDPOINT = 'https://pdp.odoo.com'
+TEST_ENDPOINT = 'https://pdp.test.odoo.com'
 
 
 class ResCompany(models.Model):
@@ -90,10 +94,12 @@ class ResCompany(models.Model):
 
     def _inverse_pdp_identifier(self):
         for record in self:
+            if not record.pdp_identifier:
+                continue
             match = PDP_identifier_re.match(record.pdp_identifier or '')
             siren = match and match.group(1)
             if not siren:
-                continue
+                raise UserError(self.env._("The identifier %s is not valid. The expected format is: SIREN, SIREN_SIRET, SIREN_SIRET_CodeRoutage or SIREN_SuffixeAdressage", record.pdp_identifier))
             siret = match.group(2)[1:] if match and match.group(2) else False  # Remove `_` at the start
             record.partner_id.write({
                 'peppol_eas': '0225',
@@ -197,9 +203,13 @@ class ResCompany(models.Model):
                 and company.currency_id == self.env.ref('base.EUR')
             )
 
+    def _pdp_get_iap_url(self):
+        self.ensure_one()
+        return ENDPOINT if self._get_peppol_edi_mode() == 'prod' else TEST_ENDPOINT
+
     def _refresh_pdp_authentication_status(self):
         self.ensure_one()
-        base_url = self.env['pdp.registration']._get_iap_url()
+        base_url = self._pdp_get_iap_url()
         response = iap_tools.iap_jsonrpc(f'{base_url}/api/signaturit_id_authentication/1/kyc_status', params={
             'object_uuid': self.pdp_authentication_uuid,
         })
