@@ -525,7 +525,7 @@ Please change the quantity done or the rounding precision in your settings.""",
         prefetch_virtual_available = defaultdict(set)
         virtual_available_dict = {}
         for move in product_moves:
-            if move._is_consuming() and move.state == 'draft' or move.picking_code == 'internal':
+            if move._is_consuming() and move.state == 'draft' or move.picking_type_id.code == 'internal':
                 prefetch_virtual_available[key_virtual_available(move)].add(move.product_id.id)
             elif move.picking_type_id.code == 'incoming':
                 prefetch_virtual_available[key_virtual_available(move, incoming=True)].add(move.product_id.id)
@@ -911,6 +911,11 @@ Please change the quantity done or the rounding precision in your settings.""",
         instead of all the orderpoints linked to the product."""
         if not self:
             return
+        orderpoints = self._get_orderpoints_to_update()
+        orderpoints.invalidate_recordset(['qty_to_order', 'qty_forecast'])
+        self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['qty_to_order_computed'], orderpoints)
+
+    def _get_orderpoints_to_update(self):
         domains = []
         for move in self:
             domain_for_move = Domain('product_id', '=', move.product_id.id)
@@ -919,8 +924,7 @@ Please change the quantity done or the rounding precision in your settings.""",
                 domain_for_move &= Domain('warehouse_id', 'in', wh_ids)
             domains.append(domain_for_move)
         orderpoints = self.env['stock.warehouse.orderpoint'].sudo().search(Domain.OR(domains), order='id')
-        orderpoints.invalidate_recordset(['qty_to_order', 'qty_forecast'])
-        self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['qty_to_order_computed'], orderpoints)
+        return orderpoints
 
     def _delay_alert_get_documents(self):
         """Returns a list of recordset of the documents linked to the stock.move in `self` in order
@@ -2333,7 +2337,10 @@ Please change the quantity done or the rounding precision in your settings.""",
     def unlink(self):
         # With the non plannified picking, draft moves could have some move lines.
         self.with_context(prefetch_fields=False).mapped('move_line_ids').unlink()
-        return super(StockMove, self).unlink()
+        orderpoints = self._get_orderpoints_to_update()
+        res = super().unlink()
+        self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['qty_to_order_computed'], orderpoints)
+        return res
 
     def _prepare_move_split_vals(self, qty):
         vals = {
@@ -2623,8 +2630,8 @@ Please change the quantity done or the rounding precision in your settings.""",
             return
 
         product_domains = Domain.OR(
-            [('product_id', '=', move.product_id.id), ('location_id', 'parent_of', move.location_dest_id.id)]
-            for move in self
+            [('product_id', 'in', moves.product_id.ids), ('location_id', 'parent_of', location_dest.id)]
+            for location_dest, moves in self.grouped('location_dest_id').items()
         )
         static_domain = [('state', 'in', ['confirmed', 'partially_available']),
                          ('procure_method', '=', 'make_to_stock'),
@@ -2707,7 +2714,7 @@ Please change the quantity done or the rounding precision in your settings.""",
         """ Open the form view of the move's reference document, if one exists, otherwise open form view of self
         """
         self.ensure_one()
-        if not self.is_inventory and self.location_dest_usage == 'inventory':
+        if not self.is_inventory and self.location_dest_usage == 'inventory' and self.scrap_id:
             return {
                 'res_model': 'stock.scrap',
                 'type': 'ir.actions.act_window',

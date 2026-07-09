@@ -1315,12 +1315,12 @@ class AccountMove(models.Model):
     def _compute_status_in_payment(self):
         for move in self:
             if move.state == 'posted':
-                if move.payment_state in ('partial', 'in_payment', 'paid', 'reversed'):
+                if move.payment_state in ('partial', 'in_payment', 'paid', 'reversed', 'blocked'):
                     move.status_in_payment = move.payment_state
                 elif move.is_move_sent:
                     move.status_in_payment = 'sent'
             elif move.state == 'draft':
-                if move.payment_state in ('partial', 'in_payment', 'paid'):
+                if move.payment_state in ('partial', 'in_payment', 'paid', 'blocked'):
                     move.status_in_payment = move.payment_state
 
             if not move.status_in_payment:
@@ -1400,7 +1400,7 @@ class AccountMove(models.Model):
                         untaxed_amount = invoice.amount_untaxed_signed
                     invoice_payment_terms = invoice.invoice_payment_term_id._compute_terms(
                         date_ref=invoice.invoice_date or invoice.date or fields.Date.context_today(invoice),
-                        currency=invoice.currency_id,
+                        currency=invoice.currency_id or invoice.journal_id.currency_id or invoice.company_currency_id,
                         tax_amount_currency=tax_amount_currency,
                         tax_amount=tax_amount,
                         untaxed_amount_currency=untaxed_amount_currency,
@@ -3269,7 +3269,7 @@ class AccountMove(models.Model):
         fake_base_line = AccountTax._prepare_base_line_for_taxes_computation(None)
 
         def get_base_lines(move):
-            return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'cogs', 'non_deductible_product'))
+            return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'non_deductible_product'))
 
         def get_tax_lines(move):
             return move.line_ids.filtered('tax_repartition_line_id')
@@ -3863,6 +3863,8 @@ class AccountMove(models.Model):
     def _get_protected_vals(self, vals, records):
         protected = set()
         for fname in vals:
+            if fname == 'tax_totals':
+                continue  # Skip protecting tax_totals since it is updated explicitly after create/write
             field = records._fields[fname]
             if field.inverse or (field.compute and not field.readonly):
                 protected.update(self.pool.field_computed.get(field, [field]))
@@ -6038,6 +6040,8 @@ class AccountMove(models.Model):
     def action_force_register_payment(self):
         if any(m.move_type == 'entry' for m in self):
             raise UserError(_("You cannot register payments for miscellaneous entries."))
+        if any(m.payment_state == 'blocked' for m in self):
+            raise UserError(self.env._("You cannot register payments for blocked invoices."))
         return self.line_ids.action_register_payment()
 
     def action_duplicate(self):
@@ -6384,12 +6388,12 @@ class AccountMove(models.Model):
                 if not move:
                     continue
                 move._post()
+                self.env['ir.cron']._commit_progress(1)
             except UserError as e:
                 self.env.cr.rollback()
                 msg = _('The move could not be posted for the following reason: %(error_message)s', error_message=e)
                 move.message_post(body=msg, message_type='comment')
                 move.auto_post = 'no'
-            finally:
                 self.env['ir.cron']._commit_progress(1)
 
     @api.model
@@ -6689,7 +6693,7 @@ class AccountMove(models.Model):
                 line[2]['partner_id'] = self.env['res.partner'].browse(line[2]['partner_id']).sudo().display_name
             line[2]['account_id'] = self.env['account.account'].browse(line[2]['account_id']).display_name or _('Destination Account')
             line[2]['debit'] = currency_id and formatLang(self.env, line[2]['debit'], currency_obj=currency_id) or line[2]['debit']
-            line[2]['credit'] = currency_id and formatLang(self.env, line[2]['credit'], currency_obj=currency_id) or line[2]['debit']
+            line[2]['credit'] = currency_id and formatLang(self.env, line[2]['credit'], currency_obj=currency_id) or line[2]['credit']
         return preview_vals
 
     def _generate_qr_code(self, silent_errors=False):

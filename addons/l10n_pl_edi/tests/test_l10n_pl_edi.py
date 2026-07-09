@@ -573,7 +573,11 @@ class TestL10nPlEdi(AccountTestInvoicingCommon, CronMixinCase):
         invoice.action_post()
         with (
             patch.object(KsefApiService, 'open_ksef_session') as mock_open_session,
-            patch.object(KsefApiService, 'send_invoice', return_value={'referenceNumber': '999999'}) as mock_send
+            patch.object(KsefApiService, 'send_invoice', return_value={'referenceNumber': '999999'}) as mock_send,
+            patch.object(KsefApiService, 'get_invoice_status', return_value={
+                'ksefNumber': '7492091229-20260210-0700A043714A-5E',
+                'status': {'code': 200},
+            })
         ):
             wizard = self.env['account.move.send.wizard'].with_company(self.company).create({
                 'move_id': invoice.id,
@@ -582,9 +586,10 @@ class TestL10nPlEdi(AccountTestInvoicingCommon, CronMixinCase):
             wizard.action_send_and_print()
             self.assertEqual(mock_open_session.call_count, 1)
             self.assertEqual(mock_send.call_count, 1)
-        self.assertEqual(invoice.l10n_pl_edi_status, 'sent')
+        self.assertEqual(invoice.l10n_pl_edi_status, 'accepted')
         self.assertEqual(invoice.l10n_pl_edi_session_id, invoice.company_id.l10n_pl_edi_session_id)
         self.assertEqual(invoice.l10n_pl_edi_ref, '999999')
+        self.assertEqual(invoice.l10n_pl_edi_number, '7492091229-20260210-0700A043714A-5E')
         self.assertEqual(invoice.l10n_pl_edi_attachment_id.name, 'FA3-INV_2026_00001.xml')
 
     def test_l10n_pl_edi_send_api_error(self):
@@ -997,3 +1002,23 @@ class TestL10nPlEdi(AccountTestInvoicingCommon, CronMixinCase):
         self.assertEqual(capt.call_count, 3)
         new_bill = self.env['account.move'].search([('l10n_pl_edi_number', '=', 'KSEF-NEW-BILL-001')])
         self.assertTrue(new_bill)
+
+    def test_ksef_bill_import_dynamic_taxes_and_fiscal_position(self):
+        """ Test that importing a KSeF bill maps taxes dynamically using amounts and fiscal positions. """
+
+        path = 'l10n_pl_edi/tests/import_xmls/fa3_standard_bill.xml'
+        with tools.file_open(path, mode='rb') as file:
+            xml_content = file.read()
+
+        parsed_vals = self.env['account.move'].with_company(self.company).l10n_pl_edi_get_ksef_bill_vals_from_xml(xml_content)
+        bill = self.env['account.move'].with_company(self.company).create(parsed_vals)
+
+        self.assertRecordValues(bill.invoice_line_ids, [
+            {'price_unit': 3.19},
+            {'price_unit': 5.00},
+            {'price_unit': 5.00},
+        ])
+        self.assertEqual(
+            bill.invoice_line_ids.mapped('tax_ids.amount'),
+            [23.0, 23.0, 5.0],
+        )
