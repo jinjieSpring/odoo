@@ -372,12 +372,21 @@ class ProductProduct(models.Model):
     def _get_remaining_moves(self):
         moves_qty_by_product = {}
         for product in self:
-            moves, remaining_qty = product._run_fifo_get_stack()
-            moves = self.env['stock.move'].concat(*moves)
-            if not moves:
+            qty_by_move = defaultdict(float)
+            lots = [None]
+            if product.lot_valuated:
+                lots = product.stock_quant_ids.filtered(
+                    lambda q: q.lot_id and q.company_id == self.env.company and q.location_id.is_valued_internal and q.quantity > 0
+                ).lot_id or [None]
+            for lot in lots:
+                moves, remaining_qty = product._run_fifo_get_stack(lot=lot)
+                if not moves:
+                    continue
+                qty_by_move[moves[0]] += remaining_qty
+                for move in moves[1:]:
+                    qty_by_move[move] += move._get_valued_qty(lot)
+            if not qty_by_move:
                 continue
-            qty_by_move = {m: m.quantity for m in moves[1:]}
-            qty_by_move[moves[0]] = remaining_qty
             moves_qty_by_product[product] = qty_by_move
         return moves_qty_by_product
 
@@ -447,8 +456,7 @@ class ProductProduct(models.Model):
             order='product_id, date, id'
         )
 
-        dropship_moves = moves.filtered(lambda m: m.is_dropship)
-        if len(dropship_moves) > 1:
+        if self.env['stock.move'].search_count(moves_domain & Domain('is_dropship', '=', True), limit=1):
             self._get_moves_with_manual_value(product_ids=self.ids)
 
         # PERF avoid memoryerror
@@ -671,8 +679,10 @@ class ProductProduct(models.Model):
                             and product.uom_id.compare(product.qty_available, 0) > 0
                     ):
                         new_avg_cost = (previous_qty * product.standard_price + added_value) / product.qty_available
-                    else:
+                    elif not product.uom_id.is_zero(added_qty):
                         new_avg_cost = added_value / added_qty
+                    else:
+                        continue
                     product.with_context(disable_auto_revaluation=True).sudo().standard_price = new_avg_cost
                 products = products - products_with_incremental_recompute
 
