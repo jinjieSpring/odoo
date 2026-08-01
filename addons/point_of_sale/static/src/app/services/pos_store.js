@@ -196,7 +196,7 @@ export class PosStore extends WithLazyGetterTrap {
         initLNA(this.notification, (type, message) => {
             this.lnaState = { type, message };
         });
-        await this.checkAccessRight();
+        this.checkAccessRight();
     }
 
     async posBackOnline() {
@@ -793,7 +793,14 @@ export class PosStore extends WithLazyGetterTrap {
                     : values.filter((value) => attrValueIds.has(value.id))
             );
         }
-        if (attributeLinesValues.some((values) => values.length > 1 || values[0].is_custom)) {
+        if (
+            attributeLinesValues.some(
+                (values) =>
+                    values.length > 1 ||
+                    values[0].is_custom ||
+                    values[0].attribute_id.display_type === "multi"
+            )
+        ) {
             const forceVariantValue =
                 (opts.forceVariantValue
                     ? Object.fromEntries(opts.forceVariantValue.map((value) => [value.id, value]))
@@ -1318,7 +1325,10 @@ export class PosStore extends WithLazyGetterTrap {
 
     setSelectedCategory(categoryId) {
         if (categoryId === this.selectedCategory?.id) {
-            if (this.selectedCategory.parent_id) {
+            const isParentAvailable = this.rootCategories.some(
+                (c) => c.id === this.selectedCategory.id
+            );
+            if (this.selectedCategory.parent_id && !isParentAvailable) {
                 this.selectedCategory = this.selectedCategory.parent_id;
             } else {
                 this.selectedCategory = this.models["pos.category"].get(0);
@@ -2341,9 +2351,9 @@ export class PosStore extends WithLazyGetterTrap {
             {
                 props: {
                     resId: product?.id,
-                    onSave: (record) => {
-                        this.data.read("product.template", [record.evalContext.id]);
-                        this.data.searchRead("product.product", [
+                    onSave: async (record) => {
+                        await this.data.read("product.template", [record.evalContext.id]);
+                        await this.data.searchRead("product.product", [
                             ["product_tmpl_id", "=", record.evalContext.id],
                         ]);
                         this.action.doAction({
@@ -2379,11 +2389,7 @@ export class PosStore extends WithLazyGetterTrap {
     }
 
     async checkAccessRight() {
-        try {
-            this.canUserCreateProduct = await user.checkAccessRight("product.product", "create");
-        } catch {
-            this.canUserCreateProduct = false;
-        }
+        this.canUserCreateProduct = await user.checkAccessRight("product.product", "create");
     }
 
     get hasProductCreationAccess() {
@@ -3121,6 +3127,21 @@ export class PosStore extends WithLazyGetterTrap {
 
     get isSmallProductScreen() {
         return this.ui.size < SIZES.MD;
+    }
+
+    getAvailableCategories() {
+        const { limit_categories, iface_available_categ_ids } = this.config;
+        let availableCategories = this.models["pos.category"].getAll();
+        if (limit_categories && iface_available_categ_ids.length > 0) {
+            availableCategories = iface_available_categ_ids;
+        }
+        return availableCategories;
+    }
+
+    get rootCategories() {
+        const available = this.getAvailableCategories();
+        const availableIds = new Set(available.map((c) => c.id));
+        return available.filter((c) => !c.parent_id || !availableIds.has(c.parent_id.id));
     }
 }
 

@@ -1252,8 +1252,8 @@ class MailThread(models.AbstractModel):
 
         # 2. Handle new incoming email by checking aliases and applying their settings
         # prefetch catchall aliases as they are used several times
-        catchall_aliases = self.env['mail.alias.domain'].search([]).mapped('catchall_email')
-        self = self.with_context(mail_catchall_aliases=catchall_aliases)
+        all_aliases = self.env['mail.alias.domain'].search([])
+        self = self.with_context(mail_catchall_aliases=all_aliases.mapped('catchall_email'))
         if rcpt_tos_list:
             # no route found for a matching reference (or reply), so parent is invalid
             message_dict.pop('parent_id', None)
@@ -1262,14 +1262,23 @@ class MailThread(models.AbstractModel):
             if self._detect_write_to_catchall(message_dict):
                 _logger.info('Routing mail from %s to %s with Message-Id %s: direct write to catchall, bounce',
                              email_from, message_dict['to'], message_id)
+
+                # TODO master: merge the logic with _detect_write_to_catchall.
+                recipient_company = self.env.company
+                email_to_list = [email_normalize(e) or e for e in email_split(message_dict['to'])]
+                for alias in all_aliases:
+                    if alias.catchall_email in email_to_list and alias.company_ids and recipient_company not in alias.company_ids:
+                        recipient_company = alias.company_ids[:1]
+
                 body = self.env['ir.qweb']._render('mail.mail_bounce_catchall', {
                     'message': message,
+                    'res_company': recipient_company,
                 })
-                self._routing_create_bounce_email(
+                self.with_company(recipient_company)._routing_create_bounce_email(
                     email_from, body, message,
                     # add a reference with a tag, to be able to ignore response to this email
                     references=f'{message_id} {generate_tracking_message_id("loop-detection-bounce-email")}',
-                    reply_to=self.env.company.email)
+                    reply_to=recipient_company.email)
                 return []
 
             dest_aliases = self.env['mail.alias'].search([
@@ -4406,12 +4415,18 @@ class MailThread(models.AbstractModel):
             return ooo_messages
 
         # limit number of real author / recipient exchanges to 1 every 4 days
-        sent_su = self.env['mail.message'].sudo().search([
+        base_domain = Domain([
             ('author_id', 'in', ooo_users.partner_id.ids),
             ('message_type', '=', 'out_of_office'),
-            '|', ('partner_ids', 'in', recipient.ids), ('outgoing_email_to', '=', email_to),
             ('date', '>=', '-4d'),
         ])
+
+        partner_domain = Domain('partner_ids', 'in', recipient.ids) if recipient else Domain.FALSE
+        email_domain = Domain('outgoing_email_to', '=', email_to) if email_to else Domain.FALSE
+        recipient_domain = partner_domain | email_domain
+
+        final_domain = base_domain & recipient_domain
+        sent_su = self.env['mail.message'].sudo().search(final_domain)
         already_mailed = sent_su.author_id
 
         # finally send OOO messages
