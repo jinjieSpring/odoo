@@ -50,7 +50,7 @@ class Account_Edi_Proxy_ClientUser(models.Model):
         if not proxy_type:
             self.ensure_one()
             proxy_type = self.proxy_type
-        return f"/api/{proxy_type}/{endpoint}"
+        return f"/api/{proxy_type}/{endpoint.lstrip('/')}"
 
     @api.model
     def _get_peppol_error_message(self, error_vals):
@@ -225,7 +225,8 @@ class Account_Edi_Proxy_ClientUser(models.Model):
             file_data['xml_tree'] = self.env['account.move']._get_xml_tree(file_data)
 
         # Self-billed invoices are invoices which your customer creates on your behalf and sends you via Peppol.
-        # In this case, the invoice needs to be created as an out_invoice in a sale journal.
+        # In this case, the invoice needs to be created as an out_invoice in a self-billing sale journal.
+        # If no self-billing sale journal was found, the invoice will be created in a regular sale journal.
         # 329/527: Self-billing invoice; 261: Self-billing credit note
         is_self_billed = False
         if file_data['xml_tree'].findtext('.//{*}InvoiceTypeCode') in ['389', '527'] or file_data['xml_tree'].findtext('.//{*}CreditNoteTypeCode') == '261':
@@ -238,15 +239,20 @@ class Account_Edi_Proxy_ClientUser(models.Model):
                 return {}
 
         else:
+            sale_journal_domain = [
+                *self.env['account.journal']._check_company_domain(self.company_id),
+                ('type', '=', 'sale'),
+            ]
             journal = (
                 journal
                 or self.env['account.journal'].search(
                     [
-                        *self.env['account.journal']._check_company_domain(self.company_id),
-                        ('type', '=', 'sale'),
+                        *sale_journal_domain,
+                        ('is_self_billing', '=', True),
                     ],
-                    limit=1
+                    limit=1,
                 )
+                or self.env['account.journal'].search(sale_journal_domain, limit=1)
             )
             move_type = 'out_invoice'
             if not journal:
@@ -268,6 +274,16 @@ class Account_Edi_Proxy_ClientUser(models.Model):
             _logger.exception("Unexpected error occurred during the import of bill with id %s", move.id)
         attachment.write({'res_model': 'account.move', 'res_id': move.id})
         return {'uuid': uuid, 'move': move}
+
+    def _peppol_get_duplicate_message_uuids(self, message_uuids):
+        self.ensure_one()
+        return set(
+            self.env['account.move'].search([
+                ('peppol_message_uuid', 'in', message_uuids),
+                ('company_id', '=', self.company_id.id),
+            ])
+            .mapped('peppol_message_uuid')
+        )
 
     def _peppol_get_new_documents(self, skip_no_journal=False):
         # Context added to not break stable policy: useful to tweak on databases processing large invoices
@@ -304,6 +320,19 @@ class Account_Edi_Proxy_ClientUser(models.Model):
                 message['uuid']
                 for message in messages.get('messages', [])
             ]
+            # remove the duplicates
+            if duplicate_message_uuids := list(edi_user._peppol_get_duplicate_message_uuids(message_uuids)):
+                message_uuids = list(set(message_uuids) - set(duplicate_message_uuids))
+                # acknowledge the duplicates on IAP side.
+                edi_user._call_peppol_proxy(
+                    endpoint=edi_user._get_peppol_proxy_endpoint('1/ack'),
+                    params={'message_uuids': duplicate_message_uuids},
+                )
+                _logger.info(
+                    "Messages with UUID %s could not be imported because they are identified as duplicates",
+                    ', '.join(duplicate_message_uuids)
+                )
+
             if not message_uuids:
                 continue
 

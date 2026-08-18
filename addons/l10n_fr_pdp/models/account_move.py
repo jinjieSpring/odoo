@@ -120,14 +120,12 @@ class AccountMove(models.Model):
         copy=False,
     )
 
-    @api.depends('peppol_is_sent', 'l10n_fr_pdp_sent_in_flow_ids')
+    @api.depends('l10n_fr_pdp_sent_in_flow_ids')
     def _compute_show_reset_to_draft_button(self):
-        # EXTEND 'account' to hide the reset to draft button for sent PDP invoices
+        # EXTEND 'account_peppol' to hide the reset to draft button for sent PDP invoices
+        # account_peppol already prevents resetting those sent via Peppol
         super()._compute_show_reset_to_draft_button()
-        relevant_moves = self.filtered(
-            lambda move: move.l10n_fr_pdp_sent_in_flow_ids or move.pdp_is_sent and move.is_sale_document(include_receipts=True)
-        )
-        relevant_moves.show_reset_to_draft_button = False
+        self.filtered(lambda move: move.sudo().l10n_fr_pdp_sent_in_flow_ids).show_reset_to_draft_button = False
 
     @api.depends(
         'line_ids.matched_debit_ids.debit_move_id',
@@ -250,8 +248,8 @@ class AccountMove(models.Model):
     def _l10n_fr_pdp_get_default_notes(self):
         self.ensure_one()
         # Mandatory / default notes for French e-invoicing [BR-FR-05]
-        # Only add them when using PDP
-        if self.company_id._get_peppol_proxy_type() != 'pdp':
+        # Only add them for French companies
+        if not self.company_id._peppol_is_french_company():
             return {}
         payment_term = self.invoice_payment_term_id
         return {
