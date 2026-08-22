@@ -1413,85 +1413,85 @@ msgstr "没有可回滚的历史版本。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "The API returned HTTP error %s: %s"
 msgstr "接口返回 HTTP 错误 %s：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "The model list endpoint was not found. For llama.cpp / vLLM, set the endpoint to http://<host>:<port>/v1 so that /v1/models is used."
 msgstr "未找到模型列表接口。对于 llama.cpp / vLLM，请将地址设置为 http://<host>:<port>/v1，以便使用 /v1/models。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "The endpoint is missing a scheme: \"%s\". Add http:// or https://."
 msgstr "接口地址缺少协议：\"%s\"。请补充 http:// 或 https://。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "Could not connect to \"%s\". Check the address and that the service is running."
 msgstr "无法连接到 \"%s\"。请检查地址，并确认服务已启动。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "The request to \"%s\" timed out."
 msgstr "请求 \"%s\" 超时。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "Request failed: %s"
 msgstr "请求失败：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/http.py:0
 msgid "The API returned non-JSON data: %s"
 msgstr "接口返回了非 JSON 数据：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "No API key is configured for provider \"%s\"."
 msgstr "提供方“%s”尚未配置 API 密钥。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "Ollama does not implement image generation in this provider."
 msgstr "当前提供方未实现 Ollama 图像生成。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "Ollama does not implement audio transcription in this provider."
 msgstr "当前提供方未实现 Ollama 语音转写。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "Ernie requires both API Key and Secret Key."
 msgstr "文心一言需要同时配置 API Key 和 Secret Key。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "Ernie did not return an access_token."
 msgstr "文心一言未返回 access_token。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "Ernie image generation is not implemented in this provider."
 msgstr "当前提供方未实现文心一言图像生成。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_provider.py:0
+#: code:addons/ai_base/tools/providers.py:0
 msgid "Ernie audio transcription is not implemented in this provider."
 msgstr "当前提供方未实现文心一言语音转写。"
 

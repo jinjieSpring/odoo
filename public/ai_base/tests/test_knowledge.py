@@ -110,7 +110,7 @@ class TestKnowledge(AiBaseCase):
         with patch.object(
                 type(self.env['ai.base.service']), 'embedding',
                 return_value=[[1.0, 0.0]]), patch(
-                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
             self.env['ai.base.service'].chat(
                 'What about meals?', session=session)

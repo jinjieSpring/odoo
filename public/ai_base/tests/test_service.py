@@ -20,7 +20,7 @@ class TestService(AiBaseCase):
 
     def test_chat_writes_request_log(self):
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok()):
             result = self.env['ai.base.service'].chat('ping')
         self.assertEqual(result['reply'], 'hello')
@@ -46,7 +46,7 @@ class TestService(AiBaseCase):
             return self._ok('hi Ada')
 
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
             result = self.env['ai.base.service'].chat(
                 prompt_key='test.draft',
@@ -59,7 +59,7 @@ class TestService(AiBaseCase):
             for msg in captured['messages'] if msg['role'] == 'system'))
 
     def test_failover_uses_next_model(self):
-        from odoo.addons.ai_base.models.ai_provider import AiError
+        from odoo.addons.ai_base.tools import AiError
         fallback = self.env['ai.model'].create({
             'name': 'Fallback',
             'code': 'fallback-svc',
@@ -75,7 +75,7 @@ class TestService(AiBaseCase):
             return self._ok('from fallback')
 
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
             result = self.env['ai.base.service'].chat('hello')
         self.assertEqual(result['reply'], 'from fallback')
@@ -104,7 +104,7 @@ class TestService(AiBaseCase):
 
         with patch.object(Service, 'on_ai_request_before', before), patch.object(
                 Service, 'on_ai_request_done', done), patch(
-                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok()):
             self.env['ai.base.service'].chat('ping')
         self.assertEqual(calls, ['before', 'done'])

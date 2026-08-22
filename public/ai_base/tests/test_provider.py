@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import Mock, patch
 
-from odoo.addons.ai_base.models.ai_provider import (
+from odoo.addons.ai_base.tools import (
     AiError,
     OpenAICompatibleAdapter,
     get_provider,
@@ -54,7 +54,7 @@ class TestProvider(AiBaseCase):
         }
         client = get_provider(self.provider)
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.http_request',
+                'odoo.addons.ai_base.tools.providers.http_request',
                 return_value=payload) as request_mock:
             result = client.chat(
                 self.model, [{'role': 'user', 'content': 'Hello'}])
@@ -69,14 +69,14 @@ class TestProvider(AiBaseCase):
         response.iter_lines.return_value = [line]
         client = get_provider(self.provider)
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.http_stream',
+                'odoo.addons.ai_base.tools.providers.http_stream',
                 return_value=response):
             chunks = list(client.stream_chat(
                 self.model, [{'role': 'user', 'content': 'hi'}]))
         self.assertEqual(chunks[0]['content'], '中')
 
     def test_http_error_on_models_is_actionable(self):
-        from odoo.addons.ai_base.models.ai_provider import _http_error_message
+        from odoo.addons.ai_base.tools.http import _http_error_message
         message = _http_error_message(
             'http://127.0.0.1:8080/models', 404, 'Not Found')
         self.assertIn('/v1/models', message)
@@ -122,7 +122,7 @@ class TestProvider(AiBaseCase):
             ]
         }
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.http_request',
+                'odoo.addons.ai_base.tools.providers.http_request',
                 return_value=payload):
             action = self.provider.action_test_connection()
         self.assertEqual(action['params']['type'], 'success')
@@ -155,7 +155,7 @@ class TestProvider(AiBaseCase):
             }]
         }
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.http_request',
+                'odoo.addons.ai_base.tools.providers.http_request',
                 return_value=payload):
             self.provider.action_test_connection()
         matches = self.env['ai.model'].search([
@@ -196,7 +196,7 @@ class TestProvider(AiBaseCase):
             raise AssertionError(url)
 
         with patch(
-                'odoo.addons.ai_base.models.ai_provider.http_request',
+                'odoo.addons.ai_base.tools.providers.http_request',
                 side_effect=fake_request):
             ollama.action_test_connection()
         model = self.env['ai.model'].search([
