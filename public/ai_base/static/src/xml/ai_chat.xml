@@ -11,7 +11,7 @@
     <t t-name="ai_base.Chat">
         <div class="o_ai_chat">
             <div class="o_ai_chat_sessions px-2 py-1">
-                <button class="btn btn-link btn-sm" t-on-click="onNewSession">New session</button>
+                <button class="btn btn-link btn-sm" t-on-click="onNewSession"><t t-esc="_t('New session')"/></button>
                 <t t-foreach="state.sessions" t-as="session" t-key="session.id">
                     <button class="btn btn-link btn-sm d-block text-start"
                             t-att-class="{'fw-bold': session.id === state.sessionId}"
@@ -53,9 +53,9 @@
             </div>
             <div class="o_ai_chat_input">
                 <input class="form-control" t-model="state.content"
-                       t-on-keydown="onKeyDown" placeholder="Ask the AI assistant..."/>
+                       t-on-keydown="onKeyDown" t-att-placeholder="_t('Ask the AI assistant...')"/>
                 <button class="btn btn-primary" t-on-click="onSend"
-                        t-att-disabled="!canSend">Send</button>
+                        t-att-disabled="!canSend"><t t-esc="_t('Send')"/></button>
             </div>
         </div>
     </t>

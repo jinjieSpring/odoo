@@ -1,0 +1,1880 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ai_base 19.0.1.0.0\n"
+"Language: zh_CN\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: ai_base
+#: model:ir.module.module,shortdesc:ai_base.module_ai_base
+msgid "AI Base"
+msgstr "AI 底座"
+
+#. module: ai_base
+#: model:res.groups.privilege,name:ai_base.ai_privilege
+#: model:ir.ui.menu,name:ai_base.ai_menu_root
+msgid "AI"
+msgstr "AI"
+
+#. module: ai_base
+#: model:res.groups,name:ai_base.group_user
+msgid "AI User"
+msgstr "AI 使用者"
+
+#. module: ai_base
+#: model:res.groups,comment:ai_base.group_user
+msgid "Can use AI chat and call registered read-only tools."
+msgstr "可以使用 AI 对话，并调用已注册的只读工具。"
+
+#. module: ai_base
+#: model:res.groups,name:ai_base.group_log
+msgid "AI Log Viewer"
+msgstr "AI 日志查看员"
+
+#. module: ai_base
+#: model:res.groups,comment:ai_base.group_log
+msgid "Can inspect AI request logs without changing configuration."
+msgstr "可以查看 AI 请求日志，但不能修改配置。"
+
+#. module: ai_base
+#: model:res.groups,name:ai_base.group_manager
+msgid "AI Manager"
+msgstr "AI 管理员"
+
+#. module: ai_base
+#: model:res.groups,comment:ai_base.group_manager
+msgid "Can configure adapters, models, prompts, knowledge and tools."
+msgstr "可以配置适配器、模型、提示词、知识库和工具。"
+
+#. module: ai_base
+#: model:res.groups.privilege,description:ai_base.ai_privilege
+msgid "Generic AI capability groups."
+msgstr "通用 AI 能力权限组。"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_adapter
+msgid "AI Model Adapter"
+msgstr "AI 模型适配器"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_model
+msgid "AI Model Pool Entry"
+msgstr "AI 模型池"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_prompt_template
+msgid "AI Prompt Template"
+msgstr "AI 提示词模板"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_prompt_template_history
+msgid "AI Prompt Template History"
+msgstr "AI 提示词历史版本"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_knowledge_base
+msgid "AI Knowledge Base"
+msgstr "AI 知识库"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_knowledge_document
+msgid "AI Knowledge Document"
+msgstr "AI 知识文档"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_knowledge_chunk
+msgid "AI Knowledge Chunk"
+msgstr "AI 知识分片"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_tool
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+msgid "AI Tool"
+msgstr "AI 工具"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_generic_tools
+msgid "AI Generic Read-Only Tools"
+msgstr "AI 通用只读工具"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_chat_session
+msgid "AI Chat Session"
+msgstr "AI 会话"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_chat_message
+msgid "AI Chat Message"
+msgstr "AI 会话消息"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_request_log
+msgid "AI Request Log"
+msgstr "AI 请求日志"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_async_job
+msgid "AI Asynchronous Job"
+msgstr "AI 异步任务"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_config
+#: model:ir.ui.view,arch_db:ai_base.ai_config_form_view
+msgid "AI Base Configuration"
+msgstr "AI 底座配置"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_base_service
+msgid "AI Base Service"
+msgstr "AI 底座服务"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_vector_store
+msgid "AI Vector Store Helper"
+msgstr "AI 向量存储"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_adapters
+#: model:ir.actions.act_window,name:ai_base.ai_adapter_action
+msgid "Adapters"
+msgstr "适配器"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_models
+#: model:ir.actions.act_window,name:ai_base.ai_model_action
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_adapter_form_view
+msgid "Models"
+msgstr "模型"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_prompts
+#: model:ir.actions.act_window,name:ai_base.ai_prompt_action
+msgid "Prompt Templates"
+msgstr "提示词模板"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_knowledge
+#: model:ir.actions.act_window,name:ai_base.ai_knowledge_action
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__knowledge_ids
+msgid "Knowledge Bases"
+msgstr "知识库"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_tools
+#: model:ir.actions.act_window,name:ai_base.ai_tool_action
+msgid "AI Tools"
+msgstr "AI 工具"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_sessions
+#: model:ir.actions.act_window,name:ai_base.ai_session_action
+msgid "Chat Sessions"
+msgstr "对话会话"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_jobs
+#: model:ir.actions.act_window,name:ai_base.ai_async_job_action
+msgid "Async Jobs"
+msgstr "异步任务"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_logs
+#: model:ir.actions.act_window,name:ai_base.ai_request_log_action
+msgid "Request Log & Usage"
+msgstr "请求日志与用量"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_settings
+#: model:ir.actions.server,name:ai_base.ai_config_action
+msgid "Configuration"
+msgstr "配置"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__name
+msgid "Adapter Name"
+msgstr "适配器名称"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__code
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__code
+msgid "Code"
+msgstr "编码"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__adapter_type
+msgid "Adapter Type"
+msgstr "适配器类型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__endpoint
+msgid "API Endpoint"
+msgstr "API 地址"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__api_key
+msgid "API Key"
+msgstr "API 密钥"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__api_secret
+msgid "API Secret"
+msgstr "API Secret"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_adapter__api_secret
+msgid "Used by Ernie (Wenxin) as the secret key."
+msgstr "文心一言使用的 Secret Key。"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__timeout
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__timeout
+msgid "Timeout (seconds)"
+msgstr "超时（秒）"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__proxy
+msgid "HTTP Proxy"
+msgstr "HTTP 代理"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__sequence
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__sequence
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__sequence
+msgid "Sequence"
+msgstr "序号"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__is_active
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__is_active
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__is_active
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__is_active
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__active
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__is_active
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__active
+msgid "Active"
+msgstr "启用"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__note
+msgid "Notes"
+msgstr "备注"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__company_id
+msgid "Company"
+msgstr "公司"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_adapter__company_id
+msgid "Empty means the adapter is available to every company."
+msgstr "留空表示所有公司都可使用该适配器。"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__openai_compat
+msgid "OpenAI Compatible"
+msgstr "OpenAI 兼容"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__qwen
+msgid "Tongyi Qianwen"
+msgstr "通义千问"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__ernie
+msgid "Wenxin Yiyan"
+msgstr "文心一言"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__deepseek
+msgid "DeepSeek"
+msgstr "DeepSeek"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__ollama
+msgid "Ollama (Local)"
+msgstr "Ollama（本地）"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__custom
+msgid "Private / Custom"
+msgstr "私有 / 自定义"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__code
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_code
+msgid "Model Code"
+msgstr "模型编码"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_model__code
+msgid "Business modules pass this code to ai.base.service."
+msgstr "业务模块通过该编码调用 ai.base.service。"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__adapter_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__adapter_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__adapter_id
+msgid "Adapter"
+msgstr "适配器"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__model_kind
+msgid "Model Type"
+msgstr "模型类型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__model_name_remote
+msgid "Remote Model Name"
+msgstr "远端模型名"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__max_context_tokens
+msgid "Max Context Tokens"
+msgstr "最大上下文 Token"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__temperature_default
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__default_temperature
+msgid "Default Temperature"
+msgstr "默认 Temperature"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__top_p_default
+msgid "Default Top P"
+msgstr "默认 Top P"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__max_tokens_default
+msgid "Default Max Tokens"
+msgstr "默认最大 Token"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__is_default
+msgid "System Default"
+msgstr "系统默认"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__supports_streaming
+msgid "Supports Streaming"
+msgstr "支持流式输出"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__chat
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__chat
+msgid "Chat"
+msgstr "对话"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__embedding
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__embed
+msgid "Embedding"
+msgstr "嵌入"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__image
+msgid "Image Generation"
+msgstr "图像生成"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__image
+msgid "Image"
+msgstr "图像"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__audio_transcribe
+msgid "Audio Transcribe"
+msgstr "语音转写"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__audio
+msgid "Audio"
+msgstr "语音"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__name
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__name
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__name
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__name
+msgid "Name"
+msgstr "名称"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__code
+msgid "Key"
+msgstr "编码"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__description
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__description
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__description
+msgid "Description"
+msgstr "描述"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__category
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__category
+msgid "Category"
+msgstr "分类"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__system_prompt
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__system_prompt
+msgid "System Prompt"
+msgstr "系统提示词"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__user_template
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__user_template
+msgid "User Template"
+msgstr "用户模板"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__content
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__content
+msgid "Template Body"
+msgstr "模板正文"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__default_params
+msgid "Default Parameters"
+msgstr "默认参数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__lang
+msgid "Language Code"
+msgstr "语言代码"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__lang
+msgid "e.g. zh_CN, en_US"
+msgstr "例如 zh_CN、en_US"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__version
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__version
+msgid "Version"
+msgstr "版本"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__default_model_code
+msgid "Default Model Code"
+msgstr "默认模型编码"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__history_ids
+msgid "History"
+msgstr "历史"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__preview_context
+msgid "Preview Context (JSON)"
+msgstr "预览上下文（JSON）"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__preview_result
+msgid "Preview Result"
+msgstr "预览结果"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__template_id
+msgid "Template"
+msgstr "模板"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__embedding_model_id
+msgid "Embedding Model"
+msgstr "嵌入模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__vector_store_type
+msgid "Vector Store"
+msgstr "向量库"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__chunk_strategy
+msgid "Chunk Strategy"
+msgstr "分块策略"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__chunk_size
+msgid "Chunk Size"
+msgstr "分块大小"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__chunk_overlap
+msgid "Chunk Overlap"
+msgstr "分块重叠"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__rerank
+msgid "Enable Rerank"
+msgstr "启用重排"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__document_ids
+msgid "Documents"
+msgstr "文档"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_base__chunk_strategy__fixed
+msgid "Fixed Length"
+msgstr "固定长度"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_base__chunk_strategy__semantic
+msgid "Semantic / Paragraph"
+msgstr "语义 / 段落"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_base__chunk_strategy__heading
+msgid "Heading Split"
+msgstr "按标题分割"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__knowledge_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__knowledge_id
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_knowledge_form_view
+msgid "Knowledge Base"
+msgstr "知识库"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__attachment_id
+msgid "Attachment"
+msgstr "附件"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__content
+msgid "Extracted Text"
+msgstr "提取文本"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__state
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__state
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__status
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__state
+msgid "Status"
+msgstr "状态"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_document__state__pending
+msgid "Pending Parse"
+msgstr "待解析"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_document__state__parsed
+msgid "Parsed"
+msgstr "解析成功"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_document__state__error
+msgid "Parse Failed"
+msgstr "解析失败"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_document__state__ready
+msgid "Vectorized"
+msgstr "已向量化"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__error_message
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_message
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__error_message
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__error
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__error
+msgid "Error"
+msgstr "错误"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__chunk_ids
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__chunk_count
+msgid "Chunks"
+msgstr "分片"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__document_id
+msgid "Document"
+msgstr "文档"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__page
+msgid "Page"
+msgstr "页码"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__content
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__content
+msgid "Content"
+msgstr "内容"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__embedding
+msgid "Embedding JSON"
+msgstr "向量 JSON"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__name
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_name
+msgid "Tool Name"
+msgstr "工具名称"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__tool_type
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__job_type
+msgid "Type"
+msgstr "类型"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_tool__tool_type__python
+msgid "Python Function"
+msgstr "Python 函数"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_tool__tool_type__orm
+msgid "Odoo ORM Action"
+msgstr "Odoo ORM 动作"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_tool__tool_type__http
+msgid "HTTP Endpoint"
+msgstr "HTTP 接口"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__input_schema
+msgid "Input JSON Schema"
+msgstr "入参 JSON Schema"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__output_schema
+msgid "Output JSON Schema"
+msgstr "出参 JSON Schema"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__required_groups
+msgid "Required Groups"
+msgstr "所需权限组"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_tool__required_groups
+msgid "Comma-separated XML IDs, e.g. base.group_user"
+msgstr "逗号分隔的 XML ID，例如 base.group_user"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__read_only
+msgid "Read Only"
+msgstr "只读"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__rate_limit
+msgid "Rate Limit / minute"
+msgstr "每分钟限流"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__orm_model
+msgid "ORM Model"
+msgstr "ORM 模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__orm_method
+msgid "ORM Method"
+msgstr "ORM 方法"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__http_method
+msgid "HTTP Method"
+msgstr "HTTP 方法"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__http_url
+msgid "HTTP URL"
+msgstr "HTTP 地址"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__http_headers
+msgid "HTTP Headers"
+msgstr "HTTP 请求头"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__name
+msgid "Session Name"
+msgstr "会话名称"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__user_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__user_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__user_id
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__user
+msgid "User"
+msgstr "用户"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__model_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_id
+msgid "Model"
+msgstr "模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__prompt_id
+msgid "Prompt"
+msgstr "提示词"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__res_model
+msgid "Related Model"
+msgstr "关联模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__res_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__res_name
+msgid "Related Record"
+msgstr "关联单据"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__message_ids
+msgid "Messages"
+msgstr "消息"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__message_count
+msgid "Message Count"
+msgstr "消息数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__streaming
+msgid "Streaming"
+msgstr "流式输出"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__knowledge_enabled
+msgid "Use Knowledge Base"
+msgstr "启用知识库"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__knowledge_top_k
+msgid "Knowledge Top K"
+msgstr "知识检索条数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__knowledge_document_ids
+#: model:ir.actions.act_window,name:ai_base.ai_document_action
+msgid "Knowledge Documents"
+msgstr "知识文档"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__compress_strategy
+msgid "Context Compression"
+msgstr "上下文压缩"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__compress_strategy__trim
+msgid "Drop Oldest"
+msgstr "丢弃最早消息"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__compress_strategy__summary
+msgid "Summarize Oldest"
+msgstr "摘要压缩"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__state__draft
+msgid "Draft"
+msgstr "草稿"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__state__open
+msgid "In Progress"
+msgstr "进行中"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__state__closed
+msgid "Closed"
+msgstr "已关闭"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__session_id
+msgid "Session"
+msgstr "会话"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__role
+msgid "Role"
+msgstr "角色"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__assistant
+msgid "Assistant"
+msgstr "助手"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__system
+msgid "System"
+msgstr "系统"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__tool
+msgid "Tool"
+msgstr "工具"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__tool_cards
+msgid "Tool Cards"
+msgstr "工具卡片"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__rag_sources
+msgid "RAG Sources"
+msgstr "RAG 来源"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__prompt_tokens
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__prompt_tokens
+msgid "Input Tokens"
+msgstr "输入 Token"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__completion_tokens
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__completion_tokens
+msgid "Output Tokens"
+msgstr "输出 Token"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__total_tokens
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__total_tokens
+msgid "Total Tokens"
+msgstr "总 Token"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__session_id
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
+msgid "Chat Session"
+msgstr "对话会话"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__scenario_key
+msgid "Scenario Key"
+msgstr "场景 Key"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__request_type
+msgid "Request Type"
+msgstr "请求类型"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__rag
+msgid "RAG Chat"
+msgstr "RAG 对话"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__agent
+msgid "Agent"
+msgstr "Agent"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__tool
+msgid "Tool Call"
+msgstr "工具调用"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__probe
+msgid "Connection Test"
+msgstr "连通性测试"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__latency_ms
+msgid "Latency (ms)"
+msgstr "耗时（毫秒）"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__success
+msgid "Success"
+msgstr "成功"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_traceback
+msgid "Traceback"
+msgstr "异常堆栈"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__input_summary
+msgid "Input Prompt"
+msgstr "输入提示词"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__output_summary
+msgid "Output Result"
+msgstr "输出结果"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__rag_snippets
+msgid "RAG Snippets"
+msgstr "RAG 片段"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_calls
+msgid "Tool Calls"
+msgstr "工具调用记录"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__raw_response
+msgid "Raw Vendor Response"
+msgstr "厂商原始响应"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__parse_document
+msgid "Parse Document"
+msgstr "解析文档"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__index_document
+msgid "Index Document"
+msgstr "向量化文档"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__summarize
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_field.xml:0
+#: code:addons/ai_base/static/src/js/ai_field.js:0
+msgid "Summarize"
+msgstr "摘要"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__custom
+msgid "Custom"
+msgstr "自定义"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__pending
+msgid "Pending"
+msgstr "待执行"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__running
+msgid "Running"
+msgstr "执行中"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__done
+msgid "Done"
+msgstr "完成"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__res_model
+msgid "Target Model"
+msgstr "目标模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__res_id
+msgid "Target ID"
+msgstr "目标 ID"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__payload
+msgid "Payload"
+msgstr "任务参数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__result
+msgid "Result"
+msgstr "结果"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__attempt
+msgid "Attempts"
+msgstr "尝试次数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__max_attempts
+msgid "Max Attempts"
+msgstr "最大尝试次数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__default_model_id
+msgid "Default Chat Model"
+msgstr "默认对话模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__embed_model_id
+msgid "Default Embedding Model"
+msgstr "默认嵌入模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__log_retention_days
+msgid "Log Retention (days)"
+msgstr "日志保留天数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__rate_limit_user
+msgid "Per-user calls / minute"
+msgstr "每用户每分钟调用次数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__rate_limit_global
+msgid "Global calls / minute"
+msgstr "全局每分钟调用次数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__max_input_chars
+msgid "Max input characters"
+msgstr "最大输入字符数"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__sensitive_words
+msgid "Sensitive words (comma-separated)"
+msgstr "敏感词（逗号分隔）"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_config__max_tool_rounds
+msgid "Max agent rounds"
+msgstr "Agent 最大轮次"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_adapter_form_view
+msgid "AI Adapter"
+msgstr "AI 适配器"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_adapter_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_model_form_view
+msgid "Test Connection"
+msgstr "测试连接"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_model_form_view
+msgid "AI Model"
+msgstr "AI 模型"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_model_form_view
+msgid "Set as Default"
+msgstr "设为默认"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Prompt Template"
+msgstr "提示词模板"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Preview Render"
+msgstr "预览渲染"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Templates"
+msgstr "模板"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Preview"
+msgstr "预览"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Restore"
+msgstr "回滚"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_knowledge_form_view
+msgid "Index All"
+msgstr "全部向量化"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_knowledge_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_document_form_view
+msgid "Parse"
+msgstr "解析"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_knowledge_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_document_form_view
+msgid "Index"
+msgstr "向量化"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_document_form_view
+msgid "Knowledge Document"
+msgstr "知识文档"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
+msgid "Input / Output"
+msgstr "输入 / 输出"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
+msgid "RAG / Tools"
+msgstr "RAG / 工具"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
+msgid "Trace"
+msgstr "追踪"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_pivot_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_graph_view
+msgid "AI Usage"
+msgstr "AI 用量"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_async_job_form_view
+msgid "Run Now"
+msgstr "立即执行"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_config_form_view
+msgid "AI Configuration"
+msgstr "AI 配置"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_config_form_view
+msgid "Save"
+msgstr "保存"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_config_form_view
+msgid "Default Models"
+msgstr "默认模型"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_config_form_view
+msgid "Safety and Limits"
+msgstr "安全与限流"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_system_default
+msgid "Default System Prompt"
+msgstr "默认系统提示词"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_rag_context
+msgid "RAG Context"
+msgstr "RAG 上下文"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_summary_default
+msgid "Default Summary"
+msgstr "默认摘要"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_field_generate
+msgid "Field Generate"
+msgstr "字段生成"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_field_rewrite
+msgid "Field Rewrite"
+msgstr "字段改写"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_field_translate
+msgid "Field Translate"
+msgstr "字段翻译"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_field_summarize
+msgid "Field Summarize"
+msgstr "字段摘要"
+
+#. module: ai_base
+#: model:ir.cron,name:ai_base.ir_cron_index_documents
+msgid "AI Base: Index pending documents"
+msgstr "AI 底座：向量化待处理文档"
+
+#. module: ai_base
+#: model:ir.cron,name:ai_base.ir_cron_gc_logs
+msgid "AI Base: Purge old request logs"
+msgstr "AI 底座：清理过期请求日志"
+
+#. module: ai_base
+#: model:ir.cron,name:ai_base.ir_cron_error_alert
+msgid "AI Base: Error rate alert"
+msgstr "AI 底座：错误率告警"
+
+#. module: ai_base
+#: model:ir.cron,name:ai_base.ir_cron_async_jobs
+msgid "AI Base: Run async jobs"
+msgstr "AI 底座：执行异步任务"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_config.py:0
+msgid "Configuration saved"
+msgstr "配置已保存"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_config.py:0
+msgid "AI Base settings have been updated."
+msgstr "AI 底座配置已更新。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat_session.py:0
+msgid "New Session"
+msgstr "新会话"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat_session.py:0
+msgid "Model ready"
+msgstr "模型就绪"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat_session.py:0
+msgid "Model not configured"
+msgstr "尚未配置模型"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat_session.py:0
+msgid "Using %s"
+msgstr "当前使用 %s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat_session.py:0
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "No default model is configured."
+msgstr "尚未配置默认模型。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat_session.py:0
+msgid "Earlier conversation omitted to stay within the context window."
+msgstr "为控制上下文长度，较早的对话内容已省略。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Unknown prompt key \"%s\"."
+msgstr "未知的提示词编码“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Message content cannot be empty."
+msgstr "消息内容不能为空。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Streaming is disabled for this model."
+msgstr "该模型未启用流式输出。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "The global AI rate limit has been reached. Retry shortly."
+msgstr "已达到全局 AI 调用频率上限，请稍后再试。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "You have reached the per-user AI rate limit. Retry shortly."
+msgstr "已达到当前用户的 AI 调用频率上限，请稍后再试。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Input exceeds the maximum length of %s characters."
+msgstr "输入超过最大长度 %s 个字符。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Input contains blocked sensitive terms: %s"
+msgstr "输入包含被拦截的敏感词：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Relevant knowledge:"
+msgstr "相关知识："
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Current business record:\n%s"
+msgstr "当前业务单据：\n%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "No default model is configured. Configure an adapter and a model, then test the connection before using AI."
+msgstr "尚未配置默认模型。请先配置适配器和模型，并测试连接后再使用 AI。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "The tool loop reached the maximum number of rounds."
+msgstr "工具调用已达到最大轮次。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" failed: %s"
+msgstr "工具“%s”执行失败：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Unknown tool \"%s\"."
+msgstr "未知工具“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_base_service.py:0
+msgid "Tool failed"
+msgstr "工具执行失败"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid "Prompt \"%s\" is disabled."
+msgstr "提示词“%s”已停用。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid "Prompt \"%s\" failed to render: %s"
+msgstr "提示词“%s”渲染失败：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid "Preview context is not valid JSON."
+msgstr "预览上下文不是有效的 JSON。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid "Preview context must be a JSON object."
+msgstr "预览上下文必须是 JSON 对象。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid "No history version to restore."
+msgstr "没有可回滚的历史版本。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "The API returned HTTP error %s: %s"
+msgstr "接口返回 HTTP 错误 %s：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "The model list endpoint was not found. For llama.cpp / vLLM, set the endpoint to http://<host>:<port>/v1 so that /v1/models is used."
+msgstr "未找到模型列表接口。对于 llama.cpp / vLLM，请将地址设置为 http://<host>:<port>/v1，以便使用 /v1/models。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "The endpoint is missing a scheme: \"%s\". Add http:// or https://."
+msgstr "接口地址缺少协议：\"%s\"。请补充 http:// 或 https://。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Could not connect to \"%s\". Check the address and that the service is running."
+msgstr "无法连接到 \"%s\"。请检查地址，并确认服务已启动。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "The request to \"%s\" timed out."
+msgstr "请求 \"%s\" 超时。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Request failed: %s"
+msgstr "请求失败：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "The API returned non-JSON data: %s"
+msgstr "接口返回了非 JSON 数据：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "No API key is configured for adapter \"%s\"."
+msgstr "适配器“%s”尚未配置 API 密钥。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Ollama does not implement image generation in this adapter."
+msgstr "当前适配器未实现 Ollama 图像生成。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Ollama does not implement audio transcription in this adapter."
+msgstr "当前适配器未实现 Ollama 语音转写。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Ernie requires both API Key and Secret Key."
+msgstr "文心一言需要同时配置 API Key 和 Secret Key。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Ernie did not return an access_token."
+msgstr "文心一言未返回 access_token。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Ernie image generation is not implemented in this adapter."
+msgstr "当前适配器未实现文心一言图像生成。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Ernie audio transcription is not implemented in this adapter."
+msgstr "当前适配器未实现文心一言语音转写。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Adapter \"%s\" is disabled."
+msgstr "适配器“%s”已停用。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Connection test failed: %s"
+msgstr "连接测试失败：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Connection successful for %s."
+msgstr "%s 连接成功。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Connection Test Successful"
+msgstr "连接测试成功"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "Connection Test Failed"
+msgstr "连接测试失败"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Embedding probe succeeded."
+msgstr "嵌入模型探测成功。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Embedding probe returned an empty vector."
+msgstr "嵌入模型探测返回了空向量。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Chat probe succeeded: %s"
+msgstr "对话探测成功：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "empty reply"
+msgstr "空回复"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Model test failed"
+msgstr "模型测试失败"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Model test successful"
+msgstr "模型测试成功"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_knowledge_base.py:0
+msgid "Could not read the docx file: %s"
+msgstr "无法读取 docx 文件：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_knowledge_base.py:0
+msgid "PDF parsing requires the pypdf package on the server."
+msgstr "解析 PDF 需要在服务器安装 pypdf。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_knowledge_base.py:0
+msgid "Unsupported document type. Upload PDF, docx, txt or markdown."
+msgstr "不支持的文档类型。请上传 PDF、docx、txt 或 markdown。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_knowledge_base.py:0
+msgid "No text could be extracted."
+msgstr "未能提取到文本。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_knowledge_base.py:0
+msgid "No chunks were produced."
+msgstr "未能生成分片。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" is not registered."
+msgstr "工具“%s”尚未注册。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "You do not have permission to call tool \"%s\"."
+msgstr "你没有权限调用工具“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" was called too frequently."
+msgstr "工具“%s”调用过于频繁。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Invalid tool parameters: %s"
+msgstr "工具参数无效：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" has no executable implementation."
+msgstr "工具“%s”没有可执行实现。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" has no resolvable model."
+msgstr "工具“%s”无法解析到对应模型。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" has no callable implementation."
+msgstr "工具“%s”没有可调用实现。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" returned an invalid result."
+msgstr "工具“%s”返回了无效结果。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "The domain must be a list of conditions."
+msgstr "domain 必须是条件列表。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Each domain condition must be a 3-element tuple."
+msgstr "每条 domain 条件必须是三元组。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Invalid domain condition."
+msgstr "无效的 domain 条件。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Unsupported domain operator \"%s\"."
+msgstr "不支持的 domain 运算符“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Unknown model \"%s\"."
+msgstr "未知模型“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Abstract or transient models cannot be queried."
+msgstr "不能查询抽象模型或临时模型。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Tool \"%s\" is read-only."
+msgstr "工具“%s”是只读的。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Found %s records."
+msgstr "找到 %s 条记录。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Read %s records."
+msgstr "读取了 %s 条记录。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Updated %s records."
+msgstr "更新了 %s 条记录。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Created record %s."
+msgstr "已创建记录 %s。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Unsupported ORM method \"%s\"."
+msgstr "不支持的 ORM 方法“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "HTTP tool \"%s\" has no URL."
+msgstr "HTTP 工具“%s”没有配置 URL。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "HTTP %s"
+msgstr "HTTP %s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Model \"%s\" does not exist."
+msgstr "模型“%s”不存在。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Counted %s records."
+msgstr "统计到 %s 条记录。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_async_job.py:0
+msgid "Nothing to do."
+msgstr "没有需要执行的任务。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_request_log.py:0
+msgid "Request Log"
+msgstr "请求日志"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_request_log.py:0
+msgid "AI Base error rate alert"
+msgstr "AI 底座错误率告警"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_request_log.py:0
+msgid "<p>AI request error rate is %(rate).0f%% over the last %(window)s minutes (%(errors)s / %(total)s).</p>"
+msgstr "<p>过去 %(window)s 分钟内，AI 请求错误率为 %(rate).0f%%（%(errors)s / %(total)s）。</p>"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_adapter.py:0
+msgid "The adapter code must be unique."
+msgstr "适配器编码必须唯一。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "The model code must be unique."
+msgstr "模型编码必须唯一。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "The tool name must be unique."
+msgstr "工具名称必须唯一。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_systray.js:0
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "AI Assistant"
+msgstr "AI 助手"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_systray.js:0
+msgid "Model not ready"
+msgstr "模型未就绪"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_systray.js:0
+msgid "No model is configured."
+msgstr "尚未配置模型。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Stream failed (%s)"
+msgstr "流式请求失败（%s）"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Tool: %s"
+msgstr "工具：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/controllers/stream.py:0
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "The model could not be reached."
+msgstr "无法连接到模型。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_field.js:0
+msgid "AI enhance failed"
+msgstr "AI 增强失败"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_field.js:0
+msgid "AI Enhance"
+msgstr "AI 增强"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "New session"
+msgstr "新会话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Ask the AI assistant..."
+msgstr "向 AI 助手提问..."
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Send"
+msgstr "发送"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_field.xml:0
+msgid "AI generate"
+msgstr "AI 生成"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_field.xml:0
+#: code:addons/ai_base/static/src/js/ai_field.js:0
+msgid "Rewrite"
+msgstr "改写"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_field.xml:0
+#: code:addons/ai_base/static/src/js/ai_field.js:0
+msgid "Translate"
+msgstr "翻译"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_base__vector_store_type__pgvector
+msgid "PGVector"
+msgstr "PGVector"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_base__vector_store_type__chroma
+msgid "Chroma"
+msgstr "Chroma"
+
+#. module: ai_base
+msgid "Summary / Rewrite"
+msgstr "摘要 / 改写"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+msgid "ORM"
+msgstr "ORM"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+msgid "HTTP"
+msgstr "HTTP"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__code
+msgid "Stable key used by business modules, e.g. sale.email.draft"
+msgstr "业务模块使用的稳定编码，例如 sale.email.draft"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__user_template
+msgid "Supports {{var_name}} placeholders and record fields."
+msgstr "支持 {{var_name}} 占位符和单据字段。"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__content
+msgid "Combined template used by render(). Falls back to system + user."
+msgstr "render() 使用的完整模板。若为空则回退到系统提示词 + 用户模板。"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__preview_context
+msgid "JSON object used by the Preview button."
+msgstr "预览按钮使用的 JSON 对象。"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_model__model_name_remote
+msgid "Value sent as the vendor ``model`` parameter."
+msgstr "作为厂商 ``model`` 参数发送的值。"

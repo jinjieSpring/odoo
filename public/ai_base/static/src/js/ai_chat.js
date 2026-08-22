@@ -41,6 +41,7 @@ async function readSse(response, onEvent) {
 
 export class AiChat extends Component {
     static template = "ai_base.Chat";
+    _t = _t;
     static props = {
         sessionId: { type: [Number, Boolean], optional: true },
         pendingMessage: { type: String, optional: true },

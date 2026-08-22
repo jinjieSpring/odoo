@@ -8,6 +8,7 @@ import { CharField, charField } from "@web/views/fields/char/char_field";
 
 export class AiEnhanceField extends CharField {
     static template = "ai_base.AiEnhanceField";
+    _t = _t;
 
     setup() {
         super.setup();
