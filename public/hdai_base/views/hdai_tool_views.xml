@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hdai_tool_list_view" model="ir.ui.view">
+        <field name="name">hdai.tool.list</field>
+        <field name="model">hdai.tool</field>
+        <field name="arch" type="xml">
+            <list string="HD AI Tools">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="scope"/>
+                <field name="read_only"/>
+                <field name="suggestive"/>
+                <field name="rate_limit"/>
+                <field name="timeout"/>
+                <field name="deprecated"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hdai_tool_form_view" model="ir.ui.view">
+        <field name="name">hdai.tool.form</field>
+        <field name="model">hdai.tool</field>
+        <field name="arch" type="xml">
+            <form string="HD AI Tool">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="category"/>
+                            <field name="scope"/>
+                        </group>
+                        <group>
+                            <field name="read_only"/>
+                            <field name="suggestive"/>
+                            <field name="rate_limit"/>
+                            <field name="timeout"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="required_permissions"/>
+                        <field name="input_schema"/>
+                        <field name="output_schema"/>
+                        <field name="deprecated"/>
+                        <field name="deprecation_message"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hdai_tool_action" model="ir.actions.act_window">
+        <field name="name">HD AI Tools</field>
+        <field name="res_model">hdai.tool</field>
+        <field name="view_mode">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('hdai_base.hdai_group_manager'))]"/>
+    </record>
+
+    <record id="hdai_tool_log_list_view" model="ir.ui.view">
+        <field name="name">hdai.tool.log.list</field>
+        <field name="model">hdai.tool.log</field>
+        <field name="arch" type="xml">
+            <list string="HD AI Tool Audit Log">
+                <field name="create_date"/>
+                <field name="tool_name"/>
+                <field name="caller_user_id"/>
+                <field name="status"/>
+                <field name="error_code"/>
+                <field name="execution_time_ms"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hdai_tool_log_action" model="ir.actions.act_window">
+        <field name="name">HD AI Tool Audit Log</field>
+        <field name="res_model">hdai.tool.log</field>
+        <field name="view_mode">list</field>
+        <field name="group_ids" eval="[Command.link(ref('hdai_base.hdai_group_manager'))]"/>
+    </record>
+
+    <record id="hdai_usage_list_view" model="ir.ui.view">
+        <field name="name">hdai.usage.list</field>
+        <field name="model">hdai.usage</field>
+        <field name="arch" type="xml">
+            <list string="HD AI Token Usage">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="model_code"/>
+                <field name="provider_id"/>
+                <field name="request_type"/>
+                <field name="prompt_tokens"/>
+                <field name="completion_tokens"/>
+                <field name="total_tokens"/>
+                <field name="latency_ms"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hdai_usage_action" model="ir.actions.act_window">
+        <field name="name">HD AI Token Usage</field>
+        <field name="res_model">hdai.usage</field>
+        <field name="view_mode">list</field>
+        <field name="group_ids" eval="[Command.link(ref('hdai_base.hdai_group_manager'))]"/>
+    </record>
+</odoo>

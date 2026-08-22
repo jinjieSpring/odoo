@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="hdai_base.FormattedText">
+        <div class="o_hdai_formatted" t-ref="root"
+             t-att-class="props.className"/>
+    </t>
+</templates>

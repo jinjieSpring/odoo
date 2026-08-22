@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="hdai_base.UserSettingsDialog">
+        <Dialog size="'md'" title.translate="AI Assistant Settings">
+            <t t-set-slot="default">
+                <div class="o_hdai_user_settings">
+                    <div t-if="state.loading" class="text-center py-3">
+                        <i class="fa fa-circle-o-notch fa-spin"/> Loading...
+                    </div>
+                    <t t-else="">
+                        <div class="o_hdai_user_settings_section">
+                            <h6>Language</h6>
+                            <div class="text-muted small mb-2">Language used for the assistant's answers and thinking process.</div>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="radio" name="hdai_language_mode" value="auto"
+                                       t-att-checked="state.languageMode === 'auto'"
+                                       t-on-change="() => this.setLanguageMode('auto')"/>
+                                <span class="ms-1">Auto-detect from the conversation</span>
+                            </label>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="radio" name="hdai_language_mode" value="system"
+                                       t-att-checked="state.languageMode === 'system'"
+                                       t-on-change="() => this.setLanguageMode('system')"/>
+                                <span class="ms-1">Follow my Odoo language</span>
+                            </label>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="radio" name="hdai_language_mode" value="specific"
+                                       t-att-checked="state.languageMode === 'specific'"
+                                       t-on-change="() => this.setLanguageMode('specific')"/>
+                                <span class="ms-1">Always use a specific language</span>
+                            </label>
+                            <div t-if="state.languageMode === 'specific'" class="mt-2">
+                                <label class="form-label" for="o_hdai_user_settings_lang">
+                                    Language
+                                </label>
+                                <select id="o_hdai_user_settings_lang"
+                                        class="form-select form-select-sm"
+                                        t-model="state.language">
+                                    <option value="" t-att-selected="!state.language">
+                                        Select a language...
+                                    </option>
+                                    <t t-foreach="state.languages" t-as="lang" t-key="lang.code">
+                                        <option t-att-value="lang.code"
+                                                t-att-selected="state.language === lang.code"
+                                                t-esc="lang.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="o_hdai_user_settings_section mt-3 pt-3 border-top">
+                            <h6>Default Chat Options</h6>
+                            <div class="text-muted small mb-2">Defaults applied to new sessions; you can still change them per session in the chat window.</div>
+                            <div class="d-flex align-items-center mb-1">
+                                <label class="form-label mb-0 me-2" for="o_hdai_user_settings_strength">
+                                    Thinking Strength
+                                </label>
+                                <select id="o_hdai_user_settings_strength"
+                                        class="form-select form-select-sm w-auto"
+                                        t-att-disabled="!state.capabilities.reasoning"
+                                        t-on-change="changeReasoningStrength">
+                                    <option value="none" t-att-selected="state.reasoningStrength === 'none'">Off</option>
+                                    <option value="low" t-att-selected="state.reasoningStrength === 'low'">Low</option>
+                                    <option value="medium" t-att-selected="state.reasoningStrength === 'medium'">Medium</option>
+                                    <option value="high" t-att-selected="state.reasoningStrength === 'high'">High</option>
+                                </select>
+                            </div>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="checkbox"
+                                       t-att-checked="state.webSearch"
+                                       t-att-disabled="!state.capabilities.web_search"
+                                       t-on-change="toggleWebSearch"/>
+                                <span class="ms-1">Web Search</span>
+                            </label>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="checkbox"
+                                       t-att-checked="state.streaming"
+                                       t-att-disabled="!state.capabilities.streaming"
+                                       t-on-change="toggleStreaming"/>
+                                <span class="ms-1">Streaming</span>
+                            </label>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="checkbox" t-att-checked="state.attachContext"
+                                       t-on-change="toggleAttachContext"/>
+                                <span class="ms-1">Attach current record context by default</span>
+                            </label>
+                        </div>
+                        <div class="o_hdai_user_settings_section mt-3 pt-3 border-top">
+                            <div class="d-flex align-items-center">
+                                <h6 class="mb-0">Prompts</h6>
+                                <button type="button" class="btn btn-link px-1 ms-auto"
+                                        title="New Prompt"
+                                        t-on-click="() => this.editPrompt(false)">
+                                    <i class="fa fa-plus"/>
+                                </button>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                Select the default prompt used by new sessions.
+                            </div>
+                            <div t-if="!state.prompts.length" class="text-muted small">
+                                No prompts yet. Click "+" to create one.
+                            </div>
+                            <t t-foreach="state.prompts" t-as="prompt" t-key="prompt.id">
+                                <div class="o_hdai_user_settings_prompt d-flex align-items-center">
+                                    <label class="d-flex align-items-center me-1 mb-0">
+                                        <input type="radio" name="hdai_default_prompt"
+                                               t-att-value="prompt.id"
+                                               t-att-checked="state.defaultPromptId === prompt.id"
+                                               t-on-change="setDefaultPrompt"/>
+                                    </label>
+                                    <span class="o_hdai_user_settings_prompt_name me-auto"
+                                          t-esc="prompt.name"/>
+                                    <button type="button" class="btn btn-link px-1"
+                                            title="Edit Prompt"
+                                            t-on-click="() => this.editPrompt(prompt.id)">
+                                        <i class="fa fa-pencil"/>
+                                    </button>
+                                    <button type="button" class="btn btn-link px-1"
+                                            title="Delete Prompt"
+                                            t-on-click="() => this.deletePrompt(prompt.id)">
+                                        <i class="fa fa-trash"/>
+                                    </button>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="o_hdai_user_settings_section mt-3 pt-3 border-top">
+                            <h6>Layout</h6>
+                            <div class="text-muted small mb-2">
+                                Chat window layout preferences, saved with your settings.
+                            </div>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="checkbox" t-att-checked="state.sidebarCollapsed"
+                                       t-on-change="toggleSidebarCollapsed"/>
+                                <span class="ms-1">Collapse the sidebar</span>
+                            </label>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="checkbox" t-att-checked="state.gridSessionsCollapsed"
+                                       t-on-change="toggleGridSessionsCollapsed"/>
+                                <span class="ms-1">Collapse the session history grid</span>
+                            </label>
+                            <label class="o_hdai_user_settings_option d-flex align-items-center mb-1">
+                                <input type="checkbox" t-att-checked="state.gridKnowledgeCollapsed"
+                                       t-on-change="toggleGridKnowledgeCollapsed"/>
+                                <span class="ms-1">Collapse the knowledge base grid</span>
+                            </label>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary"
+                        t-att-disabled="state.loading"
+                        t-on-click="save">Save</button>
+                <button class="btn btn-secondary" t-on-click="props.close">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

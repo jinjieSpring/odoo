@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hdai_nlview_model_view_list" model="ir.ui.view">
+        <field name="name">hdai.nlview.model.list</field>
+        <field name="model">hdai.nlview.model</field>
+        <field name="arch" type="xml">
+            <list string="AI Open View Models" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="model_id"/>
+                <field name="model" readonly="1"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="hdai_nlview_model_view_form" model="ir.ui.view">
+        <field name="name">hdai.nlview.model.form</field>
+        <field name="model">hdai.nlview.model</field>
+        <field name="arch" type="xml">
+            <form string="AI Open View Model">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="model_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="hdai_action_nlview_model" model="ir.actions.act_window">
+        <field name="name">AI Open View Models</field>
+        <field name="res_model">hdai.nlview.model</field>
+        <field name="view_mode">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('base.group_system'))]"/>
+    </record>
+    <record id="hdai_nlview_model_res_partner" model="hdai.nlview.model">
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="hdai_nlview_model_res_users" model="hdai.nlview.model">
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="sequence">20</field>
+    </record>
+</odoo>
