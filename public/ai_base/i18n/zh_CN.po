@@ -251,9 +251,39 @@ msgid "Active"
 msgstr "启用"
 
 #. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_provider__is_active
+msgid ""
+"Master switch for this provider. Disabled providers are skipped even if a "
+"model under them is active or marked preferred."
+msgstr "提供方总开关。关闭后，其下模型即使仍启用或标为首选，也不会被调用。"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_model__is_active
+msgid ""
+"Enable this model. A disabled provider still blocks every model under it, "
+"including the preferred one."
+msgstr "只控制这一条模型。提供方关闭时，其下全部模型（含首选）都不可用。"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_provider__note
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
 msgid "Notes"
 msgstr "备注"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
+msgid "General"
+msgstr "常规"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
+msgid "Connection"
+msgstr "连接"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
+msgid "Optional remarks..."
+msgstr "可选备注..."
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_provider__company_id
@@ -357,13 +387,26 @@ msgstr "默认最大 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__is_default
-msgid "System Default"
-msgstr "系统默认"
+msgid "Preferred"
+msgstr "首选"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_model__is_default
+msgid ""
+"Preferred model of this type when a caller does not pass a model code. Has "
+"no effect if this model or its provider is disabled."
+msgstr "同类模型中，业务调用未指定编码时优先使用。本模型或所属提供方停用后不会生效。"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__supports_streaming
 msgid "Supports Streaming"
 msgstr "支持流式输出"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__vendor_info
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_model_form_view
+msgid "Vendor Parameters"
+msgstr "厂商参数"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__chat
@@ -1053,8 +1096,8 @@ msgstr "AI 模型"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_model_form_view
-msgid "Set as Default"
-msgstr "设为默认"
+msgid "Set as Preferred"
+msgstr "设为首选"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
@@ -1461,6 +1504,12 @@ msgstr "提供方“%s”已停用。"
 
 #. module: ai_base
 #. odoo-python
+#: code:addons/ai_base/models/ai_model.py:0
+msgid "Model \"%s\" is disabled."
+msgstr "模型“%s”已停用。"
+
+#. module: ai_base
+#. odoo-python
 #: code:addons/ai_base/models/ai_provider.py:0
 msgid "Connection test failed: %s"
 msgstr "连接测试失败：%s"
@@ -1468,8 +1517,26 @@ msgstr "连接测试失败：%s"
 #. module: ai_base
 #. odoo-python
 #: code:addons/ai_base/models/ai_provider.py:0
-msgid "Connection successful for %s."
-msgstr "%s 连接成功。"
+msgid "Connection successful. Created %s model(s)."
+msgstr "连接成功，已创建 %s 个模型。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Connection successful. Updated %s existing model(s)."
+msgstr "连接成功，已更新 %s 个已有模型。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Connection successful. Created %s model(s), updated %s."
+msgstr "连接成功，已创建 %s 个模型，更新 %s 个。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Connection successful, but the API returned no models."
+msgstr "连接成功，但接口没有返回模型列表。"
 
 #. module: ai_base
 #. odoo-python

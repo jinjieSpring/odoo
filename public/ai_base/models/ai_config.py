@@ -10,10 +10,12 @@ class AiConfig(models.TransientModel):
 
     default_model_id = fields.Many2one(
         'ai.model', string='Default Chat Model',
-        domain="[('model_kind', '=', 'chat'), ('is_active', '=', True)]")
+        domain="[('model_kind', '=', 'chat'), ('is_active', '=', True), "
+               "('provider_id.is_active', '=', True)]")
     embed_model_id = fields.Many2one(
         'ai.model', string='Default Embedding Model',
-        domain="[('model_kind', '=', 'embedding'), ('is_active', '=', True)]")
+        domain="[('model_kind', '=', 'embedding'), ('is_active', '=', True), "
+               "('provider_id.is_active', '=', True)]")
     log_retention_days = fields.Integer(
         string='Log Retention (days)', default=90)
     rate_limit_user = fields.Integer(

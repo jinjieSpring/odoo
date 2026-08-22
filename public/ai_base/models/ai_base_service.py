@@ -371,6 +371,8 @@ class AiBaseService(models.AbstractModel):
         return template.render(context or {}, record=record)
 
     def _resolve_model(self, model=None, scenario='chat'):
+        if model and not model._is_usable():
+            model = self.env['ai.model']
         if model:
             return model
         resolved = self.env['ai.model']._get_model_for_scenario(scenario)

@@ -109,7 +109,8 @@ class AiKnowledgeBase(models.Model):
     description = fields.Text(string='Description')
     embedding_model_id = fields.Many2one(
         'ai.model', string='Embedding Model',
-        domain="[('model_kind', '=', 'embedding'), ('is_active', '=', True)]")
+        domain="[('model_kind', '=', 'embedding'), ('is_active', '=', True), "
+               "('provider_id.is_active', '=', True)]")
     vector_store_type = fields.Selection([
         ('pgvector', 'PGVector'),
         ('chroma', 'Chroma'),

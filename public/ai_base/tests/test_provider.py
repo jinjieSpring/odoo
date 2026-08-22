@@ -6,6 +6,7 @@ from odoo.addons.ai_base.models.ai_provider import (
     OpenAICompatibleAdapter,
     get_provider,
     normalize_base_url,
+    pretty_model_name,
 )
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
@@ -102,3 +103,119 @@ class TestProvider(AiBaseCase):
         client = get_provider(cloud)
         with self.assertRaises(AiError):
             client.chat(model, [{'role': 'user', 'content': 'hi'}])
+
+    def test_test_connection_creates_listed_models(self):
+        payload = {
+            'data': [
+                {
+                    'id': 'qwen2.5-7b',
+                    'owned_by': 'vllm',
+                    'max_model_len': 32768,
+                    'max_tokens': 8192,
+                    'root': 'Qwen/Qwen2.5-7B',
+                },
+                {
+                    'id': 'text-embedding-bge',
+                    'owned_by': 'vllm',
+                    'max_model_len': 8192,
+                },
+            ]
+        }
+        with patch(
+                'odoo.addons.ai_base.models.ai_provider.http_request',
+                return_value=payload):
+            action = self.provider.action_test_connection()
+        self.assertEqual(action['params']['type'], 'success')
+        chat = self.env['ai.model'].search([
+            ('provider_id', '=', self.provider.id),
+            ('model_name_remote', '=', 'qwen2.5-7b'),
+        ])
+        self.assertTrue(chat)
+        self.assertEqual(chat.name, 'Qwen2.5 7B')
+        self.assertEqual(chat.code, 'qwen2.5-7b')
+        self.assertEqual(chat.model_kind, 'chat')
+        self.assertEqual(chat.max_context_tokens, 32768)
+        self.assertEqual(chat.max_tokens_default, 8192)
+        self.assertEqual(chat.vendor_info.get('owned_by'), 'vllm')
+        embed = self.env['ai.model'].search([
+            ('provider_id', '=', self.provider.id),
+            ('model_name_remote', '=', 'text-embedding-bge'),
+        ])
+        self.assertEqual(embed.model_kind, 'embedding')
+        self.assertEqual(embed.name, 'Text Embedding BGE')
+        self.assertEqual(embed.code, 'text-embedding-bge')
+        self.assertFalse(embed.supports_streaming)
+
+    def test_test_connection_updates_existing_without_duplicate(self):
+        payload = {
+            'data': [{
+                'id': 'gpt-4o-mini',
+                'owned_by': 'openai',
+                'context_length': 200000,
+            }]
+        }
+        with patch(
+                'odoo.addons.ai_base.models.ai_provider.http_request',
+                return_value=payload):
+            self.provider.action_test_connection()
+        matches = self.env['ai.model'].search([
+            ('provider_id', '=', self.provider.id),
+            ('model_name_remote', '=', 'gpt-4o-mini'),
+        ])
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches.name, 'Test Model')
+        self.assertEqual(matches.max_context_tokens, 200000)
+        self.assertEqual(matches.vendor_info.get('owned_by'), 'openai')
+
+    def test_test_connection_ollama_tags(self):
+        ollama = self.env['ai.provider'].create({
+            'name': 'Ollama Local',
+            'provider_type': 'ollama',
+            'endpoint': 'http://127.0.0.1:11434',
+        })
+
+        def fake_request(method, url, **kwargs):
+            if url.endswith('/api/tags'):
+                return {
+                    'models': [{
+                        'name': 'llama3:latest',
+                        'size': 4661224676,
+                        'details': {
+                            'family': 'llama',
+                            'parameter_size': '8B',
+                            'quantization_level': 'Q4_0',
+                        },
+                    }]
+                }
+            if url.endswith('/api/show'):
+                return {
+                    'details': {'family': 'llama'},
+                    'model_info': {'llama.context_length': 8192},
+                    'parameters': 'temperature 0.8',
+                }
+            raise AssertionError(url)
+
+        with patch(
+                'odoo.addons.ai_base.models.ai_provider.http_request',
+                side_effect=fake_request):
+            ollama.action_test_connection()
+        model = self.env['ai.model'].search([
+            ('provider_id', '=', ollama.id),
+            ('model_name_remote', '=', 'llama3:latest'),
+        ])
+        self.assertTrue(model)
+        self.assertEqual(model.name, 'Llama3 (latest)')
+        self.assertEqual(model.code, 'llama3:latest')
+        self.assertEqual(model.max_context_tokens, 8192)
+        self.assertEqual(
+            (model.vendor_info.get('details') or {}).get('parameter_size'),
+            '8B')
+
+    def test_pretty_model_name(self):
+        self.assertEqual(pretty_model_name('qwen2.5-7b'), 'Qwen2.5 7B')
+        self.assertEqual(pretty_model_name('gpt-4o-mini'), 'GPT-4o Mini')
+        self.assertEqual(pretty_model_name('llama3:latest'), 'Llama3 (latest)')
+        self.assertEqual(
+            pretty_model_name('Qwen/Qwen2.5-7B'), 'Qwen2.5 7B')
+        self.assertEqual(
+            pretty_model_name('text-embedding-bge'), 'Text Embedding BGE')

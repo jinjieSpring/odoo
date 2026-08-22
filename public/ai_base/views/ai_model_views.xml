@@ -11,17 +11,16 @@
                             class="oe_highlight"
                             groups="ai_base.group_manager"/>
                     <button name="action_set_as_default" type="object"
-                            string="Set as Default"
+                            string="Set as Preferred"
                             groups="ai_base.group_manager"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="code"/>
+                            <field name="model_name_remote"/>
                             <field name="provider_id"/>
                             <field name="model_kind"/>
-                            <field name="model_name_remote"/>
                             <field name="is_default"/>
                             <field name="is_active"/>
                         </group>
@@ -34,6 +33,9 @@
                             <field name="sequence"/>
                         </group>
                     </group>
+                    <group string="Vendor Parameters" invisible="not vendor_info">
+                        <field name="vendor_info" nolabel="1" colspan="2"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -44,7 +46,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="code"/>
+                <field name="model_name_remote"/>
                 <field name="provider_id"/>
                 <field name="model_kind"/>
                 <field name="is_default"/>

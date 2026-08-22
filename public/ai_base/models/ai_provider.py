@@ -3,6 +3,7 @@
 
 import json
 import logging
+import re
 import requests
 
 from odoo import _, api, fields, models
@@ -76,6 +77,121 @@ def http_stream(method, url, timeout=120, proxies=None, **kwargs):
         raise AiError(_http_error_message(url, resp.status_code, resp.text))
     resp.encoding = 'utf-8'
     return resp
+
+
+def _as_int(value):
+    try:
+        if value is None or value is False:
+            return 0
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _json_safe(value):
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    return str(value)
+
+
+_CONTEXT_KEYS = (
+    'max_model_len', 'context_length', 'max_context_length',
+    'n_ctx_train', 'n_ctx', 'ctx_len', 'max_seq_len',
+)
+
+
+def _context_from_entry(entry):
+    if not isinstance(entry, dict):
+        return 0
+    for key in _CONTEXT_KEYS:
+        value = _as_int(entry.get(key))
+        if value:
+            return value
+    meta = entry.get('meta') if isinstance(entry.get('meta'), dict) else {}
+    for key in _CONTEXT_KEYS:
+        value = _as_int(meta.get(key))
+        if value:
+            return value
+    details = entry.get('details') if isinstance(entry.get('details'), dict) else {}
+    value = _as_int(details.get('context_length'))
+    if value:
+        return value
+    info = entry.get('model_info') if isinstance(entry.get('model_info'), dict) else {}
+    for key, item in info.items():
+        if 'context_length' in str(key):
+            value = _as_int(item)
+            if value:
+                return value
+    show = entry.get('show') if isinstance(entry.get('show'), dict) else {}
+    if show:
+        nested = _context_from_entry(show)
+        if nested:
+            return nested
+    return 0
+
+
+_NAME_ACRONYMS = {
+    'gpt': 'GPT', 'bge': 'BGE', 'e5': 'E5', 'gte': 'GTE',
+    'llm': 'LLM', 'tts': 'TTS', 'asr': 'ASR',
+}
+
+
+def pretty_model_name(remote_name):
+    """Turn a vendor model id into a short display label."""
+    raw = (remote_name or '').strip()
+    if not raw:
+        return raw
+    name = raw.split('/')[-1]
+    tag = ''
+    if ':' in name:
+        name, tag = name.split(':', 1)
+    tokens = []
+    for token in re.split(r'[-_]+', name):
+        if not token:
+            continue
+        lower = token.lower()
+        if lower in _NAME_ACRONYMS:
+            tokens.append(_NAME_ACRONYMS[lower])
+        elif re.fullmatch(r'\d+(\.\d+)?[bB]', token):
+            tokens.append(token.upper())
+        elif re.fullmatch(r'\d+\.\d+', token):
+            tokens.append(token)
+        else:
+            tokens.append(token[0].upper() + token[1:])
+    merged = []
+    index = 0
+    while index < len(tokens):
+        current = tokens[index]
+        nxt = tokens[index + 1] if index + 1 < len(tokens) else ''
+        if current == 'GPT' and re.fullmatch(r'\d+o', nxt, flags=re.I):
+            merged.append('GPT-%s' % nxt)
+            index += 2
+            continue
+        merged.append(current)
+        index += 1
+    result = ' '.join(merged)
+    if tag:
+        result = '%s (%s)' % (result, tag)
+    return result or raw
+
+
+def _infer_model_kind(name):
+    lower = (name or '').lower()
+    if any(token in lower for token in (
+            'embed', 'embedding', 'bge-', 'e5-', 'gte-')):
+        return 'embedding'
+    if any(token in lower for token in (
+            'whisper', 'transcribe', 'speech-to-text')):
+        return 'audio_transcribe'
+    if any(token in lower for token in (
+            'dall-e', 'dalle', 'flux', 'sdxl', 'stable-diffusion',
+            'image-generate')):
+        return 'image'
+    return 'chat'
 
 
 def _usage(raw):
@@ -161,6 +277,30 @@ class BaseAdapter:
 
     def _remote_name(self, model):
         return model.model_name_remote or model.code
+
+    def list_models(self):
+        """Return remote model descriptors used to fill ``ai.model``."""
+        return []
+
+    def _normalize_listed_model(self, remote_name, entry):
+        entry = entry if isinstance(entry, dict) else {}
+        kind = _infer_model_kind(remote_name)
+        context = _context_from_entry(entry)
+        max_out = _as_int(
+            entry.get('max_tokens') or entry.get('max_output_tokens'))
+        meta = entry.get('meta') if isinstance(entry.get('meta'), dict) else {}
+        if not max_out:
+            max_out = _as_int(
+                meta.get('max_tokens') or meta.get('max_output_tokens'))
+        return {
+            'remote_name': remote_name,
+            'name': pretty_model_name(remote_name),
+            'model_kind': kind,
+            'max_context_tokens': context or None,
+            'max_tokens_default': max_out or None,
+            'supports_streaming': kind == 'chat',
+            'vendor_info': _json_safe(entry),
+        }
 
     def chat_completion(self, model, messages, options=None):
         raise NotImplementedError
@@ -305,6 +445,20 @@ class OpenAICompatibleAdapter(BaseAdapter):
             files=files)
         return {'text': data.get('text') or '', 'raw': data}
 
+    def list_models(self):
+        self._require_key_if_cloud()
+        data = http_request(
+            'GET', self.endpoint + '/models',
+            timeout=self.timeout, proxies=self.proxies,
+            headers=self._headers())
+        models = []
+        for entry in data.get('data') or []:
+            remote = entry.get('id')
+            if not remote:
+                continue
+            models.append(self._normalize_listed_model(remote, entry))
+        return models
+
 
 class QwenAdapter(OpenAICompatibleAdapter):
     """Tongyi Qianwen via the OpenAI-compatible DashScope endpoint."""
@@ -404,6 +558,31 @@ class OllamaAdapter(BaseAdapter):
     def audio_transcribe(self, model, audio_bytes, filename='audio.wav', options=None):
         raise AiError(_('Ollama does not implement audio transcription in this provider.'))
 
+    def list_models(self):
+        data = http_request(
+            'GET', self.endpoint + '/api/tags',
+            timeout=self.timeout, proxies=self.proxies)
+        models = []
+        for entry in data.get('models') or []:
+            remote = entry.get('name') or entry.get('model')
+            if not remote:
+                continue
+            extra = dict(entry)
+            try:
+                shown = http_request(
+                    'POST', self.endpoint + '/api/show',
+                    timeout=self.timeout, proxies=self.proxies,
+                    json={'name': remote})
+                extra['show'] = shown
+                if isinstance(shown, dict):
+                    extra.setdefault('details', shown.get('details'))
+                    extra.setdefault('model_info', shown.get('model_info'))
+                    extra.setdefault('parameters', shown.get('parameters'))
+            except AiError:
+                _logger.info('ollama /api/show unavailable for %s', remote)
+            models.append(self._normalize_listed_model(remote, extra))
+        return models
+
 
 class ErnieAdapter(BaseAdapter):
     """Baidu Ernie / Wenxin workshop chat + embedding."""
@@ -470,6 +649,10 @@ class ErnieAdapter(BaseAdapter):
 
     def audio_transcribe(self, model, audio_bytes, filename='audio.wav', options=None):
         raise AiError(_('Ernie audio transcription is not implemented in this provider.'))
+
+    def list_models(self):
+        self._access_token()
+        return []
 
 
 ADAPTER_CLASSES = {
@@ -540,7 +723,10 @@ class AiProvider(models.Model):
     timeout = fields.Integer(string='Timeout (seconds)', default=60)
     proxy = fields.Char(string='HTTP Proxy')
     sequence = fields.Integer(string='Sequence', default=10)
-    is_active = fields.Boolean(string='Active', default=True)
+    is_active = fields.Boolean(
+        string='Active', default=True,
+        help='Master switch for this provider. Disabled providers are skipped '
+             'even if a model under them is active or marked preferred.')
     note = fields.Text(string='Notes')
     company_id = fields.Many2one(
         'res.company', string='Company', index=True,
@@ -589,36 +775,97 @@ class AiProvider(models.Model):
         return get_provider(self)
 
     def action_test_connection(self):
-        """Health-check the provider. Uses /models when possible, else a tiny chat."""
+        """Health-check the provider and create listed models on success."""
         self.ensure_one()
         if not self.is_active:
             raise UserError(_('Provider "%s" is disabled.') % self.name)
         client = self._get_client()
         try:
-            if self.provider_type == 'ollama':
-                http_request(
-                    'GET', client.endpoint + '/api/tags',
-                    timeout=self.timeout, proxies=client.proxies)
-            elif self.provider_type == 'ernie':
-                client._access_token()
-            else:
-                http_request(
-                    'GET', client.endpoint + '/models',
-                    timeout=self.timeout, proxies=client.proxies,
-                    headers=client._headers())
+            listed = client.list_models()
         except AiError as exc:
             return self._notify(False, _('Connection test failed: %s') % exc)
-        return self._notify(True, _('Connection successful for %s.') % self.name)
+        created, updated = self._sync_listed_models(listed)
+        if created and updated:
+            message = _(
+                'Connection successful. Created %s model(s), updated %s.') % (
+                    created, updated)
+        elif created:
+            message = _('Connection successful. Created %s model(s).') % created
+        elif updated:
+            message = _('Connection successful. Updated %s existing model(s).') % updated
+        else:
+            message = _('Connection successful, but the API returned no models.')
+        return self._notify(True, message, reload=True)
 
-    def _notify(self, ok, message):
+    def _sync_listed_models(self, listed):
+        self.ensure_one()
+        existing = {
+            model.model_name_remote: model for model in self.model_ids
+            if model.model_name_remote
+        }
+        created = 0
+        updated = 0
+        for info in listed:
+            remote = info.get('remote_name')
+            if not remote:
+                continue
+            vals = self._listed_model_vals(info)
+            current = existing.get(remote)
+            if current:
+                if current._name_tracks_remote():
+                    vals['name'] = pretty_model_name(remote)
+                current.write(vals)
+                updated += 1
+                continue
+            display = info.get('name') or ''
+            if not display or display == remote:
+                display = pretty_model_name(remote)
+            vals.update({
+                'name': display,
+                'code': self._unique_model_code(remote),
+                'provider_id': self.id,
+                'model_name_remote': remote,
+                'model_kind': info.get('model_kind') or 'chat',
+            })
+            created_model = self.env['ai.model'].create(vals)
+            existing[remote] = created_model
+            created += 1
+        return created, updated
+
+    def _listed_model_vals(self, info):
+        vals = {
+            'vendor_info': info.get('vendor_info') or {},
+            'supports_streaming': bool(info.get('supports_streaming')),
+        }
+        if info.get('max_context_tokens'):
+            vals['max_context_tokens'] = info['max_context_tokens']
+        if info.get('max_tokens_default'):
+            vals['max_tokens_default'] = info['max_tokens_default']
+        return vals
+
+    def _unique_model_code(self, remote_name):
+        return self.env['ai.model']._unique_code_for_remote(
+            remote_name, provider_id=self.id)
+
+    def _notify(self, ok, message, reload=False):
+        params = {
+            'type': 'success' if ok else 'warning',
+            'title': _('Connection Test Successful') if ok else _(
+                'Connection Test Failed'),
+            'message': message,
+            'sticky': not ok,
+        }
+        if reload:
+            params['next'] = {
+                'type': 'ir.actions.act_window',
+                'res_model': 'ai.provider',
+                'res_id': self.id,
+                'view_mode': 'form',
+                'views': [(False, 'form')],
+                'target': 'current',
+            }
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
-            'params': {
-                'type': 'success' if ok else 'warning',
-                'title': _('Connection Test Successful') if ok else _(
-                    'Connection Test Failed'),
-                'message': message,
-                'sticky': not ok,
-            },
+            'params': params,
         }

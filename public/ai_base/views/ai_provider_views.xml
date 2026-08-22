@@ -13,37 +13,36 @@
                 </header>
                 <sheet>
                     <group>
-                        <group>
+                        <group string="General">
                             <field name="name"/>
                             <field name="provider_type"/>
-                            <field name="endpoint"/>
+                            <field name="is_active"/>
                             <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="sequence"/>
                         </group>
-                        <group>
+                        <group string="Connection">
+                            <field name="endpoint"/>
                             <field name="api_key" password="True" groups="ai_base.group_manager"/>
                             <field name="api_secret" password="True" groups="ai_base.group_manager"
                                    invisible="provider_type != 'ernie'"/>
                             <field name="timeout"/>
                             <field name="proxy"/>
-                            <field name="sequence"/>
-                            <field name="is_active"/>
                         </group>
+                    </group>
+                    <group>
+                        <field name="note" nolabel="1" placeholder="Optional remarks..."/>
                     </group>
                     <notebook>
                         <page string="Models">
                             <field name="model_ids">
                                 <list>
                                     <field name="name"/>
-                                    <field name="code"/>
                                     <field name="model_kind"/>
                                     <field name="model_name_remote"/>
                                     <field name="is_default"/>
                                     <field name="is_active"/>
                                 </list>
                             </field>
-                        </page>
-                        <page string="Notes">
-                            <field name="note" nolabel="1"/>
                         </page>
                     </notebook>
                 </sheet>
