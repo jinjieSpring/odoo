@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="ai_menu_root" name="AI"
+              sequence="91" web_icon="ai_base,static/description/icon.png"
+              groups="ai_base.group_user"/>
+    <menuitem id="ai_menu_adapters" name="Adapters"
+              parent="ai_menu_root" action="ai_adapter_action"
+              groups="ai_base.group_manager" sequence="10"/>
+    <menuitem id="ai_menu_models" name="Models"
+              parent="ai_menu_root" action="ai_model_action"
+              groups="ai_base.group_manager" sequence="20"/>
+    <menuitem id="ai_menu_prompts" name="Prompt Templates"
+              parent="ai_menu_root" action="ai_prompt_action"
+              groups="ai_base.group_manager" sequence="30"/>
+    <menuitem id="ai_menu_knowledge" name="Knowledge Bases"
+              parent="ai_menu_root" action="ai_knowledge_action"
+              groups="ai_base.group_manager" sequence="40"/>
+    <menuitem id="ai_menu_tools" name="AI Tools"
+              parent="ai_menu_root" action="ai_tool_action"
+              groups="ai_base.group_manager" sequence="50"/>
+    <menuitem id="ai_menu_sessions" name="Chat Sessions"
+              parent="ai_menu_root" action="ai_session_action"
+              groups="ai_base.group_manager" sequence="60"/>
+    <menuitem id="ai_menu_jobs" name="Async Jobs"
+              parent="ai_menu_root" action="ai_async_job_action"
+              groups="ai_base.group_manager" sequence="65"/>
+    <menuitem id="ai_menu_logs" name="Request Log &amp; Usage"
+              parent="ai_menu_root" action="ai_request_log_action"
+              groups="ai_base.group_log" sequence="70"/>
+    <menuitem id="ai_menu_settings" name="Configuration"
+              parent="ai_menu_root" action="ai_config_action"
+              groups="ai_base.group_manager" sequence="80"/>
+</odoo>

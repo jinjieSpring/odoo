@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_config_form_view" model="ir.ui.view">
+        <field name="name">ai.config.form</field>
+        <field name="model">ai.config</field>
+        <field name="arch" type="xml">
+            <form string="AI Configuration" create="0" delete="0">
+                <header>
+                    <button name="action_save" type="object" string="Save"
+                            class="oe_highlight" groups="ai_base.group_manager"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>AI Base Configuration</h1>
+                    </div>
+                    <group string="Default Models">
+                        <field name="default_model_id"/>
+                        <field name="embed_model_id"/>
+                    </group>
+                    <group string="Safety and Limits">
+                        <field name="rate_limit_user"/>
+                        <field name="rate_limit_global"/>
+                        <field name="max_input_chars"/>
+                        <field name="sensitive_words"/>
+                        <field name="max_tool_rounds"/>
+                        <field name="log_retention_days"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="ai_config_action" model="ir.actions.server">
+        <field name="name">Configuration</field>
+        <field name="model_id" ref="model_ai_config"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open()</field>
+    </record>
+</odoo>

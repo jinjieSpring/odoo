@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_tool_form_view" model="ir.ui.view">
+        <field name="name">ai.tool.form</field>
+        <field name="model">ai.tool</field>
+        <field name="arch" type="xml">
+            <form string="AI Tool">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="tool_type"/>
+                            <field name="category"/>
+                            <field name="is_active"/>
+                            <field name="read_only"/>
+                        </group>
+                        <group>
+                            <field name="required_groups"/>
+                            <field name="rate_limit"/>
+                            <field name="timeout"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                    <group string="ORM" invisible="tool_type != 'orm'">
+                        <field name="orm_model"/>
+                        <field name="orm_method"/>
+                    </group>
+                    <group string="HTTP" invisible="tool_type != 'http'">
+                        <field name="http_method"/>
+                        <field name="http_url"/>
+                        <field name="http_headers"/>
+                    </group>
+                    <field name="input_schema"/>
+                    <field name="output_schema"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_tool_list_view" model="ir.ui.view">
+        <field name="name">ai.tool.list</field>
+        <field name="model">ai.tool</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="tool_type"/>
+                <field name="read_only"/>
+                <field name="rate_limit"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_tool_action" model="ir.actions.act_window">
+        <field name="name">AI Tools</field>
+        <field name="res_model">ai.tool</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

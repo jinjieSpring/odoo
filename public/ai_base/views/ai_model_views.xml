@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_model_form_view" model="ir.ui.view">
+        <field name="name">ai.model.form</field>
+        <field name="model">ai.model</field>
+        <field name="arch" type="xml">
+            <form string="AI Model">
+                <header>
+                    <button name="action_test_connection" type="object"
+                            string="Test Connection"
+                            class="oe_highlight"
+                            groups="ai_base.group_manager"/>
+                    <button name="action_set_as_default" type="object"
+                            string="Set as Default"
+                            groups="ai_base.group_manager"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="adapter_id"/>
+                            <field name="model_kind"/>
+                            <field name="model_name_remote"/>
+                            <field name="is_default"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="max_context_tokens"/>
+                            <field name="temperature_default"/>
+                            <field name="top_p_default"/>
+                            <field name="max_tokens_default"/>
+                            <field name="supports_streaming"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_model_list_view" model="ir.ui.view">
+        <field name="name">ai.model.list</field>
+        <field name="model">ai.model</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="adapter_id"/>
+                <field name="model_kind"/>
+                <field name="is_default"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_model_action" model="ir.actions.act_window">
+        <field name="name">Models</field>
+        <field name="res_model">ai.model</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

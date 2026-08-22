@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_knowledge_form_view" model="ir.ui.view">
+        <field name="name">ai.knowledge.base.form</field>
+        <field name="model">ai.knowledge.base</field>
+        <field name="arch" type="xml">
+            <form string="Knowledge Base">
+                <header>
+                    <button name="action_index_all" type="object" string="Index All"
+                            class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="embedding_model_id"/>
+                            <field name="vector_store_type"/>
+                            <field name="chunk_strategy"/>
+                        </group>
+                        <group>
+                            <field name="chunk_size"/>
+                            <field name="chunk_overlap"/>
+                            <field name="rerank"/>
+                            <field name="is_active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                    <field name="document_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="state"/>
+                            <field name="chunk_count"/>
+                            <button name="action_parse" type="object" string="Parse"/>
+                            <button name="action_index" type="object" string="Index"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_knowledge_list_view" model="ir.ui.view">
+        <field name="name">ai.knowledge.base.list</field>
+        <field name="model">ai.knowledge.base</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="embedding_model_id"/>
+                <field name="document_count"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_document_form_view" model="ir.ui.view">
+        <field name="name">ai.knowledge.document.form</field>
+        <field name="model">ai.knowledge.document</field>
+        <field name="arch" type="xml">
+            <form string="Knowledge Document">
+                <header>
+                    <button name="action_parse" type="object" string="Parse"/>
+                    <button name="action_index" type="object" string="Index" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,parsed,ready,error"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="knowledge_id"/>
+                        <field name="attachment_id"/>
+                        <field name="error_message"/>
+                    </group>
+                    <field name="content"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_knowledge_action" model="ir.actions.act_window">
+        <field name="name">Knowledge Bases</field>
+        <field name="res_model">ai.knowledge.base</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="ai_document_action" model="ir.actions.act_window">
+        <field name="name">Knowledge Documents</field>
+        <field name="res_model">ai.knowledge.document</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

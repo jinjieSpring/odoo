@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ai_base.ChatDialog">
+        <Dialog size="'md'" title="title">
+            <AiChat sessionId="props.sessionId"
+                    pendingMessage="props.pendingMessage"
+                    resModel="props.resModel"
+                    resId="props.resId"/>
+        </Dialog>
+    </t>
+    <t t-name="ai_base.Chat">
+        <div class="o_ai_chat">
+            <div class="o_ai_chat_sessions px-2 py-1">
+                <button class="btn btn-link btn-sm" t-on-click="onNewSession">New session</button>
+                <t t-foreach="state.sessions" t-as="session" t-key="session.id">
+                    <button class="btn btn-link btn-sm d-block text-start"
+                            t-att-class="{'fw-bold': session.id === state.sessionId}"
+                            t-on-click="() => this.onSelectSession(session.id)">
+                        <t t-esc="session.name"/>
+                    </button>
+                </t>
+            </div>
+            <div class="o_ai_chat_messages" t-ref="messages">
+                <t t-foreach="state.messages" t-as="message" t-key="message.id">
+                    <div t-att-class="'o_ai_chat_msg ' + message.role">
+                        <t t-esc="message.content"/>
+                        <div t-if="message.tool_cards and message.tool_cards.length"
+                             class="o_ai_chat_tools small mt-1">
+                            <t t-foreach="message.tool_cards" t-as="card" t-key="card_index">
+                                <div class="o_ai_tool_card">
+                                    <t t-esc="card.name"/> · <t t-esc="card.status"/>
+                                    <t t-if="card.summary"> — <t t-esc="card.summary"/></t>
+                                </div>
+                            </t>
+                        </div>
+                        <div t-if="message.rag_sources and message.rag_sources.length"
+                             class="o_ai_chat_sources small mt-1">
+                            <t t-foreach="message.rag_sources" t-as="src" t-key="src_index">
+                                <div>
+                                    <t t-esc="src.citation"/> <t t-esc="src.source_document"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+                <div t-if="state.streamingContent" class="o_ai_chat_msg assistant">
+                    <t t-esc="state.streamingContent"/>
+                </div>
+                <div t-if="state.toolHint" class="o_ai_tool_card small px-3">
+                    <t t-esc="state.toolHint"/>
+                </div>
+                <div t-if="state.error" class="o_ai_chat_error" t-esc="state.error"/>
+            </div>
+            <div class="o_ai_chat_input">
+                <input class="form-control" t-model="state.content"
+                       t-on-keydown="onKeyDown" placeholder="Ask the AI assistant..."/>
+                <button class="btn btn-primary" t-on-click="onSend"
+                        t-att-disabled="!canSend">Send</button>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_prompt_form_view" model="ir.ui.view">
+        <field name="name">ai.prompt.template.form</field>
+        <field name="model">ai.prompt.template</field>
+        <field name="arch" type="xml">
+            <form string="Prompt Template">
+                <header>
+                    <button name="action_preview" type="object" string="Preview Render"
+                            class="oe_highlight" groups="ai_base.group_manager"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="lang"/>
+                            <field name="version"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="default_model_code"/>
+                            <field name="default_temperature"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                    <notebook>
+                        <page string="Templates">
+                            <group>
+                                <field name="system_prompt"/>
+                                <field name="user_template"/>
+                                <field name="content"/>
+                            </group>
+                        </page>
+                        <page string="Preview">
+                            <field name="preview_context"/>
+                            <field name="preview_result"/>
+                        </page>
+                        <page string="History">
+                            <field name="history_ids">
+                                <list>
+                                    <field name="version"/>
+                                    <field name="create_date"/>
+                                    <button name="action_restore" type="object" string="Restore"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_prompt_list_view" model="ir.ui.view">
+        <field name="name">ai.prompt.template.list</field>
+        <field name="model">ai.prompt.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="lang"/>
+                <field name="version"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_prompt_action" model="ir.actions.act_window">
+        <field name="name">Prompt Templates</field>
+        <field name="res_model">ai.prompt.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

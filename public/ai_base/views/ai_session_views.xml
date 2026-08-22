@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_session_form_view" model="ir.ui.view">
+        <field name="name">ai.chat.session.form</field>
+        <field name="model">ai.chat.session</field>
+        <field name="arch" type="xml">
+            <form string="Chat Session">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="user_id"/>
+                            <field name="model_id"/>
+                            <field name="prompt_id"/>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="res_model"/>
+                            <field name="res_id"/>
+                            <field name="res_name"/>
+                            <field name="knowledge_enabled"/>
+                            <field name="compress_strategy"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="message_ids">
+                        <list>
+                            <field name="create_date"/>
+                            <field name="role"/>
+                            <field name="content"/>
+                            <field name="total_tokens"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_session_list_view" model="ir.ui.view">
+        <field name="name">ai.chat.session.list</field>
+        <field name="model">ai.chat.session</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="model_id"/>
+                <field name="res_name"/>
+                <field name="message_count"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_session_action" model="ir.actions.act_window">
+        <field name="name">Chat Sessions</field>
+        <field name="res_model">ai.chat.session</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_async_job_form_view" model="ir.ui.view">
+        <field name="name">ai.async.job.form</field>
+        <field name="model">ai.async.job</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_run" type="object" string="Run Now"
+                            invisible="state not in ('pending', 'error')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="job_type"/>
+                        <field name="res_model"/>
+                        <field name="res_id"/>
+                        <field name="attempt"/>
+                        <field name="max_attempts"/>
+                        <field name="error_message"/>
+                    </group>
+                    <field name="payload"/>
+                    <field name="result"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_async_job_list_view" model="ir.ui.view">
+        <field name="name">ai.async.job.list</field>
+        <field name="model">ai.async.job</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="job_type"/>
+                <field name="state"/>
+                <field name="attempt"/>
+                <field name="user_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_async_job_action" model="ir.actions.act_window">
+        <field name="name">Async Jobs</field>
+        <field name="res_model">ai.async.job</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

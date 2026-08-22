@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ai_base.SystrayMenu">
+        <button class="o_ai_systray_icon btn btn-link p-1"
+                t-att-title="iconTitle" t-on-click="onClick">
+            <img src="/ai_base/static/description/icon.svg" alt="AI"/>
+        </button>
+    </t>
+</templates>

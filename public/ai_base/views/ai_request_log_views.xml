@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_request_log_list_view" model="ir.ui.view">
+        <field name="name">ai.request.log.list</field>
+        <field name="model">ai.request.log</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="request_type"/>
+                <field name="scenario_key"/>
+                <field name="model_code"/>
+                <field name="tool_name"/>
+                <field name="total_tokens"/>
+                <field name="latency_ms"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_request_log_form_view" model="ir.ui.view">
+        <field name="name">ai.request.log.form</field>
+        <field name="model">ai.request.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="request_type"/>
+                            <field name="scenario_key"/>
+                            <field name="adapter_id"/>
+                            <field name="model_id"/>
+                            <field name="tool_name"/>
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="latency_ms"/>
+                            <field name="prompt_tokens"/>
+                            <field name="completion_tokens"/>
+                            <field name="total_tokens"/>
+                            <field name="error_message"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Input / Output">
+                            <field name="input_summary"/>
+                            <field name="output_summary"/>
+                        </page>
+                        <page string="RAG / Tools">
+                            <field name="rag_snippets"/>
+                            <field name="tool_calls"/>
+                        </page>
+                        <page string="Trace">
+                            <field name="error_traceback"/>
+                            <field name="raw_response"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_request_log_pivot_view" model="ir.ui.view">
+        <field name="name">ai.request.log.pivot</field>
+        <field name="model">ai.request.log</field>
+        <field name="arch" type="xml">
+            <pivot string="AI Usage">
+                <field name="model_code" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="scenario_key" type="col"/>
+                <field name="total_tokens" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="ai_request_log_graph_view" model="ir.ui.view">
+        <field name="name">ai.request.log.graph</field>
+        <field name="model">ai.request.log</field>
+        <field name="arch" type="xml">
+            <graph string="AI Usage" type="bar">
+                <field name="model_code"/>
+                <field name="total_tokens" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="ai_request_log_action" model="ir.actions.act_window">
+        <field name="name">Request Log &amp; Usage</field>
+        <field name="res_model">ai.request.log</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+    </record>
+</odoo>

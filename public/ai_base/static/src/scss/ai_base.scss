@@ -1,0 +1,65 @@
+.o_ai_systray_icon img {
+    width: 22px;
+    height: 22px;
+}
+
+.o_ai_chat {
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+    max-height: 70vh;
+    width: 520px;
+}
+
+.o_ai_chat_messages {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: 0.75rem;
+    background: $o-view-background-color;
+}
+
+.o_ai_chat_msg {
+    margin-bottom: 0.75rem;
+    max-width: 85%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.o_ai_chat_msg.user {
+    margin-left: auto;
+    background: $o-brand-primary;
+    color: #fff;
+}
+
+.o_ai_chat_msg.assistant {
+    background: $o-brand-lightsecondary;
+    color: $o-main-text-color;
+}
+
+.o_ai_chat_input {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-top: 1px solid $o-gray-300;
+}
+
+.o_ai_chat_sessions {
+    max-height: 120px;
+    overflow: auto;
+    border-bottom: 1px solid $o-gray-300;
+}
+
+.o_ai_chat_error {
+    color: $o-danger;
+    padding: 0.5rem 0.75rem;
+}
+
+.o_ai_tool_card {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+.o_ai_enhance_field .btn-group {
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
