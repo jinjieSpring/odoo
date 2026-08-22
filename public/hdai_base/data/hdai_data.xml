@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Generic tool package holding the framework's built-in read-only tools. -->
+        <record id="tool_package_generic" model="hdai.tool.package">
+            <field name="name">generic_package</field>
+            <field name="description">Generic read-only data query tools (search, count, group by).</field>
+        </record>
+    </data>
+</odoo>

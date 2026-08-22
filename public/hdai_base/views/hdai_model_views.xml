@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hdai_model_view_form" model="ir.ui.view">
+        <field name="name">hdai.model.form</field>
+        <field name="model">hdai.model</field>
+        <field name="arch" type="xml">
+            <form string="AI Model">
+                <header>
+                    <button name="action_test_connection" type="object"
+                            string="Test Connection"
+                            class="oe_highlight"
+                            groups="hdai_base.hdai_group_manager"
+                            help="Probe the provider for the model capabilities and fill the read-only capability fields automatically."/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="code" required="1"/>
+                            <field name="provider_id" required="1"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="context_length"
+                                   help="Context window size (tokens). Filled by the test connection from provider metadata; when the provider does not expose it, a recommended default is used and a notice is shown."/>
+                            <field name="max_output_tokens"
+                                   help="Maximum output tokens. Filled by the test connection from provider metadata; when the provider does not expose it, a recommended default is used and a notice is shown."/>
+                        </group>
+                    </group>
+                    <separator string="Model Parameters"/>
+                    <group>
+                        <group>
+                            <field name="temperature"/>
+                            <field name="top_p"/>
+                            <field name="top_k"/>
+                        </group>
+                        <group>
+                            <field name="thinking_strength"/>
+                        </group>
+                    </group>
+                    <separator string="Model Capabilities"/>
+                    <group>
+                        <group>
+                            <field name="supports_reasoning" readonly="1"/>
+                            <field name="supports_web_search" readonly="1"/>
+                            <field name="supports_streaming" readonly="1"/>
+                        </group>
+                        <group>
+                            <label for="supports_reasoning"
+                                   string="Detected automatically when testing the connection. Read-only; updated only by the test."
+                                   class="text-muted"/>
+                        </group>
+                    </group>
+                    <separator string="Open Permissions"/>
+                    <group>
+                        <group>
+                            <field name="allow_reasoning"
+                                   readonly="supports_reasoning == False"/>
+                            <field name="allow_web_search"
+                                   readonly="supports_web_search == False"/>
+                            <field name="allow_streaming"
+                                   readonly="supports_streaming == False"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hdai_model_view_list" model="ir.ui.view">
+        <field name="name">hdai.model.list</field>
+        <field name="model">hdai.model</field>
+        <field name="arch" type="xml">
+            <list string="AI Models">
+                <field name="name" required="1"/>
+                <field name="code" required="1"/>
+                <field name="provider_id"/>
+                <field name="context_length"/>
+                <field name="max_output_tokens"/>
+                <field name="temperature" optional="show"/>
+                <field name="thinking_strength" optional="show"/>
+                <field name="supports_reasoning" readonly="1"/>
+                <field name="supports_web_search" readonly="1"/>
+                <field name="supports_streaming" readonly="1"/>
+                <field name="allow_reasoning"/>
+                <field name="allow_web_search"/>
+                <field name="allow_streaming"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hdai_model_action" model="ir.actions.act_window">
+        <field name="name">Model Configuration</field>
+        <field name="res_model">hdai.model</field>
+        <field name="view_mode">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('hdai_base.hdai_group_manager'))]"/>
+    </record>
+</odoo>

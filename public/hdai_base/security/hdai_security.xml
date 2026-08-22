@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hdai_privilege" model="res.groups.privilege">
+            <field name="name">HD AI</field>
+            <field name="sequence">90</field>
+            <field name="description">HD AI capability groups.</field>
+        </record>
+
+        <record id="hdai_group_user" model="res.groups">
+            <field name="name">HD AI / User</field>
+            <field name="privilege_id" ref="hdai_privilege"/>
+            <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+            <field name="comment">Can use the AI chat and call the generic read-only tools.</field>
+        </record>
+
+        <record id="hdai_group_manager" model="res.groups">
+            <field name="name">HD AI / Manager</field>
+            <field name="privilege_id" ref="hdai_privilege"/>
+            <field name="implied_ids" eval="[Command.link(ref('hdai_group_user'))]"/>
+            <field name="comment">Can configure model providers and manage the AI tool registry.</field>
+        </record>
+
+        <!-- Every administrator gets the HD AI manager role so the HD AI
+             settings app block, menus and configuration actions are
+             visible for admins out of the box (the settings page and menu
+             items are group-gated). -->
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[Command.link(ref('hdai_group_manager'))]"/>
+        </record>
+
+        <record id="hdai_session_own_rule" model="ir.rule">
+            <field name="name">hdai.session: own sessions only</field>
+            <field name="model_id" ref="model_hdai_session"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hdai_message_own_rule" model="ir.rule">
+            <field name="name">hdai.message: own session messages only</field>
+            <field name="model_id" ref="model_hdai_message"/>
+            <field name="domain_force">[('session_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

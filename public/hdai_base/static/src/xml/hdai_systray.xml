@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="hdai_base.SystrayMenu">
+        <div class="o_hdai_systray"
+             t-on-mouseenter="onMouseEnter"
+             t-on-mouseleave="onMouseLeave">
+            <div class="o_hdai_systray_expand d-flex align-items-center"
+                 t-att-class="{'o_hdai_open': state.expanded}">
+                <img class="o_hdai_systray_logo"
+                     src="/hdai_base/static/src/icons/hdai_icon.svg"
+                     alt="hdai"/>
+                <input class="o_hdai_systray_input" t-ref="input"
+                       t-model="state.content" t-on-keydown="onKeyDown"
+                       placeholder="Ask the AI assistant..."/>
+                <button class="o_hdai_systray_send btn btn-link px-1"
+                        title="Send (Enter)" t-att-disabled="!hasContent"
+                        t-on-click="onSend">
+                    <i class="fa fa-paper-plane"/>
+                </button>
+            </div>
+            <button class="o_hdai_systray_icon btn btn-link p-1"
+                    t-att-class="{'o_hdai_unavailable': !state.modelReady}"
+                    t-att-title="iconTitle" t-on-click="onClickIcon">
+                <img class="o_hdai_systray_icon_img"
+                     src="/hdai_base/static/src/icons/hdai_icon.svg"
+                     alt="AI Assistant"/>
+                <span t-if="!state.modelReady" class="o_hdai_systray_badge"
+                      title="Model not ready">
+                    <i class="fa fa-exclamation"/>
+                </span>
+            </button>
+        </div>
+    </t>
+</templates>

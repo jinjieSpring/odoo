@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_hdai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.hdai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="HD AI" name="hdai_base"
+                     groups="hdai_base.hdai_group_manager">
+                    <block title="Default model">
+                        <setting string="Default provider and model"
+                                 help="Select the default model used by the system tray AI chat.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label string="Default Provider" for="hdai_default_provider_id"
+                                           class="col-lg-3 o_light_label"/>
+                                    <div class="d-flex align-items-center">
+                                        <field name="hdai_default_provider_id"/>
+                                        <button name="hdai_action_open_provider" type="object"
+                                                string="Configure Provider" class="btn-link ms-2"
+                                                noSaveDialog="true"
+                                                invisible="hdai_default_provider_id == False"
+                                                help="Open the provider form to configure the connection and test it to fill the model list."/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label string="Default Model" for="hdai_default_model_id"
+                                           class="col-lg-3 o_light_label"/>
+                                    <field name="hdai_default_model_id"
+                                           readonly="hdai_default_provider_id == False"
+                                           help="Select a provider first; only models of the selected provider are listed."/>
+                                </div>
+                                <div invisible="hdai_default_model_id == False" class="row">
+                                    <label for="hdai_default_model_code"
+                                           string="Model Configuration"
+                                           class="col-lg-3 o_light_label"/>
+                                    <div class="content-group">
+                                        <div class="row">
+                                            <field name="hdai_default_model_code" readonly="1" class="me-3"/>
+                                            <field name="hdai_default_model_context_length" readonly="1" class="me-3"/>
+                                            <field name="hdai_default_model_max_output_tokens" readonly="1" class="me-3"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div invisible="hdai_default_model_id != False" class="row">
+                                    <label for="hdai_default_provider_id"
+                                           string="Model Configuration"
+                                           class="col-lg-3 o_light_label"/>
+                                    <label for="hdai_default_provider_id"
+                                           string="No model selected. Use &quot;Configure Provider&quot; to configure the connection and fill the model list."
+                                           class="o_light_label text-muted"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Prompts">
+                        <setting string="Record Context Prompt"
+                                 help="Template rendered with the current record snapshot; use the {snapshot} placeholder.">
+                            <field name="hdai_context_prompt"/>
+                        </setting>
+                    </block>
+                    <block title="Tool loop"
+                           help="Guardrails for the server-side read-only tool calling loop (mixed execution model).">
+                        <setting string="Max tool rounds"
+                                 help="Maximum successive model calls per answer. Read-only tools are executed automatically each round; the loop stops when the limit is reached.">
+                            <field name="hdai_max_successive_calls"/>
+                        </setting>
+                        <setting string="Max tool calls per round"
+                                 help="Maximum number of tool calls handled in a single round.">
+                            <field name="hdai_max_tool_calls_per_call"/>
+                        </setting>
+                    </block>
+                    <block title="Scenario routing"
+                           help="Default model per scenario (unified model routing). Unset scenarios fall back to the default model.">
+                        <setting string="Chat model"
+                                 help="Used by the system tray AI chat.">
+                            <field name="hdai_route_chat"/>
+                        </setting>
+                        <setting string="Channel / Livechat model"
+                                 help="Used for channel replies and livechat.">
+                            <field name="hdai_route_channel"/>
+                        </setting>
+                        <setting string="Summary / Drafting model"
+                                 help="Used for summaries, drafting and Composer output.">
+                            <field name="hdai_route_summary"/>
+                        </setting>
+                        <setting string="Suggestion model"
+                                 help="Used for decision suggestions.">
+                            <field name="hdai_route_suggest"/>
+                        </setting>
+                        <setting string="Embedding model"
+                                 help="Used for embedding and vectorization.">
+                            <field name="hdai_route_embed"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
