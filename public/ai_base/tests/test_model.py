@@ -17,13 +17,12 @@ class TestModel(AiBaseCase):
         second = self.env['ai.model'].create({
             'name': 'Fallback',
             'code': 'fallback-chat',
-            'adapter_id': self.adapter.id,
+            'provider_id': self.provider.id,
             'model_name_remote': 'fallback',
         })
-        other = self.env['ai.adapter'].create({
+        other = self.env['ai.provider'].create({
             'name': 'Other',
-            'code': 'other_openai',
-            'adapter_type': 'openai_compat',
+            'provider_type': 'openai_compat',
             'endpoint': 'https://api.other/v1',
             'api_key': 'sk-abcdef1234567890',
             'sequence': 20,
@@ -31,7 +30,7 @@ class TestModel(AiBaseCase):
         third = self.env['ai.model'].create({
             'name': 'Low',
             'code': 'low-chat',
-            'adapter_id': other.id,
+            'provider_id': other.id,
             'model_name_remote': 'low',
         })
         chain = self.env['ai.model']._get_scenario_models('chat')

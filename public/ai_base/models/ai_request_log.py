@@ -18,8 +18,8 @@ class AiRequestLog(models.Model):
         default=lambda self: self.env.user)
     session_id = fields.Many2one(
         'ai.chat.session', string='Chat Session', ondelete='set null', index=True)
-    adapter_id = fields.Many2one(
-        'ai.adapter', string='Adapter', ondelete='set null')
+    provider_id = fields.Many2one(
+        'ai.provider', string='Provider', ondelete='set null')
     model_id = fields.Many2one(
         'ai.model', string='Model', ondelete='set null')
     model_code = fields.Char(string='Model Code')

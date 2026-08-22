@@ -25,16 +25,16 @@
             <field name="name">AI Manager</field>
             <field name="privilege_id" ref="ai_privilege"/>
             <field name="implied_ids" eval="[Command.link(ref('group_log'))]"/>
-            <field name="comment">Can configure adapters, models, prompts, knowledge and tools.</field>
+            <field name="comment">Can configure providers, models, prompts, knowledge and tools.</field>
         </record>
 
         <record id="base.group_system" model="res.groups">
             <field name="implied_ids" eval="[Command.link(ref('group_manager'))]"/>
         </record>
 
-        <record id="rule_adapter_company" model="ir.rule">
-            <field name="name">ai.adapter: multi-company</field>
-            <field name="model_id" ref="model_ai_adapter"/>
+        <record id="rule_provider_company" model="ir.rule">
+            <field name="name">ai.provider: multi-company</field>
+            <field name="model_id" ref="model_ai_provider"/>
             <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
             <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
         </record>

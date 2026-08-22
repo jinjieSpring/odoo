@@ -2,7 +2,7 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.ai_base.models.ai_adapter import AiError, get_adapter
+from odoo.addons.ai_base.models.ai_provider import AiError, get_provider
 
 
 class AiModel(models.Model):
@@ -25,8 +25,8 @@ class AiModel(models.Model):
     code = fields.Char(
         string='Model Code', required=True, index=True,
         help='Business modules pass this code to ai.base.service.')
-    adapter_id = fields.Many2one(
-        'ai.adapter', string='Adapter', required=True, ondelete='cascade',
+    provider_id = fields.Many2one(
+        'ai.provider', string='Provider', required=True, ondelete='cascade',
         check_company=True)
     model_kind = fields.Selection([
         ('chat', 'Chat'),
@@ -47,7 +47,7 @@ class AiModel(models.Model):
     supports_streaming = fields.Boolean(string='Supports Streaming', default=True)
     company_id = fields.Many2one(
         'res.company', string='Company', index=True,
-        related='adapter_id.company_id', store=True, readonly=True)
+        related='provider_id.company_id', store=True, readonly=True)
 
     _code_uniq = models.Constraint(
         'UNIQUE(code)',
@@ -137,7 +137,7 @@ class AiModel(models.Model):
         add(self._get_model_for_scenario(scenario))
         add(self._get_default_model())
         models = self.search([('is_active', '=', True), ('model_kind', '=', 'chat')])
-        models = models.sorted(key=lambda m: (m.adapter_id.sequence, m.sequence, m.id))
+        models = models.sorted(key=lambda m: (m.provider_id.sequence, m.sequence, m.id))
         for model in models:
             add(model)
         return candidates
@@ -160,9 +160,9 @@ class AiModel(models.Model):
 
     def action_test_connection(self):
         self.ensure_one()
-        if not self.adapter_id.is_active:
-            raise UserError(_('Adapter "%s" is disabled.') % self.adapter_id.name)
-        client = get_adapter(self.adapter_id)
+        if not self.provider_id.is_active:
+            raise UserError(_('Provider "%s" is disabled.') % self.provider_id.name)
+        client = get_provider(self.provider_id)
         try:
             if self.model_kind == 'embedding':
                 vectors = client.embedding(self, ['ping'])

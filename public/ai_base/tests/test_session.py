@@ -17,7 +17,7 @@ class TestSession(AiBaseCase):
     def test_send_persists_messages(self):
         session = self.env['ai.chat.session'].create({'name': 'New Session'})
         with patch(
-                'odoo.addons.ai_base.models.ai_adapter.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._chat_ok()):
             session.action_send_message('hello there')
         self.assertEqual(session.name, 'hello there'[:30])

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="ai_adapter_form_view" model="ir.ui.view">
-        <field name="name">ai.adapter.form</field>
-        <field name="model">ai.adapter</field>
+    <record id="ai_provider_form_view" model="ir.ui.view">
+        <field name="name">ai.provider.form</field>
+        <field name="model">ai.provider</field>
         <field name="arch" type="xml">
-            <form string="AI Adapter">
+            <form string="AI Provider">
                 <header>
                     <button name="action_test_connection" type="object"
                             string="Test Connection"
@@ -15,15 +15,14 @@
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="code"/>
-                            <field name="adapter_type"/>
+                            <field name="provider_type"/>
                             <field name="endpoint"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <group>
                             <field name="api_key" password="True" groups="ai_base.group_manager"/>
                             <field name="api_secret" password="True" groups="ai_base.group_manager"
-                                   invisible="adapter_type != 'ernie'"/>
+                                   invisible="provider_type != 'ernie'"/>
                             <field name="timeout"/>
                             <field name="proxy"/>
                             <field name="sequence"/>
@@ -51,23 +50,22 @@
             </form>
         </field>
     </record>
-    <record id="ai_adapter_list_view" model="ir.ui.view">
-        <field name="name">ai.adapter.list</field>
-        <field name="model">ai.adapter</field>
+    <record id="ai_provider_list_view" model="ir.ui.view">
+        <field name="name">ai.provider.list</field>
+        <field name="model">ai.provider</field>
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="code"/>
-                <field name="adapter_type"/>
+                <field name="provider_type"/>
                 <field name="endpoint"/>
                 <field name="model_count"/>
                 <field name="is_active"/>
             </list>
         </field>
     </record>
-    <record id="ai_adapter_action" model="ir.actions.act_window">
-        <field name="name">Adapters</field>
-        <field name="res_model">ai.adapter</field>
+    <record id="ai_provider_action" model="ir.actions.act_window">
+        <field name="name">Providers</field>
+        <field name="res_model">ai.provider</field>
         <field name="view_mode">list,form</field>
     </record>
 </odoo>

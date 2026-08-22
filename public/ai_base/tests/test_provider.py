@@ -1,30 +1,28 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import Mock, patch
 
-from odoo.addons.ai_base.models.ai_adapter import (
+from odoo.addons.ai_base.models.ai_provider import (
     AiError,
     OpenAICompatibleAdapter,
-    get_adapter,
+    get_provider,
     normalize_base_url,
 )
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
 
-class TestAdapter(AiBaseCase):
+class TestProvider(AiBaseCase):
     def test_registry_resolves_vendor(self):
-        self.assertIsInstance(get_adapter(self.adapter), OpenAICompatibleAdapter)
-        ollama = self.env['ai.adapter'].create({
+        self.assertIsInstance(get_provider(self.provider), OpenAICompatibleAdapter)
+        ollama = self.env['ai.provider'].create({
             'name': 'Ollama',
-            'code': 'ollama_local',
-            'adapter_type': 'ollama',
+            'provider_type': 'ollama',
         })
-        self.assertEqual(get_adapter(ollama).__class__.__name__, 'OllamaAdapter')
-        qwen = self.env['ai.adapter'].create({
+        self.assertEqual(get_provider(ollama).__class__.__name__, 'OllamaAdapter')
+        qwen = self.env['ai.provider'].create({
             'name': 'Qwen',
-            'code': 'qwen_dash',
-            'adapter_type': 'qwen',
+            'provider_type': 'qwen',
         })
-        self.assertEqual(get_adapter(qwen).__class__.__name__, 'QwenAdapter')
+        self.assertEqual(get_provider(qwen).__class__.__name__, 'QwenAdapter')
 
     def test_create_fills_type_presets(self):
         cases = {
@@ -33,33 +31,31 @@ class TestAdapter(AiBaseCase):
             'qwen': 'https://dashscope.aliyuncs.com/compatible-mode/v1',
             'openai_compat': 'https://api.openai.com/v1',
         }
-        for adapter_type, endpoint in cases.items():
-            adapter = self.env['ai.adapter'].create({
-                'adapter_type': adapter_type,
-                'code': 'preset_%s' % adapter_type,
+        for provider_type, endpoint in cases.items():
+            provider = self.env['ai.provider'].create({
+                'provider_type': provider_type,
             })
-            self.assertEqual(adapter.endpoint, endpoint)
-            self.assertTrue(adapter.name)
+            self.assertEqual(provider.endpoint, endpoint)
+            self.assertTrue(provider.name)
 
     def test_base_url_scheme_is_auto_prepended(self):
-        adapter = self.env['ai.adapter'].create({
+        provider = self.env['ai.provider'].create({
             'name': 'Local',
-            'code': 'local_llama',
-            'adapter_type': 'custom',
+            'provider_type': 'custom',
             'endpoint': '127.0.0.1:8080/v1',
         })
-        self.assertEqual(adapter.endpoint, 'http://127.0.0.1:8080/v1')
+        self.assertEqual(provider.endpoint, 'http://127.0.0.1:8080/v1')
 
     def test_chat_openai_compatible(self):
         payload = {
             'choices': [{'message': {'content': 'Hi there'}}],
             'usage': {'prompt_tokens': 10, 'completion_tokens': 5},
         }
-        adapter = get_adapter(self.adapter)
+        client = get_provider(self.provider)
         with patch(
-                'odoo.addons.ai_base.models.ai_adapter.http_request',
+                'odoo.addons.ai_base.models.ai_provider.http_request',
                 return_value=payload) as request_mock:
-            result = adapter.chat(
+            result = client.chat(
                 self.model, [{'role': 'user', 'content': 'Hello'}])
         self.assertEqual(result['content'], 'Hi there')
         self.assertEqual(result['usage']['total_tokens'], 15)
@@ -70,16 +66,16 @@ class TestAdapter(AiBaseCase):
         line = b'data: {"choices":[{"delta":{"content":"\xe4\xb8\xad"}}]}'
         response = Mock()
         response.iter_lines.return_value = [line]
-        adapter = get_adapter(self.adapter)
+        client = get_provider(self.provider)
         with patch(
-                'odoo.addons.ai_base.models.ai_adapter.http_stream',
+                'odoo.addons.ai_base.models.ai_provider.http_stream',
                 return_value=response):
-            chunks = list(adapter.stream_chat(
+            chunks = list(client.stream_chat(
                 self.model, [{'role': 'user', 'content': 'hi'}]))
         self.assertEqual(chunks[0]['content'], '中')
 
     def test_http_error_on_models_is_actionable(self):
-        from odoo.addons.ai_base.models.ai_adapter import _http_error_message
+        from odoo.addons.ai_base.models.ai_provider import _http_error_message
         message = _http_error_message(
             'http://127.0.0.1:8080/models', 404, 'Not Found')
         self.assertIn('/v1/models', message)
@@ -91,19 +87,18 @@ class TestAdapter(AiBaseCase):
             'https://api.example.com/v1')
 
     def test_missing_key_raises(self):
-        cloud = self.env['ai.adapter'].create({
+        cloud = self.env['ai.provider'].create({
             'name': 'Cloud',
-            'code': 'cloud_no_key',
-            'adapter_type': 'openai_compat',
+            'provider_type': 'openai_compat',
             'endpoint': 'https://api.openai.com/v1',
             'api_key': False,
         })
         model = self.env['ai.model'].create({
             'name': 'No Key',
             'code': 'no-key-model',
-            'adapter_id': cloud.id,
+            'provider_id': cloud.id,
             'model_name_remote': 'gpt-4o-mini',
         })
-        adapter = get_adapter(cloud)
+        client = get_provider(cloud)
         with self.assertRaises(AiError):
-            adapter.chat(model, [{'role': 'user', 'content': 'hi'}])
+            client.chat(model, [{'role': 'user', 'content': 'hi'}])

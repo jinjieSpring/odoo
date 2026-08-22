@@ -28,7 +28,7 @@
                             <field name="user_id"/>
                             <field name="request_type"/>
                             <field name="scenario_key"/>
-                            <field name="adapter_id"/>
+                            <field name="provider_id"/>
                             <field name="model_id"/>
                             <field name="tool_name"/>
                         </group>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import test_adapter
+from . import test_provider
 from . import test_model
 from . import test_prompt
 from . import test_knowledge

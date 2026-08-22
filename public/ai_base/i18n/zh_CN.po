@@ -45,8 +45,8 @@ msgstr "AI 管理员"
 
 #. module: ai_base
 #: model:res.groups,comment:ai_base.group_manager
-msgid "Can configure adapters, models, prompts, knowledge and tools."
-msgstr "可以配置适配器、模型、提示词、知识库和工具。"
+msgid "Can configure providers, models, prompts, knowledge and tools."
+msgstr "可以配置提供方、模型、提示词、知识库和工具。"
 
 #. module: ai_base
 #: model:res.groups.privilege,description:ai_base.ai_privilege
@@ -54,9 +54,9 @@ msgid "Generic AI capability groups."
 msgstr "通用 AI 能力权限组。"
 
 #. module: ai_base
-#: model:ir.model,name:ai_base.model_ai_adapter
-msgid "AI Model Adapter"
-msgstr "AI 模型适配器"
+#: model:ir.model,name:ai_base.model_ai_provider
+msgid "AI Model Provider"
+msgstr "AI 模型提供方"
 
 #. module: ai_base
 #: model:ir.model,name:ai_base.model_ai_model
@@ -136,15 +136,15 @@ msgid "AI Vector Store Helper"
 msgstr "AI 向量存储"
 
 #. module: ai_base
-#: model:ir.ui.menu,name:ai_base.ai_menu_adapters
-#: model:ir.actions.act_window,name:ai_base.ai_adapter_action
-msgid "Adapters"
-msgstr "适配器"
+#: model:ir.ui.menu,name:ai_base.ai_menu_providers
+#: model:ir.actions.act_window,name:ai_base.ai_provider_action
+msgid "Providers"
+msgstr "提供方"
 
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_models
 #: model:ir.actions.act_window,name:ai_base.ai_model_action
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_adapter_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
 msgid "Models"
 msgstr "模型"
 
@@ -192,61 +192,55 @@ msgid "Configuration"
 msgstr "配置"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__name
-msgid "Adapter Name"
-msgstr "适配器名称"
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__name
+msgid "Provider Name"
+msgstr "提供方名称"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__code
-#: model:ir.model.fields,field_description:ai_base.field_ai_model__code
-msgid "Code"
-msgstr "编码"
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__provider_type
+msgid "Provider Type"
+msgstr "提供方类型"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__adapter_type
-msgid "Adapter Type"
-msgstr "适配器类型"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__endpoint
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__endpoint
 msgid "API Endpoint"
 msgstr "API 地址"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__api_key
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__api_key
 msgid "API Key"
 msgstr "API 密钥"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__api_secret
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__api_secret
 msgid "API Secret"
 msgstr "API Secret"
 
 #. module: ai_base
-#: model:ir.model.fields,help:ai_base.field_ai_adapter__api_secret
+#: model:ir.model.fields,help:ai_base.field_ai_provider__api_secret
 msgid "Used by Ernie (Wenxin) as the secret key."
 msgstr "文心一言使用的 Secret Key。"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__timeout
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__timeout
 #: model:ir.model.fields,field_description:ai_base.field_ai_tool__timeout
 msgid "Timeout (seconds)"
 msgstr "超时（秒）"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__proxy
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__proxy
 msgid "HTTP Proxy"
 msgstr "HTTP 代理"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__sequence
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__sequence
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__sequence
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__sequence
 msgid "Sequence"
 msgstr "序号"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__is_active
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__is_active
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__is_active
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__is_active
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__is_active
@@ -257,12 +251,12 @@ msgid "Active"
 msgstr "启用"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__note
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__note
 msgid "Notes"
 msgstr "备注"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_adapter__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__company_id
@@ -273,37 +267,37 @@ msgid "Company"
 msgstr "公司"
 
 #. module: ai_base
-#: model:ir.model.fields,help:ai_base.field_ai_adapter__company_id
-msgid "Empty means the adapter is available to every company."
-msgstr "留空表示所有公司都可使用该适配器。"
+#: model:ir.model.fields,help:ai_base.field_ai_provider__company_id
+msgid "Empty means the provider is available to every company."
+msgstr "留空表示所有公司都可使用该提供方。"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__openai_compat
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_provider__provider_type__openai_compat
 msgid "OpenAI Compatible"
 msgstr "OpenAI 兼容"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__qwen
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_provider__provider_type__qwen
 msgid "Tongyi Qianwen"
 msgstr "通义千问"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__ernie
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_provider__provider_type__ernie
 msgid "Wenxin Yiyan"
 msgstr "文心一言"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__deepseek
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_provider__provider_type__deepseek
 msgid "DeepSeek"
 msgstr "DeepSeek"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__ollama
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_provider__provider_type__ollama
 msgid "Ollama (Local)"
 msgstr "Ollama（本地）"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_adapter__adapter_type__custom
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_provider__provider_type__custom
 msgid "Private / Custom"
 msgstr "私有 / 自定义"
 
@@ -324,11 +318,11 @@ msgid "Business modules pass this code to ai.base.service."
 msgstr "业务模块通过该编码调用 ai.base.service。"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_model__adapter_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__adapter_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__adapter_id
-msgid "Adapter"
-msgstr "适配器"
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__provider_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__provider_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__provider_id
+msgid "Provider"
+msgstr "提供方"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__model_kind
@@ -1042,12 +1036,12 @@ msgid "Max agent rounds"
 msgstr "Agent 最大轮次"
 
 #. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_adapter_form_view
-msgid "AI Adapter"
-msgstr "AI 适配器"
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
+msgid "AI Provider"
+msgstr "AI 提供方"
 
 #. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_adapter_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_model_form_view
 msgid "Test Connection"
 msgstr "测试连接"
@@ -1316,8 +1310,8 @@ msgstr "当前业务单据：\n%s"
 #. module: ai_base
 #. odoo-python
 #: code:addons/ai_base/models/ai_base_service.py:0
-msgid "No default model is configured. Configure an adapter and a model, then test the connection before using AI."
-msgstr "尚未配置默认模型。请先配置适配器和模型，并测试连接后再使用 AI。"
+msgid "No default model is configured. Configure a provider and a model, then test the connection before using AI."
+msgstr "尚未配置默认模型。请先配置提供方和模型，并测试连接后再使用 AI。"
 
 #. module: ai_base
 #. odoo-python
@@ -1376,116 +1370,116 @@ msgstr "没有可回滚的历史版本。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "The API returned HTTP error %s: %s"
 msgstr "接口返回 HTTP 错误 %s：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "The model list endpoint was not found. For llama.cpp / vLLM, set the endpoint to http://<host>:<port>/v1 so that /v1/models is used."
 msgstr "未找到模型列表接口。对于 llama.cpp / vLLM，请将地址设置为 http://<host>:<port>/v1，以便使用 /v1/models。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "The endpoint is missing a scheme: \"%s\". Add http:// or https://."
 msgstr "接口地址缺少协议：\"%s\"。请补充 http:// 或 https://。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Could not connect to \"%s\". Check the address and that the service is running."
 msgstr "无法连接到 \"%s\"。请检查地址，并确认服务已启动。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "The request to \"%s\" timed out."
 msgstr "请求 \"%s\" 超时。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Request failed: %s"
 msgstr "请求失败：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "The API returned non-JSON data: %s"
 msgstr "接口返回了非 JSON 数据：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
-msgid "No API key is configured for adapter \"%s\"."
-msgstr "适配器“%s”尚未配置 API 密钥。"
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "No API key is configured for provider \"%s\"."
+msgstr "提供方“%s”尚未配置 API 密钥。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
-msgid "Ollama does not implement image generation in this adapter."
-msgstr "当前适配器未实现 Ollama 图像生成。"
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Ollama does not implement image generation in this provider."
+msgstr "当前提供方未实现 Ollama 图像生成。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
-msgid "Ollama does not implement audio transcription in this adapter."
-msgstr "当前适配器未实现 Ollama 语音转写。"
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Ollama does not implement audio transcription in this provider."
+msgstr "当前提供方未实现 Ollama 语音转写。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Ernie requires both API Key and Secret Key."
 msgstr "文心一言需要同时配置 API Key 和 Secret Key。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Ernie did not return an access_token."
 msgstr "文心一言未返回 access_token。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
-msgid "Ernie image generation is not implemented in this adapter."
-msgstr "当前适配器未实现文心一言图像生成。"
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Ernie image generation is not implemented in this provider."
+msgstr "当前提供方未实现文心一言图像生成。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
-msgid "Ernie audio transcription is not implemented in this adapter."
-msgstr "当前适配器未实现文心一言语音转写。"
+#: code:addons/ai_base/models/ai_provider.py:0
+msgid "Ernie audio transcription is not implemented in this provider."
+msgstr "当前提供方未实现文心一言语音转写。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 #: code:addons/ai_base/models/ai_model.py:0
-msgid "Adapter \"%s\" is disabled."
-msgstr "适配器“%s”已停用。"
+msgid "Provider \"%s\" is disabled."
+msgstr "提供方“%s”已停用。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Connection test failed: %s"
 msgstr "连接测试失败：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Connection successful for %s."
 msgstr "%s 连接成功。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Connection Test Successful"
 msgstr "连接测试成功"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
+#: code:addons/ai_base/models/ai_provider.py:0
 msgid "Connection Test Failed"
 msgstr "连接测试失败"
 
@@ -1722,12 +1716,6 @@ msgstr "AI 底座错误率告警"
 #: code:addons/ai_base/models/ai_request_log.py:0
 msgid "<p>AI request error rate is %(rate).0f%% over the last %(window)s minutes (%(errors)s / %(total)s).</p>"
 msgstr "<p>过去 %(window)s 分钟内，AI 请求错误率为 %(rate).0f%%（%(errors)s / %(total)s）。</p>"
-
-#. module: ai_base
-#. odoo-python
-#: code:addons/ai_base/models/ai_adapter.py:0
-msgid "The adapter code must be unique."
-msgstr "适配器编码必须唯一。"
 
 #. module: ai_base
 #. odoo-python

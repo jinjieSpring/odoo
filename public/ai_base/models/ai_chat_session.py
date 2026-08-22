@@ -17,7 +17,7 @@ class AiChatSession(models.Model):
     user_id = fields.Many2one(
         'res.users', string='User', required=True,
         default=lambda self: self.env.user, ondelete='cascade')
-    adapter_id = fields.Many2one('ai.adapter', string='Adapter')
+    provider_id = fields.Many2one('ai.provider', string='Provider')
     model_id = fields.Many2one('ai.model', string='Model')
     prompt_id = fields.Many2one(
         'ai.prompt.template', string='Prompt', ondelete='set null')
@@ -71,7 +71,7 @@ class AiChatSession(models.Model):
                 model = self.env['ai.model']._get_model_for_scenario('chat')
                 if model:
                     vals['model_id'] = model.id
-                    vals['adapter_id'] = model.adapter_id.id
+                    vals['provider_id'] = model.provider_id.id
         return super().create(vals_list)
 
     def _build_history(self):

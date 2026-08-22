@@ -45,7 +45,7 @@ import traceback
 from odoo import _, models
 from odoo.exceptions import UserError
 
-from odoo.addons.ai_base.models.ai_adapter import AiError, get_adapter
+from odoo.addons.ai_base.models.ai_provider import AiError, get_provider
 from odoo.addons.ai_base.models.ai_tool import extract_tool_calls, strip_tool_blocks
 from odoo.addons.ai_base.models.ai_vector_store import get_vector_store
 
@@ -132,7 +132,7 @@ class AiBaseService(models.AbstractModel):
                 if not session.model_id:
                     session.write({
                         'model_id': model.id,
-                        'adapter_id': model.adapter_id.id,
+                        'provider_id': model.provider_id.id,
                     })
                 session.write({'state': 'open'})
                 self.env['ai.chat.message'].create({
@@ -204,9 +204,9 @@ class AiBaseService(models.AbstractModel):
             model = self.env['ai.model']._get_by_code(model_code)
         model = self._resolve_model(model, 'embed')
         started = time.time()
-        adapter = get_adapter(model.adapter_id)
+        client = get_provider(model.provider_id)
         try:
-            vectors = adapter.embedding(model, list(texts))
+            vectors = client.embedding(model, list(texts))
             status = 'success'
             error = False
         except AiError as exc:
@@ -215,7 +215,7 @@ class AiBaseService(models.AbstractModel):
             error = str(exc)
         self._log(
             request_type='embed',
-            adapter_id=model.adapter_id.id,
+            provider_id=model.provider_id.id,
             model_id=model.id,
             model_code=model.code,
             scenario_key='embed',
@@ -283,7 +283,7 @@ class AiBaseService(models.AbstractModel):
         if not session.model_id:
             session.write({
                 'model_id': model.id,
-                'adapter_id': model.adapter_id.id,
+                'provider_id': model.provider_id.id,
             })
         session.write({'state': 'open'})
         self.env['ai.chat.message'].create({
@@ -376,7 +376,7 @@ class AiBaseService(models.AbstractModel):
         resolved = self.env['ai.model']._get_model_for_scenario(scenario)
         if not resolved:
             raise UserError(_(
-                'No default model is configured. Configure an adapter and '
+                'No default model is configured. Configure a provider and '
                 'a model, then test the connection before using AI.'))
         return resolved
 
@@ -447,7 +447,7 @@ class AiBaseService(models.AbstractModel):
             request_type=request_type,
             scenario_key=scenario_key,
             session_id=session.id if session else False,
-            adapter_id=model.adapter_id.id,
+            provider_id=model.provider_id.id,
             model_id=model.id,
             model_code=model.code,
             prompt_tokens=(result.get('usage') or {}).get('prompt_tokens') or 0,
@@ -564,9 +564,9 @@ class AiBaseService(models.AbstractModel):
         max_calls = self._param_int('ai_base.max_tool_calls_per_round', 10)
         last_error = None
         for _round in range(max_rounds):
-            adapter = get_adapter(current.adapter_id)
+            client = get_provider(current.provider_id)
             try:
-                result = adapter.chat_completion(current, history, options)
+                result = client.chat_completion(current, history, options)
             except AiError as exc:
                 last_error = exc
                 result = None
@@ -575,7 +575,7 @@ class AiBaseService(models.AbstractModel):
                     retry.pop('tools', None)
                     retry.pop('tool_choice', None)
                     try:
-                        result = adapter.chat_completion(current, history, retry)
+                        result = client.chat_completion(current, history, retry)
                         options = retry
                     except AiError:
                         result = None
@@ -584,7 +584,7 @@ class AiBaseService(models.AbstractModel):
                         if candidate.id == current.id:
                             continue
                         try:
-                            result = get_adapter(candidate.adapter_id).chat_completion(
+                            result = get_provider(candidate.provider_id).chat_completion(
                                 candidate, history, options)
                             current = candidate
                             break

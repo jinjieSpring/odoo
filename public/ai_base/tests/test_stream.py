@@ -15,7 +15,7 @@ class TestStream(AiBaseCase):
     def test_stream_chat_collects_plain_events(self):
         session = self.env['ai.chat.session'].create({'name': 'S'})
         with patch(
-                'odoo.addons.ai_base.models.ai_adapter.OpenAICompatibleAdapter.chat_completion',
+                'odoo.addons.ai_base.models.ai_provider.OpenAICompatibleAdapter.chat_completion',
                 return_value={
                     'content': 'chunk',
                     'reasoning': 'why',

@@ -3,7 +3,7 @@
     'name': 'AI Base',
     'version': '19.0.1.0.0',
     'category': 'Productivity/AI',
-    'summary': 'Odoo 19 AI foundation: adapters, prompts, RAG, tools, chat',
+    'summary': 'Odoo 19 AI foundation: providers, prompts, RAG, tools, chat',
     'description': """
 AI Base
 =======
@@ -11,7 +11,7 @@ AI Base
 Generic, multi-company AI foundation for Odoo 19. Business modules call this
 layer instead of talking to vendors directly.
 
-* Vendor adapters (OpenAI-compatible, Qwen, Ernie, DeepSeek, Ollama, private)
+* Vendor providers (OpenAI-compatible, Qwen, Ernie, DeepSeek, Ollama, private)
 * Model pool, prompt templates with versioning, RAG knowledge bases
 * Registered Agent tools (Python / ORM / HTTP) with ACL and audit logs
 * Chat sessions, jsonrpc + SSE streaming, OWL chat widget and field enhancer
@@ -29,7 +29,7 @@ Install does not fail if the extension is unavailable.
         'security/ai_base_security.xml',
         'security/ir.model.access.csv',
         'data/ai_base_data.xml',
-        'views/ai_adapter_views.xml',
+        'views/ai_provider_views.xml',
         'views/ai_model_views.xml',
         'views/ai_prompt_views.xml',
         'views/ai_knowledge_views.xml',

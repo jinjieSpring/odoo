@@ -19,7 +19,7 @@
                         <group>
                             <field name="name"/>
                             <field name="code"/>
-                            <field name="adapter_id"/>
+                            <field name="provider_id"/>
                             <field name="model_kind"/>
                             <field name="model_name_remote"/>
                             <field name="is_default"/>
@@ -45,7 +45,7 @@
             <list>
                 <field name="name"/>
                 <field name="code"/>
-                <field name="adapter_id"/>
+                <field name="provider_id"/>
                 <field name="model_kind"/>
                 <field name="is_default"/>
                 <field name="is_active"/>

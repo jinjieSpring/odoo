@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Vendor adapter layer: unified chat / embedding / image / audio APIs."""
+"""Vendor provider layer: unified chat / embedding / image / audio APIs."""
 
 import json
 import logging
-import re
 import requests
 
 from odoo import _, api, fields, models
@@ -50,7 +49,7 @@ def _request_error_message(url, exc):
 
 
 def http_request(method, url, timeout=60, proxies=None, **kwargs):
-    """Synchronous JSON HTTP helper used by every adapter (and tests)."""
+    """Synchronous JSON HTTP helper used by every provider client (and tests)."""
     try:
         resp = requests.request(
             method, url, timeout=timeout or 60, proxies=proxies, **kwargs)
@@ -115,32 +114,32 @@ def _parse_tool_calls(message):
 
 
 class BaseAdapter:
-    """Pluggable vendor adapter. Subclasses implement the four primitives."""
+    """HTTP client for an ai.provider record. Subclasses implement the four primitives."""
 
-    def __init__(self, adapter):
-        self.adapter = adapter
+    def __init__(self, provider):
+        self.provider = provider
 
     @property
     def endpoint(self):
         return normalize_base_url(
-            self.adapter.endpoint or getattr(self.adapter, 'base_url', ''))
+            self.provider.endpoint or getattr(self.provider, 'base_url', ''))
 
     @property
     def timeout(self):
-        return self.adapter.timeout or 60
+        return self.provider.timeout or 60
 
     @property
     def proxies(self):
-        proxy = (self.adapter.proxy or '').strip()
+        proxy = (self.provider.proxy or '').strip()
         if not proxy:
             return None
         return {'http': proxy, 'https': proxy}
 
     def _api_key(self):
-        sudo = getattr(self.adapter, 'sudo', None)
+        sudo = getattr(self.provider, 'sudo', None)
         if sudo is not None:
             return sudo().api_key
-        return self.adapter.api_key
+        return self.provider.api_key
 
     def _headers(self):
         key = self._api_key()
@@ -150,12 +149,12 @@ class BaseAdapter:
         if self._is_local():
             return
         if not self._api_key():
-            raise AiError(_('No API key is configured for adapter "%s".') % (
-                self.adapter.name,))
+            raise AiError(_('No API key is configured for provider "%s".') % (
+                self.provider.name,))
 
     def _is_local(self):
-        adapter_type = getattr(self.adapter, 'adapter_type', '')
-        if adapter_type in ('ollama',):
+        provider_type = getattr(self.provider, 'provider_type', '')
+        if provider_type in ('ollama',):
             return True
         base = (self.endpoint or '').lower()
         return ('localhost' in base or '127.0.0.1' in base or '0.0.0.0' in base)
@@ -400,10 +399,10 @@ class OllamaAdapter(BaseAdapter):
         return vectors
 
     def image_generate(self, model, prompt, options=None):
-        raise AiError(_('Ollama does not implement image generation in this adapter.'))
+        raise AiError(_('Ollama does not implement image generation in this provider.'))
 
     def audio_transcribe(self, model, audio_bytes, filename='audio.wav', options=None):
-        raise AiError(_('Ollama does not implement audio transcription in this adapter.'))
+        raise AiError(_('Ollama does not implement audio transcription in this provider.'))
 
 
 class ErnieAdapter(BaseAdapter):
@@ -411,7 +410,7 @@ class ErnieAdapter(BaseAdapter):
 
     def _access_token(self):
         key = self._api_key() or ''
-        secret = (self.adapter.api_secret or '').strip()
+        secret = (self.provider.api_secret or '').strip()
         if not key or not secret:
             raise AiError(_('Ernie requires both API Key and Secret Key.'))
         url = ('https://aip.baidubce.com/oauth/2.0/token'
@@ -467,10 +466,10 @@ class ErnieAdapter(BaseAdapter):
         return [row.get('embedding') or [] for row in items]
 
     def image_generate(self, model, prompt, options=None):
-        raise AiError(_('Ernie image generation is not implemented in this adapter.'))
+        raise AiError(_('Ernie image generation is not implemented in this provider.'))
 
     def audio_transcribe(self, model, audio_bytes, filename='audio.wav', options=None):
-        raise AiError(_('Ernie audio transcription is not implemented in this adapter.'))
+        raise AiError(_('Ernie audio transcription is not implemented in this provider.'))
 
 
 ADAPTER_CLASSES = {
@@ -483,16 +482,16 @@ ADAPTER_CLASSES = {
 }
 
 
-def get_adapter(adapter):
-    """Return a vendor adapter instance for an ``ai.adapter`` record."""
-    adapter_type = getattr(adapter, 'adapter_type', None) or 'openai_compat'
-    cls = ADAPTER_CLASSES.get(adapter_type) or OpenAICompatibleAdapter
-    return cls(adapter)
+def get_provider(provider):
+    """Return an HTTP client for an ``ai.provider`` record."""
+    provider_type = getattr(provider, 'provider_type', None) or 'openai_compat'
+    cls = ADAPTER_CLASSES.get(provider_type) or OpenAICompatibleAdapter
+    return cls(provider)
 
 
-class AiAdapter(models.Model):
-    _name = 'ai.adapter'
-    _description = 'AI Model Adapter'
+class AiProvider(models.Model):
+    _name = 'ai.provider'
+    _description = 'AI Model Provider'
     _order = 'sequence, name'
     _check_company_auto = True
 
@@ -523,16 +522,15 @@ class AiAdapter(models.Model):
         },
     }
 
-    name = fields.Char(string='Adapter Name', required=True)
-    code = fields.Char(string='Code', required=True, index=True)
-    adapter_type = fields.Selection([
+    name = fields.Char(string='Provider Name', required=True)
+    provider_type = fields.Selection([
         ('openai_compat', 'OpenAI Compatible'),
         ('qwen', 'Tongyi Qianwen'),
         ('ernie', 'Wenxin Yiyan'),
         ('deepseek', 'DeepSeek'),
         ('ollama', 'Ollama (Local)'),
         ('custom', 'Private / Custom'),
-    ], string='Adapter Type', required=True, default='openai_compat')
+    ], string='Provider Type', required=True, default='openai_compat')
     endpoint = fields.Char(string='API Endpoint')
     api_key = fields.Char(
         string='API Key', copy=False, groups='ai_base.group_manager')
@@ -546,27 +544,19 @@ class AiAdapter(models.Model):
     note = fields.Text(string='Notes')
     company_id = fields.Many2one(
         'res.company', string='Company', index=True,
-        help='Empty means the adapter is available to every company.')
-    model_ids = fields.One2many('ai.model', 'adapter_id', string='Models')
+        help='Empty means the provider is available to every company.')
+    model_ids = fields.One2many('ai.model', 'provider_id', string='Models')
     model_count = fields.Integer(compute='_compute_model_count', string='Models')
-
-    _code_uniq = models.Constraint(
-        'UNIQUE(code)',
-        'The adapter code must be unique.')
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            preset = self._TYPE_PRESETS.get(vals.get('adapter_type') or 'openai_compat')
+            preset = self._TYPE_PRESETS.get(vals.get('provider_type') or 'openai_compat')
             if preset:
                 for field, value in preset.items():
                     vals.setdefault(field, value)
             if vals.get('endpoint'):
                 vals['endpoint'] = normalize_base_url(vals['endpoint'])
-            if not vals.get('code'):
-                vals['code'] = re.sub(
-                    r'[^a-z0-9_]+', '_', (vals.get('adapter_type') or 'adapter')
-                ).strip('_')
         return super().create(vals_list)
 
     def write(self, vals):
@@ -574,12 +564,12 @@ class AiAdapter(models.Model):
             vals['endpoint'] = normalize_base_url(vals['endpoint'])
         return super().write(vals)
 
-    @api.onchange('adapter_type')
-    def _onchange_adapter_type(self):
-        preset = self._TYPE_PRESETS.get(self.adapter_type)
+    @api.onchange('provider_type')
+    def _onchange_provider_type(self):
+        preset = self._TYPE_PRESETS.get(self.provider_type)
         if not preset:
             return
-        previous = self._origin.adapter_type if self._origin else False
+        previous = self._origin.provider_type if self._origin else False
         previous_preset = self._TYPE_PRESETS.get(previous, {})
         if not self.name or self.name == previous_preset.get('name'):
             self.name = preset['name']
@@ -588,28 +578,28 @@ class AiAdapter(models.Model):
     @api.depends('model_ids')
     def _compute_model_count(self):
         data = self.env['ai.model']._read_group(
-            [('adapter_id', 'in', self.ids)],
-            ['adapter_id'], ['adapter_id:count'])
-        count_map = {adapter.id: count for adapter, count in data}
-        for adapter in self:
-            adapter.model_count = count_map.get(adapter.id, 0)
+            [('provider_id', 'in', self.ids)],
+            ['provider_id'], ['provider_id:count'])
+        count_map = {provider.id: count for provider, count in data}
+        for provider in self:
+            provider.model_count = count_map.get(provider.id, 0)
 
     def _get_client(self):
         self.ensure_one()
-        return get_adapter(self)
+        return get_provider(self)
 
     def action_test_connection(self):
-        """Health-check the adapter. Uses /models when possible, else a tiny chat."""
+        """Health-check the provider. Uses /models when possible, else a tiny chat."""
         self.ensure_one()
         if not self.is_active:
-            raise UserError(_('Adapter "%s" is disabled.') % self.name)
+            raise UserError(_('Provider "%s" is disabled.') % self.name)
         client = self._get_client()
         try:
-            if self.adapter_type == 'ollama':
+            if self.provider_type == 'ollama':
                 http_request(
                     'GET', client.endpoint + '/api/tags',
                     timeout=self.timeout, proxies=client.proxies)
-            elif self.adapter_type == 'ernie':
+            elif self.provider_type == 'ernie':
                 client._access_token()
             else:
                 http_request(
