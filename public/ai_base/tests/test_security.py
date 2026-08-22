@@ -12,10 +12,10 @@ class TestSecurity(AiBaseCase):
         template = self.env['ai.prompt.template'].create({
             'name': 'Core',
             'code': 'core.locked',
-            'content': 'keep',
+            'user_template': 'keep',
         })
         with self.assertRaises(AccessError):
-            template.with_user(user).write({'content': 'hacked'})
+            template.with_user(user).write({'user_template': 'hacked'})
 
     def test_log_viewer_can_read_logs(self):
         log = self.env['ai.request.log'].sudo().create({

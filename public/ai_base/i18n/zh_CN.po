@@ -477,13 +477,6 @@ msgid "User Template"
 msgstr "用户模板"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__content
-#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__content
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
-msgid "Template Body"
-msgstr "模板正文"
-
-#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__default_params
 msgid "Default Parameters"
 msgstr "默认参数"
@@ -1130,11 +1123,6 @@ msgstr "给模型的系统说明（可选）。"
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
 msgid "User message, e.g. Rewrite: {{ text }}"
 msgstr "用户消息，例如：请改写：{{ text }}"
-
-#. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
-msgid "Used when system + user templates are empty."
-msgstr "系统提示词和用户模板都为空时使用。"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
@@ -1969,11 +1957,6 @@ msgstr "业务模块使用的稳定编码，例如 sale.email.draft"
 #: model:ir.model.fields,help:ai_base.field_ai_prompt_template__user_template
 msgid "Supports {{var_name}} placeholders and record fields."
 msgstr "支持 {{var_name}} 占位符和单据字段。"
-
-#. module: ai_base
-#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__content
-msgid "Combined template used by render(). Falls back to system + user."
-msgstr "render() 使用的完整模板。若为空则回退到系统提示词 + 用户模板。"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_prompt_template__preview_context

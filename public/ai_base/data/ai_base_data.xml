@@ -13,7 +13,6 @@
 3. 回答用简体中文，先给结论，再用条目列出依据。涉及金额、日期、状态时保持原样，不要四舍五入或改写状态值。
 4. 不输出与问题无关的客套话，不泄露 API 密钥、密码等敏感字段。]]></field>
             <field name="user_template"/>
-            <field name="content"/>
         </record>
         <record id="prompt_rag_context" model="ai.prompt.template">
             <field name="name">知识库问答</field>
@@ -35,7 +34,6 @@
 {% endfor %}
 
 请根据以上资料作答。]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_summary_default" model="ai.prompt.template">
             <field name="name">公文摘要</field>
@@ -52,7 +50,6 @@
             <field name="user_template"><![CDATA[请摘要以下内容：
 
 {{ text }}]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_field_generate" model="ai.prompt.template">
             <field name="name">字段生成</field>
@@ -64,7 +61,6 @@
             <field name="user_template"><![CDATA[请根据下面的上下文，生成一段可直接写入字段的中文内容：
 
 {{ text }}]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_field_rewrite" model="ai.prompt.template">
             <field name="name">字段改写</field>
@@ -76,7 +72,6 @@
             <field name="user_template"><![CDATA[请改写以下文字，使表达更清晰、更适合正式单据：
 
 {{ text }}]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_field_translate" model="ai.prompt.template">
             <field name="name">字段翻译</field>
@@ -88,7 +83,6 @@
             <field name="user_template"><![CDATA[请将下面文字翻译成「{{ lang }}」：
 
 {{ text }}]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_field_summarize" model="ai.prompt.template">
             <field name="name">字段摘要</field>
@@ -100,7 +94,6 @@
             <field name="user_template"><![CDATA[请将以下内容压缩成一两句话：
 
 {{ text }}]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_sale_email_draft" model="ai.prompt.template">
             <field name="name">销售跟进邮件</field>
@@ -112,7 +105,6 @@
             <field name="user_template"><![CDATA[请给客户「{{ record.name or name or '客户' }}」写一封跟进邮件。
 语气：{{ tone or '正式、简洁' }}
 沟通要点：{{ text or '感谢对方关注，确认需求，并约定下一步沟通时间。' }}]]></field>
-            <field name="content"/>
         </record>
         <record id="prompt_meeting_minutes" model="ai.prompt.template">
             <field name="name">会议纪要整理</field>
@@ -129,7 +121,6 @@
             <field name="user_template"><![CDATA[请根据以下记录整理会议纪要：
 
 {{ text }}]]></field>
-            <field name="content"/>
         </record>
     </data>
     <data noupdate="1">

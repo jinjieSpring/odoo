@@ -36,7 +36,6 @@ class TestService(AiBaseCase):
             'code': 'test.draft',
             'system_prompt': 'Be brief',
             'user_template': 'Say hi to {{ who }}',
-            'content': 'Say hi to {{ who }}',
         })
         captured = {}
 

@@ -35,8 +35,6 @@
                                placeholder="Instructions for the model (optional)."/>
                         <field name="user_template" colspan="2"
                                placeholder="User message, e.g. Rewrite: {{ text }}"/>
-                        <field name="content" colspan="2"
-                               placeholder="Used when system + user templates are empty."/>
                     </group>
                     <notebook>
                         <page string="Preview" name="preview">

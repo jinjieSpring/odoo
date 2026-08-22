@@ -54,9 +54,6 @@ class AiPromptTemplate(models.Model):
     user_template = fields.Text(
         string='User Template',
         help='Supports {{var_name}} placeholders and record fields.')
-    content = fields.Text(
-        string='Template Body',
-        help='Combined template used by render(). Falls back to system + user.')
     default_params = fields.Json(string='Default Parameters', default=dict)
     is_active = fields.Boolean(string='Active', default=True)
     version = fields.Integer(string='Version', default=1, readonly=True)
@@ -70,10 +67,8 @@ class AiPromptTemplate(models.Model):
 
     def _combined_content(self):
         self.ensure_one()
-        if self.content:
-            return self.content
-        parts = [part for part in (self.system_prompt, self.user_template) if part]
-        return '\n\n'.join(parts)
+        return '\n\n'.join(
+            part for part in (self.system_prompt, self.user_template) if part)
 
     def _prepare_context(self, values=None, record=None):
         ctx = {}
@@ -115,7 +110,7 @@ class AiPromptTemplate(models.Model):
                     self.display_name, exc)) from exc
         return {
             'system': _one(self.system_prompt),
-            'user': _one(self.user_template or self.content),
+            'user': _one(self.user_template),
         }
 
     @api.model
@@ -171,7 +166,13 @@ class AiPromptTemplate(models.Model):
         elif context:
             self.preview_context = json.dumps(context, ensure_ascii=False, indent=2)
         try:
-            self.preview_result = self.render(context)
+            parts = self.render_parts(context)
+            blocks = []
+            if parts.get('system'):
+                blocks.append('%s\n%s' % (_('System Prompt'), parts['system']))
+            if parts.get('user'):
+                blocks.append('%s\n%s' % (_('User Template'), parts['user']))
+            self.preview_result = '\n\n'.join(blocks)
         except UserError as exc:
             self.preview_result = self._preview_error_message(exc)
         return True
@@ -185,7 +186,6 @@ class AiPromptTemplate(models.Model):
         self.write({
             'system_prompt': history.system_prompt,
             'user_template': history.user_template,
-            'content': history.content,
         })
         return True
 
@@ -197,7 +197,7 @@ class AiPromptTemplate(models.Model):
         return records
 
     def write(self, vals):
-        tracked = {'system_prompt', 'user_template', 'content'}
+        tracked = {'system_prompt', 'user_template'}
         bump = bool(tracked.intersection(vals))
         res = super().write(vals)
         if bump:
@@ -215,7 +215,6 @@ class AiPromptTemplate(models.Model):
             'version': self.version,
             'system_prompt': self.system_prompt or '',
             'user_template': self.user_template or '',
-            'content': self._combined_content() or '',
         })
 
 
@@ -230,7 +229,6 @@ class AiPromptTemplateHistory(models.Model):
     version = fields.Integer(string='Version', required=True)
     system_prompt = fields.Text(string='System Prompt')
     user_template = fields.Text(string='User Template')
-    content = fields.Text(string='Template Body')
 
     def action_restore(self):
         self.ensure_one()
