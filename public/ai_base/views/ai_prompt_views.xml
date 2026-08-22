@@ -10,39 +10,52 @@
                             class="oe_highlight" groups="ai_base.group_manager"/>
                 </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="is_active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Field Rewrite"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="code"/>
-                            <field name="category"/>
-                            <field name="lang"/>
-                            <field name="version"/>
+                            <field name="code" placeholder="e.g. field.rewrite"/>
                             <field name="is_active"/>
                         </group>
                         <group>
-                            <field name="default_model_code"/>
-                            <field name="default_temperature"/>
+                            <field name="version"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </group>
-                    <field name="description"/>
+                    <group>
+                        <field name="description" colspan="2"
+                               placeholder="Optional notes about this prompt."/>
+                        <field name="system_prompt" colspan="2"
+                               placeholder="Instructions for the model (optional)."/>
+                        <field name="user_template" colspan="2"
+                               placeholder="User message, e.g. Rewrite: {{ text }}"/>
+                        <field name="content" colspan="2"
+                               placeholder="Used when system + user templates are empty."/>
+                    </group>
                     <notebook>
-                        <page string="Templates">
+                        <page string="Preview" name="preview">
                             <group>
-                                <field name="system_prompt"/>
-                                <field name="user_template"/>
-                                <field name="content"/>
+                                <group string="Preview Context (JSON)">
+                                    <field name="preview_context" nolabel="1" colspan="2"
+                                           placeholder='{"query": "Sample question"}'/>
+                                </group>
+                                <group string="Preview Result">
+                                    <field name="preview_result" nolabel="1" colspan="2"
+                                           placeholder="Click Preview Render to see the output."/>
+                                </group>
                             </group>
                         </page>
-                        <page string="Preview">
-                            <field name="preview_context"/>
-                            <field name="preview_result"/>
-                        </page>
-                        <page string="History">
-                            <field name="history_ids">
+                        <page string="Version History" name="history">
+                            <field name="history_ids" nolabel="1">
                                 <list>
                                     <field name="version"/>
-                                    <field name="create_date"/>
+                                    <field name="create_date" string="Created On"/>
                                     <button name="action_restore" type="object" string="Restore"/>
                                 </list>
                             </field>
@@ -59,8 +72,6 @@
             <list>
                 <field name="name"/>
                 <field name="code"/>
-                <field name="category"/>
-                <field name="lang"/>
                 <field name="version"/>
                 <field name="is_active"/>
             </list>

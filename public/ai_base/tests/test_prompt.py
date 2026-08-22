@@ -65,3 +65,17 @@ class TestPrompt(AiBaseCase):
         other_found = self.env['ai.prompt.template'].with_company(
             other)._get_by_code('test.shared', company=other)
         self.assertEqual(other_found.content, 'other {{ who }}')
+
+    def test_preview_fills_sample_items(self):
+        template = self.env['ai.prompt.template'].create({
+            'name': 'RAG',
+            'code': 'test.preview.rag',
+            'content': (
+                'Q: {{ query }}\n'
+                '{% for item in items %}- {{ item.content }}\n{% endfor %}'
+            ),
+        })
+        template.action_preview()
+        self.assertIn('Sample question', template.preview_result)
+        self.assertIn('Sample knowledge excerpt.', template.preview_result)
+        self.assertIn('"items"', template.preview_context)

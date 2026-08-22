@@ -111,8 +111,6 @@ class AiBaseService(models.AbstractModel):
                 options['system_prompt'] = parts['system']
             if not content:
                 content = parts.get('user') or ''
-            if template.default_model_code and not model_code:
-                model_code = template.default_model_code
         content = (content or '').strip()
         if not content:
             raise UserError(_('Message content cannot be empty.'))

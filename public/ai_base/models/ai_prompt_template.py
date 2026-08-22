@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 from collections.abc import Mapping
 
-from jinja2 import Environment, StrictUndefined, UndefinedError, TemplateError
+from jinja2 import Environment, StrictUndefined, UndefinedError, TemplateError, meta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -41,7 +42,7 @@ def _record_context(record):
 class AiPromptTemplate(models.Model):
     _name = 'ai.prompt.template'
     _description = 'AI Prompt Template'
-    _order = 'category, name'
+    _order = 'name'
     _check_company_auto = True
 
     name = fields.Char(string='Name', required=True, translate=True)
@@ -49,7 +50,6 @@ class AiPromptTemplate(models.Model):
         string='Key', required=True, index=True,
         help='Stable key used by business modules, e.g. sale.email.draft')
     description = fields.Text(string='Description')
-    category = fields.Char(string='Category')
     system_prompt = fields.Text(string='System Prompt')
     user_template = fields.Text(
         string='User Template',
@@ -58,17 +58,14 @@ class AiPromptTemplate(models.Model):
         string='Template Body',
         help='Combined template used by render(). Falls back to system + user.')
     default_params = fields.Json(string='Default Parameters', default=dict)
-    lang = fields.Char(string='Language Code', help='e.g. zh_CN, en_US')
     is_active = fields.Boolean(string='Active', default=True)
     version = fields.Integer(string='Version', default=1, readonly=True)
-    default_model_code = fields.Char(string='Default Model Code')
-    default_temperature = fields.Float(string='Default Temperature')
     company_id = fields.Many2one('res.company', string='Company', index=True)
     history_ids = fields.One2many(
-        'ai.prompt.template.history', 'template_id', string='History')
+        'ai.prompt.template.history', 'template_id', string='Version History')
     preview_context = fields.Text(
         string='Preview Context (JSON)',
-        help='JSON object used by the Preview button.')
+        help='Sample JSON used by Preview. Leave empty to fill typical values automatically.')
     preview_result = fields.Text(string='Preview Result', readonly=True)
 
     def _combined_content(self):
@@ -122,34 +119,61 @@ class AiPromptTemplate(models.Model):
         }
 
     @api.model
-    def _get_by_code(self, code, company=None, lang=None):
+    def _get_by_code(self, code, company=None):
         if not code:
             return self.browse()
         company = company or self.env.company
         domain = [('code', '=', code), ('is_active', '=', True)]
-        if lang:
-            found = self.search(domain + [
-                ('lang', '=', lang),
-                '|', ('company_id', '=', False), ('company_id', '=', company.id),
-            ], order='company_id desc', limit=1)
-            if found:
-                return found
         return self.search(domain + [
             '|', ('company_id', '=', False), ('company_id', '=', company.id),
         ], order='company_id desc', limit=1)
 
+    def _preview_defaults(self, source):
+        """Typical values so Preview can run without hand-written JSON."""
+        names = meta.find_undeclared_variables(_JINJA.parse(source or ''))
+        names -= {'user', 'company', 'record', 'value'}
+        samples = {
+            'items': [{
+                'citation': '[SOURCE:demo]',
+                'page': 1,
+                'source_document': 'demo.pdf',
+                'content': 'Sample knowledge excerpt.',
+            }],
+            'query': 'Sample question',
+            'text': 'Sample text',
+            'lang': self.env.lang or 'en_US',
+            'who': 'Ada',
+            'name': 'Ada',
+        }
+        return {name: samples.get(name, 'sample') for name in names}
+
+    def _preview_error_message(self, exc):
+        text = str(exc)
+        if 'is undefined' in text and "'" in text:
+            name = text.split("'")[1]
+            return _(
+                'The template needs a value for "%s". Add it to the JSON '
+                'on the Preview tab, for example: {"%s": "sample"}.'
+            ) % (name, name)
+        return _('Could not render this template: %s') % text
+
     def action_preview(self):
         self.ensure_one()
-        context = {}
+        context = self._preview_defaults(self._combined_content())
         if self.preview_context:
-            import json
             try:
-                context = json.loads(self.preview_context)
+                parsed = json.loads(self.preview_context)
             except ValueError as exc:
                 raise UserError(_('Preview context is not valid JSON.')) from exc
-            if not isinstance(context, dict):
+            if not isinstance(parsed, dict):
                 raise UserError(_('Preview context must be a JSON object.'))
-        self.preview_result = self.render(context)
+            context.update(parsed)
+        elif context:
+            self.preview_context = json.dumps(context, ensure_ascii=False, indent=2)
+        try:
+            self.preview_result = self.render(context)
+        except UserError as exc:
+            self.preview_result = self._preview_error_message(exc)
         return True
 
     def action_rollback(self, history_id=None):

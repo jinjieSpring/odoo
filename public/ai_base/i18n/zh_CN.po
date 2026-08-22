@@ -371,7 +371,6 @@ msgstr "最大上下文 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__temperature_default
-#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__default_temperature
 msgid "Default Temperature"
 msgstr "默认 Temperature"
 
@@ -461,7 +460,6 @@ msgid "Description"
 msgstr "描述"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__category
 #: model:ir.model.fields,field_description:ai_base.field_ai_tool__category
 msgid "Category"
 msgstr "分类"
@@ -481,6 +479,7 @@ msgstr "用户模板"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__content
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__content
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
 msgid "Template Body"
 msgstr "模板正文"
 
@@ -490,38 +489,26 @@ msgid "Default Parameters"
 msgstr "默认参数"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__lang
-msgid "Language Code"
-msgstr "语言代码"
-
-#. module: ai_base
-#: model:ir.model.fields,help:ai_base.field_ai_prompt_template__lang
-msgid "e.g. zh_CN, en_US"
-msgstr "例如 zh_CN、en_US"
-
-#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__version
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template_history__version
 msgid "Version"
 msgstr "版本"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__default_model_code
-msgid "Default Model Code"
-msgstr "默认模型编码"
-
-#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__history_ids
-msgid "History"
-msgstr "历史"
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Version History"
+msgstr "版本历史"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__preview_context
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
 msgid "Preview Context (JSON)"
 msgstr "预览上下文（JSON）"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__preview_result
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
 msgid "Preview Result"
 msgstr "预览结果"
 
@@ -1121,8 +1108,48 @@ msgstr "预览"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "e.g. Field Rewrite"
+msgstr "例如：字段改写"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "e.g. field.rewrite"
+msgstr "例如 field.rewrite"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Optional notes about this prompt."
+msgstr "可选：说明这条提示词的用途。"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Instructions for the model (optional)."
+msgstr "给模型的系统说明（可选）。"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "User message, e.g. Rewrite: {{ text }}"
+msgstr "用户消息，例如：请改写：{{ text }}"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Used when system + user templates are empty."
+msgstr "系统提示词和用户模板都为空时使用。"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Click Preview Render to see the output."
+msgstr "点击「预览渲染」查看结果。"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
 msgid "Restore"
 msgstr "回滚"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_prompt_form_view
+msgid "Created On"
+msgstr "创建时间"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_knowledge_form_view
@@ -1194,38 +1221,48 @@ msgstr "安全与限流"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_system_default
-msgid "Default System Prompt"
-msgstr "默认系统提示词"
+msgid "系统助手"
+msgstr "系统助手"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_rag_context
-msgid "RAG Context"
-msgstr "RAG 上下文"
+msgid "知识库问答"
+msgstr "知识库问答"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_summary_default
-msgid "Default Summary"
-msgstr "默认摘要"
+msgid "公文摘要"
+msgstr "公文摘要"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_field_generate
-msgid "Field Generate"
+msgid "字段生成"
 msgstr "字段生成"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_field_rewrite
-msgid "Field Rewrite"
+msgid "字段改写"
 msgstr "字段改写"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_field_translate
-msgid "Field Translate"
+msgid "字段翻译"
 msgstr "字段翻译"
 
 #. module: ai_base
 #: model:ai.prompt.template,name:ai_base.prompt_field_summarize
-msgid "Field Summarize"
+msgid "字段摘要"
 msgstr "字段摘要"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_sale_email_draft
+msgid "销售跟进邮件"
+msgstr "销售跟进邮件"
+
+#. module: ai_base
+#: model:ai.prompt.template,name:ai_base.prompt_meeting_minutes
+msgid "会议纪要整理"
+msgstr "会议纪要整理"
 
 #. module: ai_base
 #: model:ir.cron,name:ai_base.ir_cron_index_documents
@@ -1404,6 +1441,20 @@ msgstr "预览上下文不是有效的 JSON。"
 #: code:addons/ai_base/models/ai_prompt_template.py:0
 msgid "Preview context must be a JSON object."
 msgstr "预览上下文必须是 JSON 对象。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid ""
+"The template needs a value for \"%s\". Add it to the JSON on the Preview "
+"tab, for example: {\"%s\": \"sample\"}."
+msgstr "模板需要变量“%s”的值。请在预览页的 JSON 中补充，例如 {\"%s\": \"sample\"}。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_prompt_template.py:0
+msgid "Could not render this template: %s"
+msgstr "无法渲染该模板：%s"
 
 #. module: ai_base
 #. odoo-python
@@ -1926,8 +1977,8 @@ msgstr "render() 使用的完整模板。若为空则回退到系统提示词 + 
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_prompt_template__preview_context
-msgid "JSON object used by the Preview button."
-msgstr "预览按钮使用的 JSON 对象。"
+msgid "Sample JSON used by Preview. Leave empty to fill typical values automatically."
+msgstr "预览使用的示例 JSON。留空则自动填入常用样例。"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_model__model_name_remote
