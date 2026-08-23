@@ -4,7 +4,7 @@ from odoo.http import request
 
 
 class AiBaseJsonRpcController(http.Controller):
-    """JSON-RPC endpoints for the OWL chat widget and field enhancer."""
+    """JSON-RPC endpoints for the OWL chat widget."""
 
     @http.route('/ai_base/defaults', type='jsonrpc', auth='user')
     def defaults(self):
@@ -65,10 +65,3 @@ class AiBaseJsonRpcController(http.Controller):
         if not session:
             return {'error': 'Session not found'}
         return session.action_set_options(options or {})
-
-    @http.route('/ai_base/field/enhance', type='jsonrpc', auth='user')
-    def field_enhance(self, action, text, lang=None):
-        return {
-            'text': request.env['ai.base.service'].enhance_field(
-                action, text, lang=lang),
-        }

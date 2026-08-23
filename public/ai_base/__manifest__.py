@@ -14,7 +14,7 @@ layer instead of talking to vendors directly.
 * Vendor providers (OpenAI-compatible, Qwen, Ernie, DeepSeek, Ollama, private)
 * Model pool and prompt templates with versioning
 * Registered Agent tools (Python / ORM / HTTP) with ACL and audit logs
-* Chat sessions, jsonrpc + NDJSON streaming, OWL chat widget and field enhancer
+* Chat sessions, jsonrpc + NDJSON streaming and OWL chat widget
 
 Knowledge bases and RAG live in the optional ``ai_knowledge`` module.
 This module does not depend on OCA ``queue_job``.
@@ -45,8 +45,6 @@ This module does not depend on OCA ``queue_job``.
             'ai_base/static/src/js/ai_chat.js',
             'ai_base/static/src/xml/ai_chat_dialog.xml',
             'ai_base/static/src/js/ai_chat_dialog.js',
-            'ai_base/static/src/xml/ai_chat_action.xml',
-            'ai_base/static/src/js/ai_chat_action.js',
             'ai_base/static/src/xml/ai_formatted_text.xml',
             'ai_base/static/src/js/ai_formatted_text.js',
             'ai_base/static/src/js/ai_markdown.js',
@@ -56,8 +54,6 @@ This module does not depend on OCA ``queue_job``.
             'ai_base/static/src/js/ai_prompt_dialog.js',
             'ai_base/static/src/xml/ai_user_settings_dialog.xml',
             'ai_base/static/src/js/ai_user_settings_dialog.js',
-            'ai_base/static/src/xml/ai_field.xml',
-            'ai_base/static/src/js/ai_field.js',
         ],
         'web.assets_unit_tests': [
             'ai_base/static/tests/**/*',

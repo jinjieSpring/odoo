@@ -279,22 +279,6 @@ class AiBaseService(models.AbstractModel):
     def invoke_tool(self, tool_name, params=None, context=None):
         return self.env['ai.tool'].action_invoke_tool(tool_name, params, context)
 
-    def enhance_field(self, action, text, lang=None):
-        """Used by the ``ai_enhance`` field widget."""
-        templates = {
-            'generate': 'field.generate',
-            'rewrite': 'field.rewrite',
-            'translate': 'field.translate',
-            'summarize': 'field.summarize',
-        }
-        prompt_key = templates.get(action) or 'field.rewrite'
-        result = self.chat(
-            prompt_key=prompt_key,
-            context={'text': text or '', 'lang': lang or self.env.lang},
-            scenario='summary',
-        )
-        return result.get('reply') or ''
-
     # ------------------------------------------------------------------
     # Internals
     # ------------------------------------------------------------------

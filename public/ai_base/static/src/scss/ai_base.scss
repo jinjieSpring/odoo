@@ -123,18 +123,6 @@
     flex-direction: column;
 }
 
-.o_ai_chat_page {
-    height: 100%;
-    padding: 0;
-
-    .o_ai_chat {
-        height: 100%;
-        max-height: none;
-        min-height: 0;
-        border-radius: 0;
-    }
-}
-
 .o_ai_chat,
 .o_ai_chat_window {
     display: flex;
@@ -1258,9 +1246,4 @@
             font-weight: 500;
         }
     }
-}
-
-.o_ai_enhance_field .btn-group {
-    flex: 0 0 auto;
-    margin-top: 2px;
 }
