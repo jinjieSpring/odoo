@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import patch
 
-from odoo.addons.ai_base.controllers.stream import _sse
+from odoo.addons.ai_base.controllers.stream import _line
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
 
 class TestStream(AiBaseCase):
-    def test_sse_format(self):
-        line = _sse('delta', {'delta': 'hi'})
-        self.assertIn('event: delta', line)
+    def test_ndjson_format(self):
+        line = _line({'delta': 'hi'})
         self.assertIn('"delta": "hi"', line)
-        self.assertTrue(line.endswith('\n\n'))
+        self.assertTrue(line.endswith('\n'))
 
     def test_stream_chat_collects_plain_events(self):
         session = self.env['ai.chat.session'].create({'name': 'S'})

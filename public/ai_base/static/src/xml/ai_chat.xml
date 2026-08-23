@@ -1,61 +1,382 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <t t-name="ai_base.ChatDialog">
-        <Dialog size="'md'" title="title">
-            <AiChat sessionId="props.sessionId"
-                    pendingMessage="props.pendingMessage"
-                    resModel="props.resModel"
-                    resId="props.resId"/>
-        </Dialog>
-    </t>
-    <t t-name="ai_base.Chat">
-        <div class="o_ai_chat">
-            <div class="o_ai_chat_sessions px-2 py-1">
-                <button class="btn btn-link btn-sm" t-on-click="onNewSession"><t t-esc="_t('New session')"/></button>
-                <t t-foreach="state.sessions" t-as="session" t-key="session.id">
-                    <button class="btn btn-link btn-sm d-block text-start"
-                            t-att-class="{'fw-bold': session.id === state.sessionId}"
-                            t-on-click="() => this.onSelectSession(session.id)">
-                        <t t-esc="session.name"/>
-                    </button>
-                </t>
-            </div>
-            <div class="o_ai_chat_messages" t-ref="messages">
-                <t t-foreach="state.messages" t-as="message" t-key="message.id">
-                    <div t-att-class="'o_ai_chat_msg ' + message.role">
-                        <t t-esc="message.content"/>
-                        <div t-if="message.tool_cards and message.tool_cards.length"
-                             class="o_ai_chat_tools small mt-1">
-                            <t t-foreach="message.tool_cards" t-as="card" t-key="card_index">
-                                <div class="o_ai_tool_card">
-                                    <t t-esc="card.name"/> · <t t-esc="card.status"/>
-                                    <t t-if="card.summary"> — <t t-esc="card.summary"/></t>
+    <t t-name="ai_base.ChatMain">
+        <div class="o_ai_chat_window">
+            <div class="o_ai_chat_body">
+                <!-- Collapsible sidebar -->
+                <div t-if="!state.sidebarCollapsed" class="o_ai_chat_sidebar"
+                     t-ref="sidebar"
+                     t-att-style="'flex: 0 0 ' + state.sidebarWidth + 'px; width: ' + state.sidebarWidth + 'px;'">
+                    <div class="o_ai_chat_sidebar_grids" t-ref="grids">
+                        <!-- Session history grid -->
+                        <div class="o_ai_sidebar_grid"
+                             data-grid-name="sessions"
+                             t-att-class="{'o_ai_grid_collapsed': state.grids.sessions}"
+                             t-att-style="state.gridHeights.sessions ? 'flex: 0 0 ' + state.gridHeights.sessions + 'px;' : ''">
+                            <div class="o_ai_grid_header d-flex align-items-center px-2"
+                                 t-on-click="() => this.toggleGrid('sessions')">
+                                <i t-att-class="state.grids.sessions ? 'fa fa-chevron-right' : 'fa fa-chevron-down'"
+                                   class="o_ai_grid_icon fa me-1"/>
+                                <span class="o_ai_grid_title">Sessions</span>
+                                <button class="btn btn-link p-0 ms-auto"
+                                        title="New Session"
+                                        t-on-click.stop="newSession">
+                                    <i class="fa fa-plus"/>
+                                </button>
+                            </div>
+                            <div t-if="!state.grids.sessions" class="o_ai_grid_body">
+                                <input class="form-control form-control-sm o_ai_session_search"
+                                       t-model="state.sessionSearch"
+                                       placeholder="Search sessions"/>
+                                <div class="o_ai_session_list">
+                                    <t t-foreach="filteredSessions" t-as="session" t-key="session.id">
+                                        <div class="o_ai_session_item d-flex align-items-center"
+                                             t-att-title="sessionTooltip(session)"
+                                             t-att-class="{'o_ai_active': session.id === state.currentId}"
+                                             t-on-click="() => this.selectSession(session.id)">
+                                            <t t-if="state.editingId === session.id">
+                                                <input class="form-control form-control-sm o_ai_session_edit"
+                                                       t-ref="editInput" t-model="state.editName"
+                                                       t-on-keydown="onEditKeyDown"
+                                                       t-on-blur="onEditBlur"
+                                                       t-on-click.stop=""/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="o_ai_session_info">
+                                                    <div class="o_ai_session_name text-truncate"
+                                                         t-esc="session.name"/>
+                                                    <div class="o_ai_session_meta"
+                                                         t-esc="sessionMeta(session)"/>
+                                                </div>
+                                            </t>
+                                            <div class="ms-auto d-flex gap-1 o_ai_session_actions">
+                                                <button class="btn btn-link p-0" title="Rename"
+                                                        t-if="state.editingId !== session.id"
+                                                        t-on-click.stop="() => this.startEdit(session.id, session.name)">
+                                                    <i class="fa fa-pencil"/>
+                                                </button>
+                                                <button class="btn btn-link p-0" title="Delete"
+                                                        t-on-click.stop="() => this.closeSession(session.id, session.name)">
+                                                    <i class="fa fa-close"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div t-if="!filteredSessions.length" class="o_ai_session_empty">
+                                        No sessions
+                                    </div>
                                 </div>
-                            </t>
+                            </div>
                         </div>
-                        <div t-if="message.rag_sources and message.rag_sources.length"
-                             class="o_ai_chat_sources small mt-1">
-                            <t t-foreach="message.rag_sources" t-as="src" t-key="src_index">
-                                <div>
-                                    <t t-esc="src.citation"/> <t t-esc="src.source_document"/>
+                        <div t-if="!state.grids.sessions" class="o_ai_grid_resizer"
+                             title="Drag to resize the grids"
+                             t-on-mousedown="(ev) => this.startGridResize(ev, 'sessions')"/>
+
+                        <!-- Knowledge base grid (placeholder) -->
+                        <div class="o_ai_sidebar_grid"
+                             data-grid-name="knowledge"
+                             t-att-class="{'o_ai_grid_collapsed': state.grids.knowledge}"
+                             t-att-style="state.gridHeights.knowledge ? 'flex: 0 0 ' + state.gridHeights.knowledge + 'px;' : ''">
+                            <div class="o_ai_grid_header d-flex align-items-center px-2"
+                                 t-on-click="() => this.toggleGrid('knowledge')">
+                                <i t-att-class="state.grids.knowledge ? 'fa fa-chevron-right' : 'fa fa-chevron-down'"
+                                   class="o_ai_grid_icon fa me-1"/>
+                                <span class="o_ai_grid_title">Knowledge Base</span>
+                            </div>
+                            <div t-if="!state.grids.knowledge" class="o_ai_grid_body">
+                                <label class="o_ai_knowledge_toggle d-flex align-items-center mb-1">
+                                    <input type="checkbox" class="form-check-input me-1"
+                                           t-att-checked="state.knowledgeEnabled"
+                                           t-on-change="toggleKnowledgeEnabled"/>
+                                    <span class="text-truncate">Use knowledge base</span>
+                                </label>
+                                <div t-if="!state.knowledgeDocuments.length"
+                                     class="o_ai_grid_placeholder">
+                                    No knowledge documents available.
                                 </div>
-                            </t>
+                                <div t-else="" class="o_ai_knowledge_list">
+                                    <t t-foreach="state.knowledgeDocuments" t-as="doc" t-key="doc.id">
+                                        <label class="o_ai_knowledge_item d-flex align-items-center mb-1">
+                                            <input type="checkbox" class="form-check-input me-1"
+                                                   t-att-value="doc.id"
+                                                   t-att-checked="state.knowledgeSelection.includes(doc.id)"
+                                                   t-on-change="toggleKnowledgeDocument"/>
+                                            <span class="text-truncate" t-esc="doc.name"/>
+                                        </label>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="o_ai_sidebar_width_resizer"
+                             title="Drag to resize the sidebar"
+                             t-on-mousedown="startSidebarResize"/>
+                        <button class="o_ai_sidebar_handle o_ai_sidebar_collapse"
+                                title="Collapse Sidebar" t-on-click="toggleSidebar">
+                        <i class="fa fa-chevron-left"/>
+                    </button>
+                </div>
+                <button t-if="state.sidebarCollapsed" class="o_ai_sidebar_handle"
+                        title="Expand Sidebar" t-on-click="toggleSidebar">
+                    <i class="fa fa-chevron-right"/>
+                </button>
+
+                <!-- Main conversation area -->
+                <div class="o_ai_chat_main">
+                    <!-- Context-sensitive strip -->
+                    <div class="o_ai_chat_context_strip d-flex align-items-center px-3">
+                        <div class="o_ai_chat_context_record d-flex align-items-center text-truncate">
+                            <i class="fa fa-paperclip me-1"/>
+                            <span class="text-truncate"
+                                  t-att-class="{'text-muted': !state.contextDisplayName}"
+                                  t-esc="state.contextDisplayName or 'No record detected'"/>
+                        </div>
+                        <div class="ms-auto d-flex align-items-center gap-3">
+                            <label class="o_ai_chat_ctl form-check form-switch mb-0"
+                                   title="Insert the current record context into the conversation">
+                                <input type="checkbox" class="form-check-input"
+                                       t-att-checked="state.attachContext and state.contextAvailable"
+                                       t-att-disabled="!state.contextAvailable"
+                                       t-on-change="onToggleAttachContext"/>
+                                <span class="form-check-label">Insert context</span>
+                            </label>
+                            <button t-if="state.currentId"
+                                    class="btn btn-link p-0 text-nowrap"
+                                    title="Open in Discuss" t-on-click="openInDiscuss">
+                                <i class="fa fa-comments me-1"/>Open in Discuss
+                            </button>
                         </div>
                     </div>
-                </t>
-                <div t-if="state.streamingContent" class="o_ai_chat_msg assistant">
-                    <t t-esc="state.streamingContent"/>
+
+                    <!-- Message area -->
+                    <div class="o_ai_chat_messages" t-ref="messages">
+                        <div t-if="!state.currentId" class="o_ai_chat_empty">
+                            <img class="o_ai_chat_empty_icon"
+                                 src="/ai_base/static/src/icons/ai_icon.svg"
+                                 alt="AI"/>
+                            <div>Ask the AI assistant to start a conversation</div>
+                        </div>
+                        <t t-else="">
+                            <t t-foreach="state.messages" t-as="msg" t-key="msg.id || msg.localId">
+                                <div class="o_ai_chat_msg"
+                                     t-att-class="'o_ai_' + msg.role">
+                                    <div class="o_ai_chat_msg_bubble">
+                                        <div t-if="msg.role === 'assistant' and msg.reasoning_content and state.reasoningStrength !== 'none'"
+                                             class="o_ai_chat_reasoning">
+                                            <button type="button"
+                                                    class="o_ai_chat_reasoning_title btn btn-link p-0"
+                                                    t-on-click="() => this.toggleReasoningCollapse(msg.id)">
+                                                <i t-att-class="isReasoningCollapsed(msg.id) ? 'fa fa-chevron-down' : 'fa fa-chevron-up'"/>
+                                                Reasoning
+                                            </button>
+                                            <div t-if="!isReasoningCollapsed(msg.id)"
+                                                 class="o_ai_chat_reasoning_body"
+                                                 t-esc="msg.reasoning_content"/>
+                                        </div>
+                                        <div t-if="msg.id and state.editingMessageId === msg.id"
+                                             class="o_ai_chat_edit_msg">
+                                            <textarea class="form-control form-control-sm"
+                                                      rows="3" t-model="state.editMessageContent"
+                                                      t-on-keydown="onEditMessageKeyDown"/>
+                                            <div class="mt-1 d-flex gap-1">
+                                                <button class="btn btn-sm btn-primary"
+                                                        t-on-click="saveEditMessage">Save</button>
+                                                <button class="btn btn-sm btn-secondary"
+                                                        t-on-click="cancelEditMessage">Cancel</button>
+                                            </div>
+                                        </div>
+                                        <div t-else="" class="o_ai_chat_msg_content">
+                                            <t t-if="msg.role === 'assistant' and msg.pending and !msg.content and !messageCards(msg).length">
+                                                <i class="fa fa-circle-o-notch fa-spin"/> Thinking...
+                                            </t>
+                                            <t t-elif="messageCards(msg).length">
+                                                <AiFormattedText
+                                                    content="msg.content"
+                                                    className="'o_ai_msg_md'"/>
+                                                <t t-foreach="messageCards(msg)" t-as="card" t-key="card_index">
+                                                    <AiToolCard
+                                                        tool="card"
+                                                        onUpdate="(card) => this.updateToolCard(msg, card)"
+                                                        onTask="(text, busy, error) => this.setTask(text, busy, error)"/>
+                                                </t>
+                                            </t>
+                                            <t t-elif="msg.tool">
+                                                <AiFormattedText
+                                                    content="msg.content_before_tool"
+                                                    className="'o_ai_msg_md'"/>
+                                                <AiToolCard
+                                                    tool="msg.tool"
+                                                    onUpdate="(card) => this.updateToolCard(msg, card)"
+                                                    onTask="(text, busy, error) => this.setTask(text, busy, error)"/>
+                                                <AiFormattedText
+                                                    content="msg.content_after_tool"
+                                                    className="'o_ai_msg_md'"/>
+                                            </t>
+                                            <AiFormattedText t-else=""
+                                                content="msg.content"
+                                                className="'o_ai_msg_md'"/>
+                                            <span t-if="msg.role === 'assistant' and msg.pending and (msg.content or messageCards(msg).length)"
+                                                  class="o_ai_chat_cursor"/>
+                                        </div>
+                                        <div class="o_ai_chat_msg_actions d-flex gap-1 mt-1">
+                                            <button t-if="msg.role === 'assistant' and msg.pending"
+                                                    type="button" class="btn btn-link p-0"
+                                                    title="Stop Generating"
+                                                    t-on-click.stop="stopGeneration">
+                                                <i class="fa fa-stop"/>
+                                            </button>
+                                            <button type="button" class="btn btn-link p-0"
+                                                    title="Copy"
+                                                    t-on-click.stop="() => this.copyMessage(msg)">
+                                                <i class="fa fa-copy"/>
+                                            </button>
+                                            <button t-if="msg.role === 'user'" type="button"
+                                                    class="btn btn-link p-0" title="Edit"
+                                                    t-on-click.stop="() => this.startEditMessage(msg)">
+                                                <i class="fa fa-pencil"/>
+                                            </button>
+                                            <button t-if="msg.role === 'user'" type="button"
+                                                    class="btn btn-link p-0" title="Resend"
+                                                    t-on-click.stop="() => this.resendMessage(msg)">
+                                                <i class="fa fa-rotate-left"/>
+                                            </button>
+                                            <button t-if="msg.role === 'assistant' and !msg.pending"
+                                                    type="button" class="btn btn-link p-0"
+                                                    title="Regenerate"
+                                                    t-on-click.stop="() => this.regenerateAnswer(msg)">
+                                                <i class="fa fa-rotate-right"/>
+                                            </button>
+                                            <button t-if="msg.role === 'assistant' and !msg.pending"
+                                                    type="button" class="btn btn-link p-0"
+                                                    title="Send as Message"
+                                                    t-att-disabled="!state.contextAttached"
+                                                    t-on-click.stop="() => this.sendAsMessage(msg)">
+                                                <i class="fa fa-envelope"/>
+                                            </button>
+                                            <button t-if="msg.role === 'assistant' and !msg.pending"
+                                                    type="button" class="btn btn-link p-0"
+                                                    title="Log as Note"
+                                                    t-att-disabled="!state.contextAttached"
+                                                    t-on-click.stop="() => this.logAsNote(msg)">
+                                                <i class="fa fa-sticky-note"/>
+                                            </button>
+                                            <button t-if="msg.role === 'assistant' and !msg.pending and msg.id"
+                                                    type="button" class="btn btn-link p-0"
+                                                    title="Thumbs Up"
+                                                    t-on-click.stop="() => this.sendFeedback(msg, 'up')">
+                                                <i class="fa fa-thumbs-o-up"/>
+                                            </button>
+                                            <button t-if="msg.role === 'assistant' and !msg.pending and msg.id"
+                                                    type="button" class="btn btn-link p-0"
+                                                    title="Thumbs Down"
+                                                    t-on-click.stop="() => this.sendFeedback(msg, 'down')">
+                                                <i class="fa fa-thumbs-o-down"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+
+                    <!-- Input row -->
+                    <div class="o_ai_chat_input_row d-flex align-items-end px-3 py-2">
+                        <div class="o_ai_chat_input_wrap flex-grow-1">
+                            <div t-if="state.commandOpen" class="o_ai_chat_commands">
+                                <t t-foreach="filteredCommands" t-as="cmd" t-key="cmd.name">
+                                    <button class="o_ai_chat_command btn btn-sm w-100 text-start"
+                                            t-on-click="() => this.runCommand(cmd.name)">
+                                        <span class="fw-bold">/<t t-out="cmd.name"/></span>
+                                        <span class="text-muted ms-1">
+                                            <t t-out="cmd.help"/>
+                                        </span>
+                                    </button>
+                                </t>
+                                <div t-if="!filteredCommands.length" class="px-2 py-1 text-muted">
+                                    No matching command
+                                </div>
+                            </div>
+                            <textarea class="o_ai_chat_input form-control" rows="2"
+                                      t-ref="chatInput" t-model="state.draft"
+                                      t-on-input="onChatInput"
+                                      t-on-keydown="onInputKeyDown"
+                                      placeholder="Ask the AI assistant... or type / for commands"/>
+                        </div>
+                        <button class="o_ai_chat_send btn btn-primary ms-2"
+                                title="Send (Enter)" t-att-disabled="!canSend"
+                                t-on-click="sendCurrent">
+                            <i class="fa fa-paper-plane"/>
+                        </button>
+                        <button class="btn btn-link p-1 ms-1" title="User Settings"
+                                t-on-click="openUserSettings">
+                            <i class="fa fa-gear"/>
+                        </button>
+                    </div>
+
+                    <!-- Status bar -->
+                    <div class="o_ai_chat_status d-flex align-items-center flex-nowrap gap-2 px-3 py-1">
+                        <span class="o_ai_chat_status_task"
+                              t-att-title="state.taskText"
+                              t-att-class="{'o_ai_task_busy': state.taskBusy,
+                                           'o_ai_task_error': state.taskError}">
+                            <i t-if="state.taskBusy" class="fa fa-circle-o-notch fa-spin me-1"/>
+                            <t t-out="state.taskText"/>
+                        </span>
+                        <span t-if="state.currentId" class="o_ai_chat_status_tokens">
+                            <t t-esc="tokenSummary"/>
+                        </span>
+                        <div class="o_ai_chat_ctx_progress"
+                             t-if="state.currentId"
+                             title="Context usage">
+                            <div class="o_ai_chat_ctx_bar"
+                                 t-att-class="{'o_ai_ctx_high': state.sessionStats.context_usage > 80}"
+                                 t-att-style="'width:' + Math.min(100, state.sessionStats.context_usage || 0) + '%'"/>
+                        </div>
+                        <div class="ms-auto d-flex align-items-center gap-2">
+                            <span t-att-title="capabilityReasons.reasoning">
+                                <select class="form-select form-select-sm o_ai_chat_ctl o_ai_status_reasoning"
+                                        t-model="state.reasoningStrength"
+                                        t-att-disabled="!state.capabilities.reasoning"
+                                        t-on-change="saveOptions">
+                                    <option value="none">Thinking: Off</option>
+                                    <option value="low">Thinking: Low</option>
+                                    <option value="medium">Thinking: Medium</option>
+                                    <option value="high">Thinking: High</option>
+                                </select>
+                            </span>
+                            <span class="d-inline-flex" t-att-title="webSearchTitle">
+                                <button type="button"
+                                        class="o_ai_chat_ctl o_ai_status_btn btn btn-link p-1"
+                                        t-att-class="{'o_ai_ctl_active': state.webSearchEnabled}"
+                                        t-att-disabled="!state.capabilities.web_search"
+                                        t-on-click="toggleWebSearch">
+                                    <i class="fa fa-globe"/>
+                                </button>
+                            </span>
+                            <span class="d-inline-flex" t-att-title="streamingTitle">
+                                <button type="button"
+                                        class="o_ai_chat_ctl o_ai_status_btn btn btn-link p-1"
+                                        t-att-class="{'o_ai_ctl_active': state.streaming}"
+                                        t-att-disabled="!state.capabilities.streaming"
+                                        t-on-click="toggleStreaming">
+                                    <i class="fa fa-bolt"/>
+                                </button>
+                            </span>
+                            <select class="form-select form-select-sm o_ai_chat_ctl o_ai_status_prompt"
+                                    t-model="state.promptId"
+                                    t-on-change="saveOptions">
+                                <option value="0">No Prompt</option>
+                                <t t-foreach="state.prompts" t-as="prompt" t-key="prompt.id">
+                                    <option t-att-value="prompt.id" t-esc="prompt.name"/>
+                                </t>
+                            </select>
+                            <button class="o_ai_chat_ctl btn btn-link p-0"
+                                    title="Manage Prompts" t-on-click="openPromptDialog">
+                                <i class="fa fa-file-lines"/>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div t-if="state.toolHint" class="o_ai_tool_card small px-3">
-                    <t t-esc="state.toolHint"/>
-                </div>
-                <div t-if="state.error" class="o_ai_chat_error" t-esc="state.error"/>
-            </div>
-            <div class="o_ai_chat_input">
-                <input class="form-control" t-model="state.content"
-                       t-on-keydown="onKeyDown" t-att-placeholder="_t('Ask the AI assistant...')"/>
-                <button class="btn btn-primary" t-on-click="onSend"
-                        t-att-disabled="!canSend"><t t-esc="_t('Send')"/></button>
             </div>
         </div>
     </t>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ai_base.ToolCard">
+        <div class="o_ai_tool_card"
+             t-att-class="'o_ai_tool_' + (props.tool.status || 'ready')">
+            <div t-if="state.installing" class="o_ai_install_overlay">
+                <i class="fa fa-circle-o-notch fa-spin o_ai_install_spinner"/>
+                <div t-esc="installingLabel"/>
+            </div>
+            <i class="fa o_ai_tool_icon" t-att-class="props.tool.icon"/>
+            <div class="o_ai_tool_body">
+                <div class="o_ai_tool_label"
+                     t-esc="props.tool.label || props.tool.name"/>
+                <div t-if="props.tool.status === 'done' and props.tool.summary"
+                     class="o_ai_tool_summary"
+                     t-esc="props.tool.summary"/>
+                <div t-if="props.tool.error" class="o_ai_tool_error">
+                    <div class="o_ai_tool_error_msg"
+                         t-esc="props.tool.error.message"/>
+                    <div t-if="props.tool.error.hint"
+                         class="o_ai_tool_hint"
+                         t-esc="props.tool.error.hint"/>
+                </div>
+            </div>
+            <div class="o_ai_tool_actions">
+                <button t-if="props.tool.status === 'ready'"
+                        type="button" class="btn btn-sm btn-primary"
+                        t-on-click="execute">
+                    <i class="fa fa-play me-1"/><t t-esc="executeLabel"/>
+                </button>
+                <button t-if="props.tool.status === 'blocked' and props.tool.error and props.tool.error.admin_notify and !isAdmin"
+                        type="button" class="btn btn-sm btn-secondary"
+                        t-on-click="notifyAdmins">
+                    <i class="fa fa-bell me-1"/><t t-esc="notifyLabel"/>
+                </button>
+                <button t-if="props.tool.status === 'blocked' and isAdmin and props.tool.error and props.tool.error.action and props.tool.error.action.type === 'whitelist_add'"
+                        type="button" class="btn btn-sm btn-primary"
+                        t-on-click="addToWhitelist">
+                    <i class="fa fa-plus me-1"/><t t-esc="addWhitelistLabel"/>
+                </button>
+                <button t-if="props.tool.status === 'blocked' and isAdmin and props.tool.error and props.tool.error.action and props.tool.error.action.type === 'whitelist_add'"
+                        type="button" class="btn btn-sm btn-secondary"
+                        t-on-click="openWhitelist">
+                    <i class="fa fa-external-link me-1"/><t t-esc="openWhitelistLabel"/>
+                </button>
+                <button t-if="props.tool.status === 'blocked' and isAdmin and props.tool.error and props.tool.error.action and props.tool.error.action.type === 'install_module'"
+                        type="button" class="btn btn-sm btn-primary"
+                        t-on-click="installModule">
+                    <i class="fa fa-download me-1"/><t t-esc="installModuleLabel"/>
+                </button>
+                <button t-if="props.tool.status === 'blocked' and isAdmin and props.tool.error and props.tool.error.action and props.tool.error.action.type === 'install_module'"
+                        type="button" class="btn btn-sm btn-secondary"
+                        t-on-click="openApps">
+                    <i class="fa fa-external-link me-1"/><t t-esc="openAppsLabel"/>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -87,7 +87,7 @@ class AiBaseService(models.AbstractModel):
     def chat(
         self, content=None, prompt_key=None, record=None, context=None,
         stream=False, model_code=None, session=None, options=None,
-        history=None, model=None, scenario='chat',
+        history=None, model=None, scenario='chat', persist_user=True,
     ):
         """Synchronous chat.
 
@@ -133,13 +133,14 @@ class AiBaseService(models.AbstractModel):
                         'provider_id': model.provider_id.id,
                     })
                 session.write({'state': 'open'})
-                self.env['ai.chat.message'].create({
-                    'session_id': session.id,
-                    'role': 'user',
-                    'content': content,
-                })
-                if session.name == _('New Session'):
-                    session.name = content[:30]
+                if persist_user:
+                    self.env['ai.chat.message'].create({
+                        'session_id': session.id,
+                        'role': 'user',
+                        'content': content,
+                    })
+                    if session.name == _('New Session'):
+                        session.name = content[:30]
                 history = session._build_history()
                 options = session._call_options(options)
             else:
@@ -500,7 +501,9 @@ class AiBaseService(models.AbstractModel):
             snapshot = self._record_snapshot(record)
             if snapshot:
                 parts.append(_('Current business record:\n%s') % snapshot)
-        if session and session.res_model and session.res_id and record is None:
+        if session and session.attach_context and session.context_snapshot:
+            parts.append(session.context_snapshot)
+        elif session and session.res_model and session.res_id and record is None:
             if session.res_model in self.env:
                 rec = self.env[session.res_model].browse(session.res_id).exists()
                 if rec:
@@ -698,6 +701,7 @@ class AiBaseService(models.AbstractModel):
                 'session_id': session.id,
                 'role': 'assistant',
                 'content': self._guard_output(content),
+                'reasoning_content': round_info.get('reasoning') or '',
                 'tool_cards': cards,
                 'prompt_tokens': usage.get('prompt_tokens') or 0,
                 'completion_tokens': usage.get('completion_tokens') or 0,

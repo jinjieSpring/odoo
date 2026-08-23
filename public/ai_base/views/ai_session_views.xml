@@ -19,6 +19,10 @@
                             <field name="res_id"/>
                             <field name="res_name"/>
                             <field name="knowledge_enabled"/>
+                            <field name="streaming"/>
+                            <field name="attach_context"/>
+                            <field name="context_model"/>
+                            <field name="context_res_id"/>
                             <field name="compress_strategy"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>

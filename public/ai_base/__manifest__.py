@@ -14,7 +14,7 @@ layer instead of talking to vendors directly.
 * Vendor providers (OpenAI-compatible, Qwen, Ernie, DeepSeek, Ollama, private)
 * Model pool, prompt templates with versioning, RAG knowledge bases
 * Registered Agent tools (Python / ORM / HTTP) with ACL and audit logs
-* Chat sessions, jsonrpc + SSE streaming, OWL chat widget and field enhancer
+* Chat sessions, jsonrpc + NDJSON streaming, OWL chat widget and field enhancer
 
 Requires PostgreSQL. For production RAG, install the ``vector`` extension::
 
@@ -46,7 +46,21 @@ Install does not fail if the extension is unavailable.
             'ai_base/static/src/xml/ai_systray.xml',
             'ai_base/static/src/js/ai_systray.js',
             'ai_base/static/src/xml/ai_chat.xml',
+            'ai_base/static/src/js/ai_view_context.js',
             'ai_base/static/src/js/ai_chat.js',
+            'ai_base/static/src/xml/ai_chat_dialog.xml',
+            'ai_base/static/src/js/ai_chat_dialog.js',
+            'ai_base/static/src/xml/ai_chat_action.xml',
+            'ai_base/static/src/js/ai_chat_action.js',
+            'ai_base/static/src/xml/ai_formatted_text.xml',
+            'ai_base/static/src/js/ai_formatted_text.js',
+            'ai_base/static/src/js/ai_markdown.js',
+            'ai_base/static/src/xml/ai_tool_card.xml',
+            'ai_base/static/src/js/ai_tool_card.js',
+            'ai_base/static/src/xml/ai_prompt_dialog.xml',
+            'ai_base/static/src/js/ai_prompt_dialog.js',
+            'ai_base/static/src/xml/ai_user_settings_dialog.xml',
+            'ai_base/static/src/js/ai_user_settings_dialog.js',
             'ai_base/static/src/xml/ai_field.xml',
             'ai_base/static/src/js/ai_field.js',
         ],

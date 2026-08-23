@@ -1,0 +1,164 @@
+# -*- coding: utf-8 -*-
+from unittest.mock import patch
+
+from odoo.tests import new_test_user
+from odoo.addons.ai_base.tests.common import AiBaseCase
+
+
+class TestChat(AiBaseCase):
+    def _chat_ok(self, content='ok'):
+        return {
+            'content': content,
+            'reasoning': '',
+            'tool_calls': [],
+            'usage': {
+                'prompt_tokens': 3,
+                'completion_tokens': 2,
+                'total_tokens': 5,
+            },
+        }
+
+    def test_defaults_include_layout_and_knowledge(self):
+        defaults = self.env['ai.chat.session'].action_get_defaults()
+        self.assertTrue(defaults['model_ready'])
+        self.assertEqual(defaults['model_status']['code'], 'ready')
+        self.assertIn('sidebar_collapsed', defaults)
+        self.assertIn('knowledge_documents', defaults)
+        self.assertEqual(defaults['agents'], [])
+        settings = self.env['ai.user.settings']._get_for_user()
+        self.assertEqual(settings.user_id, self.env.user)
+        self.assertEqual(settings.sidebar_width, 260)
+
+    def test_user_settings_roundtrip(self):
+        self.env['ai.chat.session'].action_save_user_settings({
+            'reasoning_strength': 'medium',
+            'streaming': False,
+            'sidebar_collapsed': True,
+            'sidebar_width': 320,
+            'language_mode': 'system',
+        })
+        settings = self.env['ai.chat.session'].action_get_user_settings()
+        self.assertEqual(settings['reasoning_strength'], 'medium')
+        self.assertFalse(settings['streaming'])
+        self.assertTrue(settings['sidebar_collapsed'])
+        self.assertEqual(settings['sidebar_width'], 320)
+        self.assertEqual(settings['language_mode'], 'system')
+
+    def test_attach_and_clear_record_context(self):
+        partner = self.env['res.partner'].create({'name': 'Acme Context'})
+        info = self.env['ai.chat.session'].action_get_record_context(
+            'res.partner', partner.id)
+        self.assertEqual(info['display_name'], 'Acme Context')
+        session = self.env['ai.chat.session'].create({'name': 'Ctx'})
+        result = session.action_attach_context('res.partner', partner.id)
+        self.assertTrue(result['attached'])
+        self.assertEqual(session.context_model, 'res.partner')
+        self.assertEqual(session.context_res_id, partner.id)
+        self.assertIn('Acme Context', session.context_snapshot)
+        session.action_clear_context()
+        self.assertFalse(session.context_model)
+        self.assertTrue(session.attach_context)
+
+    def test_list_context_snapshot(self):
+        info = self.env['ai.chat.session'].action_get_list_context(
+            'res.partner', [1, 2], 3)
+        self.assertEqual(info['count'], 3)
+        self.assertEqual(info['model'], 'res.partner')
+        session = self.env['ai.chat.session'].create({'name': 'List'})
+        result = session.action_attach_list_context('res.partner', [1, 2], 3)
+        self.assertTrue(result['attached'])
+        self.assertIn('3', session.context_snapshot)
+
+    def test_edit_and_resend_truncates_later_messages(self):
+        session = self.env['ai.chat.session'].create({'name': 'Edit'})
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._chat_ok('first')):
+            session.action_send_message('hello')
+        user_msg = session.message_ids.filtered(lambda m: m.role == 'user')
+        self.assertEqual(len(user_msg), 1)
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._chat_ok('second')):
+            result = session.action_edit_and_resend(user_msg.id, 'hello again')
+        self.assertIn('messages', result)
+        self.assertEqual(session.message_ids.filtered(
+            lambda m: m.role == 'user').content, 'hello again')
+        self.assertEqual(
+            session.message_ids.filtered(lambda m: m.role == 'assistant').content,
+            'second')
+
+    def test_regenerate_replaces_assistant_reply(self):
+        session = self.env['ai.chat.session'].create({'name': 'Regen'})
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._chat_ok('old')):
+            session.action_send_message('ask')
+        assistant = session.message_ids.filtered(lambda m: m.role == 'assistant')
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._chat_ok('new')):
+            session.action_regenerate(assistant.id)
+        self.assertEqual(
+            session.message_ids.filtered(lambda m: m.role == 'assistant').content,
+            'new')
+
+    def test_send_as_message_needs_context(self):
+        session = self.env['ai.chat.session'].create({'name': 'Mail'})
+        message = self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'assistant',
+            'content': 'Draft reply',
+        })
+        action = session.action_send_as_message(message.id)
+        self.assertEqual(action['tag'], 'display_notification')
+        partner = self.env['res.partner'].create({'name': 'Mail Partner'})
+        session.action_attach_context('res.partner', partner.id)
+        action = session.action_send_as_message(message.id)
+        self.assertEqual(action['res_model'], 'mail.compose.message')
+
+    def test_open_in_discuss_is_stub(self):
+        session = self.env['ai.chat.session'].create({'name': 'Discuss'})
+        action = session.action_open_in_discuss()
+        self.assertEqual(action['tag'], 'display_notification')
+
+    def test_set_options_parses_knowledge_ids(self):
+        kb = self.env['ai.knowledge.base'].create({'name': 'KB'})
+        doc = self.env['ai.knowledge.document'].create({
+            'name': 'Doc',
+            'knowledge_id': kb.id,
+            'state': 'ready',
+        })
+        session = self.env['ai.chat.session'].create({'name': 'Opts'})
+        session.action_set_options({
+            'knowledge_enabled': True,
+            'knowledge_document_ids': str(doc.id),
+            'sidebar_width': 400,
+        })
+        self.assertTrue(session.knowledge_enabled)
+        self.assertEqual(session.knowledge_document_ids.ids, [doc.id])
+        settings = self.env['ai.user.settings']._get_for_user()
+        self.assertEqual(settings.sidebar_width, 400)
+
+    def test_get_session_payload_matches_ui(self):
+        session = self.env['ai.chat.session'].create({'name': 'Payload'})
+        self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'user',
+            'content': 'hi',
+            'prompt_tokens': 4,
+        })
+        payload = session.action_get_session()
+        self.assertIn('capabilities', payload['session'])
+        self.assertEqual(payload['session']['name'], 'Payload')
+        self.assertEqual(payload['messages'][0]['content'], 'hi')
+
+    def test_settings_are_per_user(self):
+        other = new_test_user(
+            self.env, login='ai_chat_other',
+            groups='base.group_user,ai_base.group_user')
+        self.env['ai.chat.session'].action_save_user_settings({
+            'sidebar_collapsed': True,
+        })
+        other_settings = self.env['ai.user.settings'].with_user(other)._get_for_user(other)
+        self.assertFalse(other_settings.sidebar_collapsed)

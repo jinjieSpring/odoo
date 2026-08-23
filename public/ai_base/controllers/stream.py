@@ -52,36 +52,40 @@ class AiBaseStreamController(http.Controller):
 
         def generate():
             if loop_error:
-                yield _sse('error', {
+                yield json.dumps({
                     'error': loop_error.get('message') or _(
                         'The model could not be reached.'),
                     'code': loop_error.get('code') or 'model_call_failed',
-                })
-                yield _sse('done', {})
+                }) + '\n'
+                yield json.dumps({'done': True}) + '\n'
                 return
             for event in events:
                 event_type = event.get('type')
                 if event_type == 'delta':
-                    yield _sse('delta', {'delta': event['delta']})
+                    yield json.dumps({'delta': event['delta']}) + '\n'
                 elif event_type == 'reasoning_delta':
-                    yield _sse('reasoning_delta', {'delta': event['delta']})
+                    yield json.dumps({'reasoning_delta': event['delta']}) + '\n'
                 elif event_type == 'tool_call':
-                    yield _sse('tool_call', {
-                        'name': event.get('name'),
-                        'card': event.get('card'),
-                    })
+                    yield json.dumps({
+                        'tool_call': {
+                            'name': event.get('name'),
+                            'card': event.get('card'),
+                        },
+                    }) + '\n'
                 elif event_type == 'tool_card':
-                    yield _sse('tool_card', {'card': event.get('card')})
+                    yield json.dumps({'tool_card': event.get('card')}) + '\n'
                 elif event_type == 'limit':
-                    yield _sse('limit', {'message': event.get('message')})
+                    yield json.dumps({'limit': event.get('message')}) + '\n'
                 elif event_type == 'usage':
-                    yield _sse('usage', {'usage': event.get('usage')})
-            yield _sse('done', {})
+                    yield json.dumps({'usage': event.get('usage')}) + '\n'
+                elif event_type == 'action':
+                    yield json.dumps({'action': event.get('action')}) + '\n'
+            yield json.dumps({'done': True}) + '\n'
 
         return werkzeug.wrappers.Response(
             generate(),
             headers={
-                'Content-Type': 'text/event-stream; charset=utf-8',
+                'Content-Type': 'application/x-ndjson; charset=utf-8',
                 'Cache-Control': 'no-cache',
                 'X-Accel-Buffering': 'no',
             },

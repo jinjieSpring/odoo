@@ -320,6 +320,20 @@ class AiKnowledgeChunk(models.Model):
     content = fields.Text(string='Content', required=True)
     embedding = fields.Text(string='Embedding JSON')
 
+    def action_open_source(self):
+        self.ensure_one()
+        document = self.document_id
+        if not document:
+            return False
+        return {
+            'type': 'ir.actions.act_window',
+            'name': document.display_name,
+            'res_model': 'ai.knowledge.document',
+            'res_id': document.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     def _embedding_vector(self):
         self.ensure_one()
         if not self.embedding:

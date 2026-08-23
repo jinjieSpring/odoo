@@ -29,6 +29,17 @@ class AiChatSession(models.Model):
     message_count = fields.Integer(
         compute='_compute_message_count', string='Message Count')
     streaming = fields.Boolean(string='Streaming', default=True)
+    reasoning_strength = fields.Selection([
+        ('none', 'Off'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+    ], string='Thinking Strength', default='none')
+    web_search_enabled = fields.Boolean(string='Web Search', default=False)
+    attach_context = fields.Boolean(string='Attach Record Context', default=True)
+    context_model = fields.Char(string='Context Model')
+    context_res_id = fields.Integer(string='Context Record')
+    context_snapshot = fields.Text(string='Context Snapshot')
     knowledge_enabled = fields.Boolean(string='Use Knowledge Base', default=False)
     knowledge_top_k = fields.Integer(string='Knowledge Top K', default=5)
     knowledge_ids = fields.Many2many(
@@ -39,6 +50,14 @@ class AiChatSession(models.Model):
         ('trim', 'Drop Oldest'),
         ('summary', 'Summarize Oldest'),
     ], string='Context Compression', default='trim')
+    input_tokens = fields.Integer(
+        compute='_compute_token_stats', store=True, string='Input Tokens')
+    output_tokens = fields.Integer(
+        compute='_compute_token_stats', store=True, string='Output Tokens')
+    context_tokens = fields.Integer(
+        compute='_compute_context_usage', string='Context Tokens')
+    context_usage = fields.Integer(
+        compute='_compute_context_usage', string='Context Usage %')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('open', 'In Progress'),
@@ -64,14 +83,42 @@ class AiChatSession(models.Model):
         for session in self:
             session.message_count = count_map.get(session.id, 0)
 
+    @api.depends('message_ids.prompt_tokens', 'message_ids.completion_tokens')
+    def _compute_token_stats(self):
+        for session in self:
+            session.input_tokens = sum(session.message_ids.mapped('prompt_tokens'))
+            session.output_tokens = sum(
+                session.message_ids.mapped('completion_tokens'))
+
+    @api.depends('message_ids.content', 'model_id.max_context_tokens')
+    def _compute_context_usage(self):
+        for session in self:
+            tokens = sum(
+                session._estimate_tokens(msg.content)
+                for msg in session.message_ids)
+            session.context_tokens = tokens
+            budget = session.model_id.max_context_tokens or 8192
+            session.context_usage = int(tokens * 100 / budget) if budget else 0
+
     @api.model_create_multi
     def create(self, vals_list):
+        settings = self.env['ai.user.settings']._get_for_user()
         for vals in vals_list:
             if not vals.get('model_id'):
                 model = self.env['ai.model']._get_model_for_scenario('chat')
                 if model:
                     vals['model_id'] = model.id
                     vals['provider_id'] = model.provider_id.id
+            if 'streaming' not in vals:
+                vals['streaming'] = settings.streaming
+            if 'reasoning_strength' not in vals:
+                vals['reasoning_strength'] = settings.reasoning_strength
+            if 'web_search_enabled' not in vals:
+                vals['web_search_enabled'] = settings.web_search_enabled
+            if 'attach_context' not in vals:
+                vals['attach_context'] = settings.attach_context
+            if 'prompt_id' not in vals and settings.default_prompt_id:
+                vals['prompt_id'] = settings.default_prompt_id.id
         return super().create(vals_list)
 
     def _build_history(self):
@@ -132,31 +179,34 @@ class AiChatSession(models.Model):
 
     def _call_options(self, extra=None):
         self.ensure_one()
-        options = {'streaming': self.streaming}
+        options = {
+            'streaming': self.streaming,
+            'reasoning_strength': self.reasoning_strength,
+            'web_search': self.web_search_enabled,
+        }
         if extra:
             options.update(extra)
         return options
 
     @api.model
     def action_get_defaults(self):
-        model = self.env['ai.model']._get_model_for_scenario('chat')
-        ready = bool(model)
-        return {
-            'model_ready': ready,
-            'model_id': model.id if model else False,
-            'model_status': {
-                'code': 'ready' if ready else 'no_model',
-                'title': _('Model ready') if ready else _('Model not configured'),
-                'message': (
-                    _('Using %s') % model.display_name if model
-                    else _('No default model is configured.')),
-            },
-            'model_info': {
-                'name': model.display_name if model else '',
-                'capabilities': model._allowed_options() if model else {},
-            },
-            'streaming': True,
-        }
+        return self.env['ai.chat'].defaults()
+
+    @api.model
+    def action_get_user_settings(self):
+        return self.env['ai.chat'].user_settings()
+
+    @api.model
+    def action_save_user_settings(self, options):
+        return self.env['ai.chat'].save_user_settings(options)
+
+    @api.model
+    def action_get_record_context(self, model_name, res_id):
+        return self.env['ai.chat'].record_context(model_name, res_id)
+
+    @api.model
+    def action_get_list_context(self, model_name, res_ids=None, total_count=None):
+        return self.env['ai.chat'].list_context(model_name, res_ids, total_count)
 
     @api.model
     def action_create_from_input(self, content, res_model=None, res_id=None):
@@ -169,29 +219,7 @@ class AiChatSession(models.Model):
 
     def action_get_session(self):
         self.ensure_one()
-        return {
-            'session': {
-                'id': self.id,
-                'name': self.name,
-                'model_id': self.model_id.id,
-                'message_count': self.message_count,
-                'streaming': self.streaming,
-                'knowledge_enabled': self.knowledge_enabled,
-                'res_model': self.res_model,
-                'res_id': self.res_id,
-                'res_name': self.res_name,
-                'capabilities': (
-                    self.model_id._allowed_options() if self.model_id else {}),
-            },
-            'messages': [{
-                'id': message.id,
-                'role': message.role,
-                'content': message.content,
-                'tool_cards': message.tool_cards or [],
-                'rag_sources': message.rag_sources or [],
-            } for message in self.message_ids.sorted(
-                lambda m: (m.create_date, m.id))],
-        }
+        return self.env['ai.chat'].session_payload(self)
 
     def action_list_sessions(self):
         sessions = self.search([('active', '=', True)], limit=50)
@@ -204,26 +232,56 @@ class AiChatSession(models.Model):
         } for session in sessions]
 
     def action_set_options(self, options):
-        self.ensure_one()
-        vals = {}
-        for field in (
-                'streaming', 'knowledge_enabled', 'knowledge_top_k',
-                'model_id', 'prompt_id', 'compress_strategy'):
-            if field in (options or {}):
-                vals[field] = options[field]
-        if 'knowledge_ids' in (options or {}):
-            vals['knowledge_ids'] = [(6, 0, options['knowledge_ids'] or [])]
-        if 'knowledge_document_ids' in (options or {}):
-            vals['knowledge_document_ids'] = [
-                (6, 0, options['knowledge_document_ids'] or [])]
-        if vals:
-            self.write(vals)
-        return self.action_get_session()
+        return self.env['ai.chat'].set_options(self, options)
 
     def action_send_message(self, content, options=None):
         self.ensure_one()
-        return self.env['ai.base.service'].chat(
-            content, session=self, options=options or {})
+        return self.env['ai.chat'].send_message(self, content, options)
+
+    def action_edit_and_resend(self, message_id, content):
+        return self.env['ai.chat'].edit_and_resend(self, message_id, content)
+
+    def action_regenerate(self, message_id):
+        return self.env['ai.chat'].regenerate(self, message_id)
+
+    def action_send_as_message(self, message_id):
+        return self.env['ai.chat'].send_as_message(self, message_id)
+
+    def action_log_as_note(self, message_id):
+        return self.env['ai.chat'].log_as_note(self, message_id)
+
+    def action_open_in_discuss(self):
+        return self.env['ai.chat'].open_in_discuss(self)
+
+    def action_attach_context(self, model_name, res_id):
+        return self.env['ai.chat'].attach_context(self, model_name, res_id)
+
+    def action_attach_list_context(self, model_name, res_ids=None, total_count=None):
+        return self.env['ai.chat'].attach_list_context(
+            self, model_name, res_ids, total_count)
+
+    def action_clear_context(self):
+        return self.env['ai.chat'].clear_context(self)
+
+    @api.model
+    def action_build_tool_card(self, payload):
+        return self.env['ai.chat'].build_tool_card(payload)
+
+    @api.model
+    def action_execute_tool(self, payload):
+        return self.env['ai.chat'].execute_tool(payload)
+
+    @api.model
+    def action_whitelist_add(self, model_name):
+        return self.env['ai.chat'].whitelist_add(model_name)
+
+    @api.model
+    def action_install_module(self, module_name):
+        return self.env['ai.chat'].install_module(module_name)
+
+    @api.model
+    def action_notify_admins(self, payload):
+        return self.env['ai.chat'].notify_admins(payload)
 
 
 class AiChatMessage(models.Model):
@@ -241,6 +299,7 @@ class AiChatMessage(models.Model):
         ('tool', 'Tool'),
     ], string='Role', required=True, default='user')
     content = fields.Text(string='Content')
+    reasoning_content = fields.Text(string='Reasoning')
     tool_cards = fields.Json(string='Tool Cards', default=list)
     rag_sources = fields.Json(string='RAG Sources', default=list)
     prompt_tokens = fields.Integer(string='Input Tokens', default=0)
