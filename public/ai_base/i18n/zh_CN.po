@@ -1989,8 +1989,14 @@ msgstr "折叠知识库面板"
 #. module: ai_base
 #. odoo-javascript
 #: code:addons/ai_base/static/src/js/ai_chat.js:0
-msgid "Agent working..."
-msgstr "智能体工作中..."
+msgid "Queued. You can close this chat; I'll keep going."
+msgstr "已排队。你可以关掉对话，我会继续做。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Working in the background (%s/%s). You can close this chat."
+msgstr "正在后台处理（%s/%s）。你可以关掉对话。"
 
 #. module: ai_base
 #. odoo-javascript

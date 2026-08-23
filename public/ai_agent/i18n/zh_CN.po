@@ -64,8 +64,53 @@ msgstr "AI 工具"
 #. module: ai_agent
 #. odoo-python
 #: code:addons/ai_agent/models/ai_agent_run.py:0
-msgid "Accepted the goal. I will continue in the background."
-msgstr "已接受该目标，我将在后台继续执行。"
+msgid ""
+"I'll keep working on this even if you leave this chat. "
+"Progress will appear here.\n"
+"\n"
+"Task: %s"
+msgstr ""
+"我会继续处理这件事，你关掉这个对话也可以。"
+"进度会显示在这里。\n"
+"\n"
+"任务：%s"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid ""
+"I'm still working on the previous task:\n"
+"\n"
+"%s\n"
+"\n"
+"Wait for it to finish, or cancel it first."
+msgstr ""
+"上一件任务还在处理：\n"
+"\n"
+"%s\n"
+"\n"
+"请等它完成，或先取消再发新的。"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "Stopped the background task."
+msgstr "已停止后台任务。"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "The background task failed: %s"
+msgstr "后台任务失败：%s"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid ""
+"The background task stopped because the agent or session "
+"is no longer available."
+msgstr "智能体或会话已不可用，后台任务已停止。"
+
 
 #. module: ai_agent
 #. odoo-python

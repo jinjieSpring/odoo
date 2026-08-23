@@ -281,6 +281,23 @@
                         </t>
                     </div>
 
+                    <div t-if="agentRunBusy" class="o_ai_run_banner px-3 py-2">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="fa fa-circle-o-notch fa-spin mt-1"/>
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="fw-bold" t-esc="agentRunBannerText"/>
+                                <div t-if="state.agentRun.goal" class="text-muted text-truncate"
+                                     t-att-title="state.agentRun.goal"
+                                     t-esc="state.agentRun.goal"/>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-secondary flex-shrink-0"
+                                    t-on-click="cancelAgentRun">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Input row -->
                     <div class="o_ai_chat_input_row d-flex align-items-end px-3 py-2">
                         <div class="o_ai_chat_input_wrap flex-grow-1">
@@ -329,7 +346,7 @@
                         </span>
                         <button t-if="agentRunBusy" type="button"
                                 class="btn btn-link btn-sm px-1"
-                                title="Cancel agent run"
+                                title="Cancel background task"
                                 t-on-click="cancelAgentRun">
                             Cancel
                         </button>

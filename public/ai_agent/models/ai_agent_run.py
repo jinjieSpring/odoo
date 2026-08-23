@@ -51,10 +51,25 @@ class AiAgentRun(models.Model):
         session.ensure_one()
         content = (content or '').strip()
         agent = session.agent_id
-        self.search([
+        active = self.search([
             ('session_id', '=', session.id),
             ('state', 'in', _ACTIVE_STATES),
-        ]).write({'state': 'cancelled'})
+        ], limit=1)
+        if active:
+            self.env['ai.chat.message'].create({
+                'session_id': session.id,
+                'role': 'user',
+                'content': content,
+            })
+            self.env['ai.chat.message'].create({
+                'session_id': session.id,
+                'role': 'assistant',
+                'content': _(
+                    "I'm still working on the previous task:\n\n%s\n\n"
+                    "Wait for it to finish, or cancel it first."
+                ) % (active.goal or ''),
+            })
+            return self.env['ai.chat'].result(session)
         self.env['ai.chat.message'].create({
             'session_id': session.id,
             'role': 'user',
@@ -65,7 +80,10 @@ class AiAgentRun(models.Model):
         self.env['ai.chat.message'].create({
             'session_id': session.id,
             'role': 'assistant',
-            'content': _('Accepted the goal. I will continue in the background.'),
+            'content': _(
+                "I'll keep working on this even if you leave this chat. "
+                "Progress will appear here.\n\nTask: %s"
+            ) % content,
         })
         run = self.create({
             'name': (content or _('Agent run'))[:80],
@@ -84,6 +102,7 @@ class AiAgentRun(models.Model):
     def action_cancel(self):
         for run in self.filtered(lambda rec: rec.state in _ACTIVE_STATES):
             run.write({'state': 'cancelled'})
+            run._post_status(_('Stopped the background task.'))
             run._notify()
         return True
 
@@ -95,7 +114,7 @@ class AiAgentRun(models.Model):
             self.env['bus.bus']._sendone(partner, 'ai_agent/run', {
                 'session_id': run.session_id.id,
                 'run_id': run.id,
-                'state': run.state,
+                **run._payload(),
             })
 
     def _payload(self):
@@ -104,7 +123,21 @@ class AiAgentRun(models.Model):
             'id': self.id,
             'state': self.state,
             'agent_id': self.agent_id.id,
+            'goal': (self.goal or '')[:200],
+            'step_count': self.step_count,
+            'max_rounds': self.agent_id.max_rounds or 8,
+            'error_message': self.error_message or '',
         }
+
+    def _post_status(self, content):
+        self.ensure_one()
+        if not content or not self.session_id:
+            return
+        self.env['ai.chat.message'].create({
+            'session_id': self.session_id.id,
+            'role': 'assistant',
+            'content': content,
+        })
 
     def _queue_job_available(self):
         return 'queue.job' in self.env
@@ -148,6 +181,9 @@ class AiAgentRun(models.Model):
                 'state': 'error',
                 'error_message': _('The agent or session is no longer available.'),
             })
+            self._post_status(_(
+                'The background task stopped because the agent or session '
+                'is no longer available.'))
             self._notify()
             return
         max_steps = max(1, agent.max_rounds or 8)
@@ -179,6 +215,7 @@ class AiAgentRun(models.Model):
                 'state': 'error',
                 'error_message': str(exc)[:500],
             })
+            self._post_status(_('The background task failed: %s') % str(exc)[:500])
             self._notify()
             return
         error = result.get('error') if isinstance(result, dict) else False
@@ -192,6 +229,10 @@ class AiAgentRun(models.Model):
             vals['state'] = 'done'
         if vals:
             self.write(vals)
+            if vals.get('state') == 'error':
+                self._post_status(_(
+                    'The background task failed: %s'
+                ) % (vals.get('error_message') or ''))
             if vals.get('state') == 'done' and agent.memory_enabled:
                 self.env['ai.agent.memory'].sudo()._remember_from_turn(
                     agent, self.goal, result.get('reply') or '',

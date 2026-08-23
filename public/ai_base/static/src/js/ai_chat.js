@@ -153,6 +153,24 @@ export class AiChat extends Component {
         return state === "pending" || state === "running";
     }
 
+    get agentRunBannerText() {
+        const run = this.state.agentRun;
+        if (!run) {
+            return "";
+        }
+        if (run.state === "pending") {
+            return _t("Queued. You can close this chat; I'll keep going.");
+        }
+        if (run.state === "running") {
+            return _t(
+                "Working in the background (%s/%s). You can close this chat.",
+                run.step_count || 1,
+                run.max_rounds || 8
+            );
+        }
+        return "";
+    }
+
     get filteredSessions() {
         const q = this.state.sessionSearch.trim().toLowerCase();
         if (!q) {
@@ -1204,7 +1222,7 @@ export class AiChat extends Component {
 
     restoreTaskAfterSend() {
         if (this.agentRunBusy) {
-            this.setTask(_t("Agent working..."), true);
+            this.setTask(this.agentRunBannerText, true);
         } else {
             this.setTask(_t("Idle"));
         }

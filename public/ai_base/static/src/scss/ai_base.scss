@@ -1163,6 +1163,17 @@
         }
     }
 
+    .o_ai_run_banner {
+        border-top: 1px solid $o-gray-200;
+        background: mix($o-brand-primary, $o-white, 8%);
+        font-size: 12px;
+        color: $o-gray-700;
+
+        .fa-spin {
+            color: $o-brand-primary;
+        }
+    }
+
     .o_ai_chat_status {
         min-height: 32px;
         border-top: 1px solid $o-gray-200;

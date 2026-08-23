@@ -133,12 +133,14 @@ class TestAgent(AiBaseCase):
         })
         payload = self.env['ai.chat'].send_message(session, 'close the books')
         self.assertTrue(any(
-            'background' in (msg.get('content') or '').lower()
+            'leave this chat' in (msg.get('content') or '').lower()
             for msg in payload['messages'] if msg['role'] == 'assistant'))
+        self.assertIn('close the books', payload['messages'][-1]['content'])
         run = self.env['ai.agent.run'].search(
             [('session_id', '=', session.id)], limit=1)
         self.assertEqual(run.state, 'pending')
         self.assertEqual(payload['session']['agent_run']['id'], run.id)
+        self.assertEqual(payload['session']['agent_run']['goal'], 'close the books')
 
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
@@ -204,3 +206,20 @@ class TestAgent(AiBaseCase):
         self.assertEqual(delayed, [True])
         run = Run.search([('session_id', '=', session.id)], limit=1)
         self.assertEqual(run.state, 'pending')
+
+    def test_goal_busy_keeps_current_run(self):
+        session = self.env['ai.chat.session'].create({
+            'name': 'Goal',
+            'agent_id': self.goal_agent.id,
+        })
+        self.env['ai.chat'].send_message(session, 'close the books')
+        runs = self.env['ai.agent.run'].search(
+            [('session_id', '=', session.id)])
+        self.assertEqual(len(runs), 1)
+        payload = self.env['ai.chat'].send_message(session, 'another job')
+        self.assertEqual(runs.state, 'pending')
+        self.assertEqual(len(self.env['ai.agent.run'].search(
+            [('session_id', '=', session.id)])), 1)
+        self.assertTrue(any(
+            'still working' in (msg.get('content') or '').lower()
+            for msg in payload['messages'] if msg['role'] == 'assistant'))
