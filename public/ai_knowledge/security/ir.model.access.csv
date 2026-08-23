@@ -5,3 +5,5 @@ access_ai_document_user,ai.knowledge.document.user,model_ai_knowledge_document,b
 access_ai_document_manager,ai.knowledge.document.manager,model_ai_knowledge_document,ai_base.group_manager,1,1,1,1
 access_ai_chunk_user,ai.knowledge.chunk.user,model_ai_knowledge_chunk,base.group_user,1,0,0,0
 access_ai_chunk_manager,ai.knowledge.chunk.manager,model_ai_knowledge_chunk,ai_base.group_manager,1,1,1,1
+access_ai_async_job_user,ai.async.job.user,model_ai_async_job,base.group_user,1,0,1,0
+access_ai_async_job_manager,ai.async.job.manager,model_ai_async_job,ai_base.group_manager,1,1,1,1

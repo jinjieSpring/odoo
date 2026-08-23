@@ -15,6 +15,4 @@ access_ai_user_settings_user,ai.user.settings.user,model_ai_user_settings,base.g
 access_ai_request_log_user,ai.request.log.user,model_ai_request_log,ai_base.group_user,1,0,0,0
 access_ai_request_log_viewer,ai.request.log.viewer,model_ai_request_log,ai_base.group_log,1,0,0,0
 access_ai_request_log_manager,ai.request.log.manager,model_ai_request_log,ai_base.group_manager,1,1,0,1
-access_ai_async_job_user,ai.async.job.user,model_ai_async_job,base.group_user,1,0,1,0
-access_ai_async_job_manager,ai.async.job.manager,model_ai_async_job,ai_base.group_manager,1,1,1,1
 access_ai_config_manager,ai.config.manager,model_ai_config,ai_base.group_manager,1,1,1,1

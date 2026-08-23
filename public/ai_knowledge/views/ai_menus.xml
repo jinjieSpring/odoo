@@ -10,6 +10,6 @@
               parent="ai_menu_knowledge" action="ai_document_action"
               groups="ai_base.group_manager" sequence="20"/>
     <menuitem id="ai_menu_jobs" name="Async Jobs"
-              parent="ai_menu_knowledge" action="ai_base.ai_async_job_action"
+              parent="ai_menu_knowledge" action="ai_async_job_action"
               groups="ai_base.group_manager" sequence="30"/>
 </odoo>

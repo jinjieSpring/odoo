@@ -17,6 +17,10 @@ Optional RAG layer on top of AI Base.
 
 Uninstalling this module leaves AI Base chat, providers, tools and usage logs
 intact. The chat sidebar hides the knowledge panel automatically.
+
+Indexing runs in the current request or via cron. If OCA ``queue_job`` is
+installed, Parse / Index are enqueued with ``with_delay()`` instead. This
+module does not depend on ``queue_job``.
 """,
     'author': 'Odoo AI Capability Building Team',
     'license': 'LGPL-3',
@@ -26,11 +30,12 @@ intact. The chat sidebar hides the knowledge panel automatically.
         'security/ir.model.access.csv',
         'data/ai_knowledge_data.xml',
         'views/ai_knowledge_views.xml',
+        'views/ai_async_job_views.xml',
         'views/ai_config_views.xml',
         'views/ai_session_views.xml',
         'views/ai_menus.xml',
     ],
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
 }

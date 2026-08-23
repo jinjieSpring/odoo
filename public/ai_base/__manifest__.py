@@ -17,6 +17,7 @@ layer instead of talking to vendors directly.
 * Chat sessions, jsonrpc + NDJSON streaming, OWL chat widget and field enhancer
 
 Knowledge bases and RAG live in the optional ``ai_knowledge`` module.
+This module does not depend on OCA ``queue_job``.
 """,
     'author': 'Odoo AI Capability Building Team',
     'license': 'LGPL-3',
@@ -31,7 +32,6 @@ Knowledge bases and RAG live in the optional ``ai_knowledge`` module.
         'views/ai_tool_views.xml',
         'views/ai_session_views.xml',
         'views/ai_request_log_views.xml',
-        'views/ai_async_job_views.xml',
         'views/ai_config_views.xml',
         'views/ai_menus.xml',
     ],

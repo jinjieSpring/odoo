@@ -115,11 +115,6 @@ msgid "AI Request Log"
 msgstr "AI 请求日志"
 
 #. module: ai_base
-#: model:ir.model,name:ai_base.model_ai_async_job
-msgid "AI Asynchronous Job"
-msgstr "AI 异步任务"
-
-#. module: ai_base
 #: model:ir.model,name:ai_base.model_ai_config
 #: model:ir.ui.view,arch_db:ai_base.ai_config_form_view
 msgid "AI Base Configuration"
@@ -176,12 +171,6 @@ msgstr "AI 工具"
 #: model:ir.actions.act_window,name:ai_base.ai_session_action
 msgid "Chat Sessions"
 msgstr "对话记录"
-
-#. module: ai_base
-#: model:ir.ui.menu,name:ai_base.ai_menu_jobs
-#: model:ir.actions.act_window,name:ai_base.ai_async_job_action
-msgid "Async Jobs"
-msgstr "异步任务"
 
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_logs
@@ -297,7 +286,6 @@ msgstr "可选备注..."
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__company_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__company_id
 msgid "Company"
 msgstr "公司"
 
@@ -448,7 +436,6 @@ msgstr "语音"
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__name
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__name
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__name
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__name
 msgid "Name"
 msgstr "名称"
 
@@ -588,7 +575,6 @@ msgstr "提取文本"
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__status
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__state
 msgid "Status"
 msgstr "状态"
 
@@ -615,9 +601,7 @@ msgstr "已向量化"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__error_message
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_message
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__error_message
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__error
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__error
 msgid "Error"
 msgstr "错误"
 
@@ -658,7 +642,6 @@ msgstr "工具名称"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_tool__tool_type
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__job_type
 msgid "Type"
 msgstr "类型"
 
@@ -740,7 +723,6 @@ msgstr "会话名称"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__user_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__user_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__user_id
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__user
 msgid "User"
 msgstr "用户"
@@ -1040,17 +1022,6 @@ msgid "Raw Vendor Response"
 msgstr "厂商原始响应"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__parse_document
-msgid "Parse Document"
-msgstr "解析文档"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__index_document
-msgid "Index Document"
-msgstr "向量化文档"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__summarize
 #. odoo-javascript
 #: code:addons/ai_base/static/src/xml/ai_field.xml:0
 #: code:addons/ai_base/static/src/js/ai_field.js:0
@@ -1058,56 +1029,10 @@ msgid "Summarize"
 msgstr "摘要"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__job_type__custom
-msgid "Custom"
-msgstr "自定义"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__pending
-msgid "Pending"
-msgstr "待执行"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__running
-msgid "Running"
-msgstr "执行中"
-
-#. module: ai_base
 #. odoo-python
 #: code:addons/ai_base/models/ai_base_service.py:0
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_async_job__state__done
 msgid "Done"
 msgstr "完成"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__res_model
-msgid "Target Model"
-msgstr "目标模型"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__res_id
-msgid "Target ID"
-msgstr "目标 ID"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__payload
-msgid "Payload"
-msgstr "任务参数"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__result
-msgid "Result"
-msgstr "结果"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__attempt
-msgid "Attempts"
-msgstr "尝试次数"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_async_job__max_attempts
-msgid "Max Attempts"
-msgstr "最大尝试次数"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_config__default_model_id
@@ -1274,11 +1199,6 @@ msgid "AI Usage"
 msgstr "AI 用量"
 
 #. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_async_job_form_view
-msgid "Run Now"
-msgstr "立即执行"
-
-#. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_config_form_view
 msgid "AI Configuration"
 msgstr "AI 配置"
@@ -1357,11 +1277,6 @@ msgstr "AI 底座：清理过期请求日志"
 #: model:ir.cron,name:ai_base.ir_cron_error_alert
 msgid "AI Base: Error rate alert"
 msgstr "AI 底座：错误率告警"
-
-#. module: ai_base
-#: model:ir.cron,name:ai_base.ir_cron_async_jobs
-msgid "AI Base: Run async jobs"
-msgstr "AI 底座：执行异步任务"
 
 #. module: ai_base
 #. odoo-python
@@ -1889,12 +1804,6 @@ msgstr "模型“%s”不存在。"
 #: code:addons/ai_base/models/ai_tool.py:0
 msgid "Counted %s records."
 msgstr "统计到 %s 条记录。"
-
-#. module: ai_base
-#. odoo-python
-#: code:addons/ai_base/models/ai_async_job.py:0
-msgid "Nothing to do."
-msgstr "没有需要执行的任务。"
 
 #. module: ai_base
 #. odoo-python

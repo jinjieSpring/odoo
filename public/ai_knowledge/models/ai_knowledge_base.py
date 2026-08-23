@@ -142,11 +142,12 @@ class AiKnowledgeBase(models.Model):
             kb.document_count = count_map.get(kb.id, 0)
 
     def action_index_all(self):
+        documents = self.env['ai.knowledge.document']
         for kb in self:
-            kb.document_ids.filtered(
+            documents |= kb.document_ids.filtered(
                 lambda d: d.state in ('pending', 'parsed', 'error')
-            ).action_index()
-        return True
+            )
+        return documents.action_index()
 
 
 class AiKnowledgeDocument(models.Model):
@@ -221,26 +222,72 @@ class AiKnowledgeDocument(models.Model):
                 pieces.append((page, chunk))
         return pieces
 
+    def _queue_job_available(self):
+        return 'queue.job' in self.env
+
+    def _should_delay(self):
+        if self.env.context.get('ai_knowledge_force_sync'):
+            return False
+        if self.env.context.get('queue_job__no_delay'):
+            return False
+        return self._queue_job_available()
+
+    def _queued_notification(self, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'title': _('Queued'),
+                'message': message,
+            },
+        }
+
     def action_parse(self):
+        if not self:
+            return True
+        if self._should_delay():
+            for document in self:
+                document.with_delay(
+                    description=_('Parse knowledge document: %s') % document.display_name,
+                    identity_key='ai_knowledge_parse_%s' % document.id,
+                )._parse_one()
+            return self._queued_notification(_(
+                'Document parsing has been queued.'))
         for document in self:
-            try:
-                pages = document._extract_text()
-                text = '\n\n'.join(page_text for _page, page_text in pages)
-                document.write({
-                    'content': text,
-                    'state': 'parsed' if text.strip() else 'error',
-                    'error_message': False if text.strip() else _(
-                        'No text could be extracted.'),
-                })
-            except Exception as exc:  # noqa: BLE001
-                _logger.exception('ai_base document parse failed')
-                document.write({
-                    'state': 'error',
-                    'error_message': str(exc)[:500],
-                })
+            document._parse_one()
+        return True
+
+    def _parse_one(self):
+        self.ensure_one()
+        try:
+            pages = self._extract_text()
+            text = '\n\n'.join(page_text for _page, page_text in pages)
+            self.write({
+                'content': text,
+                'state': 'parsed' if text.strip() else 'error',
+                'error_message': False if text.strip() else _(
+                    'No text could be extracted.'),
+            })
+        except Exception as exc:  # noqa: BLE001
+            _logger.exception('ai_knowledge document parse failed')
+            self.write({
+                'state': 'error',
+                'error_message': str(exc)[:500],
+            })
         return True
 
     def action_index(self):
+        if not self:
+            return True
+        if self._should_delay():
+            for document in self:
+                document.with_delay(
+                    description=_('Index knowledge document: %s') % document.display_name,
+                    identity_key='ai_knowledge_index_%s' % document.id,
+                )._index_one()
+            return self._queued_notification(_(
+                'Document indexing has been queued.'))
         for document in self:
             document._index_one()
         return True
@@ -249,7 +296,7 @@ class AiKnowledgeDocument(models.Model):
         self.ensure_one()
         try:
             if self.state in ('pending', 'error') or not self.content:
-                self.action_parse()
+                self._parse_one()
                 self.invalidate_recordset(['content', 'state'])
             if self.state == 'error':
                 return
@@ -279,7 +326,7 @@ class AiKnowledgeDocument(models.Model):
             store.upsert(self.env, chunks)
             self.write({'state': 'ready', 'error_message': False})
         except Exception as exc:  # noqa: BLE001
-            _logger.exception('ai_base document index failed')
+            _logger.exception('ai_knowledge document index failed')
             self.write({'state': 'error', 'error_message': str(exc)[:500]})
 
     def unlink(self):
@@ -298,6 +345,8 @@ class AiKnowledgeDocument(models.Model):
             ('state', 'in', ('pending', 'parsed')),
             ('active', '=', True),
         ], limit=batch_size)
+        # Reuses action_index(): sync when queue_job is absent, enqueued
+        # (identity_key) when it is installed.
         pending.action_index()
 
 

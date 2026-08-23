@@ -135,3 +135,31 @@ class TestKnowledge(AiBaseCase):
         })
         self.assertTrue(session.knowledge_enabled)
         self.assertEqual(session.knowledge_document_ids.ids, [doc.id])
+
+    def test_index_stays_sync_without_queue_job(self):
+        document = self._document()
+        self.assertFalse(document._should_delay())
+        with patch.object(
+                type(self.env['ai.base.service']), 'embedding',
+                return_value=[[0.1, 0.2]]):
+            result = document.action_index()
+        self.assertTrue(result)
+        self.assertEqual(document.state, 'ready')
+
+    def test_index_enqueues_when_queue_job_is_available(self):
+        document = self._document()
+        delayed = []
+
+        class Delayed:
+            def _index_one(self):
+                delayed.append(document.id)
+
+        with patch.object(
+                type(document), '_should_delay', return_value=True
+        ), patch.object(
+                type(document), 'with_delay', return_value=Delayed()
+        ):
+            action = document.action_index()
+        self.assertEqual(delayed, [document.id])
+        self.assertNotEqual(document.state, 'ready')
+        self.assertEqual(action['tag'], 'display_notification')

@@ -45,6 +45,114 @@ msgid "AI Vector Store Helper"
 msgstr "AI 向量库助手"
 
 #. module: ai_knowledge
+#: model:ir.model,name:ai_knowledge.model_ai_async_job
+msgid "AI Asynchronous Job"
+msgstr "AI 异步任务"
+
+#. module: ai_knowledge
+#: model:ir.ui.menu,name:ai_knowledge.ai_menu_jobs
+#: model:ir.actions.act_window,name:ai_knowledge.ai_async_job_action
+msgid "Async Jobs"
+msgstr "异步任务"
+
+#. module: ai_knowledge
+#: model:ir.cron,name:ai_knowledge.ir_cron_async_jobs
+msgid "AI Knowledge: Run async jobs"
+msgstr "AI 知识库：执行异步任务"
+
+#. module: ai_knowledge
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_async_job_form_view
+msgid "Run Now"
+msgstr "立即执行"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__job_type__parse_document
+msgid "Parse Document"
+msgstr "解析文档"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__job_type__index_document
+msgid "Index Document"
+msgstr "向量化文档"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__job_type__summarize
+msgid "Summarize"
+msgstr "摘要"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__job_type__custom
+msgid "Custom"
+msgstr "自定义"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__state__pending
+msgid "Pending"
+msgstr "待执行"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__state__running
+msgid "Running"
+msgstr "执行中"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__state__done
+msgid "Done"
+msgstr "完成"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__res_model
+msgid "Target Model"
+msgstr "目标模型"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__res_id
+msgid "Target ID"
+msgstr "目标 ID"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__payload
+msgid "Payload"
+msgstr "任务参数"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__result
+msgid "Result"
+msgstr "结果"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__attempt
+msgid "Attempts"
+msgstr "尝试次数"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__max_attempts
+msgid "Max Attempts"
+msgstr "最大尝试次数"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_async_job.py:0
+msgid "Nothing to do."
+msgstr "没有需要执行的任务。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_async_job.py:0
+msgid "Indexed"
+msgstr "已向量化"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__job_type
+msgid "Type"
+msgstr "类型"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__user_id
+msgid "User"
+msgstr "用户"
+
+#. module: ai_knowledge
 #: model:ir.ui.menu,name:ai_knowledge.ai_menu_knowledge
 msgid "Knowledge"
 msgstr "知识库"
@@ -64,11 +172,6 @@ msgid "Knowledge Documents"
 msgstr "知识文档"
 
 #. module: ai_knowledge
-#: model:ir.ui.menu,name:ai_knowledge.ai_menu_jobs
-msgid "Async Jobs"
-msgstr "异步任务"
-
-#. module: ai_knowledge
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_config__embed_model_id
 msgid "Default Embedding Model"
 msgstr "默认嵌入模型"
@@ -86,6 +189,7 @@ msgstr "知识检索条数"
 #. module: ai_knowledge
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__name
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__name
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__name
 msgid "Name"
 msgstr "名称"
 
@@ -159,6 +263,7 @@ msgstr "启用"
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__company_id
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__company_id
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__company_id
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__company_id
 msgid "Company"
 msgstr "公司"
 
@@ -187,6 +292,7 @@ msgstr "提取文本"
 
 #. module: ai_knowledge
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__state
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__state
 msgid "Status"
 msgstr "状态"
 
@@ -197,6 +303,8 @@ msgstr "待解析"
 
 #. module: ai_knowledge
 #: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_document__state__parsed
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_async_job.py:0
 msgid "Parsed"
 msgstr "解析成功"
 
@@ -212,6 +320,8 @@ msgstr "已向量化"
 
 #. module: ai_knowledge
 #: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__error_message
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_async_job__error_message
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_async_job__state__error
 msgid "Error"
 msgstr "错误"
 
@@ -309,3 +419,33 @@ msgstr "未能生成分片。"
 #: code:addons/ai_knowledge/models/ai_base_service.py:0
 msgid "Relevant knowledge:"
 msgstr "相关知识："
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Queued"
+msgstr "已加入队列"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Document parsing has been queued."
+msgstr "文档解析已加入后台队列。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Document indexing has been queued."
+msgstr "文档向量化已加入后台队列。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Parse knowledge document: %s"
+msgstr "解析知识文档：%s"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Index knowledge document: %s"
+msgstr "向量化知识文档：%s"
