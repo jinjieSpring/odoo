@@ -168,10 +168,9 @@ msgid "AI Tools"
 msgstr "AI 工具"
 
 #. module: ai_base
-#: model:ir.ui.menu,name:ai_base.ai_menu_sessions
 #: model:ir.actions.act_window,name:ai_base.ai_session_action
 msgid "Chat Sessions"
-msgstr "对话会话"
+msgstr "对话记录"
 
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_jobs
@@ -182,8 +181,9 @@ msgstr "异步任务"
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_logs
 #: model:ir.actions.act_window,name:ai_base.ai_request_log_action
-msgid "Request Log & Usage"
-msgstr "请求日志与用量"
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__log_count
+msgid "Usage & Audit"
+msgstr "用量与审计"
 
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_settings
@@ -633,6 +633,8 @@ msgstr "页码"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__content
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__content
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__content_preview
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Content"
 msgstr "内容"
 
@@ -759,7 +761,73 @@ msgid "Related Record"
 msgstr "关联单据"
 
 #. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__attach_context
+msgid "Attach Record Context"
+msgstr "附加单据上下文"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__context_model
+msgid "Context Model"
+msgstr "上下文模型"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__context_res_id
+msgid "Context Record"
+msgstr "上下文单据"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
+msgid "Record Context"
+msgstr "单据上下文"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__context_snapshot
+msgid "Context Snapshot"
+msgstr "上下文快照"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__reasoning_strength
+msgid "Thinking Strength"
+msgstr "思考强度"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__web_search_enabled
+msgid "Web Search"
+msgstr "联网搜索"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__reasoning_strength__none
+msgid "Off"
+msgstr "关闭"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__reasoning_strength__low
+msgid "Low"
+msgstr "低"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__reasoning_strength__medium
+msgid "Medium"
+msgstr "中"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_session__reasoning_strength__high
+msgid "High"
+msgstr "高"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__context_tokens
+msgid "Context Tokens"
+msgstr "上下文 Token"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__context_usage
+msgid "Context Usage %"
+msgstr "上下文占用"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__message_ids
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Messages"
 msgstr "消息"
 
@@ -820,6 +888,12 @@ msgid "Closed"
 msgstr "已关闭"
 
 #. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__create_date
+#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__create_date
+msgid "Created On"
+msgstr "创建时间"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__session_id
 msgid "Session"
 msgstr "会话"
@@ -845,6 +919,13 @@ msgid "Tool"
 msgstr "工具"
 
 #. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__reasoning_content
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__reasoning_preview
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
+msgid "Reasoning"
+msgstr "思考过程"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__tool_cards
 msgid "Tool Cards"
 msgstr "工具卡片"
@@ -857,18 +938,21 @@ msgstr "RAG 来源"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__prompt_tokens
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__prompt_tokens
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Input Tokens"
 msgstr "输入 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__completion_tokens
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__completion_tokens
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Output Tokens"
 msgstr "输出 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__total_tokens
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__total_tokens
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Total Tokens"
 msgstr "总 Token"
 

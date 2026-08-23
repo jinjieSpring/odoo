@@ -81,6 +81,17 @@
             <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
         </record>
 
+        <record id="rule_session_log_viewer" model="ir.rule">
+            <field name="name">ai.chat.session: company sessions readable by log viewers</field>
+            <field name="model_id" ref="model_ai_chat_session"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[Command.link(ref('group_log'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
         <record id="rule_user_settings_own" model="ir.rule">
             <field name="name">ai.user.settings: own settings</field>
             <field name="model_id" ref="model_ai_user_settings"/>

@@ -33,6 +33,9 @@ class TestSession(AiBaseCase):
             'res_id': partner.id,
         })
         self.assertEqual(session.res_name, 'Acme')
+        action = session.action_open_related_record()
+        self.assertEqual(action['res_model'], 'res.partner')
+        self.assertEqual(action['res_id'], partner.id)
 
     def test_own_session_rule(self):
         session = self.env['ai.chat.session'].create({'name': 'Mine'})
@@ -42,3 +45,26 @@ class TestSession(AiBaseCase):
         found = self.env['ai.chat.session'].with_user(other).search([
             ('id', '=', session.id)])
         self.assertFalse(found)
+
+    def test_open_request_logs_filters_current_session(self):
+        session = self.env['ai.chat.session'].create({'name': 'Logged'})
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._chat_ok()):
+            session.action_send_message('hello there')
+        action = session.action_open_request_logs()
+        self.assertEqual(action['res_model'], 'ai.request.log')
+        self.assertEqual(action['domain'], [('session_id', '=', session.id)])
+        self.assertGreaterEqual(session.log_count, 1)
+
+    def test_message_preview_collapses_long_content(self):
+        session = self.env['ai.chat.session'].create({'name': 'Preview'})
+        long_text = ('hello world ' * 20).strip()
+        message = self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'user',
+            'content': long_text,
+        })
+        self.assertEqual(len(message.content_preview), 80)
+        self.assertTrue(message.content_preview.endswith('…'))
+        self.assertNotIn('\n', message.content_preview)

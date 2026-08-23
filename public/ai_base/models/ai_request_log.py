@@ -10,6 +10,7 @@ class AiRequestLog(models.Model):
     _order = 'create_date desc, id desc'
     _check_company_auto = True
 
+    create_date = fields.Datetime(string='Created On', readonly=True)
     company_id = fields.Many2one(
         'res.company', string='Company', index=True,
         default=lambda self: self.env.company)

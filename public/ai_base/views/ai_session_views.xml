@@ -4,8 +4,20 @@
         <field name="name">ai.chat.session.form</field>
         <field name="model">ai.chat.session</field>
         <field name="arch" type="xml">
-            <form string="Chat Session">
+            <form string="Chat Session" create="0" edit="0" delete="0" duplicate="0">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="res_id" invisible="1"/>
+                        <button name="action_open_related_record" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="not res_id">
+                            <field name="res_name" widget="statinfo" string="Related Record"/>
+                        </button>
+                        <button name="action_open_request_logs" type="object"
+                                class="oe_stat_button" icon="fa-list-alt">
+                            <field name="log_count" widget="statinfo" string="Usage &amp; Audit"/>
+                        </button>
+                    </div>
                     <group>
                         <group>
                             <field name="name"/>
@@ -15,26 +27,50 @@
                             <field name="state"/>
                         </group>
                         <group>
-                            <field name="res_model"/>
-                            <field name="res_id"/>
-                            <field name="res_name"/>
+                            <field name="attach_context"/>
                             <field name="knowledge_enabled"/>
                             <field name="streaming"/>
-                            <field name="attach_context"/>
-                            <field name="context_model"/>
-                            <field name="context_res_id"/>
                             <field name="compress_strategy"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </group>
-                    <field name="message_ids">
-                        <list>
-                            <field name="create_date"/>
-                            <field name="role"/>
-                            <field name="content"/>
-                            <field name="total_tokens"/>
-                        </list>
-                    </field>
+                    <notebook>
+                        <page string="Messages">
+                            <field name="message_ids" readonly="1">
+                                <list create="0" delete="0" edit="0">
+                                    <field name="create_date"/>
+                                    <field name="role"/>
+                                    <field name="content_preview"/>
+                                    <field name="reasoning_preview" optional="hide"/>
+                                    <field name="prompt_tokens" optional="hide" sum="Input Tokens"/>
+                                    <field name="completion_tokens" optional="hide" sum="Output Tokens"/>
+                                    <field name="total_tokens" optional="show" sum="Total Tokens"/>
+                                </list>
+                                <form create="0" edit="0" delete="0">
+                                    <group>
+                                        <group>
+                                            <field name="create_date"/>
+                                            <field name="role"/>
+                                        </group>
+                                        <group>
+                                            <field name="prompt_tokens"/>
+                                            <field name="completion_tokens"/>
+                                            <field name="total_tokens"/>
+                                        </group>
+                                    </group>
+                                    <group string="Content">
+                                        <field name="content" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group string="Reasoning">
+                                        <field name="reasoning_content" nolabel="1" colspan="2"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Record Context">
+                            <field name="context_snapshot" nolabel="1" readonly="1"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -43,7 +79,7 @@
         <field name="name">ai.chat.session.list</field>
         <field name="model">ai.chat.session</field>
         <field name="arch" type="xml">
-            <list>
+            <list create="0" edit="0" delete="0">
                 <field name="name"/>
                 <field name="user_id"/>
                 <field name="model_id"/>
@@ -57,5 +93,6 @@
         <field name="name">Chat Sessions</field>
         <field name="res_model">ai.chat.session</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
     </record>
 </odoo>

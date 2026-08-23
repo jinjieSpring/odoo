@@ -58,6 +58,8 @@ class AiChatSession(models.Model):
         compute='_compute_context_usage', string='Context Tokens')
     context_usage = fields.Integer(
         compute='_compute_context_usage', string='Context Usage %')
+    log_count = fields.Integer(
+        compute='_compute_log_count', string='Usage & Audit')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('open', 'In Progress'),
@@ -99,6 +101,41 @@ class AiChatSession(models.Model):
             session.context_tokens = tokens
             budget = session.model_id.max_context_tokens or 8192
             session.context_usage = int(tokens * 100 / budget) if budget else 0
+
+    def _compute_log_count(self):
+        data = self.env['ai.request.log']._read_group(
+            [('session_id', 'in', self.ids)],
+            ['session_id'], ['session_id:count'])
+        count_map = {session.id: count for session, count in data}
+        for session in self:
+            session.log_count = count_map.get(session.id, 0)
+
+    def action_open_request_logs(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Usage & Audit'),
+            'res_model': 'ai.request.log',
+            'view_mode': 'list,form,pivot,graph',
+            'domain': [('session_id', '=', self.id)],
+            'context': {'default_session_id': self.id},
+        }
+
+    def action_open_related_record(self):
+        self.ensure_one()
+        if not self.res_model or not self.res_id or self.res_model not in self.env:
+            return False
+        record = self.env[self.res_model].browse(self.res_id).exists()
+        if not record:
+            return False
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.res_name or _('Related Record'),
+            'res_model': self.res_model,
+            'res_id': record.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -289,6 +326,9 @@ class AiChatMessage(models.Model):
     _description = 'AI Chat Message'
     _order = 'create_date, id'
 
+    _PREVIEW_LEN = 80
+
+    create_date = fields.Datetime(string='Created On', readonly=True)
     session_id = fields.Many2one(
         'ai.chat.session', string='Session', required=True,
         ondelete='cascade', index=True)
@@ -299,12 +339,29 @@ class AiChatMessage(models.Model):
         ('tool', 'Tool'),
     ], string='Role', required=True, default='user')
     content = fields.Text(string='Content')
+    content_preview = fields.Char(
+        compute='_compute_previews', string='Content')
     reasoning_content = fields.Text(string='Reasoning')
+    reasoning_preview = fields.Char(
+        compute='_compute_previews', string='Reasoning')
     tool_cards = fields.Json(string='Tool Cards', default=list)
     rag_sources = fields.Json(string='RAG Sources', default=list)
     prompt_tokens = fields.Integer(string='Input Tokens', default=0)
     completion_tokens = fields.Integer(string='Output Tokens', default=0)
     total_tokens = fields.Integer(string='Total Tokens', default=0)
+
+    @api.depends('content', 'reasoning_content')
+    def _compute_previews(self):
+        for message in self:
+            message.content_preview = message._preview(message.content)
+            message.reasoning_preview = message._preview(message.reasoning_content)
+
+    @api.model
+    def _preview(self, text):
+        compact = ' '.join((text or '').split())
+        if len(compact) <= self._PREVIEW_LEN:
+            return compact
+        return compact[: self._PREVIEW_LEN - 1] + '…'
 
     @api.model_create_multi
     def create(self, vals_list):

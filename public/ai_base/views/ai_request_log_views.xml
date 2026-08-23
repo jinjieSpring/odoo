@@ -7,6 +7,7 @@
             <list create="0" edit="0">
                 <field name="create_date"/>
                 <field name="user_id"/>
+                <field name="session_id"/>
                 <field name="request_type"/>
                 <field name="scenario_key"/>
                 <field name="model_code"/>
@@ -25,7 +26,9 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="create_date"/>
                             <field name="user_id"/>
+                            <field name="session_id"/>
                             <field name="request_type"/>
                             <field name="scenario_key"/>
                             <field name="provider_id"/>
@@ -82,7 +85,7 @@
         </field>
     </record>
     <record id="ai_request_log_action" model="ir.actions.act_window">
-        <field name="name">Request Log &amp; Usage</field>
+        <field name="name">Usage &amp; Audit</field>
         <field name="res_model">ai.request.log</field>
         <field name="view_mode">list,form,pivot,graph</field>
     </record>
