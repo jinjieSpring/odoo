@@ -51,6 +51,18 @@
             </list>
         </field>
     </record>
+    <record id="ai_document_list_view" model="ir.ui.view">
+        <field name="name">ai.knowledge.document.list</field>
+        <field name="model">ai.knowledge.document</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="knowledge_id"/>
+                <field name="state"/>
+                <field name="chunk_count"/>
+            </list>
+        </field>
+    </record>
     <record id="ai_document_form_view" model="ir.ui.view">
         <field name="name">ai.knowledge.document.form</field>
         <field name="model">ai.knowledge.document</field>

@@ -2,7 +2,7 @@
 import json
 from unittest.mock import patch
 
-from odoo.addons.ai_base.models.ai_vector_store import (
+from odoo.addons.ai_knowledge.models.ai_vector_store import (
     CosineFallbackStore,
     PgVectorStore,
     cosine_similarity,
@@ -28,7 +28,7 @@ class TestKnowledge(AiBaseCase):
         self.assertEqual(items, [])
 
     def test_chunk_strategies(self):
-        from odoo.addons.ai_base.models.ai_knowledge_base import (
+        from odoo.addons.ai_knowledge.models.ai_knowledge_base import (
             _split_fixed, _split_heading, _split_semantic,
         )
         text = '# Title\n\nHello world.\n\n## Two\n\nMore text here.'
@@ -118,3 +118,20 @@ class TestKnowledge(AiBaseCase):
             msg['content'] for msg in captured['messages']
             if msg['role'] == 'system')
         self.assertIn('meals', system.lower())
+
+    def test_defaults_expose_knowledge_when_installed(self):
+        defaults = self.env['ai.chat.session'].action_get_defaults()
+        self.assertTrue(defaults['has_knowledge'])
+        kb = self.env['ai.knowledge.base'].create({'name': 'KB'})
+        doc = self.env['ai.knowledge.document'].create({
+            'name': 'Doc',
+            'knowledge_id': kb.id,
+            'state': 'ready',
+        })
+        session = self.env['ai.chat.session'].create({'name': 'Opts'})
+        session.action_set_options({
+            'knowledge_enabled': True,
+            'knowledge_document_ids': str(doc.id),
+        })
+        self.assertTrue(session.knowledge_enabled)
+        self.assertEqual(session.knowledge_document_ids.ids, [doc.id])

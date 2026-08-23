@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_config_form_view_knowledge" model="ir.ui.view">
+        <field name="name">ai.config.form.knowledge</field>
+        <field name="model">ai.config</field>
+        <field name="inherit_id" ref="ai_base.ai_config_form_view"/>
+        <field name="arch" type="xml">
+            <field name="default_model_id" position="after">
+                <field name="embed_model_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -3,7 +3,6 @@
 from . import test_provider
 from . import test_model
 from . import test_prompt
-from . import test_knowledge
 from . import test_service
 from . import test_session
 from . import test_chat

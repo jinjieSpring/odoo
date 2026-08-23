@@ -66,12 +66,6 @@ class AiBaseJsonRpcController(http.Controller):
             return {'error': 'Session not found'}
         return session.action_set_options(options or {})
 
-    @http.route('/ai_base/knowledge/search', type='jsonrpc', auth='user')
-    def knowledge_search(self, query, top_k=5, document_ids=None, knowledge_ids=None):
-        return request.env['ai.base.service'].retrieve(
-            query, top_k=top_k, document_ids=document_ids,
-            knowledge_ids=knowledge_ids)
-
     @http.route('/ai_base/field/enhance', type='jsonrpc', auth='user')
     def field_enhance(self, action, text, lang=None):
         return {

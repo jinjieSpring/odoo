@@ -12,15 +12,10 @@ Example (from another Odoo module)::
     )
     reply = result['reply']
 
-    # RAG
-    result = self.env['ai.base.service'].rag_chat(
-        'What is the expense policy?',
-        knowledge_ids=kb.ids,
-        top_k=5,
-    )
-
     # Embeddings
     vectors = self.env['ai.base.service'].embedding(['hello world'])
+
+    # RAG lives in the optional ai_knowledge module.
 
     # Agent loop (model may call registered tools)
     result = self.env['ai.base.service'].agent_run(
@@ -47,7 +42,6 @@ from odoo.exceptions import UserError
 
 from odoo.addons.ai_base.tools import AiError, get_provider
 from odoo.addons.ai_base.models.ai_tool import extract_tool_calls, strip_tool_blocks
-from odoo.addons.ai_base.models.ai_vector_store import get_vector_store
 
 _logger = logging.getLogger(__name__)
 
@@ -162,37 +156,14 @@ class AiBaseService(models.AbstractModel):
             self.on_ai_request_error(payload, exc)
             raise
 
-    def rag_chat(
-        self, query, knowledge_ids=None, document_ids=None, top_k=5,
-        rerank=None, prompt_key='rag.context', **kwargs
-    ):
-        """Retrieve knowledge snippets, inject them into the prompt, then chat."""
-        retrieved = self.retrieve(
-            query, top_k=top_k, document_ids=document_ids,
-            knowledge_ids=knowledge_ids)
-        options = dict(kwargs.pop('options', None) or {})
-        rag_text = self._format_rag(retrieved, query, prompt_key)
-        if rag_text:
-            options['system_prompt'] = '\n\n'.join(
-                part for part in (options.get('system_prompt'), rag_text) if part)
-        result = self.chat(query, options=options, scenario='rag', **kwargs)
-        result['rag_sources'] = retrieved
-        session = kwargs.get('session')
-        if session:
-            last = session.message_ids.filtered(
-                lambda m: m.role == 'assistant')[-1:]
-            if last:
-                last.rag_sources = retrieved
-        log = self.env['ai.request.log'].sudo().search([
-            ('user_id', '=', self.env.user.id),
-            ('scenario_key', '=', 'rag'),
-        ], order='id desc', limit=1)
-        if log:
-            log.write({
-                'request_type': 'rag',
-                'rag_snippets': json.dumps(retrieved, ensure_ascii=False)[:4000],
-            })
-        return result
+    def rag_chat(self, query, **kwargs):
+        """RAG entry point. Implemented by ``ai_knowledge`` when installed."""
+        raise UserError(_(
+            'Install the AI Knowledge module to use knowledge-base chat.'))
+
+    def retrieve(self, query, top_k=5, document_ids=None, knowledge_ids=None, model=None):
+        """Return knowledge snippets. Empty unless ``ai_knowledge`` is installed."""
+        return []
 
     def embedding(self, texts, model=None, model_code=None):
         """Return a list of embedding vectors for ``texts``.
@@ -304,38 +275,6 @@ class AiBaseService(models.AbstractModel):
             session=session, model=model, result=result,
             input_summary=content)
         return {'result': result, 'events': events, 'error': result.get('error')}
-
-    def retrieve(self, query, top_k=5, document_ids=None, knowledge_ids=None, model=None):
-        query = (query or '').strip()
-        if not query:
-            return []
-        try:
-            vectors = self.embedding([query], model=model)
-        except UserError:
-            return []
-        if not vectors or not vectors[0]:
-            return []
-        domain_ids = list(document_ids or [])
-        store_type = 'pgvector'
-        kb_ids = list(knowledge_ids or [])
-        kbs = self.env['ai.knowledge.base']
-        if kb_ids:
-            kbs = self.env['ai.knowledge.base'].browse(kb_ids).exists()
-            if kbs:
-                store_type = kbs[0].vector_store_type or 'pgvector'
-                if not domain_ids:
-                    domain_ids = self.env['ai.knowledge.document'].search([
-                        ('knowledge_id', 'in', kbs.ids),
-                        ('state', '=', 'ready'),
-                        ('active', '=', True),
-                    ]).ids
-        hits = get_vector_store(self.env, store_type).search(
-            self.env, vectors[0], top_k=top_k or 5,
-            document_ids=domain_ids or None,
-            knowledge_ids=kb_ids or None)
-        if kbs and kbs[0].rerank and len(hits) > 1:
-            hits = sorted(hits, key=lambda item: item.get('score') or 0, reverse=True)
-        return hits
 
     def invoke_tool(self, tool_name, params=None, context=None):
         return self.env['ai.tool'].action_invoke_tool(tool_name, params, context)
@@ -465,22 +404,9 @@ class AiBaseService(models.AbstractModel):
             ], ensure_ascii=False)[:4000],
         )
 
-    def _format_rag(self, retrieved, query, prompt_key):
-        if not retrieved:
-            return ''
-        rag = self.render_prompt(prompt_key, {'items': retrieved, 'query': query})
-        if rag:
-            return rag
-        lines = [_('Relevant knowledge:')]
-        lines += [
-            '- %s p.%s [%s] %s' % (
-                item.get('citation') or '',
-                item.get('page') or '-',
-                item.get('source_document') or '',
-                item.get('content') or '')
-            for item in retrieved
-        ]
-        return '\n'.join(lines)
+    def _knowledge_system_parts(self, session, query):
+        """Override in ``ai_knowledge`` to inject retrieved snippets."""
+        return []
 
     def _system_messages(self, session=None, options=None, query=None, record=None):
         options = options or {}
@@ -510,16 +436,7 @@ class AiBaseService(models.AbstractModel):
                     snapshot = self._record_snapshot(rec)
                     if snapshot:
                         parts.append(_('Current business record:\n%s') % snapshot)
-        if session and session.knowledge_enabled and query:
-            retrieved = self.retrieve(
-                query,
-                top_k=session.knowledge_top_k or 5,
-                document_ids=session.knowledge_document_ids.ids or None,
-                knowledge_ids=session.knowledge_ids.ids or None,
-            )
-            rag = self._format_rag(retrieved, query, 'rag.context')
-            if rag:
-                parts.append(rag)
+        parts.extend(self._knowledge_system_parts(session, query))
         if not parts:
             return []
         return [{'role': 'system', 'content': '\n\n'.join(parts)}]

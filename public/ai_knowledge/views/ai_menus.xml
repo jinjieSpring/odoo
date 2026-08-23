@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="ai_menu_knowledge" name="Knowledge"
+              parent="ai_base.ai_menu_root"
+              groups="ai_base.group_manager" sequence="20"/>
+    <menuitem id="ai_menu_knowledge_bases" name="Knowledge Bases"
+              parent="ai_menu_knowledge" action="ai_knowledge_action"
+              groups="ai_base.group_manager" sequence="10"/>
+    <menuitem id="ai_menu_knowledge_documents" name="Knowledge Documents"
+              parent="ai_menu_knowledge" action="ai_document_action"
+              groups="ai_base.group_manager" sequence="20"/>
+    <menuitem id="ai_menu_jobs" name="Async Jobs"
+              parent="ai_menu_knowledge" action="ai_base.ai_async_job_action"
+              groups="ai_base.group_manager" sequence="30"/>
+</odoo>

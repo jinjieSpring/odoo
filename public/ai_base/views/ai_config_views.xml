@@ -15,7 +15,6 @@
                     </div>
                     <group string="Default Models">
                         <field name="default_model_id"/>
-                        <field name="embed_model_id"/>
                     </group>
                     <group string="Safety and Limits">
                         <field name="rate_limit_user"/>

@@ -11,28 +11,26 @@
     <record id="ai_menu_root" model="ir.ui.menu">
         <field name="action" eval="False"/>
     </record>
+
+    <menuitem id="ai_menu_foundation" name="Foundation"
+              parent="ai_menu_root"
+              groups="ai_base.group_log" sequence="10"/>
     <menuitem id="ai_menu_providers" name="Providers"
-              parent="ai_menu_root" action="ai_provider_action"
+              parent="ai_menu_foundation" action="ai_provider_action"
               groups="ai_base.group_manager" sequence="10"/>
     <menuitem id="ai_menu_models" name="Models"
-              parent="ai_menu_root" action="ai_model_action"
+              parent="ai_menu_foundation" action="ai_model_action"
               groups="ai_base.group_manager" sequence="20"/>
     <menuitem id="ai_menu_prompts" name="Prompt Templates"
-              parent="ai_menu_root" action="ai_prompt_action"
+              parent="ai_menu_foundation" action="ai_prompt_action"
               groups="ai_base.group_manager" sequence="30"/>
-    <menuitem id="ai_menu_knowledge" name="Knowledge Bases"
-              parent="ai_menu_root" action="ai_knowledge_action"
-              groups="ai_base.group_manager" sequence="40"/>
     <menuitem id="ai_menu_tools" name="AI Tools"
-              parent="ai_menu_root" action="ai_tool_action"
+              parent="ai_menu_foundation" action="ai_tool_action"
               groups="ai_base.group_manager" sequence="50"/>
-    <menuitem id="ai_menu_jobs" name="Async Jobs"
-              parent="ai_menu_root" action="ai_async_job_action"
-              groups="ai_base.group_manager" sequence="65"/>
     <menuitem id="ai_menu_logs" name="Usage &amp; Audit"
-              parent="ai_menu_root" action="ai_request_log_action"
+              parent="ai_menu_foundation" action="ai_request_log_action"
               groups="ai_base.group_log" sequence="70"/>
     <menuitem id="ai_menu_settings" name="Configuration"
-              parent="ai_menu_root" action="ai_config_action"
+              parent="ai_menu_foundation" action="ai_config_action"
               groups="ai_base.group_manager" sequence="80"/>
 </odoo>

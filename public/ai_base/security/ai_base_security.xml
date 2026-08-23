@@ -25,7 +25,7 @@
             <field name="name">AI Manager</field>
             <field name="privilege_id" ref="ai_privilege"/>
             <field name="implied_ids" eval="[Command.link(ref('group_log'))]"/>
-            <field name="comment">Can configure providers, models, prompts, knowledge and tools.</field>
+            <field name="comment">Can configure providers, models, prompts and tools.</field>
         </record>
 
         <record id="base.group_system" model="res.groups">
@@ -50,27 +50,6 @@
             <field name="name">ai.prompt.template: multi-company</field>
             <field name="model_id" ref="model_ai_prompt_template"/>
             <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
-            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
-        </record>
-
-        <record id="rule_knowledge_company" model="ir.rule">
-            <field name="name">ai.knowledge.base: multi-company</field>
-            <field name="model_id" ref="model_ai_knowledge_base"/>
-            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
-        </record>
-
-        <record id="rule_document_company" model="ir.rule">
-            <field name="name">ai.knowledge.document: multi-company</field>
-            <field name="model_id" ref="model_ai_knowledge_document"/>
-            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
-        </record>
-
-        <record id="rule_chunk_company" model="ir.rule">
-            <field name="name">ai.knowledge.chunk: multi-company</field>
-            <field name="model_id" ref="model_ai_knowledge_chunk"/>
-            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
             <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
         </record>
 

@@ -72,8 +72,8 @@
                              title="Drag to resize the grids"
                              t-on-mousedown="(ev) => this.startGridResize(ev, 'sessions')"/>
 
-                        <!-- Knowledge base grid (placeholder) -->
-                        <div class="o_ai_sidebar_grid"
+                        <!-- Knowledge base grid (shown only when ai_knowledge is installed) -->
+                        <div t-if="state.hasKnowledge" class="o_ai_sidebar_grid"
                              data-grid-name="knowledge"
                              t-att-class="{'o_ai_grid_collapsed': state.grids.knowledge}"
                              t-att-style="state.gridHeights.knowledge ? 'flex: 0 0 ' + state.gridHeights.knowledge + 'px;' : ''">

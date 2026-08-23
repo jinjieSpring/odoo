@@ -40,12 +40,6 @@ class AiChatSession(models.Model):
     context_model = fields.Char(string='Context Model')
     context_res_id = fields.Integer(string='Context Record')
     context_snapshot = fields.Text(string='Context Snapshot')
-    knowledge_enabled = fields.Boolean(string='Use Knowledge Base', default=False)
-    knowledge_top_k = fields.Integer(string='Knowledge Top K', default=5)
-    knowledge_ids = fields.Many2many(
-        'ai.knowledge.base', string='Knowledge Bases')
-    knowledge_document_ids = fields.Many2many(
-        'ai.knowledge.document', string='Knowledge Documents')
     compress_strategy = fields.Selection([
         ('trim', 'Drop Oldest'),
         ('summary', 'Summarize Oldest'),

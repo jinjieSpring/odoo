@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prompt_rag_context" model="ai.prompt.template">
+            <field name="name">知识库问答</field>
+            <field name="code">rag.context</field>
+            <field name="description">把检索到的知识片段组装进提示词，供 RAG 问答使用。</field>
+            <field name="system_prompt"><![CDATA[你是企业知识库助手。只根据下面的「参考资料」回答用户问题。
+
+规则：
+- 资料足以回答时，用简体中文给出完整、可执行的说明。
+- 资料不足或互相冲突时，说明缺口，并列出已找到的相关片段；不要用常识补全制度条文。
+- 引用资料时，保留原文中的 [SOURCE:...] 标记，方便用户回看附件。
+- 不要编造条款编号、生效日期或责任部门。]]></field>
+            <field name="user_template"><![CDATA[用户问题：{{ query }}
+
+参考资料：
+{% for item in items %}
+- 来源：{{ item.source_document }}　页码：{{ item.page or '—' }}　{{ item.citation }}
+  {{ item.content }}
+{% endfor %}
+
+请根据以上资料作答。]]></field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="ir_cron_index_documents" model="ir.cron">
+            <field name="name">AI Knowledge: Index pending documents</field>
+            <field name="model_id" ref="model_ai_knowledge_document"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_index_pending()</field>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

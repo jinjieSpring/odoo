@@ -149,6 +149,11 @@ msgid "Models"
 msgstr "模型"
 
 #. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_foundation
+msgid "Foundation"
+msgstr "基础"
+
+#. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_prompts
 #: model:ir.actions.act_window,name:ai_base.ai_prompt_action
 msgid "Prompt Templates"
@@ -564,6 +569,8 @@ msgstr "按标题分割"
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__knowledge_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_chunk__knowledge_id
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_knowledge_form_view
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
 msgid "Knowledge Base"
 msgstr "知识库"
 
@@ -2051,3 +2058,21 @@ msgstr "预览使用的示例 JSON。留空则自动填入常用样例。"
 #: model:ir.model.fields,help:ai_base.field_ai_model__model_name_remote
 msgid "Value sent as the vendor ``model`` parameter."
 msgstr "作为厂商 ``model`` 参数发送的值。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Use knowledge base"
+msgstr "使用知识库"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "No knowledge documents available."
+msgstr "暂无可用的知识文档。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Collapse the knowledge base grid"
+msgstr "折叠知识库面板"

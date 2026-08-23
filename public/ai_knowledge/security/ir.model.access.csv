@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_knowledge_user,ai.knowledge.base.user,model_ai_knowledge_base,base.group_user,1,0,0,0
+access_ai_knowledge_manager,ai.knowledge.base.manager,model_ai_knowledge_base,ai_base.group_manager,1,1,1,1
+access_ai_document_user,ai.knowledge.document.user,model_ai_knowledge_document,base.group_user,1,0,0,0
+access_ai_document_manager,ai.knowledge.document.manager,model_ai_knowledge_document,ai_base.group_manager,1,1,1,1
+access_ai_chunk_user,ai.knowledge.chunk.user,model_ai_knowledge_chunk,base.group_user,1,0,0,0
+access_ai_chunk_manager,ai.knowledge.chunk.manager,model_ai_knowledge_chunk,ai_base.group_manager,1,1,1,1

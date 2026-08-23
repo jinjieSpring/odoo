@@ -12,10 +12,6 @@ class AiConfig(models.TransientModel):
         'ai.model', string='Default Chat Model',
         domain="[('model_kind', '=', 'chat'), ('is_active', '=', True), "
                "('provider_id.is_active', '=', True)]")
-    embed_model_id = fields.Many2one(
-        'ai.model', string='Default Embedding Model',
-        domain="[('model_kind', '=', 'embedding'), ('is_active', '=', True), "
-               "('provider_id.is_active', '=', True)]")
     log_retention_days = fields.Integer(
         string='Log Retention (days)', default=90)
     rate_limit_user = fields.Integer(
@@ -41,7 +37,6 @@ class AiConfig(models.TransientModel):
 
         values.update({
             'default_model_id': _model('ai.default_model_id'),
-            'embed_model_id': _model('ai.route.embed'),
             'log_retention_days': int(
                 params.get_param('ai_base.log_retention_days', '90') or 90),
             'rate_limit_user': int(
@@ -60,10 +55,8 @@ class AiConfig(models.TransientModel):
         self.ensure_one()
         params = self.env['ir.config_parameter'].sudo()
         chat_id = int(self.default_model_id.id or 0)
-        embed_id = int(self.embed_model_id.id or 0)
         params.set_param('ai.default_model_id', str(chat_id))
         params.set_param('ai.route.chat', str(chat_id))
-        params.set_param('ai.route.embed', str(embed_id))
         params.set_param(
             'ai_base.log_retention_days', str(self.log_retention_days or 90))
         params.set_param(
@@ -78,8 +71,6 @@ class AiConfig(models.TransientModel):
             'ai_base.max_tool_rounds', str(self.max_tool_rounds or 10))
         if self.default_model_id:
             self.default_model_id.action_set_as_default('chat')
-        if self.embed_model_id:
-            self.embed_model_id.action_set_as_default('embed')
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',

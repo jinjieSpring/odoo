@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_session_form_view_knowledge" model="ir.ui.view">
+        <field name="name">ai.chat.session.form.knowledge</field>
+        <field name="model">ai.chat.session</field>
+        <field name="inherit_id" ref="ai_base.ai_session_form_view"/>
+        <field name="arch" type="xml">
+            <field name="attach_context" position="after">
+                <field name="knowledge_enabled"/>
+                <field name="knowledge_top_k"/>
+                <field name="knowledge_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+</odoo>

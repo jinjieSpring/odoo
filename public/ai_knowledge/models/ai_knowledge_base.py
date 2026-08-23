@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.ai_base.models.ai_vector_store import get_vector_store
+from odoo.addons.ai_knowledge.models.ai_vector_store import get_vector_store
 
 _logger = logging.getLogger(__name__)
 

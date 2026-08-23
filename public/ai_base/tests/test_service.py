@@ -107,3 +107,12 @@ class TestService(AiBaseCase):
                 return_value=self._ok()):
             self.env['ai.base.service'].chat('ping')
         self.assertEqual(calls, ['before', 'done'])
+
+    def test_knowledge_is_optional(self):
+        if 'ai.knowledge.base' in self.env:
+            return
+        self.assertEqual(self.env['ai.base.service'].retrieve('hello'), [])
+        with self.assertRaises(UserError):
+            self.env['ai.base.service'].rag_chat('hello')
+        defaults = self.env['ai.chat.session'].action_get_defaults()
+        self.assertFalse(defaults['has_knowledge'])

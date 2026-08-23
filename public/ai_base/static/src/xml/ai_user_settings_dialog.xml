@@ -137,7 +137,7 @@
                                        t-on-change="toggleGridSessionsCollapsed"/>
                                 <span class="ms-1">Collapse the session history grid</span>
                             </label>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
+                            <label t-if="state.hasKnowledge" class="o_ai_user_settings_option d-flex align-items-center mb-1">
                                 <input type="checkbox" t-att-checked="state.gridKnowledgeCollapsed"
                                        t-on-change="toggleGridKnowledgeCollapsed"/>
                                 <span class="ms-1">Collapse the knowledge base grid</span>

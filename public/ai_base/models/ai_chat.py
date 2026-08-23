@@ -27,7 +27,7 @@ _LANGUAGE_NAMES = {
 }
 
 _SESSION_OPTION_FIELDS = (
-    'streaming', 'knowledge_enabled', 'knowledge_top_k',
+    'streaming',
     'model_id', 'prompt_id', 'compress_strategy',
     'reasoning_strength', 'web_search_enabled', 'attach_context',
 )
@@ -191,6 +191,7 @@ class AiChat(models.AbstractModel):
                 model._allowed_options() if model else self.empty_capabilities()),
             'agents': [],
             'default_agent_id': False,
+            'has_knowledge': 'ai.knowledge.base' in self.env,
             'knowledge_documents': self.knowledge_documents(),
         }
 
@@ -217,6 +218,7 @@ class AiChat(models.AbstractModel):
             'grid_sessions_height': settings.grid_sessions_height,
             'grid_knowledge_height': settings.grid_knowledge_height,
             'sidebar_width': settings.sidebar_width or 260,
+            'has_knowledge': 'ai.knowledge.base' in self.env,
             'default_prompt_id': settings.default_prompt_id.id or False,
             'prompts': self.prompt_choices(),
         }
@@ -296,9 +298,6 @@ class AiChat(models.AbstractModel):
                     session.context_model and (
                         session.context_res_id or session.context_snapshot)),
                 'context_display_name': snapshot.splitlines()[0] if snapshot else '',
-                'knowledge_enabled': session.knowledge_enabled,
-                'knowledge_top_k': session.knowledge_top_k,
-                'knowledge_document_ids': session.knowledge_document_ids.ids,
                 'capabilities': (
                     model._allowed_options()
                     if model else self.empty_capabilities()),
@@ -332,9 +331,6 @@ class AiChat(models.AbstractModel):
                 for field in _SESSION_OPTION_FIELDS
                 if field in options
             }
-            if 'knowledge_document_ids' in options:
-                vals['knowledge_document_ids'] = [(6, 0, self._parse_document_ids(
-                    options['knowledge_document_ids']))]
             if vals:
                 session.write(vals)
         user_vals = {}

@@ -1,0 +1,311 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ai_knowledge
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-23 02:00+0000\n"
+"PO-Revision-Date: 2026-08-23 02:00+0000\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: ai_knowledge
+#: model:ir.module.module,shortdesc:base.module_ai_knowledge
+msgid "AI Knowledge"
+msgstr "AI 知识库"
+
+#. module: ai_knowledge
+#: model:ir.module.module,summary:base.module_ai_knowledge
+msgid "Knowledge bases, embeddings and RAG for AI Base"
+msgstr "为 AI 基础提供知识库、嵌入模型和 RAG 检索"
+
+#. module: ai_knowledge
+#: model:ir.model,name:ai_knowledge.model_ai_knowledge_base
+msgid "AI Knowledge Base"
+msgstr "AI 知识库"
+
+#. module: ai_knowledge
+#: model:ir.model,name:ai_knowledge.model_ai_knowledge_document
+msgid "AI Knowledge Document"
+msgstr "AI 知识文档"
+
+#. module: ai_knowledge
+#: model:ir.model,name:ai_knowledge.model_ai_knowledge_chunk
+msgid "AI Knowledge Chunk"
+msgstr "AI 知识分片"
+
+#. module: ai_knowledge
+#: model:ir.model,name:ai_knowledge.model_ai_vector_store
+msgid "AI Vector Store Helper"
+msgstr "AI 向量库助手"
+
+#. module: ai_knowledge
+#: model:ir.ui.menu,name:ai_knowledge.ai_menu_knowledge
+msgid "Knowledge"
+msgstr "知识库"
+
+#. module: ai_knowledge
+#: model:ir.ui.menu,name:ai_knowledge.ai_menu_knowledge_bases
+#: model:ir.actions.act_window,name:ai_knowledge.ai_knowledge_action
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_chat_session__knowledge_ids
+msgid "Knowledge Bases"
+msgstr "知识库"
+
+#. module: ai_knowledge
+#: model:ir.ui.menu,name:ai_knowledge.ai_menu_knowledge_documents
+#: model:ir.actions.act_window,name:ai_knowledge.ai_document_action
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_chat_session__knowledge_document_ids
+msgid "Knowledge Documents"
+msgstr "知识文档"
+
+#. module: ai_knowledge
+#: model:ir.ui.menu,name:ai_knowledge.ai_menu_jobs
+msgid "Async Jobs"
+msgstr "异步任务"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_config__embed_model_id
+msgid "Default Embedding Model"
+msgstr "默认嵌入模型"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_chat_session__knowledge_enabled
+msgid "Use Knowledge Base"
+msgstr "启用知识库"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_chat_session__knowledge_top_k
+msgid "Knowledge Top K"
+msgstr "知识检索条数"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__name
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__name
+msgid "Name"
+msgstr "名称"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__description
+msgid "Description"
+msgstr "说明"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__embedding_model_id
+msgid "Embedding Model"
+msgstr "嵌入模型"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__vector_store_type
+msgid "Vector Store"
+msgstr "向量库"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_base__vector_store_type__pgvector
+msgid "PGVector"
+msgstr "PGVector"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_base__vector_store_type__chroma
+msgid "Chroma"
+msgstr "Chroma"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__chunk_strategy
+msgid "Chunk Strategy"
+msgstr "分块策略"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_base__chunk_strategy__fixed
+msgid "Fixed Length"
+msgstr "固定长度"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_base__chunk_strategy__semantic
+msgid "Semantic / Paragraph"
+msgstr "语义 / 段落"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_base__chunk_strategy__heading
+msgid "Heading Split"
+msgstr "按标题分割"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__chunk_size
+msgid "Chunk Size"
+msgstr "分块大小"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__chunk_overlap
+msgid "Chunk Overlap"
+msgstr "分块重叠"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__rerank
+msgid "Enable Rerank"
+msgstr "启用重排"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__is_active
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__active
+msgid "Active"
+msgstr "启用"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__company_id
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__company_id
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__company_id
+msgid "Company"
+msgstr "公司"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__document_ids
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_base__document_count
+msgid "Documents"
+msgstr "文档"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__knowledge_id
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__knowledge_id
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_knowledge_form_view
+msgid "Knowledge Base"
+msgstr "知识库"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__attachment_id
+msgid "Attachment"
+msgstr "附件"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__content
+msgid "Extracted Text"
+msgstr "提取文本"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__state
+msgid "Status"
+msgstr "状态"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_document__state__pending
+msgid "Pending Parse"
+msgstr "待解析"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_document__state__parsed
+msgid "Parsed"
+msgstr "解析成功"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_document__state__error
+msgid "Parse Failed"
+msgstr "解析失败"
+
+#. module: ai_knowledge
+#: model:ir.model.fields.selection,name:ai_knowledge.selection__ai_knowledge_document__state__ready
+msgid "Vectorized"
+msgstr "已向量化"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__error_message
+msgid "Error"
+msgstr "错误"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__chunk_ids
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_document__chunk_count
+msgid "Chunks"
+msgstr "分片"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__document_id
+msgid "Document"
+msgstr "文档"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__sequence
+msgid "Sequence"
+msgstr "序号"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__page
+msgid "Page"
+msgstr "页码"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__content
+msgid "Content"
+msgstr "内容"
+
+#. module: ai_knowledge
+#: model:ir.model.fields,field_description:ai_knowledge.field_ai_knowledge_chunk__embedding
+msgid "Embedding JSON"
+msgstr "向量 JSON"
+
+#. module: ai_knowledge
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_knowledge_form_view
+msgid "Index All"
+msgstr "全部向量化"
+
+#. module: ai_knowledge
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_knowledge_form_view
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_document_form_view
+msgid "Parse"
+msgstr "解析"
+
+#. module: ai_knowledge
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_knowledge_form_view
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_document_form_view
+msgid "Index"
+msgstr "向量化"
+
+#. module: ai_knowledge
+#: model_terms:ir.ui.view,arch_db:ai_knowledge.ai_document_form_view
+msgid "Knowledge Document"
+msgstr "知识文档"
+
+#. module: ai_knowledge
+#: model:ir.cron,cron_name:ai_knowledge.ir_cron_index_documents
+#: model:ir.cron,name:ai_knowledge.ir_cron_index_documents
+msgid "AI Knowledge: Index pending documents"
+msgstr "AI 知识库：索引待处理文档"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Could not read the docx file: %s"
+msgstr "无法读取 docx 文件：%s"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "PDF parsing requires the pypdf package on the server."
+msgstr "解析 PDF 需要在服务器安装 pypdf。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "Unsupported document type. Upload PDF, docx, txt or markdown."
+msgstr "不支持的文档类型。请上传 PDF、docx、txt 或 markdown。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "No text could be extracted."
+msgstr "未能提取到文本。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_knowledge_base.py:0
+msgid "No chunks were produced."
+msgstr "未能生成分片。"
+
+#. module: ai_knowledge
+#. odoo-python
+#: code:addons/ai_knowledge/models/ai_base_service.py:0
+msgid "Relevant knowledge:"
+msgstr "相关知识："

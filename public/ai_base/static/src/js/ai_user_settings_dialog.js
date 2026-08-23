@@ -33,6 +33,7 @@ export class AiUserSettingsDialog extends Component {
             sidebarCollapsed: false,
             gridSessionsCollapsed: false,
             gridKnowledgeCollapsed: false,
+            hasKnowledge: false,
             defaultPromptId: false,
             prompts: [],
         });
@@ -65,6 +66,7 @@ export class AiUserSettingsDialog extends Component {
                     settings.grid_sessions_collapsed),
                 gridKnowledgeCollapsed: Boolean(
                     settings.grid_knowledge_collapsed),
+                hasKnowledge: Boolean(settings.has_knowledge),
                 defaultPromptId: settings.default_prompt_id || false,
                 prompts: settings.prompts || [],
             });

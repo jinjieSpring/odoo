@@ -23,7 +23,7 @@ class TestChat(AiBaseCase):
         self.assertTrue(defaults['model_ready'])
         self.assertEqual(defaults['model_status']['code'], 'ready')
         self.assertIn('sidebar_collapsed', defaults)
-        self.assertIn('knowledge_documents', defaults)
+        self.assertIn('has_knowledge', defaults)
         self.assertEqual(defaults['agents'], [])
         settings = self.env['ai.user.settings']._get_for_user()
         self.assertEqual(settings.user_id, self.env.user)
@@ -122,21 +122,9 @@ class TestChat(AiBaseCase):
         action = session.action_open_in_discuss()
         self.assertEqual(action['tag'], 'display_notification')
 
-    def test_set_options_parses_knowledge_ids(self):
-        kb = self.env['ai.knowledge.base'].create({'name': 'KB'})
-        doc = self.env['ai.knowledge.document'].create({
-            'name': 'Doc',
-            'knowledge_id': kb.id,
-            'state': 'ready',
-        })
+    def test_set_options_saves_layout(self):
         session = self.env['ai.chat.session'].create({'name': 'Opts'})
-        session.action_set_options({
-            'knowledge_enabled': True,
-            'knowledge_document_ids': str(doc.id),
-            'sidebar_width': 400,
-        })
-        self.assertTrue(session.knowledge_enabled)
-        self.assertEqual(session.knowledge_document_ids.ids, [doc.id])
+        session.action_set_options({'sidebar_width': 400})
         settings = self.env['ai.user.settings']._get_for_user()
         self.assertEqual(settings.sidebar_width, 400)
 

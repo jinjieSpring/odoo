@@ -18,7 +18,7 @@ class AiAsyncJob(models.Model):
         ('index_document', 'Index Document'),
         ('summarize', 'Summarize'),
         ('custom', 'Custom'),
-    ], string='Type', required=True, default='index_document')
+    ], string='Type', required=True, default='custom')
     state = fields.Selection([
         ('pending', 'Pending'),
         ('running', 'Running'),
@@ -66,13 +66,6 @@ class AiAsyncJob(models.Model):
 
     def _dispatch(self):
         self.ensure_one()
-        if self.job_type in ('parse_document', 'index_document') and self.res_id:
-            document = self.env['ai.knowledge.document'].browse(self.res_id)
-            if self.job_type == 'parse_document':
-                document.action_parse()
-            else:
-                document.action_index()
-            return document.state
         if self.job_type == 'summarize':
             text = (self.payload or {}).get('text') or ''
             result = self.env['ai.base.service'].chat(

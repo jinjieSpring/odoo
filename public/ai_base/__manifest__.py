@@ -3,7 +3,7 @@
     'name': 'AI Base',
     'version': '19.0.1.0.0',
     'category': 'Productivity/AI',
-    'summary': 'Odoo 19 AI foundation: providers, prompts, RAG, tools, chat',
+    'summary': 'Odoo 19 AI foundation: providers, prompts, tools, chat',
     'description': """
 AI Base
 =======
@@ -12,15 +12,11 @@ Generic, multi-company AI foundation for Odoo 19. Business modules call this
 layer instead of talking to vendors directly.
 
 * Vendor providers (OpenAI-compatible, Qwen, Ernie, DeepSeek, Ollama, private)
-* Model pool, prompt templates with versioning, RAG knowledge bases
+* Model pool and prompt templates with versioning
 * Registered Agent tools (Python / ORM / HTTP) with ACL and audit logs
 * Chat sessions, jsonrpc + NDJSON streaming, OWL chat widget and field enhancer
 
-Requires PostgreSQL. For production RAG, install the ``vector`` extension::
-
-    CREATE EXTENSION IF NOT EXISTS vector;
-
-Install does not fail if the extension is unavailable.
+Knowledge bases and RAG live in the optional ``ai_knowledge`` module.
 """,
     'author': 'Odoo AI Capability Building Team',
     'license': 'LGPL-3',
@@ -32,7 +28,6 @@ Install does not fail if the extension is unavailable.
         'views/ai_provider_views.xml',
         'views/ai_model_views.xml',
         'views/ai_prompt_views.xml',
-        'views/ai_knowledge_views.xml',
         'views/ai_tool_views.xml',
         'views/ai_session_views.xml',
         'views/ai_request_log_views.xml',
