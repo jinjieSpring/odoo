@@ -126,6 +126,8 @@ export class AiChat extends Component {
             );
         });
         onWillUnmount(() => {
+            // Do not abort an in-flight send: closing the dialog must not
+            // stop server-side chat or a background goal run.
             this.busSubscription?.unsubscribe?.();
             this.agentRunSubscription?.unsubscribe?.();
         });

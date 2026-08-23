@@ -11,6 +11,8 @@ _ACTIVE_STATES = ('pending', 'running')
 class AiAgentRun(models.Model):
     """One background goal execution on a session.
 
+    Work continues after the chat UI is closed. The send request only
+    records the run; steps run via cron (or OCA queue_job when installed).
     A session has at most one active run; starting a new goal cancels the
     previous. Runs are not nested and do not dispatch to other agents.
     """
@@ -76,6 +78,7 @@ class AiAgentRun(models.Model):
         })
         session.write({'state': 'open'})
         run._notify()
+        run._schedule_step()
         return self.env['ai.chat'].result(session)
 
     def action_cancel(self):
@@ -103,9 +106,40 @@ class AiAgentRun(models.Model):
             'agent_id': self.agent_id.id,
         }
 
+    def _queue_job_available(self):
+        return 'queue.job' in self.env
+
+    def _should_delay(self):
+        if self.env.context.get('queue_job__no_delay'):
+            return False
+        return self._queue_job_available()
+
+    def _cron(self):
+        return self.env.ref(
+            'ai_agent.ir_cron_agent_runs', raise_if_not_found=False)
+
+    def _schedule_step(self):
+        """Continue without keeping the chat request or UI open."""
+        runs = self.filtered(lambda rec: rec.state in _ACTIVE_STATES)
+        if not runs:
+            return
+        if runs._should_delay():
+            for run in runs:
+                run.with_delay(
+                    description=_('AI Agent run: %s') % run.display_name,
+                    identity_key='ai_agent_run_%s' % run.id,
+                )._step()
+            return
+        cron = runs._cron()
+        if cron:
+            cron.sudo()._trigger()
+
     def _step(self):
         self.ensure_one()
         if self.state not in _ACTIVE_STATES:
+            return
+        locked = self.try_lock_for_update(allow_referencing=True)
+        if not locked:
             return
         agent = self.agent_id
         session = self.session_id
@@ -164,12 +198,17 @@ class AiAgentRun(models.Model):
                     user=self.user_id,
                     company=self.company_id or self.env.company)
         self._notify()
+        if self.state in _ACTIVE_STATES:
+            self._schedule_step()
 
     @api.model
     def _cron_step_runs(self, batch_size=5):
         runs = self.search(
             [('state', 'in', list(_ACTIVE_STATES))],
             order='id', limit=batch_size)
+        if runs._should_delay():
+            runs._schedule_step()
+            return
         for run in runs:
             try:
                 run._step()

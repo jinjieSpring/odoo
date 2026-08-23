@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 _MAX_MEMORY_CHARS = 800
 
@@ -39,7 +39,7 @@ class AiAgentMemory(models.Model):
         memories = self._search_for(agent, user=user, company=company)
         if not memories:
             return ''
-        lines = [_('Agent memory (most recent last):')]
+        lines = [self.env._('Agent memory (most recent last):')]
         for memory in reversed(memories):
             text = (memory.content or '').strip()
             if text:

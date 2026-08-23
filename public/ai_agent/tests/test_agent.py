@@ -169,3 +169,38 @@ class TestAgent(AiBaseCase):
         self.assertFalse(any(
             'should not run' in (msg.content or '')
             for msg in session2.message_ids))
+
+    def test_goal_schedules_step_without_running_in_send(self):
+        session = self.env['ai.chat.session'].create({
+            'name': 'Goal',
+            'agent_id': self.goal_agent.id,
+        })
+        with patch.object(
+                type(self.env['ai.agent.run']), '_schedule_step') as schedule:
+            self.env['ai.chat'].send_message(session, 'close the books')
+            self.assertTrue(schedule.called)
+        run = self.env['ai.agent.run'].search(
+            [('session_id', '=', session.id)], limit=1)
+        self.assertEqual(run.state, 'pending')
+        self.assertFalse(any(
+            'books closed' in (msg.content or '')
+            for msg in session.message_ids if msg.role == 'assistant'))
+
+    def test_goal_enqueues_when_queue_job_is_available(self):
+        session = self.env['ai.chat.session'].create({
+            'name': 'Goal',
+            'agent_id': self.goal_agent.id,
+        })
+        delayed = []
+
+        class Delayed:
+            def _step(self):
+                delayed.append(True)
+
+        Run = self.env['ai.agent.run']
+        with patch.object(type(Run), '_should_delay', return_value=True), patch.object(
+                type(Run), 'with_delay', return_value=Delayed(), create=True):
+            self.env['ai.chat'].send_message(session, 'close the books')
+        self.assertEqual(delayed, [True])
+        run = Run.search([('session_id', '=', session.id)], limit=1)
+        self.assertEqual(run.state, 'pending')

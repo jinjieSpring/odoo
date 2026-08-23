@@ -68,6 +68,12 @@ msgid "Accepted the goal. I will continue in the background."
 msgstr "已接受该目标，我将在后台继续执行。"
 
 #. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "AI Agent run: %s"
+msgstr "AI 智能体运行：%s"
+
+#. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__active
 msgid "Active"
 msgstr "启用"
