@@ -2003,3 +2003,37 @@ msgstr "取消智能体运行失败：%s"
 #: code:addons/ai_base/static/src/js/ai_chat.js:0
 msgid "Cancelled"
 msgstr "已取消"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed to record feedback: %s"
+msgstr "记录反馈失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Feedback recorded. Thank you!"
+msgstr "已记录反馈，谢谢！"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__feedback
+msgid "Feedback"
+msgstr "反馈"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__feedback__up
+msgid "Thumbs Up"
+msgstr "点赞"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__feedback__down
+msgid "Thumbs Down"
+msgstr "点踩"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_chat.py:0
+msgid "Feedback must be thumbs up or thumbs down."
+msgstr "反馈只能是点赞或点踩。"
+

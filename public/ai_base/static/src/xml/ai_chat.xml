@@ -263,14 +263,16 @@
                                             <button t-if="msg.role === 'assistant' and !msg.pending and msg.id"
                                                     type="button" class="btn btn-link p-0"
                                                     title="Thumbs Up"
+                                                    t-att-class="{'text-success': msg.feedback === 'up'}"
                                                     t-on-click.stop="() => this.sendFeedback(msg, 'up')">
-                                                <i class="fa fa-thumbs-o-up"/>
+                                                <i t-att-class="msg.feedback === 'up' ? 'fa fa-thumbs-up' : 'fa fa-thumbs-o-up'"/>
                                             </button>
                                             <button t-if="msg.role === 'assistant' and !msg.pending and msg.id"
                                                     type="button" class="btn btn-link p-0"
                                                     title="Thumbs Down"
+                                                    t-att-class="{'text-danger': msg.feedback === 'down'}"
                                                     t-on-click.stop="() => this.sendFeedback(msg, 'down')">
-                                                <i class="fa fa-thumbs-o-down"/>
+                                                <i t-att-class="msg.feedback === 'down' ? 'fa fa-thumbs-down' : 'fa fa-thumbs-o-down'"/>
                                             </button>
                                         </div>
                                     </div>

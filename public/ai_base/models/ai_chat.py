@@ -210,6 +210,7 @@ class AiChat(models.AbstractModel):
                 'create_date': message.create_date,
                 'tool_cards': message.tool_cards or [],
                 'rag_sources': message.rag_sources or [],
+                'feedback': message.feedback or False,
             })
         return result
 
@@ -339,6 +340,14 @@ class AiChat(models.AbstractModel):
         if message.session_id != session or message.role != 'assistant':
             raise UserError(_('Only assistant messages of this session can be used.'))
         return message
+
+    def submit_feedback(self, session, message_id, rating):
+        session.ensure_one()
+        if rating not in ('up', 'down'):
+            raise UserError(_('Feedback must be thumbs up or thumbs down.'))
+        message = self._assistant_message(session, message_id)
+        message.write({'feedback': rating})
+        return True
 
     def send_as_message(self, session, message_id):
         session.ensure_one()

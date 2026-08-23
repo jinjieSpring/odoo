@@ -266,6 +266,9 @@ class AiChatSession(models.Model):
     def action_open_in_discuss(self):
         return self.env['ai.chat'].open_in_discuss(self)
 
+    def action_submit_feedback(self, message_id, rating):
+        return self.env['ai.chat'].submit_feedback(self, message_id, rating)
+
     def action_attach_context(self, model_name, res_id):
         return self.env['ai.chat'].attach_context(self, model_name, res_id)
 
@@ -322,6 +325,10 @@ class AiChatMessage(models.Model):
         compute='_compute_previews', string='Reasoning')
     tool_cards = fields.Json(string='Tool Cards', default=list)
     rag_sources = fields.Json(string='RAG Sources', default=list)
+    feedback = fields.Selection([
+        ('up', 'Thumbs Up'),
+        ('down', 'Thumbs Down'),
+    ], string='Feedback')
     prompt_tokens = fields.Integer(string='Input Tokens', default=0)
     completion_tokens = fields.Integer(string='Output Tokens', default=0)
     total_tokens = fields.Integer(string='Total Tokens', default=0)

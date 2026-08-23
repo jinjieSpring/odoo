@@ -94,7 +94,8 @@ async function mountChat() {
         currentController: null,
     }));
     mockService("bus_service", () => ({
-        subscribe: () => ({ unsubscribe: () => {} }),
+        subscribe: () => {},
+        unsubscribe: () => {},
     }));
     mockService("dialog", () => ({
         add: (...args) => dialogs.push(args),
@@ -218,6 +219,16 @@ test("regenerate and resend call the expected model actions", async () => {
     ).toBe(true);
     expect(
         ormCalls.some(([, method]) => method === "action_edit_and_resend")
+    ).toBe(true);
+});
+
+test("thumbs feedback calls the session action", async () => {
+    await mountChat();
+    await click(
+        ".o_ai_chat_msg.o_ai_assistant .o_ai_chat_msg_actions button[title='Thumbs Up']"
+    );
+    expect(
+        ormCalls.some(([, method]) => method === "action_submit_feedback")
     ).toBe(true);
 });
 

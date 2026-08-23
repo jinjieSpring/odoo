@@ -141,6 +141,19 @@ class TestChat(AiBaseCase):
         self.assertIn('capabilities', payload['session'])
         self.assertEqual(payload['session']['name'], 'Payload')
         self.assertEqual(payload['messages'][0]['content'], 'hi')
+        self.assertIn('feedback', payload['messages'][0])
+
+    def test_submit_feedback_on_assistant_message(self):
+        session = self.env['ai.chat.session'].create({'name': 'Rate'})
+        assistant = self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'assistant',
+            'content': 'answer',
+        })
+        session.action_submit_feedback(assistant.id, 'up')
+        self.assertEqual(assistant.feedback, 'up')
+        session.action_submit_feedback(assistant.id, 'down')
+        self.assertEqual(assistant.feedback, 'down')
 
     def test_settings_are_per_user(self):
         other = new_test_user(

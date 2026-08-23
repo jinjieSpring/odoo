@@ -5,6 +5,7 @@ import {
     onMounted,
     onWillStart,
     onWillUnmount,
+    status,
     useEffect,
     useRef,
     useState,
@@ -116,20 +117,22 @@ export class AiChat extends Component {
             // Re-detect the record context after the DOM/router are ready
             // so the context strip auto-loads on dialog open.
             this.attachAutoContext();
-            this.busSubscription = this.bus.subscribe(
-                "ai_base/nlview",
-                (payload) => this.onNlviewBus(payload)
-            );
-            this.agentRunSubscription = this.bus.subscribe(
-                "ai_agent/run",
-                (payload) => this.onAgentRunBus(payload)
-            );
+            this._onNlviewBus = (payload) => this.onNlviewBus(payload);
+            this._onAgentRunBus = (payload) => this.onAgentRunBus(payload);
+            this.bus.subscribe("ai_base/nlview", this._onNlviewBus);
+            this.bus.subscribe("ai_agent/run", this._onAgentRunBus);
         });
         onWillUnmount(() => {
             // Do not abort an in-flight send: closing the dialog must not
-            // stop server-side chat or a background goal run.
-            this.busSubscription?.unsubscribe?.();
-            this.agentRunSubscription?.unsubscribe?.();
+            // stop server-side chat or a background goal run. Unsubscribe
+            // with the same callback refs — bus.subscribe does not return
+            // an unsubscribe handle.
+            if (this._onNlviewBus) {
+                this.bus.unsubscribe("ai_base/nlview", this._onNlviewBus);
+            }
+            if (this._onAgentRunBus) {
+                this.bus.unsubscribe("ai_agent/run", this._onAgentRunBus);
+            }
         });
         useEffect(
             () => this.scrollToBottom(),
@@ -617,6 +620,9 @@ export class AiChat extends Component {
             "action_get_session",
             [[sessionId]]
         );
+        if (status(this) === "destroyed") {
+            return;
+        }
         this.state.messages = data.messages || [];
         this.state.sessionStats = {
             ...EMPTY_SESSION_STATS,
@@ -948,12 +954,18 @@ export class AiChat extends Component {
                 "action_send_message",
                 [[this.state.currentId], content, {}]
             );
+            if (status(this) === "destroyed") {
+                return;
+            }
             this.applyResult(result);
             await this.loadSessions();
             if (result.action) {
                 this.actionService.doAction(result.action);
             }
         } catch (error) {
+            if (status(this) === "destroyed") {
+                return;
+            }
             console.error("ai_base: send failed", error);
             this.notification.add(
                 _t("Failed to send the message: %s", error.message || error),
@@ -961,8 +973,10 @@ export class AiChat extends Component {
             );
             this.setTask(_t("Failed"), false, true);
         } finally {
-            this.state.sending = false;
-            this.restoreTaskAfterSend();
+            if (status(this) !== "destroyed") {
+                this.state.sending = false;
+                this.restoreTaskAfterSend();
+            }
         }
     }
 
@@ -1004,6 +1018,9 @@ export class AiChat extends Component {
                 const { done, value } = await reader.read();
                 if (done) {
                     break;
+                }
+                if (status(this) === "destroyed") {
+                    return;
                 }
                 buffer += decoder.decode(value, { stream: true });
                 const lines = buffer.split("\n");
@@ -1083,6 +1100,9 @@ export class AiChat extends Component {
                 "action_get_session",
                 [[this.state.currentId]]
             );
+            if (status(this) === "destroyed") {
+                return;
+            }
             this.state.messages = data.messages || [];
             this.state.sessionStats = {
                 ...EMPTY_SESSION_STATS,
@@ -1091,6 +1111,9 @@ export class AiChat extends Component {
             this.applyAgentSession(data.session);
             await this.loadSessions();
         } catch (error) {
+            if (status(this) === "destroyed") {
+                return;
+            }
             if (error.name === "AbortError") {
                 // User stopped the generation: drop the partial bubble and
                 // reload the persisted messages (the stream controller only
@@ -1100,6 +1123,9 @@ export class AiChat extends Component {
                     "action_get_session",
                     [[this.state.currentId]]
                 );
+                if (status(this) === "destroyed") {
+                    return;
+                }
                 this.state.messages = data.messages || [];
                 this.state.sessionStats = {
                     ...EMPTY_SESSION_STATS,
@@ -1117,10 +1143,12 @@ export class AiChat extends Component {
             );
             this.setTask(_t("Failed"), false, true);
         } finally {
-            this.state.sending = false;
             this._abortController = null;
             this._stopRequested = false;
-            this.restoreTaskAfterSend();
+            if (status(this) !== "destroyed") {
+                this.state.sending = false;
+                this.restoreTaskAfterSend();
+            }
         }
     }
 
@@ -1203,6 +1231,9 @@ export class AiChat extends Component {
     }
 
     onAgentRunBus(payload) {
+        if (status(this) === "destroyed") {
+            return;
+        }
         if (payload.session_id && payload.session_id !== this.state.currentId) {
             return;
         }
@@ -1364,30 +1395,28 @@ export class AiChat extends Component {
     }
 
     async sendFeedback(msg, rating) {
-        if (!msg || !msg.id) {
+        if (!msg || !msg.id || this.state.sending) {
             return;
         }
         try {
             await this.orm.call(
-                "ai.governance.feedback",
-                "action_submit",
-                [msg.id, rating, ""]
+                "ai.chat.session",
+                "action_submit_feedback",
+                [[this.state.currentId], msg.id, rating]
+            );
+            this.state.messages = this.state.messages.map((item) =>
+                item.id === msg.id ? { ...item, feedback: rating } : item
             );
             this.notification.add(
                 _t("Feedback recorded. Thank you!"),
                 { type: "success" }
             );
         } catch (error) {
-            // Governance module is optional: silence the call when the
-            // service is not installed.
-            if (
-                error &&
-                !String(error.message || error).includes(
-                    "Object doesn't exist"
-                )
-            ) {
-                console.error("ai_base: feedback failed", error);
-            }
+            console.error("ai_base: feedback failed", error);
+            this.notification.add(
+                _t("Failed to record feedback: %s", error.message || error),
+                { type: "danger" }
+            );
         }
     }
 
@@ -1405,6 +1434,9 @@ export class AiChat extends Component {
     }
 
     onNlviewBus(payload) {
+        if (status(this) === "destroyed") {
+            return;
+        }
         // Session-tagged bus notification: never apply a view requested by
         // another chat session (multi-session anti-crosstalk).
         if (payload.session_id && payload.session_id !== this.state.currentId) {
