@@ -28,7 +28,6 @@ class AiChatSession(models.Model):
         'ai.chat.message', 'session_id', string='Messages')
     message_count = fields.Integer(
         compute='_compute_message_count', string='Message Count')
-    streaming = fields.Boolean(string='Streaming', default=True)
     reasoning_strength = fields.Selection([
         ('none', 'Off'),
         ('low', 'Low'),
@@ -139,8 +138,6 @@ class AiChatSession(models.Model):
                 if model:
                     vals['model_id'] = model.id
                     vals['provider_id'] = model.provider_id.id
-            if 'streaming' not in vals:
-                vals['streaming'] = settings.streaming
             if 'reasoning_strength' not in vals:
                 vals['reasoning_strength'] = settings.reasoning_strength
             if 'attach_context' not in vals:
@@ -208,7 +205,6 @@ class AiChatSession(models.Model):
     def _call_options(self, extra=None):
         self.ensure_one()
         options = {
-            'streaming': self.streaming,
             'reasoning_strength': self.reasoning_strength,
         }
         if extra:

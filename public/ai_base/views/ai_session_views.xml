@@ -28,7 +28,6 @@
                         </group>
                         <group>
                             <field name="attach_context"/>
-                            <field name="streaming"/>
                             <field name="compress_strategy"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>

@@ -65,13 +65,6 @@
                                 </select>
                             </div>
                             <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
-                                <input type="checkbox"
-                                       t-att-checked="state.streaming"
-                                       t-att-disabled="!state.capabilities.streaming"
-                                       t-on-change="toggleStreaming"/>
-                                <span class="ms-1">Streaming</span>
-                            </label>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
                                 <input type="checkbox" t-att-checked="state.attachContext"
                                        t-on-change="toggleAttachContext"/>
                                 <span class="ms-1">Attach current record context by default</span>

@@ -84,7 +84,6 @@ export class AiChat extends Component {
                 streaming: true,
             },
             reasoningStrength: "none",
-            streaming: true,
             attachContext: true,
             promptId: 0,
             prompts: [],
@@ -252,16 +251,7 @@ export class AiChat extends Component {
             reasoning: this.state.capabilities.reasoning
                 ? ""
                 : _t("Thinking strength is not available for the current model."),
-            streaming: this.state.capabilities.streaming
-                ? ""
-                : _t("Streaming is not available for the current model."),
         };
-    }
-
-    get streamingTitle() {
-        return this.state.capabilities.streaming
-            ? _t("Streaming")
-            : this.capabilityReasons.streaming;
     }
 
     get filteredCommands() {
@@ -537,7 +527,6 @@ export class AiChat extends Component {
                 (defaults.model_info && defaults.model_info.capabilities) ||
                 NO_CAPABILITIES,
             reasoningStrength: defaults.reasoning_strength || "none",
-            streaming: Boolean(defaults.streaming),
             attachContext: Boolean(defaults.attach_context),
             sidebarCollapsed: Boolean(defaults.sidebar_collapsed),
             grids: {
@@ -636,7 +625,6 @@ export class AiChat extends Component {
         this.updateModelBadge();
         this.state.reasoningStrength =
             data.session.reasoning_strength || "none";
-        this.state.streaming = Boolean(data.session.streaming);
         this.state.knowledgeEnabled = Boolean(
             data.session.knowledge_enabled
         );
@@ -936,7 +924,7 @@ export class AiChat extends Component {
         }
         this.optimisticUserMessage(content);
         this.scrollToBottom();
-        if (this.state.streaming && this.state.capabilities.streaming) {
+        if (this.state.capabilities.streaming) {
             await this.sendStreaming(content);
         } else {
             await this.sendSync(content);
@@ -1161,7 +1149,6 @@ export class AiChat extends Component {
     async saveOptions() {
         const options = {
             reasoning_strength: this.state.reasoningStrength,
-            streaming: this.state.streaming,
             attach_context: this.state.attachContext,
             prompt_id: this.state.promptId || false,
             knowledge_enabled: this.state.knowledgeEnabled,
@@ -1200,14 +1187,6 @@ export class AiChat extends Component {
             selection.splice(index, 1);
         }
         this.state.knowledgeSelection = selection;
-        this.saveOptions();
-    }
-
-    toggleStreaming() {
-        if (!this.state.capabilities.streaming) {
-            return;
-        }
-        this.state.streaming = !this.state.streaming;
         this.saveOptions();
     }
 
@@ -1644,7 +1623,6 @@ export class AiChat extends Component {
                 );
                 Object.assign(this.state, {
                     reasoningStrength: defaults.reasoning_strength || "none",
-                    streaming: Boolean(defaults.streaming),
                     attachContext: Boolean(defaults.attach_context),
                     promptId: defaults.default_prompt_id || 0,
                     prompts: defaults.prompts || [],

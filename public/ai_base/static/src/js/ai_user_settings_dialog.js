@@ -27,7 +27,6 @@ export class AiUserSettingsDialog extends Component {
             language: "",
             languages: [],
             reasoningStrength: "none",
-            streaming: true,
             attachContext: true,
             sidebarCollapsed: false,
             gridSessionsCollapsed: false,
@@ -56,7 +55,6 @@ export class AiUserSettingsDialog extends Component {
                 language: settings.language || "",
                 languages: settings.languages || [],
                 reasoningStrength: settings.reasoning_strength || "none",
-                streaming: Boolean(settings.streaming),
                 attachContext: Boolean(settings.attach_context),
                 sidebarCollapsed: Boolean(settings.sidebar_collapsed),
                 gridSessionsCollapsed: Boolean(
@@ -83,10 +81,6 @@ export class AiUserSettingsDialog extends Component {
 
     changeReasoningStrength(ev) {
         this.state.reasoningStrength = ev.target.value;
-    }
-
-    toggleStreaming(ev) {
-        this.state.streaming = ev.target.checked;
     }
 
     toggleAttachContext(ev) {
@@ -177,7 +171,6 @@ export class AiUserSettingsDialog extends Component {
                     language_mode: this.state.languageMode,
                     language: this.state.language,
                     reasoning_strength: this.state.reasoningStrength,
-                    streaming: this.state.streaming,
                     attach_context: this.state.attachContext,
                     sidebar_collapsed: this.state.sidebarCollapsed,
                     grid_sessions_collapsed: this.state.gridSessionsCollapsed,

@@ -24,7 +24,6 @@ const DEFAULTS = {
         },
     },
     reasoning_strength: "none",
-    streaming: true,
     attach_context: true,
     sidebar_collapsed: false,
     grid_sessions_collapsed: false,
