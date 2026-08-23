@@ -22,12 +22,11 @@ export class AiUserSettingsDialog extends Component {
         this.notification = useService("notification");
         this.state = useState({
             loading: true,
-            capabilities: { reasoning: false, web_search: false, streaming: false },
+            capabilities: { reasoning: false, streaming: false },
             languageMode: "auto",
             language: "",
             languages: [],
             reasoningStrength: "none",
-            webSearch: false,
             streaming: true,
             attachContext: true,
             sidebarCollapsed: false,
@@ -51,14 +50,12 @@ export class AiUserSettingsDialog extends Component {
                 loading: false,
                 capabilities: settings.capabilities || {
                     reasoning: false,
-                    web_search: false,
                     streaming: false,
                 },
                 languageMode: settings.language_mode || "auto",
                 language: settings.language || "",
                 languages: settings.languages || [],
                 reasoningStrength: settings.reasoning_strength || "none",
-                webSearch: Boolean(settings.web_search_enabled),
                 streaming: Boolean(settings.streaming),
                 attachContext: Boolean(settings.attach_context),
                 sidebarCollapsed: Boolean(settings.sidebar_collapsed),
@@ -86,10 +83,6 @@ export class AiUserSettingsDialog extends Component {
 
     changeReasoningStrength(ev) {
         this.state.reasoningStrength = ev.target.value;
-    }
-
-    toggleWebSearch(ev) {
-        this.state.webSearch = ev.target.checked;
     }
 
     toggleStreaming(ev) {
@@ -184,7 +177,6 @@ export class AiUserSettingsDialog extends Component {
                     language_mode: this.state.languageMode,
                     language: this.state.language,
                     reasoning_strength: this.state.reasoningStrength,
-                    web_search_enabled: this.state.webSearch,
                     streaming: this.state.streaming,
                     attach_context: this.state.attachContext,
                     sidebar_collapsed: this.state.sidebarCollapsed,

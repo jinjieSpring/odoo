@@ -344,15 +344,6 @@
                                     <option value="high">Thinking: High</option>
                                 </select>
                             </span>
-                            <span class="d-inline-flex" t-att-title="webSearchTitle">
-                                <button type="button"
-                                        class="o_ai_chat_ctl o_ai_status_btn btn btn-link p-1"
-                                        t-att-class="{'o_ai_ctl_active': state.webSearchEnabled}"
-                                        t-att-disabled="!state.capabilities.web_search"
-                                        t-on-click="toggleWebSearch">
-                                    <i class="fa fa-globe"/>
-                                </button>
-                            </span>
                             <span class="d-inline-flex" t-att-title="streamingTitle">
                                 <button type="button"
                                         class="o_ai_chat_ctl o_ai_status_btn btn btn-link p-1"

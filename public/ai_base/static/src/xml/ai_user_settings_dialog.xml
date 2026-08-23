@@ -66,13 +66,6 @@
                             </div>
                             <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
                                 <input type="checkbox"
-                                       t-att-checked="state.webSearch"
-                                       t-att-disabled="!state.capabilities.web_search"
-                                       t-on-change="toggleWebSearch"/>
-                                <span class="ms-1">Web Search</span>
-                            </label>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
-                                <input type="checkbox"
                                        t-att-checked="state.streaming"
                                        t-att-disabled="!state.capabilities.streaming"
                                        t-on-change="toggleStreaming"/>

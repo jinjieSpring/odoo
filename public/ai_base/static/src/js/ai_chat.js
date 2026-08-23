@@ -30,7 +30,6 @@ const EMPTY_SESSION_STATS = {
 
 const NO_CAPABILITIES = {
     reasoning: false,
-    web_search: false,
     streaming: false,
 };
 
@@ -82,11 +81,9 @@ export class AiChat extends Component {
             modelInfo: {},
             capabilities: {
                 reasoning: true,
-                web_search: true,
                 streaming: true,
             },
             reasoningStrength: "none",
-            webSearchEnabled: false,
             streaming: true,
             attachContext: true,
             promptId: 0,
@@ -255,19 +252,10 @@ export class AiChat extends Component {
             reasoning: this.state.capabilities.reasoning
                 ? ""
                 : _t("Thinking strength is not available for the current model."),
-            web_search: this.state.capabilities.web_search
-                ? ""
-                : _t("Web search is not available for the current model."),
             streaming: this.state.capabilities.streaming
                 ? ""
                 : _t("Streaming is not available for the current model."),
         };
-    }
-
-    get webSearchTitle() {
-        return this.state.capabilities.web_search
-            ? _t("Web Search")
-            : this.capabilityReasons.web_search;
     }
 
     get streamingTitle() {
@@ -549,7 +537,6 @@ export class AiChat extends Component {
                 (defaults.model_info && defaults.model_info.capabilities) ||
                 NO_CAPABILITIES,
             reasoningStrength: defaults.reasoning_strength || "none",
-            webSearchEnabled: Boolean(defaults.web_search_enabled),
             streaming: Boolean(defaults.streaming),
             attachContext: Boolean(defaults.attach_context),
             sidebarCollapsed: Boolean(defaults.sidebar_collapsed),
@@ -649,9 +636,6 @@ export class AiChat extends Component {
         this.updateModelBadge();
         this.state.reasoningStrength =
             data.session.reasoning_strength || "none";
-        this.state.webSearchEnabled = Boolean(
-            data.session.web_search_enabled
-        );
         this.state.streaming = Boolean(data.session.streaming);
         this.state.knowledgeEnabled = Boolean(
             data.session.knowledge_enabled
@@ -1014,7 +998,6 @@ export class AiChat extends Component {
                     content,
                     options: {
                         reasoning_strength: this.state.reasoningStrength,
-                        web_search: this.state.webSearchEnabled,
                     },
                 }),
             });
@@ -1178,7 +1161,6 @@ export class AiChat extends Component {
     async saveOptions() {
         const options = {
             reasoning_strength: this.state.reasoningStrength,
-            web_search_enabled: this.state.webSearchEnabled,
             streaming: this.state.streaming,
             attach_context: this.state.attachContext,
             prompt_id: this.state.promptId || false,
@@ -1218,14 +1200,6 @@ export class AiChat extends Component {
             selection.splice(index, 1);
         }
         this.state.knowledgeSelection = selection;
-        this.saveOptions();
-    }
-
-    toggleWebSearch() {
-        if (!this.state.capabilities.web_search) {
-            return;
-        }
-        this.state.webSearchEnabled = !this.state.webSearchEnabled;
         this.saveOptions();
     }
 
@@ -1670,7 +1644,6 @@ export class AiChat extends Component {
                 );
                 Object.assign(this.state, {
                     reasoningStrength: defaults.reasoning_strength || "none",
-                    webSearchEnabled: Boolean(defaults.web_search_enabled),
                     streaming: Boolean(defaults.streaming),
                     attachContext: Boolean(defaults.attach_context),
                     promptId: defaults.default_prompt_id || 0,

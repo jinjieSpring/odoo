@@ -29,12 +29,11 @@ _LANGUAGE_NAMES = {
 _SESSION_OPTION_FIELDS = (
     'streaming',
     'model_id', 'prompt_id', 'compress_strategy',
-    'reasoning_strength', 'web_search_enabled', 'attach_context',
+    'reasoning_strength', 'attach_context',
 )
 
 _USER_OPTION_FIELDS = {
     'reasoning_strength': 'reasoning_strength',
-    'web_search_enabled': 'web_search_enabled',
     'streaming': 'streaming',
     'attach_context': 'attach_context',
     'prompt_id': 'default_prompt_id',
@@ -68,8 +67,6 @@ class AiUserSettings(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ], string='Thinking Strength', default='none')
-    web_search_enabled = fields.Boolean(
-        string='Enable Web Search by Default', default=False)
     streaming = fields.Boolean(string='Streaming by Default', default=True)
     default_prompt_id = fields.Many2one(
         'ai.prompt.template', string='Default Prompt', ondelete='set null')
@@ -108,7 +105,6 @@ class AiChat(models.AbstractModel):
     def empty_capabilities(self):
         return {
             'reasoning': False,
-            'web_search': False,
             'streaming': False,
         }
 
@@ -176,7 +172,6 @@ class AiChat(models.AbstractModel):
                 'capabilities': model._allowed_options(),
             } if model else {},
             'reasoning_strength': settings.reasoning_strength,
-            'web_search_enabled': settings.web_search_enabled,
             'streaming': settings.streaming,
             'attach_context': settings.attach_context,
             'sidebar_collapsed': settings.sidebar_collapsed,
@@ -209,7 +204,6 @@ class AiChat(models.AbstractModel):
                     _LANGUAGE_NAMES.items(), key=lambda item: item[1])
             ],
             'reasoning_strength': settings.reasoning_strength,
-            'web_search_enabled': settings.web_search_enabled,
             'streaming': settings.streaming,
             'attach_context': settings.attach_context,
             'sidebar_collapsed': settings.sidebar_collapsed,
@@ -238,7 +232,7 @@ class AiChat(models.AbstractModel):
             vals['language'] = False
         if options.get('reasoning_strength') in ('none', 'low', 'medium', 'high'):
             vals['reasoning_strength'] = options['reasoning_strength']
-        for field in ('web_search_enabled', 'streaming', 'attach_context'):
+        for field in ('streaming', 'attach_context'):
             if field in options:
                 vals[field] = bool(options[field])
         for field in _LAYOUT_BOOL_FIELDS:
@@ -290,7 +284,6 @@ class AiChat(models.AbstractModel):
                 'output_tokens': session.output_tokens,
                 'message_count': session.message_count,
                 'reasoning_strength': session.reasoning_strength,
-                'web_search_enabled': session.web_search_enabled,
                 'streaming': session.streaming,
                 'prompt_id': session.prompt_id.id or False,
                 'attach_context': session.attach_context,

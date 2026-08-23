@@ -35,7 +35,6 @@ class AiChatSession(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ], string='Thinking Strength', default='none')
-    web_search_enabled = fields.Boolean(string='Web Search', default=False)
     attach_context = fields.Boolean(string='Attach Record Context', default=True)
     context_model = fields.Char(string='Context Model')
     context_res_id = fields.Integer(string='Context Record')
@@ -144,8 +143,6 @@ class AiChatSession(models.Model):
                 vals['streaming'] = settings.streaming
             if 'reasoning_strength' not in vals:
                 vals['reasoning_strength'] = settings.reasoning_strength
-            if 'web_search_enabled' not in vals:
-                vals['web_search_enabled'] = settings.web_search_enabled
             if 'attach_context' not in vals:
                 vals['attach_context'] = settings.attach_context
             if 'prompt_id' not in vals and settings.default_prompt_id:
@@ -213,7 +210,6 @@ class AiChatSession(models.Model):
         options = {
             'streaming': self.streaming,
             'reasoning_strength': self.reasoning_strength,
-            'web_search': self.web_search_enabled,
         }
         if extra:
             options.update(extra)

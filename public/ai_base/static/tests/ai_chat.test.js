@@ -20,12 +20,10 @@ const DEFAULTS = {
     model_info: {
         capabilities: {
             reasoning: true,
-            web_search: true,
             streaming: true,
         },
     },
     reasoning_strength: "none",
-    web_search_enabled: false,
     streaming: true,
     attach_context: true,
     sidebar_collapsed: false,

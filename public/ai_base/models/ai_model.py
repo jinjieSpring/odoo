@@ -159,7 +159,6 @@ class AiModel(models.Model):
         return {
             'streaming': bool(self.supports_streaming),
             'reasoning': False,
-            'web_search': False,
         }
 
     def _is_usable(self):
