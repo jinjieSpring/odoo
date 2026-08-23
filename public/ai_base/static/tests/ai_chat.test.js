@@ -19,11 +19,9 @@ const DEFAULTS = {
     model_status: { code: "ready", title: "Model ready", message: "ok" },
     model_info: {
         capabilities: {
-            reasoning: true,
             streaming: true,
         },
     },
-    reasoning_strength: "none",
     attach_context: true,
     sidebar_collapsed: false,
     grid_sessions_collapsed: false,

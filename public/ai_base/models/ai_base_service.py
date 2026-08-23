@@ -421,9 +421,22 @@ class AiBaseService(models.AbstractModel):
                     if snapshot:
                         parts.append(_('Current business record:\n%s') % snapshot)
         parts.extend(self._knowledge_system_parts(session, query))
-        if not parts:
-            return []
+        parts.append(self._user_language_instruction())
         return [{'role': 'system', 'content': '\n\n'.join(parts)}]
+
+    def _user_language_name(self):
+        """Display name of the current user's Odoo interface language."""
+        code = self.env.lang or 'en_US'
+        data = self.env['res.lang']._get_data(code=code)
+        return data.name or code
+
+    def _user_language_instruction(self):
+        name = self._user_language_name()
+        return (
+            'Always reply in %s, matching the current user\'s Odoo interface '
+            'language. Use that language for the entire answer unless the user '
+            'explicitly asks otherwise.'
+        ) % name
 
     def _record_snapshot(self, record, max_fields=40):
         record.ensure_one()

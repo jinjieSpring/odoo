@@ -56,6 +56,19 @@ class TestService(AiBaseCase):
         self.assertTrue(any(
             'Be brief' in (msg.get('content') or '')
             for msg in captured['messages'] if msg['role'] == 'system'))
+        language = self.env['ai.base.service']._user_language_name()
+        self.assertTrue(any(
+            language in (msg.get('content') or '')
+            for msg in captured['messages'] if msg['role'] == 'system'))
+
+    def test_system_messages_follow_odoo_language(self):
+        service = self.env['ai.base.service'].with_context(lang='en_US')
+        name = service._user_language_name()
+        self.assertTrue(name)
+        messages = service._system_messages(options={'system_prompt': 'Be brief'})
+        self.assertEqual(len(messages), 1)
+        self.assertIn('Be brief', messages[0]['content'])
+        self.assertIn(name, messages[0]['content'])
 
     def test_failover_uses_next_model(self):
         from odoo.addons.ai_base.tools import AiError

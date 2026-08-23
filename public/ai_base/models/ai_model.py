@@ -158,7 +158,6 @@ class AiModel(models.Model):
         self.ensure_one()
         return {
             'streaming': bool(self.supports_streaming),
-            'reasoning': False,
         }
 
     def _is_usable(self):

@@ -22,11 +22,7 @@ export class AiUserSettingsDialog extends Component {
         this.notification = useService("notification");
         this.state = useState({
             loading: true,
-            capabilities: { reasoning: false, streaming: false },
-            languageMode: "auto",
-            language: "",
-            languages: [],
-            reasoningStrength: "none",
+            capabilities: { streaming: false },
             attachContext: true,
             sidebarCollapsed: false,
             gridSessionsCollapsed: false,
@@ -48,13 +44,8 @@ export class AiUserSettingsDialog extends Component {
             Object.assign(this.state, {
                 loading: false,
                 capabilities: settings.capabilities || {
-                    reasoning: false,
                     streaming: false,
                 },
-                languageMode: settings.language_mode || "auto",
-                language: settings.language || "",
-                languages: settings.languages || [],
-                reasoningStrength: settings.reasoning_strength || "none",
                 attachContext: Boolean(settings.attach_context),
                 sidebarCollapsed: Boolean(settings.sidebar_collapsed),
                 gridSessionsCollapsed: Boolean(
@@ -73,14 +64,6 @@ export class AiUserSettingsDialog extends Component {
                 { type: "danger" }
             );
         }
-    }
-
-    setLanguageMode(mode) {
-        this.state.languageMode = mode;
-    }
-
-    changeReasoningStrength(ev) {
-        this.state.reasoningStrength = ev.target.value;
     }
 
     toggleAttachContext(ev) {
@@ -158,19 +141,10 @@ export class AiUserSettingsDialog extends Component {
         if (this.isSaving || this.state.loading) {
             return;
         }
-        if (this.state.languageMode === "specific" && !this.state.language) {
-            this.notification.add(_t("Please select a language."), {
-                type: "warning",
-            });
-            return;
-        }
         this.isSaving = true;
         try {
             await this.orm.call("ai.chat.session", "action_save_user_settings", [
                 {
-                    language_mode: this.state.languageMode,
-                    language: this.state.language,
-                    reasoning_strength: this.state.reasoningStrength,
                     attach_context: this.state.attachContext,
                     sidebar_collapsed: this.state.sidebarCollapsed,
                     grid_sessions_collapsed: this.state.gridSessionsCollapsed,

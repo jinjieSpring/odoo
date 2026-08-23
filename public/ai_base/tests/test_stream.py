@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import patch
 
-from odoo.addons.ai_base.controllers.stream import _line
+from odoo.addons.ai_base.controllers.stream import _sse
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
 
 class TestStream(AiBaseCase):
-    def test_ndjson_format(self):
-        line = _line({'delta': 'hi'})
+    def test_sse_format(self):
+        line = _sse('delta', {'delta': 'hi'})
+        self.assertIn('event: delta', line)
         self.assertIn('"delta": "hi"', line)
         self.assertTrue(line.endswith('\n'))
 

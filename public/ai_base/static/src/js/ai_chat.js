@@ -29,7 +29,6 @@ const EMPTY_SESSION_STATS = {
 };
 
 const NO_CAPABILITIES = {
-    reasoning: false,
     streaming: false,
 };
 
@@ -80,10 +79,8 @@ export class AiChat extends Component {
             modelStatus: {},
             modelInfo: {},
             capabilities: {
-                reasoning: true,
                 streaming: true,
             },
-            reasoningStrength: "none",
             attachContext: true,
             promptId: 0,
             prompts: [],
@@ -244,14 +241,6 @@ export class AiChat extends Component {
             output,
             pct
         );
-    }
-
-    get capabilityReasons() {
-        return {
-            reasoning: this.state.capabilities.reasoning
-                ? ""
-                : _t("Thinking strength is not available for the current model."),
-        };
     }
 
     get filteredCommands() {
@@ -526,7 +515,6 @@ export class AiChat extends Component {
             capabilities:
                 (defaults.model_info && defaults.model_info.capabilities) ||
                 NO_CAPABILITIES,
-            reasoningStrength: defaults.reasoning_strength || "none",
             attachContext: Boolean(defaults.attach_context),
             sidebarCollapsed: Boolean(defaults.sidebar_collapsed),
             grids: {
@@ -623,8 +611,6 @@ export class AiChat extends Component {
                 ...NO_CAPABILITIES,
             };
         this.updateModelBadge();
-        this.state.reasoningStrength =
-            data.session.reasoning_strength || "none";
         this.state.knowledgeEnabled = Boolean(
             data.session.knowledge_enabled
         );
@@ -984,9 +970,7 @@ export class AiChat extends Component {
                 body: JSON.stringify({
                     session_id: this.state.currentId,
                     content,
-                    options: {
-                        reasoning_strength: this.state.reasoningStrength,
-                    },
+                    options: {},
                 }),
             });
             if (!resp.ok) {
@@ -1148,7 +1132,6 @@ export class AiChat extends Component {
 
     async saveOptions() {
         const options = {
-            reasoning_strength: this.state.reasoningStrength,
             attach_context: this.state.attachContext,
             prompt_id: this.state.promptId || false,
             knowledge_enabled: this.state.knowledgeEnabled,
@@ -1622,7 +1605,6 @@ export class AiChat extends Component {
                     []
                 );
                 Object.assign(this.state, {
-                    reasoningStrength: defaults.reasoning_strength || "none",
                     attachContext: Boolean(defaults.attach_context),
                     promptId: defaults.default_prompt_id || 0,
                     prompts: defaults.prompts || [],

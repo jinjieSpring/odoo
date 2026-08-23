@@ -28,12 +28,6 @@ class AiChatSession(models.Model):
         'ai.chat.message', 'session_id', string='Messages')
     message_count = fields.Integer(
         compute='_compute_message_count', string='Message Count')
-    reasoning_strength = fields.Selection([
-        ('none', 'Off'),
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
-    ], string='Thinking Strength', default='none')
     attach_context = fields.Boolean(string='Attach Record Context', default=True)
     context_model = fields.Char(string='Context Model')
     context_res_id = fields.Integer(string='Context Record')
@@ -138,8 +132,6 @@ class AiChatSession(models.Model):
                 if model:
                     vals['model_id'] = model.id
                     vals['provider_id'] = model.provider_id.id
-            if 'reasoning_strength' not in vals:
-                vals['reasoning_strength'] = settings.reasoning_strength
             if 'attach_context' not in vals:
                 vals['attach_context'] = settings.attach_context
             if 'prompt_id' not in vals and settings.default_prompt_id:
@@ -204,9 +196,7 @@ class AiChatSession(models.Model):
 
     def _call_options(self, extra=None):
         self.ensure_one()
-        options = {
-            'reasoning_strength': self.reasoning_strength,
-        }
+        options = {}
         if extra:
             options.update(extra)
         return options

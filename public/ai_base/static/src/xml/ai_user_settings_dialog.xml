@@ -9,61 +9,8 @@
                     </div>
                     <t t-else="">
                         <div class="o_ai_user_settings_section">
-                            <h6>Language</h6>
-                            <div class="text-muted small mb-2">Language used for the assistant's answers and thinking process.</div>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
-                                <input type="radio" name="ai_language_mode" value="auto"
-                                       t-att-checked="state.languageMode === 'auto'"
-                                       t-on-change="() => this.setLanguageMode('auto')"/>
-                                <span class="ms-1">Auto-detect from the conversation</span>
-                            </label>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
-                                <input type="radio" name="ai_language_mode" value="system"
-                                       t-att-checked="state.languageMode === 'system'"
-                                       t-on-change="() => this.setLanguageMode('system')"/>
-                                <span class="ms-1">Follow my Odoo language</span>
-                            </label>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
-                                <input type="radio" name="ai_language_mode" value="specific"
-                                       t-att-checked="state.languageMode === 'specific'"
-                                       t-on-change="() => this.setLanguageMode('specific')"/>
-                                <span class="ms-1">Always use a specific language</span>
-                            </label>
-                            <div t-if="state.languageMode === 'specific'" class="mt-2">
-                                <label class="form-label" for="o_ai_user_settings_lang">
-                                    Language
-                                </label>
-                                <select id="o_ai_user_settings_lang"
-                                        class="form-select form-select-sm"
-                                        t-model="state.language">
-                                    <option value="" t-att-selected="!state.language">
-                                        Select a language...
-                                    </option>
-                                    <t t-foreach="state.languages" t-as="lang" t-key="lang.code">
-                                        <option t-att-value="lang.code"
-                                                t-att-selected="state.language === lang.code"
-                                                t-esc="lang.name"/>
-                                    </t>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="o_ai_user_settings_section mt-3 pt-3 border-top">
                             <h6>Default Chat Options</h6>
                             <div class="text-muted small mb-2">Defaults applied to new sessions; you can still change them per session in the chat window.</div>
-                            <div class="d-flex align-items-center mb-1">
-                                <label class="form-label mb-0 me-2" for="o_ai_user_settings_strength">
-                                    Thinking Strength
-                                </label>
-                                <select id="o_ai_user_settings_strength"
-                                        class="form-select form-select-sm w-auto"
-                                        t-att-disabled="!state.capabilities.reasoning"
-                                        t-on-change="changeReasoningStrength">
-                                    <option value="none" t-att-selected="state.reasoningStrength === 'none'">Off</option>
-                                    <option value="low" t-att-selected="state.reasoningStrength === 'low'">Low</option>
-                                    <option value="medium" t-att-selected="state.reasoningStrength === 'medium'">Medium</option>
-                                    <option value="high" t-att-selected="state.reasoningStrength === 'high'">High</option>
-                                </select>
-                            </div>
                             <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
                                 <input type="checkbox" t-att-checked="state.attachContext"
                                        t-on-change="toggleAttachContext"/>

@@ -161,7 +161,7 @@
                                 <div class="o_ai_chat_msg"
                                      t-att-class="'o_ai_' + msg.role">
                                     <div class="o_ai_chat_msg_bubble">
-                                        <div t-if="msg.role === 'assistant' and msg.reasoning_content and state.reasoningStrength !== 'none'"
+                                        <div t-if="msg.role === 'assistant' and msg.reasoning_content"
                                              class="o_ai_chat_reasoning">
                                             <button type="button"
                                                     class="o_ai_chat_reasoning_title btn btn-link p-0"
@@ -333,17 +333,6 @@
                                  t-att-style="'width:' + Math.min(100, state.sessionStats.context_usage || 0) + '%'"/>
                         </div>
                         <div class="ms-auto d-flex align-items-center gap-2">
-                            <span t-att-title="capabilityReasons.reasoning">
-                                <select class="form-select form-select-sm o_ai_chat_ctl o_ai_status_reasoning"
-                                        t-model="state.reasoningStrength"
-                                        t-att-disabled="!state.capabilities.reasoning"
-                                        t-on-change="saveOptions">
-                                    <option value="none">Thinking: Off</option>
-                                    <option value="low">Thinking: Low</option>
-                                    <option value="medium">Thinking: Medium</option>
-                                    <option value="high">Thinking: High</option>
-                                </select>
-                            </span>
                             <select class="form-select form-select-sm o_ai_chat_ctl o_ai_status_prompt"
                                     t-model="state.promptId"
                                     t-on-change="saveOptions">

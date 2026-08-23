@@ -13,26 +13,12 @@ from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
-_LANGUAGE_NAMES = {
-    'en_US': 'English',
-    'zh_CN': '简体中文',
-    'zh_TW': '繁體中文',
-    'ja_JP': '日本語',
-    'ko_KR': '한국어',
-    'fr_FR': 'Français',
-    'de_DE': 'Deutsch',
-    'es_ES': 'Español',
-    'pt_BR': 'Português',
-    'ru_RU': 'Русский',
-}
-
 _SESSION_OPTION_FIELDS = (
     'model_id', 'prompt_id', 'compress_strategy',
-    'reasoning_strength', 'attach_context',
+    'attach_context',
 )
 
 _USER_OPTION_FIELDS = {
-    'reasoning_strength': 'reasoning_strength',
     'attach_context': 'attach_context',
     'prompt_id': 'default_prompt_id',
 }
@@ -53,18 +39,6 @@ class AiUserSettings(models.Model):
     user_id = fields.Many2one(
         'res.users', string='User', required=True,
         ondelete='cascade', index=True)
-    language_mode = fields.Selection([
-        ('auto', 'Auto-detect'),
-        ('system', 'Follow System Language'),
-        ('specific', 'Specific Language'),
-    ], string='AI Assistant Language', default='auto')
-    language = fields.Char(string='AI Assistant Specific Language')
-    reasoning_strength = fields.Selection([
-        ('none', 'Off'),
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
-    ], string='Thinking Strength', default='none')
     default_prompt_id = fields.Many2one(
         'ai.prompt.template', string='Default Prompt', ondelete='set null')
     attach_context = fields.Boolean(
@@ -101,7 +75,6 @@ class AiChat(models.AbstractModel):
 
     def empty_capabilities(self):
         return {
-            'reasoning': False,
             'streaming': False,
         }
 
@@ -168,7 +141,6 @@ class AiChat(models.AbstractModel):
                 'max_output_tokens': model.max_tokens_default,
                 'capabilities': model._allowed_options(),
             } if model else {},
-            'reasoning_strength': settings.reasoning_strength,
             'attach_context': settings.attach_context,
             'sidebar_collapsed': settings.sidebar_collapsed,
             'grid_sessions_collapsed': settings.grid_sessions_collapsed,
@@ -192,14 +164,6 @@ class AiChat(models.AbstractModel):
         return {
             'capabilities': (
                 model._allowed_options() if model else self.empty_capabilities()),
-            'language_mode': settings.language_mode or 'auto',
-            'language': settings.language or '',
-            'languages': [
-                {'code': code, 'name': name}
-                for code, name in sorted(
-                    _LANGUAGE_NAMES.items(), key=lambda item: item[1])
-            ],
-            'reasoning_strength': settings.reasoning_strength,
             'attach_context': settings.attach_context,
             'sidebar_collapsed': settings.sidebar_collapsed,
             'grid_sessions_collapsed': settings.grid_sessions_collapsed,
@@ -216,17 +180,6 @@ class AiChat(models.AbstractModel):
         options = options or {}
         settings = self.env['ai.user.settings']._get_for_user()
         vals = {}
-        if options.get('language_mode') in ('auto', 'system', 'specific'):
-            vals['language_mode'] = options['language_mode']
-        language = (options.get('language') or '').strip()
-        if options.get('language_mode') == 'specific':
-            if language not in _LANGUAGE_NAMES:
-                raise UserError(_('Please select a valid language.'))
-            vals['language'] = language
-        elif 'language_mode' in options:
-            vals['language'] = False
-        if options.get('reasoning_strength') in ('none', 'low', 'medium', 'high'):
-            vals['reasoning_strength'] = options['reasoning_strength']
         for field in ('attach_context',):
             if field in options:
                 vals[field] = bool(options[field])
@@ -278,7 +231,6 @@ class AiChat(models.AbstractModel):
                 'input_tokens': session.input_tokens,
                 'output_tokens': session.output_tokens,
                 'message_count': session.message_count,
-                'reasoning_strength': session.reasoning_strength,
                 'prompt_id': session.prompt_id.id or False,
                 'attach_context': session.attach_context,
                 'context_attached': bool(
@@ -308,10 +260,6 @@ class AiChat(models.AbstractModel):
 
     def set_options(self, session, options):
         options = options or {}
-        if (options.get('reasoning_strength')
-                and options['reasoning_strength'] not in
-                ('none', 'low', 'medium', 'high')):
-            raise UserError(_('Invalid thinking strength.'))
         if session:
             vals = {
                 field: options[field]

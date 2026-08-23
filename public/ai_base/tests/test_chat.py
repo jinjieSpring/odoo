@@ -31,18 +31,15 @@ class TestChat(AiBaseCase):
 
     def test_user_settings_roundtrip(self):
         self.env['ai.chat.session'].action_save_user_settings({
-            'reasoning_strength': 'medium',
             'attach_context': False,
             'sidebar_collapsed': True,
             'sidebar_width': 320,
-            'language_mode': 'system',
         })
         settings = self.env['ai.chat.session'].action_get_user_settings()
-        self.assertEqual(settings['reasoning_strength'], 'medium')
         self.assertFalse(settings['attach_context'])
         self.assertTrue(settings['sidebar_collapsed'])
         self.assertEqual(settings['sidebar_width'], 320)
-        self.assertEqual(settings['language_mode'], 'system')
+        self.assertNotIn('language_mode', settings)
 
     def test_attach_and_clear_record_context(self):
         partner = self.env['res.partner'].create({'name': 'Acme Context'})
