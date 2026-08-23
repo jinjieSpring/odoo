@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_agent_form_view" model="ir.ui.view">
+        <field name="name">ai.agent.form</field>
+        <field name="model">ai.agent</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent">
+                <sheet>
+                    <widget name="web_ribbon" title="Default" bg_color="text-bg-success"
+                            invisible="not is_default"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active" invisible="1"/>
+                            <field name="is_default"/>
+                            <field name="active"/>
+                            <field name="run_mode"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="prompt_id"/>
+                            <field name="max_rounds"/>
+                            <field name="memory_enabled"/>
+                            <field name="memory_limit" invisible="not memory_enabled"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="When a dedicated menu should bind this agent"/>
+                    </group>
+                    <p class="text-muted">
+                        Mark one agent as default for the systray. Extra agents
+                        are for dedicated menus that create a session with that
+                        agent; they are not a chat dropdown and do not call
+                        each other.
+                    </p>
+                    <notebook>
+                        <page string="Prompt">
+                            <field name="system_prompt" nolabel="1"
+                                   placeholder="Persona instructions for this agent"
+                                   invisible="prompt_id"/>
+                            <div class="text-muted" invisible="not prompt_id">
+                                Using the selected prompt template as the agent persona.
+                            </div>
+                        </page>
+                        <page string="Tools">
+                            <field name="tool_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="read_only"/>
+                                    <field name="is_active"/>
+                                </list>
+                            </field>
+                            <p class="text-muted">
+                                Leave empty to allow every tool the user may already call.
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_agent_list_view" model="ir.ui.view">
+        <field name="name">ai.agent.list</field>
+        <field name="model">ai.agent</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="run_mode"/>
+                <field name="is_default"/>
+                <field name="memory_enabled"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_agent_search_view" model="ir.ui.view">
+        <field name="name">ai.agent.search</field>
+        <field name="model">ai.agent</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Chat" name="filter_chat" domain="[('run_mode', '=', 'chat')]"/>
+                <filter string="Goal" name="filter_goal" domain="[('run_mode', '=', 'goal')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    <record id="ai_agent_action" model="ir.actions.act_window">
+        <field name="name">Agents</field>
+        <field name="res_model">ai.agent</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="ai_agent_run_form_view" model="ir.ui.view">
+        <field name="name">ai.agent.run.form</field>
+        <field name="model">ai.agent.run</field>
+        <field name="arch" type="xml">
+            <form string="Agent Run" create="0" edit="0">
+                <header>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            class="btn-secondary"
+                            invisible="state not in ('pending', 'running')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,running,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="agent_id"/>
+                            <field name="session_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="step_count"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="error_message" invisible="not error_message"/>
+                        </group>
+                    </group>
+                    <group string="Goal">
+                        <field name="goal" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="ai_agent_run_list_view" model="ir.ui.view">
+        <field name="name">ai.agent.run.list</field>
+        <field name="model">ai.agent.run</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <field name="user_id"/>
+                <field name="state"/>
+                <field name="step_count"/>
+            </list>
+        </field>
+    </record>
+    <record id="ai_agent_run_action" model="ir.actions.act_window">
+        <field name="name">Agent Runs</field>
+        <field name="res_model">ai.agent.run</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'create': False}</field>
+    </record>
+</odoo>

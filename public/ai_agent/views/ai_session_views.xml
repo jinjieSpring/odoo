@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_session_form_view_agent" model="ir.ui.view">
+        <field name="name">ai.chat.session.form.agent</field>
+        <field name="model">ai.chat.session</field>
+        <field name="inherit_id" ref="ai_base.ai_session_form_view"/>
+        <field name="arch" type="xml">
+            <field name="prompt_id" position="after">
+                <field name="agent_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

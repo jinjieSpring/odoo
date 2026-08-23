@@ -1985,3 +1985,21 @@ msgstr "暂无可用的知识文档。"
 #: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
 msgid "Collapse the knowledge base grid"
 msgstr "折叠知识库面板"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Agent working..."
+msgstr "智能体工作中..."
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed to cancel the agent run: %s"
+msgstr "取消智能体运行失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Cancelled"
+msgstr "已取消"

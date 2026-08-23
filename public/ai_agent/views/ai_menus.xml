@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="ai_menu_agents" name="Agents"
+              parent="ai_base.ai_menu_root"
+              groups="ai_base.group_manager" sequence="15"/>
+    <menuitem id="ai_menu_agent_config" name="Agents"
+              parent="ai_menu_agents" action="ai_agent_action"
+              groups="ai_base.group_manager" sequence="10"/>
+    <menuitem id="ai_menu_agent_runs" name="Runs"
+              parent="ai_menu_agents" action="ai_agent_run_action"
+              groups="ai_base.group_log" sequence="20"/>
+</odoo>

@@ -140,6 +140,8 @@ class AiBaseService(models.AbstractModel):
             else:
                 history = list(history or [])
                 history.append({'role': 'user', 'content': content})
+            if session:
+                options['session'] = session
             messages = self._system_messages(
                 session, options, content, record=record) + history
             result = self._run_tool_loop(model, messages, options)
@@ -264,6 +266,7 @@ class AiBaseService(models.AbstractModel):
         if session.name == _('New Session'):
             session.name = content[:30]
         options = session._call_options(options)
+        options['session'] = session
         history = session._build_history()
         messages = self._system_messages(session, options, content) + history
         result = self._run_tool_loop(
@@ -392,6 +395,10 @@ class AiBaseService(models.AbstractModel):
         """Override in ``ai_knowledge`` to inject retrieved snippets."""
         return []
 
+    def _agent_system_parts(self, session, query):
+        """Override in ``ai_agent`` to inject persona and memory."""
+        return []
+
     def _system_messages(self, session=None, options=None, query=None, record=None):
         options = options or {}
         parts = []
@@ -421,6 +428,7 @@ class AiBaseService(models.AbstractModel):
                     if snapshot:
                         parts.append(_('Current business record:\n%s') % snapshot)
         parts.extend(self._knowledge_system_parts(session, query))
+        parts.extend(self._agent_system_parts(session, query))
         parts.append(self._user_language_instruction())
         return [{'role': 'system', 'content': '\n\n'.join(parts)}]
 
@@ -465,7 +473,8 @@ class AiBaseService(models.AbstractModel):
 
     def _run_tool_loop(self, model, history, options=None, emit=None):
         options = dict(options or {})
-        manifest = self.env['ai.tool'].action_get_manifest_for_user()
+        session = options.pop('session', None)
+        manifest = self.env['ai.tool'].action_get_manifest_for_user(session=session)
         if manifest:
             options['tools'] = self.env['ai.tool']._function_schemas(manifest)
         candidates = self.env['ai.model']._get_scenario_models('chat') or [model]
@@ -540,7 +549,8 @@ class AiBaseService(models.AbstractModel):
             for call in tool_calls[:max_calls]:
                 name = call.get('name') or ''
                 arguments = call.get('arguments') or {}
-                card, status, result_data = self._execute_loop_call(name, arguments)
+                card, status, result_data = self._execute_loop_call(
+                    name, arguments, session=session)
                 cards.append(card)
                 if status == 'executed':
                     if emit:
@@ -586,7 +596,7 @@ class AiBaseService(models.AbstractModel):
             'model_id': current.id,
         }
 
-    def _execute_loop_call(self, name, arguments):
+    def _execute_loop_call(self, name, arguments, session=None):
         tool = self.env['ai.tool'].sudo().search(
             [('name', '=', name), ('is_active', '=', True)], limit=1)
         card = {'name': name, 'status': 'blocked', 'arguments': arguments}

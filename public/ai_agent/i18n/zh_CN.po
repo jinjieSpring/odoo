@@ -1,0 +1,440 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ai_agent
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-23 13:32+0000\n"
+"PO-Revision-Date: 2026-08-23 13:32+0000\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: ai_agent
+#: model:ir.module.module,shortdesc:base.module_ai_agent
+#: model:ir.model,name:ai_agent.model_ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "AI Agent"
+msgstr "AI 智能体"
+
+#. module: ai_agent
+#: model:ir.module.module,summary:base.module_ai_agent
+msgid "Configurable agents with memory and background goal runs"
+msgstr "可配置智能体，含记忆与后台目标执行"
+
+#. module: ai_agent
+#: model:ir.model,name:ai_agent.model_ai_agent_memory
+msgid "AI Agent Memory"
+msgstr "AI 智能体记忆"
+
+#. module: ai_agent
+#: model:ir.model,name:ai_agent.model_ai_agent_run
+msgid "AI Agent Run"
+msgstr "AI 智能体运行"
+
+#. module: ai_agent
+#: model:ir.actions.server,name:ai_agent.ir_cron_agent_runs_ir_actions_server
+msgid "AI Agent: Continue goal runs"
+msgstr "AI 智能体：继续目标运行"
+
+#. module: ai_agent
+#: model:ir.model,name:ai_agent.model_ai_base_service
+msgid "AI Base Service"
+msgstr "AI 底座服务"
+
+#. module: ai_agent
+#: model:ir.model,name:ai_agent.model_ai_chat
+msgid "AI Chat Facade"
+msgstr "AI 对话门面"
+
+#. module: ai_agent
+#: model:ir.model,name:ai_agent.model_ai_chat_session
+msgid "AI Chat Session"
+msgstr "AI 会话"
+
+#. module: ai_agent
+#: model:ir.model,name:ai_agent.model_ai_tool
+msgid "AI Tool"
+msgstr "AI 工具"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "Accepted the goal. I will continue in the background."
+msgstr "已接受该目标，我将在后台继续执行。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__active
+msgid "Active"
+msgstr "启用"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__agent_id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__agent_id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__agent_id
+msgid "Agent"
+msgstr "智能体"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_run_form_view
+msgid "Agent Run"
+msgstr "智能体运行"
+
+#. module: ai_agent
+#: model:ir.actions.act_window,name:ai_agent.ai_agent_run_action
+msgid "Agent Runs"
+msgstr "智能体运行"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_memory.py:0
+msgid "Agent memory (most recent last):"
+msgstr "智能体记忆（最近的在后）："
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "Agent run"
+msgstr "智能体运行"
+
+#. module: ai_agent
+#: model:ir.actions.act_window,name:ai_agent.ai_agent_action
+#: model:ir.ui.menu,name:ai_agent.ai_menu_agent_config
+#: model:ir.ui.menu,name:ai_agent.ai_menu_agents
+msgid "Agents"
+msgstr "智能体"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_search_view
+msgid "Archived"
+msgstr "已归档"
+
+#. module: ai_agent
+#: model:ai.agent,name:ai_agent.agent_default_assistant
+msgid "Assistant"
+msgstr "助手"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_run_form_view
+msgid "Cancel"
+msgstr "取消"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent_run__state__cancelled
+msgid "Cancelled"
+msgstr "已取消"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent__run_mode__chat
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_search_view
+msgid "Chat"
+msgstr "对话"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__run_mode
+msgid ""
+"Chat: reply in the current request. Goal: accept a task and continue it in "
+"the background."
+msgstr "对话：在当前请求中回复。目标：接受任务并在后台继续执行。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__company_id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__company_id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__company_id
+msgid "Company"
+msgstr "公司"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__content
+msgid "Content"
+msgstr "内容"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__create_uid
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__create_uid
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__create_uid
+msgid "Created by"
+msgstr "创建人"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__create_date
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__create_date
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__create_date
+msgid "Created on"
+msgstr "创建时间"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "Default"
+msgstr "默认"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__is_default
+msgid "Default Agent"
+msgstr "默认智能体"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__description
+msgid "Description"
+msgstr "描述"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_base_service__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_chat__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_tool__display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent_run__state__done
+msgid "Done"
+msgstr "完成"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__tool_ids
+msgid "Empty means every tool the user is allowed to call."
+msgstr "留空表示允许调用当前用户有权使用的全部工具。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__error_message
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent_run__state__error
+msgid "Error"
+msgstr "错误"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__goal
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_run_form_view
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_search_view
+msgid "Goal"
+msgstr "目标"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent__run_mode__goal
+msgid "Goal (background)"
+msgstr "目标（后台）"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_base_service__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_chat__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_tool__id
+msgid "ID"
+msgstr "ID"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__write_uid
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__write_uid
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__write_uid
+msgid "Last Updated by"
+msgstr "最后更新人"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__write_date
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__write_date
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__write_date
+msgid "Last Updated on"
+msgstr "最后更新时间"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "Leave empty to allow every tool the user may already call."
+msgstr "留空表示允许使用当前用户本就可以调用的全部工具。"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid ""
+"Mark one agent as default for the systray. Extra agents\n"
+"                        are for dedicated menus that create a session with that\n"
+"                        agent; they are not a chat dropdown and do not call\n"
+"                        each other."
+msgstr ""
+"将其中一个智能体标为托盘默认。额外智能体供专用菜单创建会话时绑定；"
+"它们不会出现在聊天下拉里，也不会互相调用。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__max_rounds
+msgid "Max Tool Rounds"
+msgstr "最大工具轮次"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__memory_ids
+msgid "Memory"
+msgstr "记忆"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__memory_limit
+msgid "Memory Entries to Keep"
+msgstr "保留的记忆条数"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__name
+msgid "Name"
+msgstr "名称"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "New Session"
+msgstr "新会话"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent_run__state__pending
+msgid "Pending"
+msgstr "待处理"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "Persona instructions for this agent"
+msgstr "该智能体的人设说明"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__system_prompt
+msgid ""
+"Persona instructions prepended to every turn. Ignored when a prompt template"
+" is set."
+msgstr "每轮对话前附加的人设说明。设置了提示词模板时忽略此项。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__plan
+msgid "Plan"
+msgstr "计划"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "Prompt"
+msgstr "提示词"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__prompt_id
+msgid "Prompt Template"
+msgstr "提示词模板"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__run_mode
+msgid "Run Mode"
+msgstr "运行模式"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent_run__state__running
+msgid "Running"
+msgstr "运行中"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__run_ids
+#: model:ir.ui.menu,name:ai_agent.ai_menu_agent_runs
+msgid "Runs"
+msgstr "运行记录"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__sequence
+msgid "Sequence"
+msgstr "序号"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__session_id
+msgid "Session"
+msgstr "会话"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_chat_session__agent_id
+msgid ""
+"Set on create by the default assistant or a dedicated entry. The chat UI "
+"does not switch agents."
+msgstr "创建时由默认助手或专用入口写入。聊天界面不会切换智能体。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__state
+msgid "Status"
+msgstr "状态"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__step_count
+msgid "Steps"
+msgstr "步数"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__system_prompt
+msgid "System Prompt"
+msgstr "系统提示词"
+
+#. module: ai_agent
+#: model:ai.agent,description:ai_agent.agent_default_assistant
+msgid ""
+"Systray default assistant. Uses every tool the current user may call. Extra "
+"agents are for dedicated menus, not a chat picker."
+msgstr "托盘默认助手。使用当前用户可调用的全部工具。额外智能体供专用菜单绑定，不是聊天下拉里的选项。"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__is_default
+msgid ""
+"Systray new sessions use this agent. Dedicated menus should pass agent_id "
+"when creating a session."
+msgstr "托盘新建会话使用此智能体。专用菜单应在创建会话时传入 agent_id。"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "The agent or session is no longer available."
+msgstr "该智能体或会话已不可用。"
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_base_service.py:0
+msgid "Tool \"%s\" is not enabled for this agent."
+msgstr "工具“%s”未对该智能体启用。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__tool_ids
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "Tools"
+msgstr "工具"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__max_rounds
+msgid "Upper bound for tool-loop rounds on a chat turn or a goal run."
+msgstr "一次对话或一次目标运行中，工具循环的轮次上限。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__user_id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__user_id
+msgid "User"
+msgstr "用户"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "Using the selected prompt template as the agent persona."
+msgstr "使用所选提示词模板作为该智能体的人设。"
+
+#. module: ai_agent
+#: model:ir.model.fields.selection,name:ai_agent.selection__ai_agent_run__state__waiting_user
+msgid "Waiting for User"
+msgstr "等待用户"
+
+#. module: ai_agent
+#: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
+msgid "When a dedicated menu should bind this agent"
+msgstr "何种专用菜单应绑定此智能体"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__memory_enabled
+msgid "Write Memory"
+msgstr "写入记忆"
+
+#. module: ai_agent
+#: model:ai.agent,system_prompt:ai_agent.agent_default_assistant
+msgid ""
+"You are an Odoo assistant. Use registered tools when they help answer the "
+"user. Do not invent records that are not in the database."
+msgstr "你是 Odoo 助手。在有助于回答用户时使用已注册的工具。不要编造数据库中不存在的记录。"

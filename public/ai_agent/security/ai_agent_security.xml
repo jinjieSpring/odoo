@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_agent_company" model="ir.rule">
+            <field name="name">ai.agent: multi-company</field>
+            <field name="model_id" ref="model_ai_agent"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
+        </record>
+
+        <record id="rule_memory_own" model="ir.rule">
+            <field name="name">ai.agent.memory: own memory, current companies</field>
+            <field name="model_id" ref="model_ai_agent_memory"/>
+            <field name="domain_force">[('user_id', '=', user.id), '|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
+        </record>
+
+        <record id="rule_run_own" model="ir.rule">
+            <field name="name">ai.agent.run: own runs, current companies</field>
+            <field name="model_id" ref="model_ai_agent_run"/>
+            <field name="domain_force">[('user_id', '=', user.id), '|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[Command.link(ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

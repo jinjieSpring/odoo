@@ -86,6 +86,9 @@ export class AiChat extends Component {
             prompts: [],
             agents: [],
             defaultAgentId: false,
+            agentId: 0,
+            agentRunMode: "chat",
+            agentRun: false,
             contextAttached: false,
             contextDisplayName: "",
             contextAvailable: false,
@@ -117,9 +120,14 @@ export class AiChat extends Component {
                 "ai_base/nlview",
                 (payload) => this.onNlviewBus(payload)
             );
+            this.agentRunSubscription = this.bus.subscribe(
+                "ai_agent/run",
+                (payload) => this.onAgentRunBus(payload)
+            );
         });
         onWillUnmount(() => {
             this.busSubscription?.unsubscribe?.();
+            this.agentRunSubscription?.unsubscribe?.();
         });
         useEffect(
             () => this.scrollToBottom(),
@@ -133,6 +141,11 @@ export class AiChat extends Component {
             !this.state.sending &&
             this.state.modelReady
         );
+    }
+
+    get agentRunBusy() {
+        const state = this.state.agentRun && this.state.agentRun.state;
+        return state === "pending" || state === "running";
     }
 
     get filteredSessions() {
@@ -532,6 +545,7 @@ export class AiChat extends Component {
             prompts: defaults.prompts || [],
             agents: defaults.agents || [],
             defaultAgentId: defaults.default_agent_id || false,
+            agentId: defaults.default_agent_id || 0,
         });
         this.updateModelBadge();
         await this.loadSessions();
@@ -619,6 +633,7 @@ export class AiChat extends Component {
         this.state.knowledgeSelection =
             data.session.knowledge_document_ids || [];
         this.state.promptId = data.session.prompt_id || 0;
+        this.applyAgentSession(data.session);
         // attach_context is a user preference persisted in the user
         // settings; switching sessions must not overwrite it.
         this.state.contextAttached = Boolean(data.session.context_attached);
@@ -670,6 +685,10 @@ export class AiChat extends Component {
         this.state.contextDisplayName = "";
         this.state.currentName = "New Session";
         this.state.sessionSearch = "";
+        this.state.agentId = this.state.defaultAgentId || 0;
+        const agent = this.state.agents.find((item) => item.id === this.state.agentId);
+        this.state.agentRunMode = agent ? agent.run_mode : "chat";
+        this.state.agentRun = false;
         await this.loadSessions();
         this.scrollToBottom();
     }
@@ -910,10 +929,10 @@ export class AiChat extends Component {
         }
         this.optimisticUserMessage(content);
         this.scrollToBottom();
-        if (this.state.capabilities.streaming) {
-            await this.sendStreaming(content);
-        } else {
+        if (this.state.agentRunMode === "goal" || !this.state.capabilities.streaming) {
             await this.sendSync(content);
+        } else {
+            await this.sendStreaming(content);
         }
         this.scrollToBottom();
     }
@@ -941,7 +960,7 @@ export class AiChat extends Component {
             this.setTask(_t("Failed"), false, true);
         } finally {
             this.state.sending = false;
-            this.setTask(_t("Idle"));
+            this.restoreTaskAfterSend();
         }
     }
 
@@ -1067,6 +1086,7 @@ export class AiChat extends Component {
                 ...EMPTY_SESSION_STATS,
                 ...(data.session || {}),
             };
+            this.applyAgentSession(data.session);
             await this.loadSessions();
         } catch (error) {
             if (error.name === "AbortError") {
@@ -1083,6 +1103,7 @@ export class AiChat extends Component {
                     ...EMPTY_SESSION_STATS,
                     ...(data.session || {}),
                 };
+                this.applyAgentSession(data.session);
                 await this.loadSessions();
                 return;
             }
@@ -1097,7 +1118,7 @@ export class AiChat extends Component {
             this.state.sending = false;
             this._abortController = null;
             this._stopRequested = false;
-            this.setTask(_t("Idle"));
+            this.restoreTaskAfterSend();
         }
     }
 
@@ -1127,6 +1148,64 @@ export class AiChat extends Component {
                 ...EMPTY_SESSION_STATS,
                 ...result.session,
             };
+            this.applyAgentSession(result.session);
+        }
+    }
+
+    applyAgentSession(session) {
+        if (!session) {
+            return;
+        }
+        if ("agent_id" in session) {
+            this.state.agentId = session.agent_id || 0;
+        }
+        if (session.agent_run_mode) {
+            this.state.agentRunMode = session.agent_run_mode;
+        } else if (this.state.agentId) {
+            const agent = this.state.agents.find(
+                (item) => item.id === this.state.agentId
+            );
+            this.state.agentRunMode = agent ? agent.run_mode : "chat";
+        }
+        if ("agent_run" in session) {
+            this.state.agentRun = session.agent_run || false;
+        }
+    }
+
+    restoreTaskAfterSend() {
+        if (this.agentRunBusy) {
+            this.setTask(_t("Agent working..."), true);
+        } else {
+            this.setTask(_t("Idle"));
+        }
+    }
+
+    async cancelAgentRun() {
+        if (!this.state.currentId || this.state.sending) {
+            return;
+        }
+        try {
+            const data = await this.orm.call(
+                "ai.chat.session",
+                "action_cancel_agent_run",
+                [[this.state.currentId]]
+            );
+            this.applyResult(data);
+            this.setTask(_t("Cancelled"));
+        } catch (error) {
+            this.notification.add(
+                _t("Failed to cancel the agent run: %s", error.message || error),
+                { type: "danger" }
+            );
+        }
+    }
+
+    onAgentRunBus(payload) {
+        if (payload.session_id && payload.session_id !== this.state.currentId) {
+            return;
+        }
+        if (this.state.currentId) {
+            this.selectSession(this.state.currentId);
         }
     }
 

@@ -220,3 +220,20 @@ test("regenerate and resend call the expected model actions", async () => {
         ormCalls.some(([, method]) => method === "action_edit_and_resend")
     ).toBe(true);
 });
+
+test("agent picker stays hidden in systray chat", async () => {
+    const previous = DEFAULTS.agents;
+    const previousDefault = DEFAULTS.default_agent_id;
+    DEFAULTS.agents = [
+        { id: 1, name: "Assistant", run_mode: "chat" },
+        { id: 7, name: "Closer", run_mode: "goal" },
+    ];
+    DEFAULTS.default_agent_id = 1;
+    try {
+        await mountChat();
+        expect(".o_ai_status_agent").toHaveCount(0);
+    } finally {
+        DEFAULTS.agents = previous;
+        DEFAULTS.default_agent_id = previousDefault;
+    }
+});

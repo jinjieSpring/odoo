@@ -223,7 +223,8 @@ class AiTool(models.Model):
                 self.create(dict(vals, name=name))
 
     @api.model
-    def action_get_manifest_for_user(self):
+    def action_get_manifest_for_user(self, session=None):
+        """ACL-filtered tool list. ``session`` lets ``ai_agent`` narrow by agent."""
         tools = self.search([('is_active', '=', True)])
         allowed = [tool for tool in tools if self._check_permissions(tool)]
         return [{
@@ -237,7 +238,7 @@ class AiTool(models.Model):
     @api.model
     def _function_schemas(self, manifest=None):
         manifest = manifest if manifest is not None \
-            else self.action_get_manifest_for_user()
+            else self.action_get_manifest_for_user(session=None)
         schemas = []
         for tool in manifest:
             input_schema = tool.get('input_schema') or {}

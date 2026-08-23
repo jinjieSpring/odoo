@@ -325,6 +325,12 @@
                         <span t-if="state.currentId" class="o_ai_chat_status_tokens">
                             <t t-esc="tokenSummary"/>
                         </span>
+                        <button t-if="agentRunBusy" type="button"
+                                class="btn btn-link btn-sm px-1"
+                                title="Cancel agent run"
+                                t-on-click="cancelAgentRun">
+                            Cancel
+                        </button>
                         <div class="o_ai_chat_ctx_progress"
                              t-if="state.currentId"
                              title="Context usage">

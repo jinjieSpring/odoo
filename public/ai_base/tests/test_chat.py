@@ -24,7 +24,11 @@ class TestChat(AiBaseCase):
         self.assertEqual(defaults['model_status']['code'], 'ready')
         self.assertIn('sidebar_collapsed', defaults)
         self.assertIn('has_knowledge', defaults)
-        self.assertEqual(defaults['agents'], [])
+        self.assertIn('agents', defaults)
+        if 'ai.agent' in self.env:
+            self.assertTrue(isinstance(defaults['agents'], list))
+        else:
+            self.assertEqual(defaults['agents'], [])
         settings = self.env['ai.user.settings']._get_for_user()
         self.assertEqual(settings.user_id, self.env.user)
         self.assertEqual(settings.sidebar_width, 260)
