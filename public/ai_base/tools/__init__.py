@@ -6,6 +6,7 @@ from .http import (
     http_stream,
     normalize_base_url,
 )
+from .markdown import markdown_to_html
 from .model_info import pretty_model_name
 from .providers import (
     ADAPTER_CLASSES,

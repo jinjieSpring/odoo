@@ -8,8 +8,12 @@ layer stays a model-call engine.
 
 import logging
 
+from markupsafe import Markup
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+
+from odoo.addons.ai_base.tools import markdown_to_html
 
 _logger = logging.getLogger(__name__)
 
@@ -376,7 +380,7 @@ class AiChat(models.AbstractModel):
                 'default_composition_mode': 'comment',
                 'default_model': session.context_model,
                 'default_res_ids': [session.context_res_id],
-                'default_body': message.content,
+                'default_body': Markup(markdown_to_html(message.content)),
                 'default_subject': _('AI assistant response'),
             },
         }
@@ -411,7 +415,8 @@ class AiChat(models.AbstractModel):
                 },
             }
         record.message_post(
-            body=message.content, message_type='comment',
+            body=Markup(markdown_to_html(message.content)),
+            message_type='comment',
             subtype_xmlid='mail.mt_note')
         return {
             'type': 'ir.actions.client',

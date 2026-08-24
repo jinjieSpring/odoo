@@ -117,6 +117,23 @@ class TestChat(AiBaseCase):
         session.action_attach_context('res.partner', partner.id)
         action = session.action_send_as_message(message.id)
         self.assertEqual(action['res_model'], 'mail.compose.message')
+        self.assertIn('<p>Draft reply</p>', action['context']['default_body'])
+
+    def test_log_as_note_posts_safe_html(self):
+        partner = self.env['res.partner'].create({'name': 'Note Partner'})
+        session = self.env['ai.chat.session'].create({'name': 'Note'})
+        message = self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'assistant',
+            'content': '**hello**\n\n<script>alert(1)</script>',
+        })
+        session.action_attach_context('res.partner', partner.id)
+        action = session.action_log_as_note(message.id)
+        self.assertEqual(action['tag'], 'display_notification')
+        note = partner.message_ids[0]
+        self.assertIn('<strong>hello</strong>', note.body)
+        self.assertNotIn('<script>', note.body)
+        self.assertIn('&lt;script&gt;', note.body)
 
     def test_open_in_discuss_is_stub(self):
         session = self.env['ai.chat.session'].create({'name': 'Discuss'})
