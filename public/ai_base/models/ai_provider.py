@@ -109,7 +109,7 @@ class AiProvider(models.Model):
         return get_provider(self)
 
     def action_test_connection(self):
-        """Health-check the provider and create listed models on success."""
+        """Health-check the provider, sync listed models, and probe thinking."""
         self.ensure_one()
         if not self.is_active:
             raise UserError(_('Provider "%s" is disabled.') % self.name)
@@ -118,7 +118,8 @@ class AiProvider(models.Model):
             listed = client.list_models()
         except AiError as exc:
             return self._notify(False, _('Connection test failed: %s') % exc)
-        created, updated = self._sync_listed_models(listed)
+        created, updated, thinking_checked, thinking_supported = (
+            self._sync_listed_models(listed, client))
         if created and updated:
             message = _(
                 'Connection successful. Created %s model(s), updated %s.') % (
@@ -129,16 +130,23 @@ class AiProvider(models.Model):
             message = _('Connection successful. Updated %s existing model(s).') % updated
         else:
             message = _('Connection successful, but the API returned no models.')
+        if thinking_checked:
+            message = '%s %s' % (message, _(
+                'Thinking supported on %s of %s chat model(s).') % (
+                    thinking_supported, thinking_checked))
         return self._notify(True, message, reload=True)
 
-    def _sync_listed_models(self, listed):
+    def _sync_listed_models(self, listed, client=None):
         self.ensure_one()
+        client = client or self._get_client()
         existing = {
             model.model_name_remote: model for model in self.model_ids
             if model.model_name_remote
         }
         created = 0
         updated = 0
+        thinking_checked = 0
+        thinking_supported = 0
         for info in listed:
             remote = info.get('remote_name')
             if not remote:
@@ -149,22 +157,27 @@ class AiProvider(models.Model):
                 if current._name_tracks_remote():
                     vals['name'] = pretty_model_name(remote)
                 current.write(vals)
+                model = current
                 updated += 1
-                continue
-            display = info.get('name') or ''
-            if not display or display == remote:
-                display = pretty_model_name(remote)
-            vals.update({
-                'name': display,
-                'code': self._unique_model_code(remote),
-                'provider_id': self.id,
-                'model_name_remote': remote,
-                'model_kind': info.get('model_kind') or 'chat',
-            })
-            created_model = self.env['ai.model'].create(vals)
-            existing[remote] = created_model
-            created += 1
-        return created, updated
+            else:
+                display = info.get('name') or ''
+                if not display or display == remote:
+                    display = pretty_model_name(remote)
+                vals.update({
+                    'name': display,
+                    'code': self._unique_model_code(remote),
+                    'provider_id': self.id,
+                    'model_name_remote': remote,
+                    'model_kind': info.get('model_kind') or 'chat',
+                })
+                model = self.env['ai.model'].create(vals)
+                existing[remote] = model
+                created += 1
+            if model.model_kind == 'chat':
+                thinking_checked += 1
+                if model._probe_thinking(client):
+                    thinking_supported += 1
+        return created, updated, thinking_checked, thinking_supported
 
     def _listed_model_vals(self, info):
         vals = {

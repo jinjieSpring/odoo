@@ -31,6 +31,7 @@ const EMPTY_SESSION_STATS = {
 
 const NO_CAPABILITIES = {
     streaming: false,
+    thinking: false,
 };
 
 export class AiChat extends Component {
@@ -81,6 +82,7 @@ export class AiChat extends Component {
             modelInfo: {},
             capabilities: {
                 streaming: true,
+                thinking: false,
             },
             attachContext: true,
             promptId: 0,
@@ -105,6 +107,7 @@ export class AiChat extends Component {
             knowledgeSelection: [],
             sessionSearch: "",
             currentName: "",
+            thinkingEnabled: false,
             modelBadge: { kind: "gray", text: "", title: "" },
             taskText: _t("Idle"),
             taskBusy: false,
@@ -146,6 +149,20 @@ export class AiChat extends Component {
             !this.state.sending &&
             this.state.modelReady
         );
+    }
+
+    get thinkingTitle() {
+        return this.state.capabilities.thinking
+            ? _t("Thinking")
+            : _t("Thinking is not available for the current model.");
+    }
+
+    get thinkingOffLabel() {
+        return _t("Thinking: Off");
+    }
+
+    get thinkingOnLabel() {
+        return _t("Thinking: On");
     }
 
     get agentRunBusy() {
@@ -659,6 +676,7 @@ export class AiChat extends Component {
         this.state.knowledgeSelection =
             data.session.knowledge_document_ids || [];
         this.state.promptId = data.session.prompt_id || 0;
+        this.state.thinkingEnabled = Boolean(data.session.thinking_enabled);
         this.applyAgentSession(data.session);
         // attach_context is a user preference persisted in the user
         // settings; switching sessions must not overwrite it.
@@ -703,6 +721,7 @@ export class AiChat extends Component {
         this.state.currentId = id;
         this.state.messages = [];
         this.state.sessionStats = { ...EMPTY_SESSION_STATS };
+        this.state.thinkingEnabled = false;
         this.state.capabilities =
             (this.state.modelInfo && this.state.modelInfo.capabilities) || {
                 ...NO_CAPABILITIES,
@@ -1264,6 +1283,7 @@ export class AiChat extends Component {
         const options = {
             attach_context: this.state.attachContext,
             prompt_id: this.state.promptId || false,
+            thinking_enabled: this.state.thinkingEnabled,
             knowledge_enabled: this.state.knowledgeEnabled,
             knowledge_document_ids: this.state.knowledgeSelection.join(","),
         };
@@ -1284,6 +1304,15 @@ export class AiChat extends Component {
 
     toggleKnowledgeEnabled(ev) {
         this.state.knowledgeEnabled = ev.target.checked;
+        this.saveOptions();
+    }
+
+    onThinkingChange(ev) {
+        if (!this.state.capabilities.thinking) {
+            this.state.thinkingEnabled = false;
+            return;
+        }
+        this.state.thinkingEnabled = ev.target.value === "1";
         this.saveOptions();
     }
 

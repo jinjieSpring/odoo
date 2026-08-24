@@ -10,3 +10,4 @@ from . import test_markdown
 from . import test_tools
 from . import test_stream
 from . import test_security
+from . import test_reasoning

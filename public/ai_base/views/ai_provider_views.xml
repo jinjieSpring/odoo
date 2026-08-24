@@ -9,7 +9,8 @@
                     <button name="action_test_connection" type="object"
                             string="Test Connection"
                             class="oe_highlight"
-                            groups="ai_base.group_manager"/>
+                            groups="ai_base.group_manager"
+                            help="List models and probe which chat models support thinking."/>
                 </header>
                 <sheet>
                     <group>

@@ -100,5 +100,8 @@ class TestModel(AiBaseCase):
     def test_allowed_options(self):
         allowed = self.model._allowed_options()
         self.assertTrue(allowed['streaming'])
+        self.assertFalse(allowed['thinking'])
         self.model.supports_streaming = False
         self.assertFalse(self.model._allowed_options()['streaming'])
+        self.model.supports_thinking = True
+        self.assertTrue(self.model._allowed_options()['thinking'])

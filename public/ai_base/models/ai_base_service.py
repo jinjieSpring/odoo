@@ -718,7 +718,10 @@ class AiBaseService(models.AbstractModel):
             except AiError as exc:
                 last_error = exc
                 result = None
-                if options.get('tools'):
+                # Keep tools when the user asked for thinking: dropping them
+                # after a thinking-mode error makes the model look like it
+                # cannot call tools.
+                if options.get('tools') and not options.get('thinking_enabled'):
                     retry = dict(options)
                     retry.pop('tools', None)
                     retry.pop('tool_choice', None)
@@ -768,22 +771,43 @@ class AiBaseService(models.AbstractModel):
             if reasoning and emit:
                 emit({'type': 'reasoning_delta', 'delta': reasoning})
             cards = []
+            executed = []
             for call in tool_calls[:max_calls]:
                 name = call.get('name') or ''
                 arguments = call.get('arguments') or {}
                 card, status, result_data = self._execute_loop_call(
                     name, arguments, session=session)
                 cards.append(card)
+                executed.append((call, card, status, result_data))
+            openai_calls = []
+            for index, (call, _card, status, _result_data) in enumerate(executed):
+                if status != 'executed':
+                    continue
+                openai_calls.append({
+                    'id': call.get('id') or 'call_%s' % index,
+                    'type': 'function',
+                    'function': {
+                        'name': call.get('name') or '',
+                        'arguments': json.dumps(
+                            call.get('arguments') or {}, ensure_ascii=False),
+                    },
+                })
+            if openai_calls:
+                assistant = {'role': 'assistant', 'content': content or ''}
+                if reasoning:
+                    assistant['reasoning_content'] = reasoning
+                assistant['tool_calls'] = openai_calls
+                history.append(assistant)
+            for index, (call, card, status, result_data) in enumerate(executed):
+                name = call.get('name') or ''
                 if status == 'executed':
                     if emit:
                         emit({'type': 'tool_call', 'name': name, 'card': card})
                     history.append({
-                        'role': 'assistant',
-                        'content': content,
-                    })
-                    history.append({
                         'role': 'tool',
-                        'content': json.dumps(result_data, ensure_ascii=False)[:4000],
+                        'tool_call_id': call.get('id') or 'call_%s' % index,
+                        'content': json.dumps(
+                            result_data, ensure_ascii=False)[:4000],
                     })
                 else:
                     if emit:

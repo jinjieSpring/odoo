@@ -118,6 +118,44 @@ class BaseAdapter:
 class OpenAICompatibleAdapter(BaseAdapter):
     """OpenAI Chat Completions / Embeddings / Images / Audio protocol."""
 
+    def _thinking_vendor_kind(self, model=None):
+        ptype = getattr(self.provider, 'provider_type', '') or ''
+        base = (self.endpoint or '').lower()
+        remote = ''
+        if model is not None:
+            remote = (self._remote_name(model) or '').lower()
+        if ptype == 'qwen' or 'dashscope' in base or 'aliyun' in base:
+            return 'qwen'
+        if ptype == 'deepseek' or 'deepseek' in base or 'deepseek' in remote:
+            return 'deepseek'
+        if ptype == 'ollama' or 'ollama' in base:
+            return 'ollama'
+        if 'openai.com' in base:
+            return 'openai'
+        return 'compat'
+
+    def _apply_thinking(self, payload, model, options):
+        options = options or {}
+        enabled = bool(options.get('thinking_enabled'))
+        kind = self._thinking_vendor_kind(model)
+        if kind == 'deepseek':
+            payload['thinking'] = {
+                'type': 'enabled' if enabled else 'disabled',
+            }
+        elif kind == 'qwen':
+            payload['enable_thinking'] = enabled
+        elif kind == 'openai':
+            if enabled:
+                payload['reasoning_effort'] = (
+                    options.get('reasoning_effort') or 'medium')
+        elif kind == 'compat':
+            if enabled or getattr(model, 'supports_thinking', False):
+                payload['enable_thinking'] = enabled
+                if enabled:
+                    payload['reasoning_effort'] = (
+                        options.get('reasoning_effort') or 'medium')
+        return payload
+
     def _chat_url(self):
         return self.endpoint + '/chat/completions'
 
@@ -145,6 +183,7 @@ class OpenAICompatibleAdapter(BaseAdapter):
         if tools:
             payload['tools'] = tools
             payload['tool_choice'] = options.get('tool_choice', 'auto')
+        self._apply_thinking(payload, model, options)
         return payload
 
     def chat_completion(self, model, messages, options=None):
@@ -157,9 +196,12 @@ class OpenAICompatibleAdapter(BaseAdapter):
         )
         choice = (data.get('choices') or [{}])[0]
         message = choice.get('message') or {}
+        reasoning = message.get('reasoning_content') or message.get('reasoning') or ''
+        if isinstance(reasoning, dict):
+            reasoning = reasoning.get('content') or ''
         return {
             'content': message.get('content') or '',
-            'reasoning': message.get('reasoning_content') or '',
+            'reasoning': reasoning,
             'tool_calls': parse_tool_calls(message),
             'usage': usage_from_raw(data.get('usage')),
             'raw': data,
@@ -193,6 +235,11 @@ class OpenAICompatibleAdapter(BaseAdapter):
                 chunk['content'] = delta['content']
             if delta.get('reasoning_content'):
                 chunk['reasoning'] = delta['reasoning_content']
+            elif delta.get('reasoning'):
+                reasoning = delta['reasoning']
+                chunk['reasoning'] = (
+                    reasoning.get('content') if isinstance(reasoning, dict)
+                    else reasoning)
             if data.get('usage'):
                 chunk['usage'] = usage_from_raw(data['usage'])
             if chunk:
@@ -284,6 +331,10 @@ class OllamaAdapter(BaseAdapter):
             sampling['num_predict'] = max_tokens
         if sampling:
             payload['options'] = sampling
+        if options.get('thinking_enabled'):
+            payload['think'] = True
+        elif getattr(model, 'supports_thinking', False):
+            payload['think'] = False
         data = http_request(
             'POST', self.endpoint + '/api/chat',
             timeout=self.timeout, proxies=self.proxies, json=payload)

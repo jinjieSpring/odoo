@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 
 _SESSION_OPTION_FIELDS = (
     'model_id', 'prompt_id', 'compress_strategy',
-    'attach_context',
+    'attach_context', 'thinking_enabled',
 )
 
 _USER_OPTION_FIELDS = {
@@ -90,10 +90,11 @@ class AiChat(models.AbstractModel):
         入参:
             无。
         返回:
-            dict: 目前仅 ``streaming: False``。
+            dict: ``streaming`` / ``thinking``，无模型时均为 ``False``。
         """
         return {
             'streaming': False,
+            'thinking': False,
         }
 
     def model_status(self, model):
@@ -321,6 +322,10 @@ class AiChat(models.AbstractModel):
                 'capabilities': (
                     model._allowed_options()
                     if model else self.empty_capabilities()),
+                'thinking_enabled': bool(
+                    session.thinking_enabled
+                    and model
+                    and model._allowed_options().get('thinking')),
             },
         }
 
@@ -372,6 +377,12 @@ class AiChat(models.AbstractModel):
                 for field in _SESSION_OPTION_FIELDS
                 if field in options
             }
+            if 'thinking_enabled' in vals:
+                allowed = (
+                    session.model_id._allowed_options()
+                    if session.model_id else {})
+                vals['thinking_enabled'] = bool(
+                    vals['thinking_enabled'] and allowed.get('thinking'))
             if vals:
                 session.write(vals)
         user_vals = {}

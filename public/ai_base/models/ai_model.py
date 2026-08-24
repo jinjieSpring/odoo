@@ -52,6 +52,15 @@ class AiModel(models.Model):
         help='Enable this model. A disabled provider still blocks every '
              'model under it, including the preferred one.')
     supports_streaming = fields.Boolean(string='Supports Streaming', default=True)
+    supports_thinking = fields.Boolean(
+        string='Supports Thinking',
+        help='Detected when testing the connection. When set, users can '
+             'turn thinking on in the chat dialog.')
+    thinking_mode = fields.Selection([
+        ('auto', 'On (including with tools)'),
+        ('enabled', 'Always on'),
+        ('disabled', 'Always off'),
+    ], string='Thinking Mode', default='disabled', required=True)
     vendor_info = fields.Json(string='Vendor Parameters', default=dict)
     company_id = fields.Many2one(
         'res.company', string='Company', index=True,
@@ -158,7 +167,43 @@ class AiModel(models.Model):
         self.ensure_one()
         return {
             'streaming': bool(self.supports_streaming),
+            'thinking': bool(self.supports_thinking),
         }
+
+    @staticmethod
+    def _result_has_reasoning(result):
+        if result.get('reasoning'):
+            return True
+        content = (result.get('content') or '').lower()
+        return '<think>' in content
+
+    def _probe_thinking(self, client=None):
+        """探测该 chat 模型是否返回思考内容，并写入 ``supports_thinking``。
+
+        入参:
+            client: 可选厂商客户端；缺省按提供方创建。
+        返回:
+            bool: 是否支持思考。非 chat 模型或不支持时为 ``False``。
+            探测异常视为不支持，不向外抛，避免拖垮提供方批量同步。
+        """
+        self.ensure_one()
+        if self.model_kind != 'chat':
+            if self.supports_thinking:
+                self.supports_thinking = False
+            return False
+        client = client or get_provider(self.provider_id)
+        prompt = [{'role': 'user', 'content': 'Reply with OK only.'}]
+        supports = False
+        try:
+            result = client.chat_completion(
+                self, prompt,
+                {'max_tokens': 64, 'thinking_enabled': True},
+            )
+            supports = self._result_has_reasoning(result)
+        except Exception:  # noqa: BLE001
+            supports = False
+        self.supports_thinking = supports
+        return supports
 
     def _is_usable(self):
         self.ensure_one()
@@ -265,14 +310,19 @@ class AiModel(models.Model):
                 message = _('Embedding probe succeeded.') if ok else _(
                     'Embedding probe returned an empty vector.')
             else:
+                prompt = [{'role': 'user', 'content': 'Reply with OK only.'}]
                 result = client.chat_completion(
-                    self,
-                    [{'role': 'user', 'content': 'Reply with OK only.'}],
-                    {'max_tokens': 16},
-                )
+                    self, prompt, {'max_tokens': 16})
                 ok = True
                 message = _('Chat probe succeeded: %s') % (
                     (result.get('content') or '')[:80] or _('empty reply'))
+                if self._probe_thinking(client):
+                    message = '%s %s' % (message, _(
+                        'Thinking is supported; users can enable it in the '
+                        'chat dialog.'))
+                else:
+                    message = '%s %s' % (message, _(
+                        'Thinking is not supported by this model.'))
         except AiError as exc:
             return {
                 'type': 'ir.actions.client',
@@ -284,7 +334,7 @@ class AiModel(models.Model):
                     'sticky': True,
                 },
             }
-        return {
+        action = {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
@@ -293,3 +343,9 @@ class AiModel(models.Model):
                 'message': message,
             },
         }
+        if self.model_kind != 'embedding':
+            action['params']['next'] = {
+                'type': 'ir.actions.client',
+                'tag': 'reload',
+            }
+        return action

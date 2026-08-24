@@ -369,6 +369,15 @@
                                  t-att-style="'width:' + Math.min(100, state.sessionStats.context_usage || 0) + '%'"/>
                         </div>
                         <div class="ms-auto d-flex align-items-center gap-2">
+                            <span t-att-title="thinkingTitle">
+                                <select class="form-select form-select-sm o_ai_chat_ctl o_ai_status_reasoning"
+                                        t-att-disabled="!state.capabilities.thinking"
+                                        t-att-value="state.thinkingEnabled ? '1' : '0'"
+                                        t-on-change="onThinkingChange">
+                                    <option value="0" t-esc="thinkingOffLabel"/>
+                                    <option value="1" t-esc="thinkingOnLabel"/>
+                                </select>
+                            </span>
                             <select class="form-select form-select-sm o_ai_chat_ctl o_ai_status_prompt"
                                     t-model="state.promptId"
                                     t-on-change="saveOptions">

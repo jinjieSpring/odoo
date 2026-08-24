@@ -9,7 +9,8 @@
                     <button name="action_test_connection" type="object"
                             string="Test Connection"
                             class="oe_highlight"
-                            groups="ai_base.group_manager"/>
+                            groups="ai_base.group_manager"
+                            help="Probe the provider and detect whether this model supports thinking."/>
                     <button name="action_set_as_default" type="object"
                             string="Set as Preferred"
                             groups="ai_base.group_manager"/>
@@ -30,6 +31,7 @@
                             <field name="top_p_default"/>
                             <field name="max_tokens_default"/>
                             <field name="supports_streaming"/>
+                            <field name="supports_thinking" readonly="1"/>
                             <field name="sequence"/>
                         </group>
                     </group>
@@ -51,6 +53,7 @@
                 <field name="model_kind"/>
                 <field name="is_default"/>
                 <field name="is_active"/>
+                <field name="supports_thinking" optional="hide"/>
             </list>
         </field>
     </record>

@@ -20,6 +20,7 @@ const DEFAULTS = {
     model_info: {
         capabilities: {
             streaming: true,
+            thinking: false,
         },
     },
     attach_context: true,
@@ -246,5 +247,34 @@ test("agent picker stays hidden in systray chat", async () => {
     } finally {
         DEFAULTS.agents = previous;
         DEFAULTS.default_agent_id = previousDefault;
+    }
+});
+
+test("thinking control is disabled when the model cannot think", async () => {
+    await mountChat();
+    const select = queryFirst(".o_ai_status_reasoning");
+    expect(select.disabled).toBe(true);
+});
+
+test("thinking control can be turned on when the model supports it", async () => {
+    const previous = SESSION_PAYLOAD.session.capabilities;
+    SESSION_PAYLOAD.session.capabilities = { streaming: true, thinking: true };
+    try {
+        await mountChat();
+        const select = queryFirst(".o_ai_status_reasoning");
+        expect(select.disabled).toBe(false);
+        select.value = "1";
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+        await animationFrame();
+        expect(
+            ormCalls.some(
+                ([, method, args]) =>
+                    method === "action_set_options" &&
+                    args[1] &&
+                    args[1].thinking_enabled
+            )
+        ).toBe(true);
+    } finally {
+        SESSION_PAYLOAD.session.capabilities = previous;
     }
 });

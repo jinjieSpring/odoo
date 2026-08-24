@@ -51,6 +51,10 @@ class AiChatSession(models.Model):
         ('open', 'In Progress'),
         ('closed', 'Closed'),
     ], string='Status', default='open')
+    thinking_enabled = fields.Boolean(
+        string='Thinking', default=False,
+        help='Ask the model to think out loud. Only used when the model '
+             'supports thinking.')
     active = fields.Boolean(string='Active', default=True)
 
     @api.depends('res_model', 'res_id')
@@ -143,10 +147,13 @@ class AiChatSession(models.Model):
         messages = []
         for message in self.message_ids.sorted(lambda m: (m.create_date, m.id)):
             if message.role in ('user', 'assistant', 'system', 'tool'):
-                messages.append({
+                entry = {
                     'role': message.role,
                     'content': message.content or '',
-                })
+                }
+                if message.role == 'assistant' and message.reasoning_content:
+                    entry['reasoning_content'] = message.reasoning_content
+                messages.append(entry)
         return self._trim_history(messages)
 
     def _estimate_tokens(self, text):
@@ -199,6 +206,12 @@ class AiChatSession(models.Model):
         options = {}
         if extra:
             options.update(extra)
+        allowed = (
+            self.model_id._allowed_options() if self.model_id else {})
+        enabled = bool(options.get('thinking_enabled', self.thinking_enabled))
+        if not allowed.get('thinking'):
+            enabled = False
+        options['thinking_enabled'] = enabled
         return options
 
     @api.model
