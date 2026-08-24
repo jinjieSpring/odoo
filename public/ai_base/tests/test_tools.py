@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import patch
 
+from odoo.exceptions import UserError
 from odoo.addons.ai_base.models.ai_tool import validate_tool_schema
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
@@ -27,15 +28,23 @@ class TestTools(AiBaseCase):
         self.assertIn('count', result['data'])
 
     def test_rate_limit(self):
-        self.env['ai.tool']._sync_registry()
-        tool = self.env['ai.tool'].search(
-            [('name', '=', 'generic.search_count')], limit=1)
-        tool.rate_limit = 1
+        tool = self.env['ai.tool'].create({
+            'name': 'custom.orm.rate_limit',
+            'description': 'Rate limit test',
+            'tool_type': 'orm',
+            'orm_model': 'res.partner',
+            'orm_method': 'search',
+            'rate_limit': 1,
+            'input_schema': {
+                'type': 'object',
+                'properties': {'model': {'type': 'string'}},
+            },
+        })
         first = self.env['ai.tool'].action_invoke_tool(
-            'generic.search_count', {'model': 'res.partner'})
+            tool.name, {'model': 'res.partner'})
         self.assertEqual(first['status'], 'success')
         second = self.env['ai.tool'].action_invoke_tool(
-            'generic.search_count', {'model': 'res.partner'})
+            tool.name, {'model': 'res.partner'})
         self.assertEqual(second['status'], 'error')
         self.assertEqual(second['code'], 429)
 
@@ -110,6 +119,30 @@ class TestTools(AiBaseCase):
         })
         self.assertEqual(result['status'], 'error')
         self.assertEqual(result['code'], 400)
+
+    def test_builtin_tool_cannot_be_deleted(self):
+        self.env['ai.tool']._sync_registry()
+        tool = self.env['ai.tool'].search(
+            [('name', '=', 'generic.search_count')], limit=1)
+        self.assertTrue(tool.is_builtin)
+        with self.assertRaises(UserError):
+            tool.unlink()
+        self.assertTrue(tool.exists())
+        with self.assertRaises(UserError):
+            tool.write({'is_active': False})
+        with self.assertRaises(UserError):
+            tool.write({'rate_limit': 1})
+        self.assertTrue(tool.is_active)
+
+    def test_custom_tool_can_be_deleted(self):
+        tool = self.env['ai.tool'].create({
+            'name': 'custom.http.ping',
+            'description': 'Ping',
+            'tool_type': 'http',
+            'http_url': 'https://example.com',
+        })
+        tool.unlink()
+        self.assertFalse(tool.exists())
 
     def test_group_by_rejects_unknown_field(self):
         self.env['ai.tool']._sync_registry()

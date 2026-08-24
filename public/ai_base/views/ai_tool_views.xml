@@ -6,32 +6,39 @@
         <field name="arch" type="xml">
             <form string="AI Tool">
                 <sheet>
+                    <widget name="web_ribbon" title="Built-in" bg_color="text-bg-info"
+                            invisible="not is_builtin"/>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="tool_type"/>
-                            <field name="category"/>
-                            <field name="is_active"/>
-                            <field name="read_only"/>
+                            <field name="is_builtin" invisible="1"/>
+                            <field name="name" readonly="is_builtin"/>
+                            <field name="tool_type" readonly="is_builtin"/>
+                            <field name="category" readonly="is_builtin"/>
+                            <field name="is_active" readonly="is_builtin"/>
+                            <field name="read_only" readonly="is_builtin"/>
                         </group>
                         <group>
-                            <field name="required_groups"/>
-                            <field name="rate_limit"/>
-                            <field name="timeout"/>
+                            <field name="required_groups" readonly="is_builtin"/>
+                            <field name="rate_limit" readonly="is_builtin"/>
+                            <field name="timeout" readonly="is_builtin"/>
                         </group>
                     </group>
-                    <field name="description"/>
+                    <field name="description" readonly="is_builtin"/>
                     <group string="ORM" invisible="tool_type != 'orm'">
-                        <field name="orm_model"/>
-                        <field name="orm_method"/>
+                        <field name="orm_model" readonly="is_builtin"/>
+                        <field name="orm_method" readonly="is_builtin"/>
                     </group>
                     <group string="HTTP" invisible="tool_type != 'http'">
-                        <field name="http_method"/>
-                        <field name="http_url"/>
-                        <field name="http_headers"/>
+                        <field name="http_method" readonly="is_builtin"/>
+                        <field name="http_url" readonly="is_builtin"/>
+                        <field name="http_headers" readonly="is_builtin"/>
                     </group>
-                    <field name="input_schema"/>
-                    <field name="output_schema"/>
+                    <field name="input_schema" readonly="is_builtin"/>
+                    <field name="output_schema" readonly="is_builtin"/>
+                    <p class="text-muted" invisible="not is_builtin">
+                        This tool is registered from Python. It cannot be
+                        edited or deleted.
+                    </p>
                 </sheet>
             </form>
         </field>
@@ -43,15 +50,43 @@
             <list>
                 <field name="name"/>
                 <field name="tool_type"/>
+                <field name="is_builtin"/>
                 <field name="read_only"/>
                 <field name="rate_limit"/>
                 <field name="is_active"/>
             </list>
         </field>
     </record>
+    <record id="ai_tool_search_view" model="ir.ui.view">
+        <field name="name">ai.tool.search</field>
+        <field name="model">ai.tool</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="tool_type"/>
+                <filter string="Custom" name="filter_custom" domain="[('is_builtin', '=', False)]"/>
+                <filter string="Built-in" name="filter_builtin" domain="[('is_builtin', '=', True)]"/>
+                <separator/>
+                <filter string="Active" name="filter_active" domain="[('is_active', '=', True)]"/>
+                <group>
+                    <filter string="Type" name="group_type" context="{'group_by': 'tool_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
     <record id="ai_tool_action" model="ir.actions.act_window">
         <field name="name">AI Tools</field>
         <field name="res_model">ai.tool</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="ai_tool_search_view"/>
+        <field name="context">{'search_default_filter_custom': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a custom tool</p>
+            <p>
+                Add ORM or HTTP tools here. Built-in Python tools
+                (search, count, group by) live under the Built-in filter
+                and cannot be edited or deleted.
+            </p>
+        </field>
     </record>
 </odoo>

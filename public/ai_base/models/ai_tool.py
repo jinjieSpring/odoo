@@ -174,10 +174,27 @@ class AiTool(models.Model):
     ], string='HTTP Method', default='POST')
     http_url = fields.Char(string='HTTP URL')
     http_headers = fields.Json(string='HTTP Headers', default=dict)
+    is_builtin = fields.Boolean(
+        string='Built-in', default=False, copy=False,
+        help='Registered from Python with @ai_tool. Cannot be edited or deleted.')
 
     _name_uniq = models.Constraint(
         'UNIQUE(name)',
         'The tool name must be unique.')
+
+    def write(self, vals):
+        if (
+            self.filtered('is_builtin')
+            and vals
+            and not self.env.context.get('ai_tool_sync')
+        ):
+            raise UserError(_('Built-in tools cannot be edited or deleted.'))
+        return super().write(vals)
+
+    def unlink(self):
+        if self.filtered('is_builtin') and not self.env.context.get('ai_tool_sync'):
+            raise UserError(_('Built-in tools cannot be edited or deleted.'))
+        return super().unlink()
 
     def _register_hook(self):
         super()._register_hook()
@@ -212,15 +229,17 @@ class AiTool(models.Model):
                 'input_schema': metadata['input_schema'],
                 'output_schema': metadata.get('output_schema') or {},
                 'required_groups': ','.join(metadata.get('required_groups') or []),
-                'rate_limit': metadata.get('rate_limit') or 30,
-                'timeout': metadata.get('timeout') or 15,
                 'read_only': metadata.get('read_only', True),
-                'is_active': True,
+                'is_builtin': True,
             }
             if name in existing:
-                existing[name].write(vals)
+                existing[name].with_context(ai_tool_sync=True).write(vals)
             else:
-                self.create(dict(vals, name=name))
+                self.create(dict(
+                    vals, name=name, is_active=True,
+                    rate_limit=metadata.get('rate_limit') or 30,
+                    timeout=metadata.get('timeout') or 15,
+                ))
 
     @api.model
     def action_get_manifest_for_user(self, session=None):

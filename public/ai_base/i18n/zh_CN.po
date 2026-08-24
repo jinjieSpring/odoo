@@ -646,6 +646,29 @@ msgid "Type"
 msgstr "类型"
 
 #. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__is_builtin
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_search_view
+msgid "Built-in"
+msgstr "内置"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_tool__is_builtin
+msgid "Registered from Python with @ai_tool. Cannot be edited or deleted."
+msgstr "由 Python 的 @ai_tool 注册。不能修改或删除。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Built-in tools cannot be edited or deleted."
+msgstr "内置工具不能修改或删除。"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_search_view
+msgid "Custom"
+msgstr "自定义"
+
+#. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_tool__tool_type__python
 msgid "Python Function"
 msgstr "Python 函数"
