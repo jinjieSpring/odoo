@@ -176,7 +176,8 @@ class AiChat(models.AbstractModel):
         model = self.env['ai.model']._get_model_for_scenario('chat')
         model_ready, model_status = self.model_status(model)
         settings = self.env['ai.user.settings']._get_for_user()
-        return {
+        values = self._settings_view(settings, model)
+        values.update({
             'model_id': model.id if model else False,
             'model_ready': model_ready,
             'model_status': model_status,
@@ -187,22 +188,11 @@ class AiChat(models.AbstractModel):
                 'max_output_tokens': model.max_tokens_default,
                 'capabilities': model._allowed_options(),
             } if model else {},
-            'attach_context': settings.attach_context,
-            'sidebar_collapsed': settings.sidebar_collapsed,
-            'grid_sessions_collapsed': settings.grid_sessions_collapsed,
-            'grid_knowledge_collapsed': settings.grid_knowledge_collapsed,
-            'grid_sessions_height': settings.grid_sessions_height,
-            'grid_knowledge_height': settings.grid_knowledge_height,
-            'sidebar_width': settings.sidebar_width or 260,
-            'default_prompt_id': settings.default_prompt_id.id or False,
-            'prompts': self.prompt_choices(),
-            'capabilities': (
-                model._allowed_options() if model else self.empty_capabilities()),
             'agents': [],
             'default_agent_id': False,
-            'has_knowledge': 'ai.knowledge.base' in self.env,
             'knowledge_documents': self.knowledge_documents(),
-        }
+        })
+        return values
 
     def user_settings(self):
         """读当前用户的助手偏好（布局、是否附带记录上下文、默认提示词）。
@@ -214,6 +204,10 @@ class AiChat(models.AbstractModel):
         """
         settings = self.env['ai.user.settings']._get_for_user()
         model = self.env['ai.model']._get_model_for_scenario('chat')
+        return self._settings_view(settings, model)
+
+    def _settings_view(self, settings, model):
+        """设置页和 defaults 共用的用户偏好字段。"""
         return {
             'capabilities': (
                 model._allowed_options() if model else self.empty_capabilities()),
@@ -507,19 +501,12 @@ class AiChat(models.AbstractModel):
         """
         session.ensure_one()
         message = self._assistant_message(session, message_id)
-        if not session.context_model or not session.context_res_id:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'type': 'warning',
-                    'title': _('No record context'),
-                    'message': _(
-                        'Attach the current record context first to '
-                        'send this response as a message.'),
-                    'sticky': True,
-                },
-            }
+        missing = self._missing_record_context(
+            session,
+            _('Attach the current record context first to '
+              'send this response as a message.'))
+        if missing:
+            return missing
         return {
             'type': 'ir.actions.act_window',
             'name': _('Send as Message'),
@@ -547,45 +534,42 @@ class AiChat(models.AbstractModel):
         """
         session.ensure_one()
         message = self._assistant_message(session, message_id)
-        if not session.context_model or not session.context_res_id:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'type': 'warning',
-                    'title': _('No record context'),
-                    'message': _(
-                        'Attach the current record context first to '
-                        'log this response as a note.'),
-                    'sticky': True,
-                },
-            }
+        missing = self._missing_record_context(
+            session,
+            _('Attach the current record context first to '
+              'log this response as a note.'))
+        if missing:
+            return missing
         record = self.env[session.context_model].browse(
             session.context_res_id).exists()
         if not record:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'type': 'warning',
-                    'title': _('Record not found'),
-                    'message': _('The context record no longer exists.'),
-                    'sticky': True,
-                },
-            }
+            return self._notify(
+                'warning', _('Record not found'),
+                _('The context record no longer exists.'))
         record.message_post(
             body=Markup(markdown_to_html(message.content)),
             message_type='comment',
             subtype_xmlid='mail.mt_note')
+        return self._notify(
+            'success', _('Note logged'),
+            _('The response was logged as a note on %s.') % (
+                record.display_name),
+            sticky=False)
+
+    def _missing_record_context(self, session, message):
+        if session.context_model and session.context_res_id:
+            return False
+        return self._notify('warning', _('No record context'), message)
+
+    def _notify(self, ntype, title, message, sticky=True):
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'type': 'success',
-                'title': _('Note logged'),
-                'message': _('The response was logged as a note on %s.') % (
-                    record.display_name),
-                'sticky': False,
+                'type': ntype,
+                'title': title,
+                'message': message,
+                'sticky': sticky,
             },
         }
 
@@ -598,18 +582,11 @@ class AiChat(models.AbstractModel):
         返回:
             dict: ``ir.actions.client`` / ``display_notification``。
         """
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'warning',
-                'title': title,
-                'message': message or _(
-                    'This feature is not implemented yet and will '
-                    'be available in a future release.'),
-                'sticky': True,
-            },
-        }
+        return self._notify(
+            'warning', title,
+            message or _(
+                'This feature is not implemented yet and will '
+                'be available in a future release.'))
 
     def build_tool_card(self, payload):
         """原样回传工具卡片数据，给前端展示用。
@@ -635,15 +612,9 @@ class AiChat(models.AbstractModel):
         result = self.env['ai.tool'].action_invoke_tool(
             name, (payload or {}).get('params') or {})
         if result.get('status') == 'success':
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'type': 'success',
-                    'title': _('Tool executed'),
-                    'message': result.get('message') or _('Done'),
-                },
-            }
+            return self._notify(
+                'success', _('Tool executed'),
+                result.get('message') or _('Done'), sticky=False)
         return self._later_stub(
             _('Tool cannot run'), result.get('message'))
 

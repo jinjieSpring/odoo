@@ -1420,20 +1420,17 @@ export class AiChat extends Component {
     }
 
     async sendAsMessage(msg) {
-        const action = await this.orm.call(
-            "ai.chat.session",
-            "action_send_as_message",
-            [[this.state.currentId], msg.id]
-        );
-        if (action && action.type) {
-            this.actionService.doAction(action);
-        }
+        this._doMessageAction("action_send_as_message", msg);
     }
 
     async logAsNote(msg) {
+        this._doMessageAction("action_log_as_note", msg);
+    }
+
+    async _doMessageAction(method, msg) {
         const action = await this.orm.call(
             "ai.chat.session",
-            "action_log_as_note",
+            method,
             [[this.state.currentId], msg.id]
         );
         if (action && action.type) {

@@ -25,8 +25,7 @@ class AiChat(models.AbstractModel):
 
     def send_message(self, session, content, options=None):
         session.ensure_one()
-        agent = session.agent_id
-        if agent and agent.run_mode == 'goal':
+        if session._is_goal_run():
             return self.env['ai.agent.run']._start_from_chat(
                 session, content, options)
         return super().send_message(session, content, options)

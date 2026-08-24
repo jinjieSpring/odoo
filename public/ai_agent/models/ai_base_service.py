@@ -16,8 +16,8 @@ class AiBaseService(models.AbstractModel):
             dict: ``result`` / ``events`` / ``error``。goal 模式立即回一条
             「已接下任务」类助手文案，真正执行在 ``ai.agent.run``。
         """
-        if session and session.agent_id and session.agent_id.run_mode == 'goal':
-            payload = self.env['ai.agent.run']._start_from_chat(
+        if session and session._is_goal_run():
+            payload = self.env['ai.chat'].send_message(
                 session, content, options)
             accepted = ''
             messages = payload.get('messages') or []
@@ -75,9 +75,9 @@ class AiBaseService(models.AbstractModel):
             tuple: ``(card, status, result_data)``。不在白名单时
             ``status='blocked'``；否则交给父类真正调用。
         """
-        if session and session.agent_id and session.agent_id.tool_ids:
-            allowed = set(session.agent_id.tool_ids.mapped('name'))
-            if name not in allowed:
+        if session:
+            allowed = session._restricted_tool_names()
+            if allowed is not None and name not in allowed:
                 card = {
                     'name': name,
                     'status': 'blocked',
@@ -108,7 +108,7 @@ class AiBaseService(models.AbstractModel):
         session = payload.get('session')
         if not session or not session.agent_id or not session.agent_id.memory_enabled:
             return result
-        if session.agent_id.run_mode == 'goal':
+        if session._is_goal_run():
             return result
         self.env['ai.agent.memory']._remember_from_turn(
             session.agent_id,

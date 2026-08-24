@@ -150,27 +150,14 @@ class AiBaseService(models.AbstractModel):
         self._check_rate_limit()
         try:
             if session:
-                if not session.model_id:
-                    session.write({
-                        'model_id': model.id,
-                        'provider_id': model.provider_id.id,
-                    })
-                session.write({'state': 'open'})
-                if persist_user:
-                    self.env['ai.chat.message'].create({
-                        'session_id': session.id,
-                        'role': 'user',
-                        'content': content,
-                    })
-                    if session.name == _('New Session'):
-                        session.name = content[:30]
+                self._prepare_session_turn(
+                    session, model, content, persist_user=persist_user)
                 history = session._build_history()
                 options = session._call_options(options)
+                options['session'] = session
             else:
                 history = list(history or [])
                 history.append({'role': 'user', 'content': content})
-            if session:
-                options['session'] = session
             messages = self._system_messages(
                 session, options, content, record=record) + history
             result = self._run_tool_loop(model, messages, options)
@@ -251,6 +238,23 @@ class AiBaseService(models.AbstractModel):
             raise UserError(error)
         return vectors
 
+    def _prepare_session_turn(self, session, model, content, persist_user=True):
+        """给会话补模型、标成进行中，并按需写入本轮用户消息。"""
+        if not session.model_id:
+            session.write({
+                'model_id': model.id,
+                'provider_id': model.provider_id.id,
+            })
+        session.write({'state': 'open'})
+        if persist_user:
+            self.env['ai.chat.message'].create({
+                'session_id': session.id,
+                'role': 'user',
+                'content': content,
+            })
+            if session.name == _('New Session'):
+                session.name = content[:30]
+
     def embed(self, texts, model=None, model_code=None):
         """``embedding()`` 的别名，入参返回值相同。
 
@@ -327,19 +331,7 @@ class AiBaseService(models.AbstractModel):
                 },
                 'events': [],
             }
-        if not session.model_id:
-            session.write({
-                'model_id': model.id,
-                'provider_id': model.provider_id.id,
-            })
-        session.write({'state': 'open'})
-        self.env['ai.chat.message'].create({
-            'session_id': session.id,
-            'role': 'user',
-            'content': content,
-        })
-        if session.name == _('New Session'):
-            session.name = content[:30]
+        self._prepare_session_turn(session, model, content)
         options = session._call_options(options)
         options['session'] = session
         history = session._build_history()

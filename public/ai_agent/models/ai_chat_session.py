@@ -33,3 +33,14 @@ class AiChatSession(models.Model):
             ('session_id', '=', self.id),
             ('state', 'in', ('pending', 'running', 'waiting_user')),
         ], limit=1)
+
+    def _is_goal_run(self):
+        self.ensure_one()
+        return bool(self.agent_id and self.agent_id.run_mode == 'goal')
+
+    def _restricted_tool_names(self):
+        """Agent 限定的工具名。``None`` 表示不限制。"""
+        self.ensure_one()
+        if not self.agent_id or not self.agent_id.tool_ids:
+            return None
+        return set(self.agent_id.tool_ids.mapped('name'))
