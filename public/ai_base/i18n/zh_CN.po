@@ -1807,6 +1807,48 @@ msgstr "统计到 %s 条记录。"
 
 #. module: ai_base
 #. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "The groupby field \"%s\" does not exist on model \"%s\"."
+msgstr "分组字段“%s”在模型“%s”上不存在。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Invalid aggregate expression \"%s\", expected \"field:aggregator\"."
+msgstr "无效的聚合表达式“%s”，应为“字段:聚合器”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "The aggregate field \"%s\" does not exist on model \"%s\"."
+msgstr "聚合字段“%s”在模型“%s”上不存在。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Cannot group or aggregate sensitive field \"%s\"."
+msgstr "不能对敏感字段“%s”分组或聚合。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Unsupported aggregator \"%s\"."
+msgstr "不支持的聚合器“%s”。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "The grouping query failed: %s"
+msgstr "分组查询失败：%s"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Grouped %s records into %s groups."
+msgstr "已将 %s 条记录分成 %s 组。"
+
+#. module: ai_base
+#. odoo-python
 #: code:addons/ai_base/models/ai_request_log.py:0
 msgid "Request Log"
 msgstr "请求日志"

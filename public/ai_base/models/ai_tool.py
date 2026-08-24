@@ -566,3 +566,116 @@ class AiGenericTools(models.AbstractModel):
             'message': _('Counted %s records.') % count,
             'data': {'count': count},
         }
+
+    @ai_tool(
+        name='generic.group_by',
+        description=(
+            'Group records of any Odoo model by a field and compute '
+            'aggregates, such as sales orders grouped by salesperson or '
+            'partners counted by country. Use this instead of search_read '
+            'when the user wants totals per group. Provide the model name, '
+            'the groupby field and aggregate expressions like '
+            '"amount_total:sum" or "id:count". Results respect the current '
+            'user permissions and record rules.'
+        ),
+        input_schema={
+            'type': 'object',
+            'properties': {
+                'model': {
+                    'type': 'string',
+                    'description': 'Technical name of the Odoo model, e.g. sale.order.',
+                },
+                'groupby': {
+                    'type': 'string',
+                    'description': 'Field to group by, e.g. user_id or state.',
+                },
+                'aggregates': {
+                    'type': 'array',
+                    'items': {'type': 'string'},
+                    'description': 'Expressions such as ["id:count", "amount_total:sum"].',
+                },
+                'domain': {'type': 'array'},
+                'limit': {'type': 'integer'},
+            },
+            'required': ['model', 'groupby', 'aggregates'],
+            'additionalProperties': False,
+        },
+        required_groups=['base.group_user'],
+    )
+    def _ai_group_by(self, params, context=None):
+        model_name = params.get('model')
+        if not model_name or model_name not in self.env:
+            return self._tool_fail(
+                404, _('Model "%s" does not exist.') % model_name)
+        model = self.env[model_name]
+        if model._abstract or model._transient:
+            return self._tool_fail(
+                400, _('Abstract or transient models cannot be queried.'))
+        groupby = params.get('groupby')
+        if not isinstance(groupby, str) or groupby not in model._fields:
+            return self._tool_fail(
+                400, _('The groupby field "%s" does not exist on model "%s".')
+                % (groupby, model_name))
+        if groupby in _SENSITIVE_FIELDS:
+            return self._tool_fail(
+                400, _('Cannot group or aggregate sensitive field "%s".')
+                % groupby)
+        aggregates = params.get('aggregates') or []
+        validated = []
+        allowed = (
+            'sum', 'avg', 'min', 'max', 'count',
+            'count_distinct', 'bool_and', 'bool_or',
+        )
+        for expression in aggregates:
+            if not isinstance(expression, str) or ':' not in expression:
+                return self._tool_fail(
+                    400, _('Invalid aggregate expression "%s", expected '
+                           '"field:aggregator".') % expression)
+            field_name, aggregator = expression.split(':', 1)
+            if field_name not in model._fields:
+                return self._tool_fail(
+                    400, _('The aggregate field "%s" does not exist on model '
+                           '"%s".') % (field_name, model_name))
+            if field_name in _SENSITIVE_FIELDS:
+                return self._tool_fail(
+                    400, _('Cannot group or aggregate sensitive field "%s".')
+                    % field_name)
+            if aggregator not in allowed:
+                return self._tool_fail(
+                    400, _('Unsupported aggregator "%s".') % aggregator)
+            validated.append('%s:%s' % (field_name, aggregator))
+        try:
+            domain = self.env['ai.tool']._safe_domain(params.get('domain') or [])
+            limit = max(1, min(int(params.get('limit') or 80), 200))
+        except (TypeError, ValueError, UserError) as exc:
+            return self._tool_fail(400, str(exc))
+        try:
+            rows = model._read_group(
+                domain, [groupby], validated or ['id:count'], limit=limit)
+        except AccessError as exc:
+            return self._tool_fail(421, str(exc))
+        except Exception as exc:  # noqa: BLE001
+            return self._tool_fail(
+                500, _('The grouping query failed: %s') % exc)
+        groups = []
+        specs = validated or ['id:count']
+        for row in rows:
+            entry = {groupby: self._plain_value(row[0])}
+            for index, expression in enumerate(specs):
+                entry[expression.replace(':', '_')] = self._plain_value(
+                    row[index + 1])
+            groups.append(entry)
+        return {
+            'status': 'success',
+            'message': _('Grouped %s records into %s groups.') % (
+                model.search_count(domain), len(groups)),
+            'data': {'groups': groups},
+        }
+
+    def _plain_value(self, value):
+        ids = getattr(value, 'ids', None)
+        if ids is not None:
+            return ids
+        if hasattr(value, 'isoformat'):
+            return value.isoformat()
+        return value

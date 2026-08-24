@@ -80,3 +80,43 @@ class TestTools(AiBaseCase):
             ('tool_name', '=', 'generic.search_count'),
         ], limit=1)
         self.assertTrue(log)
+
+    def test_group_by_readonly(self):
+        self.env['ai.tool']._sync_registry()
+        country = self.env['res.country'].search([], limit=1)
+        self.assertTrue(country)
+        partners = self.env['res.partner'].create([
+            {'name': 'Group A', 'country_id': country.id},
+            {'name': 'Group B', 'country_id': country.id},
+        ])
+        result = self.env['ai.tool'].action_invoke_tool('generic.group_by', {
+            'model': 'res.partner',
+            'groupby': 'country_id',
+            'aggregates': ['id:count'],
+            'domain': [['id', 'in', partners.ids]],
+        })
+        self.assertEqual(result['status'], 'success')
+        self.assertTrue(result['data']['groups'])
+        total = sum(
+            group.get('id_count', 0) for group in result['data']['groups'])
+        self.assertEqual(total, 2)
+
+    def test_group_by_rejects_bad_aggregator(self):
+        self.env['ai.tool']._sync_registry()
+        result = self.env['ai.tool'].action_invoke_tool('generic.group_by', {
+            'model': 'res.partner',
+            'groupby': 'country_id',
+            'aggregates': ['id:bogus'],
+        })
+        self.assertEqual(result['status'], 'error')
+        self.assertEqual(result['code'], 400)
+
+    def test_group_by_rejects_unknown_field(self):
+        self.env['ai.tool']._sync_registry()
+        result = self.env['ai.tool'].action_invoke_tool('generic.group_by', {
+            'model': 'res.partner',
+            'groupby': 'not_a_field',
+            'aggregates': ['id:count'],
+        })
+        self.assertEqual(result['status'], 'error')
+        self.assertEqual(result['code'], 400)
