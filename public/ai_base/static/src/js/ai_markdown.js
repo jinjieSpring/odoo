@@ -209,7 +209,8 @@ export function markdownToHtml(text) {
                 html.push(`<${newType}>`);
                 listType = newType;
             }
-            html.push(`<li>${inlineFormat((ulItem || olItem)[1])}</li>`);
+            const itemText = ulItem ? ulItem[1] : olItem[2];
+            html.push(`<li>${inlineFormat(itemText)}</li>`);
             i += 1;
             continue;
         }

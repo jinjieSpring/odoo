@@ -10,6 +10,7 @@ import {
 } from "@web/../tests/web_test_helpers";
 
 import { AiFormattedText } from "@ai_base/js/ai_formatted_text";
+import { markdownToHtml } from "@ai_base/js/ai_markdown";
 
 defineMailModels();
 
@@ -22,6 +23,16 @@ async function mount(content) {
     mockService("notification", () => ({ add: () => {} }));
     await mountWithCleanup(AiFormattedText, { props: { content } });
 }
+
+test("ordered list keeps the step text, not the marker numbers", () => {
+    const html = markdownToHtml("1. 登录后台\n2. 打开设置\n3. 查看用户");
+    expect(html).toInclude("<ol>");
+    expect(html).toInclude("<li>登录后台</li>");
+    expect(html).toInclude("<li>打开设置</li>");
+    expect(html).toInclude("<li>查看用户</li>");
+    expect(html).not.toInclude("<li>1</li>");
+    expect(html).not.toInclude("<li>2</li>");
+});
 
 test("renders headings, bold and inline code", async () => {
     await mount("# Title\n\n**bold** and `code`");
