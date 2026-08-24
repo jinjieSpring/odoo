@@ -63,15 +63,36 @@ class AiBaseService(models.AbstractModel):
     # ------------------------------------------------------------------
 
     def on_ai_request_before(self, payload):
-        """Called before every vendor request. Return the (possibly mutated) payload."""
+        """请求发出前的扩展钩子，可改 payload。``ai_agent`` 等模块可继承重写。
+
+        入参:
+            payload (dict): 即将发给厂商的请求包，常见键 ``content`` / ``session`` /
+                ``model`` / ``options`` / ``scenario``。
+        返回:
+            dict: 原样或修改后的 payload。
+        """
         return payload
 
     def on_ai_request_done(self, payload, result):
-        """Called after a successful vendor request."""
+        """厂商调用成功后的扩展钩子。``ai_agent`` 在此写入记忆。
+
+        入参:
+            payload (dict): 请求前的 payload。
+            result (dict): 本轮结果，含 ``reply`` / ``usage`` / ``rounds`` 等。
+        返回:
+            dict: 原样或修改后的 result。
+        """
         return result
 
     def on_ai_request_error(self, payload, error):
-        """Called when a vendor request fails. ``error`` is an exception or dict."""
+        """厂商调用失败时的扩展钩子，默认只回传错误，不吞异常。
+
+        入参:
+            payload (dict): 失败时的请求包。
+            error: 异常对象，或错误 dict。
+        返回:
+            原样 error。
+        """
         return error
 
     # ------------------------------------------------------------------
@@ -83,16 +104,24 @@ class AiBaseService(models.AbstractModel):
         stream=False, model_code=None, session=None, options=None,
         history=None, model=None, scenario='chat', persist_user=True,
     ):
-        """Synchronous chat.
+        """同步聊天：组 system + 历史，跑工具循环，可选写入 session。
 
-        :param str content: user message (optional when ``prompt_key`` renders a user turn)
-        :param str prompt_key: ``ai.prompt.template`` code
-        :param record: optional ORM record used to render the prompt
-        :param dict context: extra template variables
-        :param bool stream: unused here; use ``stream_chat`` / SSE for streaming
-        :param str model_code: ``ai.model.code``
-        :param session: optional ``ai.chat.session``
-        :returns: dict with ``reply``, ``usage``, ``rounds``, ``latency_ms``
+        入参:
+            content (str): 用户本轮原文。有 ``prompt_key`` 且模板能渲出 user 时可省略。
+            prompt_key (str): ``ai.prompt.template`` 的 code。
+            record: 可选业务记录，用来渲染模板 / 拼记录快照。
+            context (dict): 模板额外变量。
+            stream (bool): 此处不用；流式走 ``stream_chat``。
+            model_code (str): ``ai.model.code``，用来解析模型。
+            session: 可选 ``ai.chat.session``；有则落库历史并带会话选项。
+            options (dict): 调用选项，如 ``system_prompt`` / ``max_rounds`` / ``skip_memory``。
+            history (list): 无 session 时的消息列表 ``[{role, content}, ...]``。
+            model: 已解析的 ``ai.model`` 记录。
+            scenario (str): 场景键，默认 ``chat``，影响选模型和日志。
+            persist_user (bool): 有 session 时是否先写入一条 user 消息。
+        返回:
+            dict: ``reply`` 最终回复；``usage`` token 累计；``rounds`` 工具循环各轮；
+            ``latency_ms`` 耗时。失败时可能带 ``error``。空内容会抛 ``UserError``。
         """
         options = dict(options or {})
         context = dict(context or {})
@@ -159,18 +188,41 @@ class AiBaseService(models.AbstractModel):
             raise
 
     def rag_chat(self, query, **kwargs):
-        """RAG entry point. Implemented by ``ai_knowledge`` when installed."""
+        """知识库问答入口。本模块只占位；装 ``ai_knowledge`` 后才有实现。
+
+        入参:
+            query (str): 用户问题。
+            **kwargs: 预留给知识库模块（session、document_ids 等）。
+        返回:
+            未安装知识库时抛 ``UserError``。安装后由子类返回聊天结果 dict。
+        """
         raise UserError(_(
             'Install the AI Knowledge module to use knowledge-base chat.'))
 
     def retrieve(self, query, top_k=5, document_ids=None, knowledge_ids=None, model=None):
-        """Return knowledge snippets. Empty unless ``ai_knowledge`` is installed."""
+        """检索知识片段。本模块恒返回空列表；``ai_knowledge`` 会重写。
+
+        入参:
+            query (str): 检索文本。
+            top_k (int): 最多返回条数，默认 5。
+            document_ids: 限定文档 id 列表。
+            knowledge_ids: 限定知识库 id 列表。
+            model: 可选 embedding 模型。
+        返回:
+            list: 知识片段；未安装知识库时为 ``[]``。
+        """
         return []
 
     def embedding(self, texts, model=None, model_code=None):
-        """Return a list of embedding vectors for ``texts``.
+        """把文本列表做成向量，并写一条 embed 请求日志。
 
-        Alias of the first.md API name; ``embed()`` is also provided.
+        入参:
+            texts (list[str]): 要向量化的文本。
+            model: 可选 ``ai.model``（须是 embedding 场景）。
+            model_code (str): 按 code 解析模型；有 ``model`` 时忽略。
+        返回:
+            list[list[float]]: 与 ``texts`` 等长的向量列表。
+            厂商失败时抛 ``UserError``。
         """
         if model_code and not model:
             model = self.env['ai.model']._get_by_code(model_code)
@@ -200,13 +252,26 @@ class AiBaseService(models.AbstractModel):
         return vectors
 
     def embed(self, texts, model=None, model_code=None):
+        """``embedding()`` 的别名，入参返回值相同。
+
+        入参 / 返回: 见 ``embedding``。
+        """
         return self.embedding(texts, model=model, model_code=model_code)
 
     def agent_run(
         self, content, session=None, max_rounds=10, prompt_key=None,
         record=None, context=None, model_code=None, options=None,
     ):
-        """Chat with the tool loop enabled (registered tools only)."""
+        """带工具循环的聊天（只调用已注册工具）。内部走 ``chat(..., scenario='agent')``。
+
+        入参:
+            content (str): 用户任务 / 问题。
+            session: 可选 ``ai.chat.session``。
+            max_rounds (int): 工具循环上限，写入 ``options['max_rounds']``，默认 10。
+            prompt_key / record / context / model_code / options: 同 ``chat``。
+        返回:
+            dict: 与 ``chat`` 相同。若产生了 rounds，会把最近一条请求日志标成 ``agent``。
+        """
         options = dict(options or {})
         options['max_rounds'] = max_rounds
         result = self.chat(
@@ -220,9 +285,19 @@ class AiBaseService(models.AbstractModel):
         return result
 
     def stream_chat(self, content, session, options=None):
-        """Run the tool loop and return plain-data events for SSE replay.
+        """流式聊天：在本方法里做完全部 ORM，返回可给 SSE 回放的纯数据事件。
 
-        All ORM work happens here. The HTTP generator must not touch the ORM.
+        HTTP 生成器不应再碰 ORM。校验失败不抛异常，而是把 error 放进返回值。
+
+        入参:
+            content (str): 用户本轮原文。
+            session: 必填 ``ai.chat.session``。
+            options (dict): 会话调用选项。
+        返回:
+            dict:
+                ``result``: 与 ``chat`` 类似的结果（含 ``reply`` / ``rounds`` / ``usage``）。
+                ``events``: SSE 事件列表，如 ``delta`` / ``tool_call`` / ``usage``。
+                ``error``: 失败时为 ``{message, code}``，成功多为 ``result`` 里的 error 或假值。
         """
         events = []
         options = dict(options or {})
@@ -280,6 +355,15 @@ class AiBaseService(models.AbstractModel):
         return {'result': result, 'events': events, 'error': result.get('error')}
 
     def invoke_tool(self, tool_name, params=None, context=None):
+        """按名称直接调一次已注册工具，不经过模型。
+
+        入参:
+            tool_name (str): 工具 name。
+            params (dict): 工具参数。
+            context (dict): 额外调用上下文。
+        返回:
+            dict: ``ai.tool.action_invoke_tool`` 的结果，一般含 ``status`` / ``message``。
+        """
         return self.env['ai.tool'].action_invoke_tool(tool_name, params, context)
 
     # ------------------------------------------------------------------
@@ -287,6 +371,16 @@ class AiBaseService(models.AbstractModel):
     # ------------------------------------------------------------------
 
     def render_prompt(self, code_or_template, context=None, company=None, record=None):
+        """渲染一条提示词模板，得到最终文本。
+
+        入参:
+            code_or_template: 模板 code（str），或已有 ``render`` 方法的模板记录。
+            context (dict): 模板变量。
+            company: 按公司查找模板时用。
+            record: 绑定的业务记录。
+        返回:
+            str: 渲染结果；找不到模板时返回空字符串。
+        """
         if hasattr(code_or_template, 'render'):
             return code_or_template.render(context or {}, record=record)
         template = self.env['ai.prompt.template']._get_by_code(
@@ -296,6 +390,14 @@ class AiBaseService(models.AbstractModel):
         return template.render(context or {}, record=record)
 
     def _resolve_model(self, model=None, scenario='chat'):
+        """选定本次可用的 ``ai.model``：传入的不可用则丢弃，再按场景取默认。
+
+        入参:
+            model: 候选 ``ai.model``，可空。
+            scenario (str): 场景，如 ``chat`` / ``embed``。
+        返回:
+            ai.model: 可用模型记录。没有任何默认模型时抛 ``UserError``。
+        """
         if model and not model._is_usable():
             model = self.env['ai.model']
         if model:
@@ -308,9 +410,24 @@ class AiBaseService(models.AbstractModel):
         return resolved
 
     def _param_int(self, key, default):
+        """读系统参数并转成 int。
+
+        入参:
+            key (str): ``ir.config_parameter`` 的 key，如 ``ai_base.max_tool_rounds``。
+            default: 缺省或无法解析时的回退值。
+        返回:
+            int
+        """
         return int(self.env['ir.config_parameter'].sudo().get_param(key, str(default)) or default)
 
     def _check_rate_limit(self):
+        """按最近 60 秒检查全站 / 当前用户的请求次数。
+
+        入参:
+            无（用 ``self.env.user`` 和 ``ai.request.log``）。
+        返回:
+            None。超限抛 ``UserError``。
+        """
         global_limit = self._param_int('ai_base.rate_limit_global_per_minute', 120)
         user_limit = self._param_int('ai_base.rate_limit_user_per_minute', 30)
         since = self.env['ai.request.log'].sudo()
@@ -334,6 +451,13 @@ class AiBaseService(models.AbstractModel):
                 raise UserError(_('You have reached the per-user AI rate limit. Retry shortly.'))
 
     def _guard_input(self, text):
+        """校验用户输入：超长、敏感词拦截；疑似注入只记日志不拦截。
+
+        入参:
+            text (str): 用户原文。
+        返回:
+            str: 原文本。超长或命中敏感词抛 ``UserError``。
+        """
         max_len = self._param_int('ai_base.max_input_chars', 20000)
         if max_len and len(text) > max_len:
             raise UserError(_('Input exceeds the maximum length of %s characters.') % max_len)
@@ -345,12 +469,27 @@ class AiBaseService(models.AbstractModel):
         return text
 
     def _guard_output(self, text):
+        """清洗模型输出：命中敏感词的片段替换成 ``***``。
+
+        入参:
+            text (str): 模型回复。
+        返回:
+            str: 脱敏后的文本。
+        """
         hits = self._sensitive_hits(text, direction='output')
         for word in hits:
             text = re.sub(re.escape(word), '***', text, flags=re.IGNORECASE)
         return text
 
     def _sensitive_hits(self, text, direction='input'):
+        """在文本里查找系统参数 ``ai_base.sensitive_words``（逗号分隔）中的词。
+
+        入参:
+            text (str): 待扫描文本。
+            direction (str): ``input`` / ``output``，当前实现未区分，仅预留。
+        返回:
+            list[str]: 命中的原词，未命中为空列表。
+        """
         raw = self.env['ir.config_parameter'].sudo().get_param(
             'ai_base.sensitive_words', '') or ''
         words = [part.strip() for part in raw.split(',') if part.strip()]
@@ -364,11 +503,30 @@ class AiBaseService(models.AbstractModel):
         return hits
 
     def _log(self, **vals):
+        """写入一条 ``ai.request.log``，自动补当前用户和公司。
+
+        入参:
+            **vals: 日志字段，如 ``request_type`` / ``model_id`` / ``status``。
+        返回:
+            ai.request.log: 新建的日志记录。
+        """
         vals.setdefault('user_id', self.env.user.id)
         vals.setdefault('company_id', self.env.company.id)
         return self.env['ai.request.log'].sudo().create(vals)
 
     def _log_request(self, request_type, scenario_key, session, model, result, input_summary=''):
+        """从一次 chat/agent 结果整理字段，再调用 ``_log``。
+
+        入参:
+            request_type (str): ``chat`` / ``agent`` / ``embed`` 等。
+            scenario_key (str): 场景键，写入日志。
+            session: ``ai.chat.session`` 或空。
+            model: 本次 ``ai.model``。
+            result (dict): ``_run_tool_loop`` / ``chat`` 的返回值。
+            input_summary (str): 输入摘要，截到 4000 字。
+        返回:
+            None（副作用是建日志）。
+        """
         error = result.get('error') or {}
         self._log(
             request_type=request_type,
@@ -392,14 +550,38 @@ class AiBaseService(models.AbstractModel):
         )
 
     def _knowledge_system_parts(self, session, query):
-        """Override in ``ai_knowledge`` to inject retrieved snippets."""
+        """拼进 system prompt 的知识库片段。本模块返回空；``ai_knowledge`` 重写。
+
+        入参:
+            session: 当前会话或空。
+            query (str): 本轮用户问题，用于检索。
+        返回:
+            list[str]: 要拼进 system 的文本块。
+        """
         return []
 
     def _agent_system_parts(self, session, query):
-        """Override in ``ai_agent`` to inject persona and memory."""
+        """拼进 system prompt 的 agent 人设和记忆。本模块返回空；``ai_agent`` 重写。
+
+        入参:
+            session: 当前会话或空（需要 ``session.agent_id``）。
+            query (str): 本轮用户问题，可给模板渲染。
+        返回:
+            list[str]: 人设 / 记忆等文本块。
+        """
         return []
 
     def _system_messages(self, session=None, options=None, query=None, record=None):
+        """组装发给模型的 system 消息：模板、记录快照、知识库、agent、界面语言。
+
+        入参:
+            session: 可选会话，取其 ``prompt_id`` / 上下文快照。
+            options (dict): 无 session 模板时可用 ``system_prompt``。
+            query (str): 本轮用户问题。
+            record: 可选业务记录，生成字段快照。
+        返回:
+            list[dict]: 通常一条 ``{'role': 'system', 'content': '...'}``。
+        """
         options = options or {}
         parts = []
         if session and session.prompt_id:
@@ -433,12 +615,25 @@ class AiBaseService(models.AbstractModel):
         return [{'role': 'system', 'content': '\n\n'.join(parts)}]
 
     def _user_language_name(self):
-        """Display name of the current user's Odoo interface language."""
+        """当前用户 Odoo 界面语言的显示名。
+
+        入参:
+            无（读 ``self.env.lang``）。
+        返回:
+            str: 如 ``Chinese (Simplified) / 简体中文``；找不到则退回语言代码。
+        """
         code = self.env.lang or 'en_US'
         data = self.env['res.lang']._get_data(code=code)
         return data.name or code
 
     def _user_language_instruction(self):
+        """生成「请用用户界面语言作答」的 system 指令。
+
+        入参:
+            无。
+        返回:
+            str: 已填入语言名的英文指令文本。
+        """
         name = self._user_language_name()
         return (
             'Always reply in %s, matching the current user\'s Odoo interface '
@@ -447,6 +642,14 @@ class AiBaseService(models.AbstractModel):
         ) % name
 
     def _record_snapshot(self, record, max_fields=40):
+        """把一条业务记录压成可读文本，供模型当上下文（跳过敏感/二进制/关系列表字段）。
+
+        入参:
+            record: 单条 ORM 记录。
+            max_fields (int): 最多序列化多少个字段，默认 40。
+        返回:
+            str: 多行文本，首行是模型名/id/显示名，其后 ``- 字段: 值``。
+        """
         record.ensure_one()
         lines = ['%s,%s %s' % (record._name, record.id, record.display_name)]
         count = 0
@@ -472,6 +675,25 @@ class AiBaseService(models.AbstractModel):
         return '\n'.join(lines)
 
     def _run_tool_loop(self, model, history, options=None, emit=None):
+        """模型 ↔ 工具 多轮循环：调厂商、执行 tool_call、把结果追加进 history。
+
+        会按当前用户/session 取工具清单；失败时先去掉 tools 重试，再换候选模型。
+
+        入参:
+            model: 起始 ``ai.model``。
+            history (list[dict]): 已含 system + 会话历史的消息列表，会被原地追加。
+            options (dict): 可含 ``session``（取出后不传给厂商）、``max_rounds``、
+                以及厂商选项。``session`` 用于过滤工具。
+            emit (callable): 可选，流式时接收事件 dict。
+        返回:
+            dict:
+                ``reply`` (str): 最后一轮有正文的助手回复。
+                ``usage`` (dict): 累计 token。
+                ``rounds`` (list): 每轮 ``content`` / ``reasoning`` / ``cards`` / ``usage``。
+                ``latency_ms`` (int): 耗时。
+                ``model_id`` (int): 实际用到的模型。
+                ``error`` (dict, 可选): 全部厂商调用失败时存在。
+        """
         options = dict(options or {})
         session = options.pop('session', None)
         manifest = self.env['ai.tool'].action_get_manifest_for_user(session=session)
@@ -597,6 +819,18 @@ class AiBaseService(models.AbstractModel):
         }
 
     def _execute_loop_call(self, name, arguments, session=None):
+        """工具循环里真正调一次工具。``ai_agent`` 会先按 agent 白名单拦截。
+
+        入参:
+            name (str): 工具 name。
+            arguments (dict): 模型给出的参数。
+            session: 当前会话，子类过滤工具时用；本实现不读它。
+        返回:
+            tuple: ``(card, status, result_data)``
+                card (dict): 前端卡片，含 ``name`` / ``status`` / ``arguments``，失败有 ``error``。
+                status (str): ``executed`` 成功，``blocked`` 未知工具或调用失败。
+                result_data (dict): 工具原始返回；blocked 时可能是 ``{}`` 或失败 result。
+        """
         tool = self.env['ai.tool'].sudo().search(
             [('name', '=', name), ('is_active', '=', True)], limit=1)
         card = {'name': name, 'status': 'blocked', 'arguments': arguments}
@@ -615,6 +849,14 @@ class AiBaseService(models.AbstractModel):
         return card, 'blocked', result
 
     def _persist_rounds(self, session, result):
+        """把工具循环每一轮写成 ``ai.chat.message``（assistant，带 tool_cards 和 token）。
+
+        入参:
+            session: ``ai.chat.session``。
+            result (dict): ``_run_tool_loop`` 的返回值，读 ``rounds``。
+        返回:
+            None。空轮（无正文、无卡片、无推理）会跳过。
+        """
         for round_info in result.get('rounds') or []:
             content = round_info.get('content') or ''
             cards = round_info.get('cards') or []
