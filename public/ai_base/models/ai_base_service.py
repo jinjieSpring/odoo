@@ -674,6 +674,55 @@ class AiBaseService(models.AbstractModel):
             count += 1
         return '\n'.join(lines)
 
+    def _complete_with_failover(self, model, history, options, candidates):
+        """调当前模型；失败则去掉 tools 重试（思考模式除外），再换候选模型。
+
+        入参:
+            model: 本轮起始 ``ai.model``。
+            history (list[dict]): 发给厂商的消息。
+            options (dict): 厂商选项；无 tools 重试成功时返回去掉 tools 的副本。
+            candidates: 可切换的 ``ai.model`` 记录集或列表。
+        返回:
+            tuple: ``(result, model, options, error)``。全部失败时
+            ``result`` 为 ``None``，``error`` 为第一次 ``AiError``。
+        """
+        options = dict(options or {})
+        last_error = None
+        try:
+            return (
+                get_provider(model.provider_id).chat_completion(
+                    model, history, options),
+                model, options, None)
+        except AiError as exc:
+            last_error = exc
+
+        # Keep tools when the user asked for thinking: dropping them
+        # after a thinking-mode error makes the model look like it
+        # cannot call tools.
+        if options.get('tools') and not options.get('thinking_enabled'):
+            retry = dict(options)
+            retry.pop('tools', None)
+            retry.pop('tool_choice', None)
+            try:
+                return (
+                    get_provider(model.provider_id).chat_completion(
+                        model, history, retry),
+                    model, retry, last_error)
+            except AiError:
+                pass
+
+        for candidate in candidates:
+            if candidate.id == model.id:
+                continue
+            try:
+                return (
+                    get_provider(candidate.provider_id).chat_completion(
+                        candidate, history, options),
+                    candidate, options, last_error)
+            except AiError:
+                continue
+        return None, model, options, last_error
+
     def _run_tool_loop(self, model, history, options=None, emit=None):
         """模型 ↔ 工具 多轮循环：调厂商、执行 tool_call、把结果追加进 history。
 
@@ -710,51 +759,23 @@ class AiBaseService(models.AbstractModel):
         max_rounds = int(options.get('max_rounds') or self._param_int(
             'ai_base.max_tool_rounds', 10))
         max_calls = self._param_int('ai_base.max_tool_calls_per_round', 10)
-        last_error = None
         for _round in range(max_rounds):
-            client = get_provider(current.provider_id)
-            try:
-                result = client.chat_completion(current, history, options)
-            except AiError as exc:
-                last_error = exc
-                result = None
-                # Keep tools when the user asked for thinking: dropping them
-                # after a thinking-mode error makes the model look like it
-                # cannot call tools.
-                if options.get('tools') and not options.get('thinking_enabled'):
-                    retry = dict(options)
-                    retry.pop('tools', None)
-                    retry.pop('tool_choice', None)
-                    try:
-                        result = client.chat_completion(current, history, retry)
-                        options = retry
-                    except AiError:
-                        result = None
-                if result is None:
-                    for candidate in candidates:
-                        if candidate.id == current.id:
-                            continue
-                        try:
-                            result = get_provider(candidate.provider_id).chat_completion(
-                                candidate, history, options)
-                            current = candidate
-                            break
-                        except AiError:
-                            continue
-                if result is None:
-                    payload = {'model': current, 'history': history}
-                    self.on_ai_request_error(payload, last_error)
-                    return {
-                        'reply': '',
-                        'usage': cumulative,
-                        'rounds': rounds,
-                        'latency_ms': int((time.time() - started) * 1000),
-                        'error': {
-                            'message': str(last_error),
-                            'code': 'model_call_failed',
-                            'traceback': traceback.format_exc(),
-                        },
-                    }
+            result, current, options, last_error = self._complete_with_failover(
+                current, history, options, candidates)
+            if result is None:
+                payload = {'model': current, 'history': history}
+                self.on_ai_request_error(payload, last_error)
+                return {
+                    'reply': '',
+                    'usage': cumulative,
+                    'rounds': rounds,
+                    'latency_ms': int((time.time() - started) * 1000),
+                    'error': {
+                        'message': str(last_error),
+                        'code': 'model_call_failed',
+                        'traceback': traceback.format_exc(),
+                    },
+                }
             content = result.get('content') or ''
             reasoning = result.get('reasoning') or ''
             usage = result.get('usage') or {}

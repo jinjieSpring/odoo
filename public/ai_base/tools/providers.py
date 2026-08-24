@@ -144,16 +144,12 @@ class OpenAICompatibleAdapter(BaseAdapter):
             }
         elif kind == 'qwen':
             payload['enable_thinking'] = enabled
-        elif kind == 'openai':
-            if enabled:
-                payload['reasoning_effort'] = (
-                    options.get('reasoning_effort') or 'medium')
         elif kind == 'compat':
             if enabled or getattr(model, 'supports_thinking', False):
                 payload['enable_thinking'] = enabled
-                if enabled:
-                    payload['reasoning_effort'] = (
-                        options.get('reasoning_effort') or 'medium')
+        if kind in ('openai', 'compat') and enabled:
+            payload['reasoning_effort'] = (
+                options.get('reasoning_effort') or 'medium')
         return payload
 
     def _chat_url(self):

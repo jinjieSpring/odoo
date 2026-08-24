@@ -146,6 +146,21 @@ class TestChat(AiBaseCase):
         settings = self.env['ai.user.settings']._get_for_user()
         self.assertEqual(settings.sidebar_width, 400)
 
+    def test_set_options_prompt_updates_user_default(self):
+        prompt = self.env['ai.prompt.template'].create({
+            'name': 'Default',
+            'code': 'test.chat.default.prompt',
+            'user_template': 'Hi',
+        })
+        session = self.env['ai.chat.session'].create({'name': 'Opts'})
+        session.action_set_options({'prompt_id': prompt.id})
+        settings = self.env['ai.user.settings']._get_for_user()
+        self.assertEqual(session.prompt_id, prompt)
+        self.assertEqual(settings.default_prompt_id, prompt)
+        session.action_set_options({'prompt_id': False})
+        self.assertFalse(session.prompt_id)
+        self.assertFalse(settings.default_prompt_id)
+
     def test_get_session_payload_matches_ui(self):
         session = self.env['ai.chat.session'].create({'name': 'Payload'})
         self.env['ai.chat.message'].create({

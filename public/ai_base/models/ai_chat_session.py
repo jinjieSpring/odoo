@@ -201,17 +201,20 @@ class AiChatSession(models.Model):
         except Exception:  # noqa: BLE001
             return _('Earlier conversation omitted to stay within the context window.')
 
-    def _call_options(self, extra=None):
+    def _effective_thinking(self, requested=None):
+        """模型不支持思考时恒为 False；否则用 requested 或本会话开关。"""
         self.ensure_one()
-        options = {}
-        if extra:
-            options.update(extra)
+        if requested is None:
+            requested = self.thinking_enabled
         allowed = (
             self.model_id._allowed_options() if self.model_id else {})
-        enabled = bool(options.get('thinking_enabled', self.thinking_enabled))
-        if not allowed.get('thinking'):
-            enabled = False
-        options['thinking_enabled'] = enabled
+        return bool(requested and allowed.get('thinking'))
+
+    def _call_options(self, extra=None):
+        self.ensure_one()
+        options = dict(extra or {})
+        options['thinking_enabled'] = self._effective_thinking(
+            options.get('thinking_enabled', self.thinking_enabled))
         return options
 
     @api.model

@@ -22,17 +22,13 @@ _SESSION_OPTION_FIELDS = (
     'attach_context', 'thinking_enabled',
 )
 
-_USER_OPTION_FIELDS = {
-    'attach_context': 'attach_context',
-    'prompt_id': 'default_prompt_id',
-}
-
 _LAYOUT_BOOL_FIELDS = (
     'sidebar_collapsed', 'grid_sessions_collapsed', 'grid_knowledge_collapsed',
 )
 _LAYOUT_HEIGHT_FIELDS = (
     'grid_sessions_height', 'grid_knowledge_height',
 )
+_USER_BOOL_FIELDS = ('attach_context',) + _LAYOUT_BOOL_FIELDS
 
 
 class AiUserSettings(models.Model):
@@ -233,6 +229,32 @@ class AiChat(models.AbstractModel):
             'prompts': self.prompt_choices(),
         }
 
+    def _user_settings_vals(self, options):
+        """从 options 抽出可写入 ``ai.user.settings`` 的字段。
+
+        入参:
+            options (dict): 可含 ``attach_context``、布局、``default_prompt_id``；
+            会话侧 ``prompt_id`` 会落到 ``default_prompt_id``。
+        返回:
+            dict: 只含实际出现在 options 里的设置字段。
+        """
+        options = options or {}
+        vals = {}
+        for field in _USER_BOOL_FIELDS:
+            if field in options:
+                vals[field] = bool(options[field])
+        for field in _LAYOUT_HEIGHT_FIELDS:
+            if field in options:
+                vals[field] = max(0, min(int(options[field] or 0), 10000))
+        if 'sidebar_width' in options:
+            vals['sidebar_width'] = max(
+                180, min(int(options['sidebar_width'] or 0), 800))
+        if 'default_prompt_id' in options:
+            vals['default_prompt_id'] = options['default_prompt_id'] or False
+        elif 'prompt_id' in options:
+            vals['default_prompt_id'] = options['prompt_id'] or False
+        return vals
+
     def save_user_settings(self, options):
         """把前端提交的用户偏好写进 ``ai.user.settings``。
 
@@ -242,24 +264,9 @@ class AiChat(models.AbstractModel):
         返回:
             bool: 恒为 ``True``。
         """
-        options = options or {}
-        settings = self.env['ai.user.settings']._get_for_user()
-        vals = {}
-        for field in ('attach_context',):
-            if field in options:
-                vals[field] = bool(options[field])
-        for field in _LAYOUT_BOOL_FIELDS:
-            if field in options:
-                vals[field] = bool(options[field])
-        for field in _LAYOUT_HEIGHT_FIELDS:
-            if field in options:
-                vals[field] = max(0, min(int(options[field] or 0), 10000))
-        if 'sidebar_width' in options:
-            vals['sidebar_width'] = max(180, min(int(options['sidebar_width'] or 0), 800))
-        if 'default_prompt_id' in options:
-            vals['default_prompt_id'] = options['default_prompt_id'] or False
+        vals = self._user_settings_vals(options)
         if vals:
-            settings.write(vals)
+            self.env['ai.user.settings']._get_for_user().write(vals)
         return True
 
     def messages(self, session):
@@ -322,10 +329,7 @@ class AiChat(models.AbstractModel):
                 'capabilities': (
                     model._allowed_options()
                     if model else self.empty_capabilities()),
-                'thinking_enabled': bool(
-                    session.thinking_enabled
-                    and model
-                    and model._allowed_options().get('thinking')),
+                'thinking_enabled': session._effective_thinking(),
             },
         }
 
@@ -378,28 +382,11 @@ class AiChat(models.AbstractModel):
                 if field in options
             }
             if 'thinking_enabled' in vals:
-                allowed = (
-                    session.model_id._allowed_options()
-                    if session.model_id else {})
-                vals['thinking_enabled'] = bool(
-                    vals['thinking_enabled'] and allowed.get('thinking'))
+                vals['thinking_enabled'] = session._effective_thinking(
+                    vals['thinking_enabled'])
             if vals:
                 session.write(vals)
-        user_vals = {}
-        for field, user_field in _USER_OPTION_FIELDS.items():
-            if field in options:
-                user_vals[user_field] = options[field]
-        if 'prompt_id' in options:
-            user_vals['default_prompt_id'] = options['prompt_id'] or False
-        for field in _LAYOUT_BOOL_FIELDS:
-            if field in options:
-                user_vals[field] = bool(options[field])
-        for field in _LAYOUT_HEIGHT_FIELDS:
-            if field in options:
-                user_vals[field] = max(0, min(int(options[field] or 0), 10000))
-        if 'sidebar_width' in options:
-            user_vals['sidebar_width'] = max(
-                180, min(int(options['sidebar_width'] or 0), 800))
+        user_vals = self._user_settings_vals(options)
         if user_vals:
             self.env['ai.user.settings']._get_for_user().write(user_vals)
         return True

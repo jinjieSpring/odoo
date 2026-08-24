@@ -82,7 +82,7 @@ class TestService(AiBaseCase):
 
         def fake_chat(this, model, messages, options=None):
             calls['n'] += 1
-            if model.id == self.model.id:
+            if model.id != fallback.id:
                 raise AiError('first failed')
             return self._ok('from fallback')
 
