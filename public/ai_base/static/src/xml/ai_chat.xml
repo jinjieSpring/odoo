@@ -125,10 +125,10 @@
                 <div class="o_ai_chat_main">
                     <!-- Context-sensitive strip -->
                     <div class="o_ai_chat_context_strip d-flex align-items-center px-3">
-                        <div class="o_ai_chat_context_record d-flex align-items-center text-truncate">
+                        <div class="o_ai_chat_context_record d-flex align-items-center text-truncate"
+                             t-att-class="{'o_ai_context_empty': !state.contextDisplayName}">
                             <i class="fa fa-paperclip me-1"/>
                             <span class="text-truncate"
-                                  t-att-class="{'text-muted': !state.contextDisplayName}"
                                   t-esc="state.contextDisplayName or 'No record detected'"/>
                         </div>
                         <div class="ms-auto d-flex align-items-center gap-3">
@@ -151,15 +151,23 @@
                     <!-- Message area -->
                     <div class="o_ai_chat_messages" t-ref="messages">
                         <div t-if="!state.currentId" class="o_ai_chat_empty">
-                            <img class="o_ai_chat_empty_icon"
-                                 src="/ai_base/static/src/icons/ai_icon.svg"
-                                 alt="AI"/>
-                            <div>Ask the AI assistant to start a conversation</div>
+                            <div class="o_ai_chat_empty_mark">
+                                <img class="o_ai_chat_empty_icon"
+                                     src="/ai_base/static/src/icons/ai_icon.svg"
+                                     alt="AI"/>
+                            </div>
+                            <div class="o_ai_chat_empty_title">
+                                Ask the AI assistant to start a conversation
+                            </div>
+                            <div class="o_ai_chat_empty_hint">
+                                Type a question below, or / for commands
+                            </div>
                         </div>
                         <t t-else="">
                             <t t-foreach="state.messages" t-as="msg" t-key="msg.id || msg.localId">
                                 <div class="o_ai_chat_msg"
                                      t-att-class="'o_ai_' + msg.role">
+                                    <div class="o_ai_chat_msg_stack">
                                     <div class="o_ai_chat_msg_bubble">
                                         <div t-if="msg.role === 'assistant' and msg.reasoning_content"
                                              class="o_ai_chat_reasoning">
@@ -218,7 +226,8 @@
                                             <span t-if="msg.role === 'assistant' and msg.pending and (msg.content or messageCards(msg).length)"
                                                   class="o_ai_chat_cursor"/>
                                         </div>
-                                        <div class="o_ai_chat_msg_actions d-flex gap-1 mt-1">
+                                    </div>
+                                    <div class="o_ai_chat_msg_actions d-flex gap-1">
                                             <button t-if="msg.role === 'assistant' and msg.pending"
                                                     type="button" class="btn btn-link p-0"
                                                     title="Stop Generating"
@@ -300,33 +309,35 @@
 
                     <!-- Input row -->
                     <div class="o_ai_chat_input_row d-flex align-items-end px-3 py-2">
-                        <div class="o_ai_chat_input_wrap flex-grow-1">
-                            <div t-if="state.commandOpen" class="o_ai_chat_commands">
-                                <t t-foreach="filteredCommands" t-as="cmd" t-key="cmd.name">
-                                    <button class="o_ai_chat_command btn btn-sm w-100 text-start"
-                                            t-on-click="() => this.runCommand(cmd.name)">
-                                        <span class="fw-bold">/<t t-out="cmd.name"/></span>
-                                        <span class="text-muted ms-1">
-                                            <t t-out="cmd.help"/>
-                                        </span>
-                                    </button>
-                                </t>
-                                <div t-if="!filteredCommands.length" class="px-2 py-1 text-muted">
-                                    No matching command
+                        <div class="o_ai_chat_composer d-flex align-items-end flex-grow-1">
+                            <div class="o_ai_chat_input_wrap flex-grow-1">
+                                <div t-if="state.commandOpen" class="o_ai_chat_commands">
+                                    <t t-foreach="filteredCommands" t-as="cmd" t-key="cmd.name">
+                                        <button class="o_ai_chat_command btn btn-sm w-100 text-start"
+                                                t-on-click="() => this.runCommand(cmd.name)">
+                                            <span class="fw-bold">/<t t-out="cmd.name"/></span>
+                                            <span class="text-muted ms-1">
+                                                <t t-out="cmd.help"/>
+                                            </span>
+                                        </button>
+                                    </t>
+                                    <div t-if="!filteredCommands.length" class="px-2 py-1 text-muted">
+                                        No matching command
+                                    </div>
                                 </div>
+                                <textarea class="o_ai_chat_input form-control" rows="2"
+                                          t-ref="chatInput" t-model="state.draft"
+                                          t-on-input="onChatInput"
+                                          t-on-keydown="onInputKeyDown"
+                                          placeholder="Ask the AI assistant... or type / for commands"/>
                             </div>
-                            <textarea class="o_ai_chat_input form-control" rows="2"
-                                      t-ref="chatInput" t-model="state.draft"
-                                      t-on-input="onChatInput"
-                                      t-on-keydown="onInputKeyDown"
-                                      placeholder="Ask the AI assistant... or type / for commands"/>
+                            <button class="o_ai_chat_send btn btn-primary"
+                                    title="Send (Enter)" t-att-disabled="!canSend"
+                                    t-on-click="sendCurrent">
+                                <i class="fa fa-paper-plane"/>
+                            </button>
                         </div>
-                        <button class="o_ai_chat_send btn btn-primary ms-2"
-                                title="Send (Enter)" t-att-disabled="!canSend"
-                                t-on-click="sendCurrent">
-                            <i class="fa fa-paper-plane"/>
-                        </button>
-                        <button class="btn btn-link p-1 ms-1" title="User Settings"
+                        <button class="o_ai_chat_settings btn btn-link p-1 ms-1" title="User Settings"
                                 t-on-click="openUserSettings">
                             <i class="fa fa-gear"/>
                         </button>

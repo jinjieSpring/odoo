@@ -18,12 +18,12 @@
                         <t t-out="state.badge.text"/>
                     </button>
                 </h4>
-                <button type="button" class="btn btn-link p-1"
+                <button type="button" class="o_ai_dialog_icon_btn btn btn-link p-1"
                         title="New Session"
                         t-on-click="newSession">
                     <i class="fa fa-plus"/>
                 </button>
-                <button type="button" class="btn btn-link p-1"
+                <button type="button" class="o_ai_dialog_icon_btn btn btn-link p-1"
                         title="Delete Current Session"
                         t-on-click="deleteSession">
                     <i class="fa fa-trash-o"/>

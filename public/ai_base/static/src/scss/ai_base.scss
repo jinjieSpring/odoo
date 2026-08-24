@@ -85,10 +85,25 @@
 
 .o_ai_chat_dialog {
     .o_ai_chat_dialog_icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
         flex-shrink: 0;
+    }
+
+    .o_ai_dialog_icon_btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        color: $o-gray-600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            color: $o-brand-primary;
+            background: mix($o-brand-primary, $o-white, 10%);
+        }
     }
 
     .modal-body {
@@ -121,6 +136,14 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+}
+
+.o_dialog:has(.o_ai_chat_dialog) .modal-header {
+    border-bottom: 1px solid $o-gray-200;
+    padding: 10px 16px;
+    background: $o-view-background-color;
 }
 
 .o_ai_chat,
@@ -240,19 +263,43 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #adb5bd;
-            gap: 8px;
+            color: $o-gray-500;
+            gap: 10px;
+            text-align: center;
+            padding: 24px;
+
+            .o_ai_chat_empty_mark {
+                width: 72px;
+                height: 72px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: mix($o-brand-primary, $o-white, 10%);
+                box-shadow: 0 10px 28px rgba($o-brand-primary, 0.16);
+            }
 
             .o_ai_chat_empty_icon {
-                width: 64px;
-                height: 64px;
-                border-radius: 16px;
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+            }
+
+            .o_ai_chat_empty_title {
+                color: $o-gray-700;
+                font-weight: 600;
+                font-size: 15px;
+            }
+
+            .o_ai_chat_empty_hint {
+                color: $o-gray-500;
+                font-size: 13px;
             }
         }
 
         .o_ai_chat_msg {
             display: flex;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
 
             &.o_ai_user {
                 justify-content: flex-end;
@@ -262,21 +309,33 @@
                 justify-content: flex-start;
             }
 
+            .o_ai_chat_msg_stack {
+                max-width: 78%;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
             .o_ai_chat_msg_bubble {
-                max-width: 82%;
-                padding: 8px 12px;
-                border-radius: 14px;
+                padding: 10px 14px;
+                border-radius: 16px 16px 16px 6px;
                 background: $o-view-background-color;
-                border: 1px solid $o-gray-200;
-                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                border: 1px solid transparent;
+                box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
                 font-size: 1rem;
                 line-height: 1.55;
+            }
+
+            &.o_ai_user .o_ai_chat_msg_stack {
+                align-items: flex-end;
             }
 
             &.o_ai_user .o_ai_chat_msg_bubble {
                 background: $o-brand-primary;
                 color: #fff;
                 border-color: $o-brand-primary;
+                border-radius: 16px 16px 6px 16px;
+                box-shadow: 0 4px 14px rgba($o-brand-primary, 0.28);
             }
 
             .o_ai_chat_reasoning {
@@ -335,22 +394,27 @@
 
             .o_ai_chat_msg_actions {
                 font-size: 12px;
-                opacity: 1;
-                min-height: 26px;
-                padding: 2px 4px;
-                margin-top: 6px !important;
-                background: rgba(0, 0, 0, 0.05);
-                border-radius: 6px;
+                opacity: 0;
+                min-height: 24px;
+                padding: 2px 0;
+                margin-top: 2px;
+                transition: opacity 0.15s ease;
 
                 .btn {
-                    color: $o-gray-600;
+                    color: $o-gray-500;
                     font-size: 13px;
-                    width: 26px;
-                    height: 22px;
+                    width: 24px;
+                    height: 24px;
                     padding: 0;
+                    border-radius: 6px;
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
+
+                    &:hover {
+                        color: $o-brand-primary;
+                        background: mix($o-brand-primary, $o-white, 10%);
+                    }
                 }
 
                 .btn:disabled {
@@ -358,13 +422,14 @@
                 }
             }
 
-            &.o_ai_user .o_ai_chat_msg_actions {
-                .btn {
-                    color: mix($o-brand-primary, $o-white, 20%);
-                }
+            &:hover .o_ai_chat_msg_actions,
+            &:focus-within .o_ai_chat_msg_actions {
+                opacity: 1;
+            }
 
-                .btn:hover {
-                    color: #ffffff;
+            @media (hover: none) {
+                .o_ai_chat_msg_actions {
+                    opacity: 1;
                 }
             }
         }
@@ -784,23 +849,39 @@
     gap: 6px;
     border-radius: 999px;
     font-size: 12px;
-    padding: 2px 10px;
-    border: 1px solid #d1d5db;
-    background: #ffffff;
-    color: #1f2937;
+    padding: 3px 10px 3px 8px;
+    border: 1px solid $o-gray-200;
+    background: mix($o-brand-primary, $o-white, 8%);
+    color: $o-gray-700;
     margin-left: 8px;
+    font-weight: 500;
 
     .o_ai_badge_dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
         display: inline-block;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
     }
 
     &.o_ai_badge_green .o_ai_badge_dot { background: #16a34a; }
-    &.o_ai_badge_red .o_ai_badge_dot { background: #dc2626; }
-    &.o_ai_badge_gray .o_ai_badge_dot { background: #9ca3af; }
-    &.o_ai_badge_blue .o_ai_badge_dot { background: #2563eb; }
+    &.o_ai_badge_red .o_ai_badge_dot {
+        background: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    }
+    &.o_ai_badge_gray .o_ai_badge_dot {
+        background: #9ca3af;
+        box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.16);
+    }
+    &.o_ai_badge_blue .o_ai_badge_dot {
+        background: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    &:hover {
+        border-color: mix($o-brand-primary, $o-white, 35%);
+        color: $o-brand-primary;
+    }
 }
 
 .o_ai_chat_window {
@@ -887,14 +968,15 @@
             }
 
             .o_ai_grid_header {
-                height: 36px;
+                height: 40px;
                 cursor: pointer;
                 user-select: none;
                 font-weight: 600;
                 font-size: 13px;
+                color: $o-gray-700;
 
                 &:hover {
-                    background: $o-gray-200;
+                    background: mix($o-brand-primary, $o-white, 8%);
                 }
 
                 .o_ai_grid_icon {
@@ -904,8 +986,16 @@
                 }
 
                 .btn {
-                    color: $o-gray-700;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 6px;
+                    color: $o-gray-600;
                     font-size: 12px;
+
+                    &:hover {
+                        color: $o-brand-primary;
+                        background: mix($o-brand-primary, $o-white, 12%);
+                    }
                 }
             }
 
@@ -920,22 +1010,26 @@
                     background: $o-view-background-color;
                     color: $o-main-text-color;
                     border: 1px solid $o-gray-300;
+                    border-radius: 8px;
                     font-size: 12px;
-                    margin-bottom: 6px;
+                    margin-bottom: 8px;
+                    box-shadow: none;
                 }
 
                 .o_ai_session_list {
                     flex: 1 1 auto;
                     min-height: 0;
                     overflow-y: auto;
+                    padding-right: 2px;
                 }
 
                 .o_ai_session_item {
-                    padding: 5px 6px;
-                    border-radius: 6px;
+                    padding: 8px 8px;
+                    border-radius: 8px;
                     cursor: pointer;
                     font-size: 13px;
-                    gap: 4px;
+                    gap: 6px;
+                    margin-bottom: 2px;
 
                     &:hover {
                         background: $o-gray-200;
@@ -944,11 +1038,16 @@
                     &.o_ai_active {
                         background: mix($o-brand-primary, $o-white, 10%);
                         color: $o-brand-primary;
+                        box-shadow: inset 3px 0 0 $o-brand-primary;
                     }
 
                     .o_ai_session_info {
                         flex: 1 1 auto;
                         min-width: 0;
+                    }
+
+                    .o_ai_session_name {
+                        font-weight: 500;
                     }
 
                     .o_ai_session_meta {
@@ -971,6 +1070,9 @@
                         color: $o-gray-500;
                         font-size: 12px;
                         opacity: 0;
+                        width: 22px;
+                        height: 22px;
+                        border-radius: 6px;
                     }
 
                     &:hover .o_ai_session_actions .btn {
@@ -1081,6 +1183,9 @@
             flex: 1 1 auto;
             min-height: 0;
             overflow-y: auto;
+            padding: 20px 24px 28px;
+            background:
+                linear-gradient(180deg, mix($o-brand-primary, $o-white, 4%) 0%, $o-brand-lightsecondary 120px);
             scrollbar-width: thin;
             scrollbar-color: $o-gray-400 transparent;
 
@@ -1096,18 +1201,28 @@
     }
 
     .o_ai_chat_context_strip {
-        min-height: 36px;
+        min-height: 40px;
         border-bottom: 1px solid $o-gray-200;
-        background: $o-brand-lightsecondary;
+        background: $o-view-background-color;
         gap: 8px;
         font-size: 12px;
 
         .o_ai_chat_context_record {
             max-width: 55%;
             color: $o-gray-700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: $o-brand-lightsecondary;
+            border: 1px solid $o-gray-200;
 
             i {
                 color: $o-brand-primary;
+            }
+
+            &.o_ai_context_empty {
+                color: $o-gray-500;
+                background: transparent;
+                border-style: dashed;
             }
         }
 
@@ -1118,7 +1233,22 @@
 
     .o_ai_chat_input_row {
         border-top: 1px solid $o-gray-200;
-        background: $o-brand-lightsecondary;
+        background: $o-view-background-color;
+
+        .o_ai_chat_composer {
+            min-width: 0;
+            background: $o-brand-lightsecondary;
+            border: 1px solid $o-gray-300;
+            border-radius: 16px;
+            padding: 4px 6px 4px 12px;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+            &:focus-within {
+                border-color: $o-brand-primary;
+                background: $o-view-background-color;
+                box-shadow: 0 0 0 3px mix($o-brand-primary, $o-white, 16%);
+            }
+        }
 
         .o_ai_chat_input_wrap {
             position: relative;
@@ -1126,20 +1256,21 @@
 
         .o_ai_chat_commands {
             position: absolute;
-            bottom: 100%;
+            bottom: calc(100% + 8px);
             left: 0;
             right: 0;
             background: $o-view-background-color;
-            border: 1px solid $o-gray-300;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid $o-gray-200;
+            border-radius: 12px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
             max-height: 240px;
             overflow-y: auto;
             z-index: 20;
-            padding: 4px;
+            padding: 6px;
 
             .o_ai_chat_command {
-                border-radius: 6px;
+                border-radius: 8px;
+                padding: 6px 8px;
 
                 &:hover {
                     background: mix($o-brand-primary, $o-white, 10%);
@@ -1149,16 +1280,50 @@
         }
 
         .o_ai_chat_input {
-            background: $o-view-background-color;
+            background: transparent;
             color: $o-main-text-color;
-            border: 1px solid $o-gray-300;
+            border: none;
             resize: none;
+            box-shadow: none;
+            padding: 8px 4px;
 
             &:focus {
-                background: $o-view-background-color;
+                background: transparent;
                 color: $o-main-text-color;
-                border-color: $o-brand-primary;
-                box-shadow: 0 0 0 1px $o-brand-primary;
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        .o_ai_chat_send {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            padding: 0;
+            margin: 2px 2px 2px 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba($o-brand-primary, 0.28);
+
+            &:disabled {
+                box-shadow: none;
+            }
+        }
+
+        .o_ai_chat_settings {
+            color: $o-gray-500;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                color: $o-brand-primary;
+                background: mix($o-brand-primary, $o-white, 10%);
             }
         }
     }
@@ -1175,12 +1340,14 @@
     }
 
     .o_ai_chat_status {
-        min-height: 32px;
+        min-height: 36px;
         border-top: 1px solid $o-gray-200;
         background: $o-brand-lightsecondary;
         font-size: 12px;
-        color: $o-gray-700;
+        color: $o-gray-600;
         flex-wrap: nowrap;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
 
         .o_ai_chat_status_task.o_ai_task_busy {
             color: $o-brand-primary;
