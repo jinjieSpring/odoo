@@ -329,6 +329,11 @@ msgid "Memory Entries to Keep"
 msgstr "保留的记忆条数"
 
 #. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__memory_limit
+msgid "Oldest entries are dropped when this limit is exceeded."
+msgstr "超出条数后，最早的记忆会被丢掉。"
+
+#. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__name
 msgid "Name"
@@ -454,8 +459,24 @@ msgstr "工具"
 
 #. module: ai_agent
 #: model:ir.model.fields,help:ai_agent.field_ai_agent__max_rounds
-msgid "Upper bound for tool-loop rounds on a chat turn or a goal run."
-msgstr "一次对话或一次目标运行中，工具循环的轮次上限。"
+msgid ""
+"How many times the model may be called in one chat turn or background goal "
+"run. One round is one model reply, which may include several tool calls. "
+"This is not the number of registered tools."
+msgstr "一次对话或一次后台目标运行中，最多向模型请求几趟。一轮是模型的一次回复，其中可以同时调用多个工具。这不是已登记的工具数量。"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__max_tool_calls_per_round
+msgid "Max tool calls per round"
+msgstr "每轮最大工具调用数"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__max_tool_calls_per_round
+msgid ""
+"How many tools the model may invoke in a single round (one model reply). "
+"Distinct from max tool rounds, which limits how many times the model is "
+"called."
+msgstr "模型一次回复里最多执行几个工具。与「最大工具轮次」不同：轮次限制的是向模型请求几趟，本项限制的是同一趟里并列调用几次。"
 
 #. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__user_id
@@ -476,12 +497,17 @@ msgstr "等待用户"
 #. module: ai_agent
 #: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
 msgid "When a dedicated menu should bind this agent"
-msgstr "何种专用菜单应绑定此智能体"
+msgstr "说明何时由专用菜单绑定此智能体"
 
 #. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__memory_enabled
 msgid "Write Memory"
 msgstr "写入记忆"
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__memory_enabled
+msgid "After a turn, store a short note the agent can reuse later."
+msgstr "每轮结束后记下一条短笔记，供智能体之后复用。"
 
 #. module: ai_agent
 #: model:ai.agent,system_prompt:ai_agent.agent_default_assistant

@@ -9,6 +9,7 @@
             <field name="is_default" eval="True"/>
             <field name="memory_enabled" eval="True"/>
             <field name="max_rounds">8</field>
+            <field name="max_tool_calls_per_round">10</field>
         </record>
     </data>
     <data noupdate="1">

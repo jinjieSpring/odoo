@@ -208,7 +208,7 @@ msgstr "API 密钥"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_provider__api_secret
 msgid "API Secret"
-msgstr "API Secret"
+msgstr "API 密钥"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_provider__api_secret
@@ -673,7 +673,9 @@ msgstr "编码"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_tool__name
-msgid "Technical identifier sent to the model. Prefer letters, digits, underscore and hyphen."
+msgid ""
+"Technical identifier sent to the model. Prefer letters, digits, underscore "
+"and hyphen."
 msgstr "发给模型的技术编码。建议只用字母、数字、下划线和连字符。"
 
 #. module: ai_base
@@ -685,6 +687,12 @@ msgstr "显示名称"
 #: model:ir.model.fields,help:ai_base.field_ai_tool__label
 msgid "Display name shown in lists, agent tools and chat cards."
 msgstr "列表、智能体工具和聊天卡片上显示的名称。"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_tool__description
+msgid ""
+"Told to the model so it knows when to call this tool. Chinese is fine."
+msgstr "发给模型，说明何时调用此工具。可以用中文。"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_name
@@ -723,7 +731,9 @@ msgstr "内置"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_tool__is_builtin
-msgid "Registered from Python with @ai_tool. Code and behaviour cannot be changed. The label can be edited."
+msgid ""
+"Registered from Python with @ai_tool. Code and behaviour cannot be changed. "
+"The label can be edited."
 msgstr "由 Python 的 @ai_tool 注册。编码和行为不能改，显示名称可以改。"
 
 #. module: ai_base
@@ -1156,11 +1166,6 @@ msgstr "最大输入字符数"
 #: model:ir.model.fields,field_description:ai_base.field_ai_config__sensitive_words
 msgid "Sensitive words (comma-separated)"
 msgstr "敏感词（逗号分隔）"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_config__max_tool_rounds
-msgid "Max agent rounds"
-msgstr "Agent 最大轮次"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_provider_form_view
@@ -2133,6 +2138,31 @@ msgid "HTTP"
 msgstr "HTTP"
 
 #. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+msgid "Find customers"
+msgstr "查找客户"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+msgid "search_partners"
+msgstr "search_partners"
+
+#. module: ai_base
+#: model_terms:ir.actions.act_window,help:ai_base.ai_tool_action
+msgid "Create a custom tool"
+msgstr "创建自定义工具"
+
+#. module: ai_base
+#: model_terms:ir.actions.act_window,help:ai_base.ai_tool_action
+msgid ""
+"Add ORM or HTTP tools here. Built-in Python tools\n"
+"                (search, count, group by) live under the Built-in filter.\n"
+"                You can edit their display label; code cannot be changed."
+msgstr ""
+"在此添加 ORM 或 HTTP 工具。内置的 Python 工具（搜索、统计、分组）在「内置」筛选里。"
+"可以改显示名称，编码不能改。"
+
+#. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_prompt_template__code
 msgid "Stable key used by business modules, e.g. sale.email.draft"
 msgstr "业务模块使用的稳定编码，例如 sale.email.draft"
@@ -2144,7 +2174,9 @@ msgstr "支持 {{var_name}} 占位符和单据字段。"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_prompt_template__preview_context
-msgid "Sample JSON used by Preview. Leave empty to fill typical values automatically."
+msgid ""
+"Sample JSON used by Preview. Leave empty to fill typical values "
+"automatically."
 msgstr "预览使用的示例 JSON。留空则自动填入常用样例。"
 
 #. module: ai_base

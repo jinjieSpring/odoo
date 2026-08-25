@@ -189,7 +189,10 @@ class AiTool(models.Model):
     label = fields.Char(
         string='Label', translate=True,
         help='Display name shown in lists, agent tools and chat cards.')
-    description = fields.Text(string='Description', required=True)
+    description = fields.Text(
+        string='Description', required=True,
+        help='Told to the model so it knows when to call this tool. '
+             'Chinese is fine.')
     tool_type = fields.Selection([
         ('python', 'Python Function'),
         ('orm', 'Odoo ORM Action'),

@@ -125,7 +125,7 @@ class AiAgentRun(models.Model):
             'agent_id': self.agent_id.id,
             'goal': (self.goal or '')[:200],
             'step_count': self.step_count,
-            'max_rounds': self.agent_id.max_rounds or 8,
+            'max_rounds': self.agent_id._effective_max_rounds(),
             'error_message': self.error_message or '',
         }
 
@@ -186,7 +186,7 @@ class AiAgentRun(models.Model):
                 'is no longer available.'))
             self._notify()
             return
-        max_steps = max(1, agent.max_rounds or 8)
+        max_steps = max(1, agent._effective_max_rounds())
         self.write({
             'state': 'running',
             'step_count': self.step_count + 1,

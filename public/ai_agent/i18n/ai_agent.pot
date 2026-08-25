@@ -1,13 +1,10 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* ai_agent
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-23 13:32+0000\n"
-"PO-Revision-Date: 2026-08-23 13:32+0000\n"
+"POT-Creation-Date: 2026-08-25 14:40+0000\n"
+"PO-Revision-Date: 2026-08-25 14:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +13,15 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: ai_agent
+#: model:ir.module.module,shortdesc:base.module_ai_agent
 #: model:ir.model,name:ai_agent.model_ai_agent
 #: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
 msgid "AI Agent"
+msgstr ""
+
+#. module: ai_agent
+#: model:ir.module.module,summary:base.module_ai_agent
+msgid "Configurable agents with memory and background goal runs"
 msgstr ""
 
 #. module: ai_agent
@@ -59,7 +62,47 @@ msgstr ""
 #. module: ai_agent
 #. odoo-python
 #: code:addons/ai_agent/models/ai_agent_run.py:0
-msgid "Accepted the goal. I will continue in the background."
+msgid ""
+"I'll keep working on this even if you leave this chat. Progress will appear here.\n"
+"\n"
+"Task: %s"
+msgstr ""
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid ""
+"I'm still working on the previous task:\n"
+"\n"
+"%s\n"
+"\n"
+"Wait for it to finish, or cancel it first."
+msgstr ""
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "Stopped the background task."
+msgstr ""
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "The background task failed: %s"
+msgstr ""
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid ""
+"The background task stopped because the agent or session is no longer "
+"available."
+msgstr ""
+
+#. module: ai_agent
+#. odoo-python
+#: code:addons/ai_agent/models/ai_agent_run.py:0
+msgid "AI Agent run: %s"
 msgstr ""
 
 #. module: ai_agent
@@ -271,6 +314,11 @@ msgid "Memory Entries to Keep"
 msgstr ""
 
 #. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__memory_limit
+msgid "Oldest entries are dropped when this limit is exceeded."
+msgstr ""
+
+#. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__name
 msgid "Name"
@@ -396,7 +444,23 @@ msgstr ""
 
 #. module: ai_agent
 #: model:ir.model.fields,help:ai_agent.field_ai_agent__max_rounds
-msgid "Upper bound for tool-loop rounds on a chat turn or a goal run."
+msgid ""
+"How many times the model may be called in one chat turn or background goal "
+"run. One round is one model reply, which may include several tool calls. "
+"This is not the number of registered tools."
+msgstr ""
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent__max_tool_calls_per_round
+msgid "Max tool calls per round"
+msgstr ""
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__max_tool_calls_per_round
+msgid ""
+"How many tools the model may invoke in a single round (one model reply). "
+"Distinct from max tool rounds, which limits how many times the model is "
+"called."
 msgstr ""
 
 #. module: ai_agent
@@ -423,6 +487,11 @@ msgstr ""
 #. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__memory_enabled
 msgid "Write Memory"
+msgstr ""
+
+#. module: ai_agent
+#: model:ir.model.fields,help:ai_agent.field_ai_agent__memory_enabled
+msgid "After a turn, store a short note the agent can reuse later."
 msgstr ""
 
 #. module: ai_agent

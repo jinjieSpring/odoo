@@ -21,7 +21,6 @@
                         <field name="rate_limit_global"/>
                         <field name="max_input_chars"/>
                         <field name="sensitive_words"/>
-                        <field name="max_tool_rounds"/>
                         <field name="log_retention_days"/>
                     </group>
                 </sheet>

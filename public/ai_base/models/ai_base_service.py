@@ -263,7 +263,7 @@ class AiBaseService(models.AbstractModel):
         return self.embedding(texts, model=model, model_code=model_code)
 
     def agent_run(
-        self, content, session=None, max_rounds=10, prompt_key=None,
+        self, content, session=None, max_rounds=None, prompt_key=None,
         record=None, context=None, model_code=None, options=None,
     ):
         """带工具循环的聊天（只调用已注册工具）。内部走 ``chat(..., scenario='agent')``。
@@ -271,13 +271,15 @@ class AiBaseService(models.AbstractModel):
         入参:
             content (str): 用户任务 / 问题。
             session: 可选 ``ai.chat.session``。
-            max_rounds (int): 工具循环上限，写入 ``options['max_rounds']``，默认 10。
+            max_rounds (int): 工具循环上限；省略则用系统配置，有 agent 时
+                可被 agent 覆盖。
             prompt_key / record / context / model_code / options: 同 ``chat``。
         返回:
             dict: 与 ``chat`` 相同。若产生了 rounds，会把最近一条请求日志标成 ``agent``。
         """
         options = dict(options or {})
-        options['max_rounds'] = max_rounds
+        if max_rounds is not None:
+            options['max_rounds'] = max_rounds
         result = self.chat(
             content, prompt_key=prompt_key, record=record, context=context,
             model_code=model_code, session=session, options=options,
@@ -411,6 +413,33 @@ class AiBaseService(models.AbstractModel):
             int
         """
         return int(self.env['ir.config_parameter'].sudo().get_param(key, str(default)) or default)
+
+    def _tool_loop_limits(self, options, session=None):
+        """Resolve round / per-round call caps: options, then agent, then fallback.
+
+        入参:
+            options (dict): 可含 ``max_rounds`` / ``max_tool_calls_per_round``；>0 优先生效。
+            session: 可选，读该会话绑定 agent 上的两项上限。
+        返回:
+            tuple: ``(max_rounds, max_calls_per_round)``，均至少为 1。
+        """
+        options = options or {}
+        agent = getattr(session, 'agent_id', None) if session else None
+        explicit_rounds = int(options.get('max_rounds') or 0)
+        explicit_calls = int(options.get('max_tool_calls_per_round') or 0)
+        if explicit_rounds:
+            max_rounds = explicit_rounds
+        elif agent and hasattr(agent, '_effective_max_rounds'):
+            max_rounds = agent._effective_max_rounds()
+        else:
+            max_rounds = self._param_int('ai_base.max_tool_rounds', 10)
+        if explicit_calls:
+            max_calls = explicit_calls
+        elif agent and hasattr(agent, '_effective_max_calls_per_round'):
+            max_calls = agent._effective_max_calls_per_round()
+        else:
+            max_calls = self._param_int('ai_base.max_tool_calls_per_round', 10)
+        return max(1, max_rounds), max(1, max_calls)
 
     def _check_rate_limit(self):
         """按最近 60 秒检查全站 / 当前用户的请求次数。
@@ -750,9 +779,7 @@ class AiBaseService(models.AbstractModel):
         }
         rounds = []
         started = time.time()
-        max_rounds = int(options.get('max_rounds') or self._param_int(
-            'ai_base.max_tool_rounds', 10))
-        max_calls = self._param_int('ai_base.max_tool_calls_per_round', 10)
+        max_rounds, max_calls = self._tool_loop_limits(options, session)
         for _round in range(max_rounds):
             result, current, options, last_error = self._complete_with_failover(
                 current, history, options, candidates)

@@ -20,6 +20,7 @@
                         <group>
                             <field name="prompt_id"/>
                             <field name="max_rounds"/>
+                            <field name="max_tool_calls_per_round"/>
                             <field name="memory_enabled"/>
                             <field name="memory_limit" invisible="not memory_enabled"/>
                             <field name="company_id" groups="base.group_multi_company"/>

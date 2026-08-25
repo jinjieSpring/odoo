@@ -93,6 +93,17 @@ class TestAgent(AiBaseCase):
         self.assertTrue(messages)
         self.assertIn('month-end', messages[0]['content'])
 
+    def test_agent_tool_limits_are_per_agent(self):
+        self.chat_agent.write({
+            'max_rounds': 3,
+            'max_tool_calls_per_round': 2,
+        })
+        self.assertEqual(self.chat_agent._effective_max_rounds(), 3)
+        self.assertEqual(self.chat_agent._effective_max_calls_per_round(), 2)
+        session = self.env['ai.chat.session'].create({'name': 'Limits'})
+        rounds, calls = self.env['ai.base.service']._tool_loop_limits({}, session)
+        self.assertEqual((rounds, calls), (3, 2))
+
     def test_memory_isolated_by_user(self):
         self.chat_agent.memory_enabled = True
         other = new_test_user(self.env, login='agent_other', groups='base.group_user')

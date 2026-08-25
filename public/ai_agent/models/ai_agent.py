@@ -42,10 +42,21 @@ class AiAgent(models.Model):
         help='Empty means every tool the user is allowed to call.')
     max_rounds = fields.Integer(
         string='Max Tool Rounds', default=8,
-        help='Upper bound for tool-loop rounds on a chat turn or a goal run.')
-    memory_enabled = fields.Boolean(string='Write Memory', default=True)
+        help='How many times the model may be called in one chat turn or '
+             'background goal run. One round is one model reply, which may '
+             'include several tool calls. This is not the number of '
+             'registered tools.')
+    max_tool_calls_per_round = fields.Integer(
+        string='Max tool calls per round', default=10,
+        help='How many tools the model may invoke in a single round (one '
+             'model reply). Distinct from max tool rounds, which limits how '
+             'many times the model is called.')
+    memory_enabled = fields.Boolean(
+        string='Write Memory', default=True,
+        help='After a turn, store a short note the agent can reuse later.')
     memory_limit = fields.Integer(
-        string='Memory Entries to Keep', default=20)
+        string='Memory Entries to Keep', default=20,
+        help='Oldest entries are dropped when this limit is exceeded.')
     memory_ids = fields.One2many(
         'ai.agent.memory', 'agent_id', string='Memory')
     run_ids = fields.One2many(
@@ -78,6 +89,16 @@ class AiAgent(models.Model):
             ('is_default', '=', True), ('active', '=', True),
         ], limit=1)
         return agent or self.search([('active', '=', True)], limit=1)
+
+    def _effective_max_rounds(self):
+        """This agent's max tool rounds (at least 1)."""
+        self.ensure_one()
+        return max(1, int(self.max_rounds or 8))
+
+    def _effective_max_calls_per_round(self):
+        """This agent's max tool calls in one model reply (at least 1)."""
+        self.ensure_one()
+        return max(1, int(self.max_tool_calls_per_round or 10))
 
     def _to_choice(self):
         self.ensure_one()

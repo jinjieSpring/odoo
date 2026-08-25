@@ -22,8 +22,6 @@ class AiConfig(models.TransientModel):
         string='Max input characters', default=20000)
     sensitive_words = fields.Char(
         string='Sensitive words (comma-separated)')
-    max_tool_rounds = fields.Integer(
-        string='Max agent rounds', default=10)
 
     @api.model
     def default_get(self, fields_list):
@@ -46,8 +44,6 @@ class AiConfig(models.TransientModel):
             'max_input_chars': int(
                 params.get_param('ai_base.max_input_chars', '20000') or 20000),
             'sensitive_words': params.get_param('ai_base.sensitive_words', '') or '',
-            'max_tool_rounds': int(
-                params.get_param('ai_base.max_tool_rounds', '10') or 10),
         })
         return values
 
@@ -67,8 +63,6 @@ class AiConfig(models.TransientModel):
             'ai_base.max_input_chars', str(self.max_input_chars or 20000))
         params.set_param(
             'ai_base.sensitive_words', self.sensitive_words or '')
-        params.set_param(
-            'ai_base.max_tool_rounds', str(self.max_tool_rounds or 10))
         if self.default_model_id:
             self.default_model_id.action_set_as_default('chat')
         return {
