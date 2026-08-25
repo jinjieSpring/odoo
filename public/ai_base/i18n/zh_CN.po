@@ -668,9 +668,46 @@ msgstr "向量 JSON"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_tool__name
+msgid "Code"
+msgstr "编码"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_tool__name
+msgid "Technical identifier sent to the model. Prefer letters, digits, underscore and hyphen."
+msgstr "发给模型的技术编码。建议只用字母、数字、下划线和连字符。"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__label
+msgid "Label"
+msgstr "显示名称"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_tool__label
+msgid "Display name shown in lists, agent tools and chat cards."
+msgstr "列表、智能体工具和聊天卡片上显示的名称。"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_name
 msgid "Tool Name"
 msgstr "工具名称"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Search records"
+msgstr "搜索记录"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Count records"
+msgstr "统计记录"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_tool.py:0
+msgid "Group records"
+msgstr "分组统计"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_tool__tool_type
@@ -686,8 +723,16 @@ msgstr "内置"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_tool__is_builtin
-msgid "Registered from Python with @ai_tool. Cannot be edited or deleted."
-msgstr "由 Python 的 @ai_tool 注册。不能修改或删除。"
+msgid "Registered from Python with @ai_tool. Code and behaviour cannot be changed. The label can be edited."
+msgstr "由 Python 的 @ai_tool 注册。编码和行为不能改，显示名称可以改。"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
+msgid ""
+"This tool is registered from Python. Code and\n"
+"                        behaviour cannot be changed. You can still edit the\n"
+"                        display label."
+msgstr "此工具由 Python 注册。编码和行为不能改，仍可修改显示名称。"
 
 #. module: ai_base
 #. odoo-python

@@ -78,13 +78,17 @@ class AiBaseService(models.AbstractModel):
         if session:
             allowed = session._restricted_tool_names()
             if allowed is not None and name not in allowed:
+                tool = self.env['ai.tool'].sudo().search(
+                    [('name', '=', name)], limit=1)
                 card = {
                     'name': name,
+                    'label': tool._tool_label() if tool else name,
                     'status': 'blocked',
                     'arguments': arguments,
                     'error': {
                         'message': _(
-                            'Tool "%s" is not enabled for this agent.') % name,
+                            'Tool "%s" is not enabled for this agent.') % (
+                                tool._tool_label() if tool else name),
                     },
                 }
                 return card, 'blocked', {}

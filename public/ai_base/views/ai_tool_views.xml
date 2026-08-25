@@ -11,7 +11,9 @@
                     <group>
                         <group>
                             <field name="is_builtin" invisible="1"/>
-                            <field name="name" readonly="is_builtin"/>
+                            <field name="label" placeholder="Find customers"/>
+                            <field name="name" readonly="is_builtin"
+                                   placeholder="search_partners"/>
                             <field name="tool_type" readonly="is_builtin"/>
                             <field name="category" readonly="is_builtin"/>
                             <field name="is_active" readonly="is_builtin"/>
@@ -36,8 +38,9 @@
                     <field name="input_schema" readonly="is_builtin"/>
                     <field name="output_schema" readonly="is_builtin"/>
                     <p class="text-muted" invisible="not is_builtin">
-                        This tool is registered from Python. It cannot be
-                        edited or deleted.
+                        This tool is registered from Python. Code and
+                        behaviour cannot be changed. You can still edit the
+                        display label.
                     </p>
                 </sheet>
             </form>
@@ -48,6 +51,7 @@
         <field name="model">ai.tool</field>
         <field name="arch" type="xml">
             <list>
+                <field name="label"/>
                 <field name="name"/>
                 <field name="tool_type"/>
                 <field name="is_builtin"/>
@@ -62,6 +66,7 @@
         <field name="model">ai.tool</field>
         <field name="arch" type="xml">
             <search>
+                <field name="label"/>
                 <field name="name"/>
                 <field name="tool_type"/>
                 <filter string="Custom" name="filter_custom" domain="[('is_builtin', '=', False)]"/>
@@ -84,8 +89,8 @@
             <p class="o_view_nocontent_smiling_face">Create a custom tool</p>
             <p>
                 Add ORM or HTTP tools here. Built-in Python tools
-                (search, count, group by) live under the Built-in filter
-                and cannot be edited or deleted.
+                (search, count, group by) live under the Built-in filter.
+                You can edit their display label; code cannot be changed.
             </p>
         </field>
     </record>

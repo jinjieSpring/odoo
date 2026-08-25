@@ -738,7 +738,9 @@ class AiBaseService(models.AbstractModel):
         options = dict(options or {})
         session = options.pop('session', None)
         manifest = self.env['ai.tool'].action_get_manifest_for_user(session=session)
+        name_map = {}
         if manifest:
+            name_map = self.env['ai.tool']._openai_name_map(manifest)
             options['tools'] = self.env['ai.tool']._function_schemas(manifest)
         candidates = self.env['ai.model']._get_scenario_models('chat') or [model]
         current = model
@@ -786,7 +788,8 @@ class AiBaseService(models.AbstractModel):
             cards = []
             executed = []
             for call in tool_calls[:max_calls]:
-                name = call.get('name') or ''
+                name = name_map.get(
+                    call.get('name') or '', call.get('name') or '')
                 arguments = call.get('arguments') or {}
                 card, status, result_data = self._execute_loop_call(
                     name, arguments, session=session)
@@ -870,7 +873,12 @@ class AiBaseService(models.AbstractModel):
         """
         tool = self.env['ai.tool'].sudo().search(
             [('name', '=', name), ('is_active', '=', True)], limit=1)
-        card = {'name': name, 'status': 'blocked', 'arguments': arguments}
+        card = {
+            'name': name,
+            'label': tool._tool_label() if tool else name,
+            'status': 'blocked',
+            'arguments': arguments,
+        }
         if not tool:
             card['error'] = {'message': _('Unknown tool "%s".') % name}
             return card, 'blocked', {}

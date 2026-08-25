@@ -46,6 +46,7 @@
                         <page string="Tools">
                             <field name="tool_ids">
                                 <list>
+                                    <field name="label"/>
                                     <field name="name"/>
                                     <field name="description"/>
                                     <field name="read_only"/>

@@ -16,10 +16,43 @@ _logger = logging.getLogger(__name__)
 
 AI_TOOL_REGISTRY = {}
 _FENCE_RE = re.compile(r'```json\s*(.*?)```', re.DOTALL)
+_OPENAI_FUNCTION_NAME_RE = re.compile(r'^[a-zA-Z0-9_-]+$')
+_OPENAI_FUNCTION_NAME_INVALID_RE = re.compile(r'[^a-zA-Z0-9_-]+')
+_OPENAI_FUNCTION_NAME_MAX = 64
 _SENSITIVE_FIELDS = (
     'password', 'api_key', 'api_secret', 'credit_card', 'bank_account',
     'id_number', 'secret', 'token',
 )
+
+
+def openai_function_name(name):
+    """Sanitize a tool name for OpenAI ``tools[].function.name``.
+
+    Providers reject names that do not match ``^[a-zA-Z0-9_-]+$``. Internal
+    names may contain dots (``generic.search_count``) or non-ASCII.
+    """
+    name = (name or '').strip()
+    if (
+        _OPENAI_FUNCTION_NAME_RE.fullmatch(name)
+        and len(name) <= _OPENAI_FUNCTION_NAME_MAX
+    ):
+        return name
+    sanitized = _OPENAI_FUNCTION_NAME_INVALID_RE.sub('_', name).strip('_')
+    sanitized = re.sub(r'_+', '_', sanitized)
+    if not sanitized:
+        sanitized = 'tool'
+    return sanitized[:_OPENAI_FUNCTION_NAME_MAX]
+
+
+def schema_description(label, description):
+    """Prefix the model-facing description with the human label when useful."""
+    label = (label or '').strip()
+    description = (description or '').strip()
+    if label and description:
+        if description.startswith(label):
+            return description
+        return '%s. %s' % (label, description)
+    return label or description
 
 
 def ai_tool(
@@ -31,12 +64,14 @@ def ai_tool(
     required_groups=None,
     rate_limit=30,
     timeout=15,
+    label='',
 ):
     """Register a method as a pre-declared AI tool. Arbitrary code is forbidden."""
 
     def decorator(method):
         metadata = {
             'name': name,
+            'label': label or '',
             'description': description,
             'category': category,
             'tool_type': 'python',
@@ -138,9 +173,22 @@ def strip_tool_blocks(content):
 class AiTool(models.Model):
     _name = 'ai.tool'
     _description = 'AI Tool'
-    _order = 'tool_type, name'
+    _order = 'tool_type, label, name'
+    _rec_names_search = ['label', 'name']
+    _BUILTIN_WRITABLE = frozenset({'label'})
+    _BUILTIN_LABELS = {
+        'generic.search_read': 'Search records',
+        'generic.search_count': 'Count records',
+        'generic.group_by': 'Group records',
+    }
 
-    name = fields.Char(string='Tool Name', required=True)
+    name = fields.Char(
+        string='Code', required=True,
+        help='Technical identifier sent to the model. Prefer letters, '
+             'digits, underscore and hyphen.')
+    label = fields.Char(
+        string='Label', translate=True,
+        help='Display name shown in lists, agent tools and chat cards.')
     description = fields.Text(string='Description', required=True)
     tool_type = fields.Selection([
         ('python', 'Python Function'),
@@ -176,11 +224,32 @@ class AiTool(models.Model):
     http_headers = fields.Json(string='HTTP Headers', default=dict)
     is_builtin = fields.Boolean(
         string='Built-in', default=False, copy=False,
-        help='Registered from Python with @ai_tool. Cannot be edited or deleted.')
+        help='Registered from Python with @ai_tool. Code and behaviour '
+             'cannot be changed. The label can be edited.')
 
     _name_uniq = models.Constraint(
         'UNIQUE(name)',
         'The tool name must be unique.')
+
+    @api.depends('label', 'name')
+    @api.depends_context('lang')
+    def _compute_display_name(self):
+        for tool in self:
+            tool.display_name = tool._tool_label()
+
+    def _tool_label(self):
+        """Human-facing name: translated builtin default, custom label, or code."""
+        self.ensure_one()
+        defaults = {
+            'generic.search_read': _('Search records'),
+            'generic.search_count': _('Count records'),
+            'generic.group_by': _('Group records'),
+        }
+        default = defaults.get(self.name)
+        text = (self.label or '').strip()
+        if default and (not text or text == self._BUILTIN_LABELS.get(self.name)):
+            return default
+        return text or self.name
 
     def write(self, vals):
         if (
@@ -188,7 +257,8 @@ class AiTool(models.Model):
             and vals
             and not self.env.context.get('ai_tool_sync')
         ):
-            raise UserError(_('Built-in tools cannot be edited or deleted.'))
+            if set(vals) - self._BUILTIN_WRITABLE:
+                raise UserError(_('Built-in tools cannot be edited or deleted.'))
         return super().write(vals)
 
     def unlink(self):
@@ -232,11 +302,16 @@ class AiTool(models.Model):
                 'read_only': metadata.get('read_only', True),
                 'is_builtin': True,
             }
+            default_label = (
+                metadata.get('label') or self._BUILTIN_LABELS.get(name) or '')
             if name in existing:
+                current = existing[name]
+                if default_label and not (current.label or '').strip():
+                    vals['label'] = default_label
                 existing[name].with_context(ai_tool_sync=True).write(vals)
             else:
                 self.create(dict(
-                    vals, name=name, is_active=True,
+                    vals, name=name, label=default_label, is_active=True,
                     rate_limit=metadata.get('rate_limit') or 30,
                     timeout=metadata.get('timeout') or 15,
                 ))
@@ -248,6 +323,7 @@ class AiTool(models.Model):
         allowed = [tool for tool in tools if self._check_permissions(tool)]
         return [{
             'name': tool.name,
+            'label': tool._tool_label(),
             'description': tool.description,
             'input_schema': tool.input_schema or {},
             'tool_type': tool.tool_type,
@@ -255,9 +331,32 @@ class AiTool(models.Model):
         } for tool in allowed]
 
     @api.model
+    def _openai_name_map(self, manifest):
+        """Map OpenAI function names back to internal ``ai.tool`` names."""
+        used = set()
+        mapping = {}
+        for tool in manifest or []:
+            internal = tool.get('name') or ''
+            base = openai_function_name(internal)
+            api_name = base
+            index = 2
+            while api_name in used:
+                suffix = '_%s' % index
+                api_name = '%s%s' % (
+                    base[:_OPENAI_FUNCTION_NAME_MAX - len(suffix)], suffix)
+                index += 1
+            used.add(api_name)
+            mapping[api_name] = internal
+        return mapping
+
+    @api.model
     def _function_schemas(self, manifest=None):
         manifest = manifest if manifest is not None \
             else self.action_get_manifest_for_user(session=None)
+        name_map = self._openai_name_map(manifest)
+        internal_to_api = {
+            internal: api_name for api_name, internal in name_map.items()
+        }
         schemas = []
         for tool in manifest:
             input_schema = tool.get('input_schema') or {}
@@ -268,8 +367,10 @@ class AiTool(models.Model):
             schemas.append({
                 'type': 'function',
                 'function': {
-                    'name': tool['name'],
-                    'description': tool.get('description') or '',
+                    'name': internal_to_api.get(
+                        tool['name'], openai_function_name(tool['name'])),
+                    'description': schema_description(
+                        tool.get('label'), tool.get('description')),
                     'parameters': input_schema,
                 },
             })
@@ -530,6 +631,7 @@ class AiGenericTools(models.AbstractModel):
 
     @ai_tool(
         name='generic.search_read',
+        label='Search records',
         description='Search records of any Odoo model and return the requested fields.',
         input_schema={
             'type': 'object',
@@ -559,6 +661,7 @@ class AiGenericTools(models.AbstractModel):
 
     @ai_tool(
         name='generic.search_count',
+        label='Count records',
         description='Count records of any Odoo model matching a domain.',
         input_schema={
             'type': 'object',
@@ -588,6 +691,7 @@ class AiGenericTools(models.AbstractModel):
 
     @ai_tool(
         name='generic.group_by',
+        label='Group records',
         description=(
             'Group records of any Odoo model by a field and compute '
             'aggregates, such as sales orders grouped by salesperson or '
