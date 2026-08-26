@@ -164,8 +164,8 @@ class TestTools(AiBaseCase):
             result = self.env['ai.base.service'].agent_run('how many users?')
         self.assertEqual(result['reply'], 'there are users')
         self.assertEqual(calls['n'], 2)
-        log = self.env['ai.request.log'].search([
-            ('request_type', '=', 'tool'),
+        log = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'tool_call'),
             ('tool_name', '=', 'generic.search_count'),
         ], limit=1)
         self.assertTrue(log)
@@ -215,8 +215,8 @@ class TestTools(AiBaseCase):
             result = self.env['ai.base.service'].agent_run('how many users?')
         self.assertEqual(result['reply'], 'there are users')
         self.assertEqual(calls['n'], 2)
-        log = self.env['ai.request.log'].search([
-            ('request_type', '=', 'tool'),
+        log = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'tool_call'),
             ('tool_name', '=', 'generic.search_count'),
         ], limit=1)
         self.assertTrue(log)

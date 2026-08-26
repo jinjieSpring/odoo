@@ -95,13 +95,41 @@ class AiAgentRun(models.Model):
             'state': 'pending',
         })
         session.write({'state': 'open'})
+        accepted = _(
+            "I'll keep working on this even if you leave this chat. "
+            "Progress will appear here.\n\nTask: %s"
+        ) % content
+        run._audit('agent_start', input_summary=(content or '')[:4000])
+        model = session.model_id
+        self.env['ai.base.service']._log(
+            request_type='agent',
+            scenario_key='agent',
+            session_id=session.id,
+            user_id=session.user_id.id,
+            company_id=session.company_id.id if session.company_id else False,
+            provider_id=model.provider_id.id if model else False,
+            model_id=model.id if model else False,
+            model_code=model.code if model else False,
+            status='success',
+            input_summary=(content or '')[:4000],
+            output_summary=accepted[:4000],
+        )
         run._notify()
         run._schedule_step()
         return self.env['ai.chat'].result(session)
 
+    def _audit(self, event_type, **vals):
+        self.ensure_one()
+        vals.setdefault('session_id', self.session_id.id)
+        vals.setdefault('agent_id', self.agent_id.id)
+        vals.setdefault('run_id', self.id)
+        vals.setdefault('status', 'success' if event_type != 'agent_error' else 'error')
+        return self.env['ai.audit.log']._record(event_type, **vals)
+
     def action_cancel(self):
         for run in self.filtered(lambda rec: rec.state in _ACTIVE_STATES):
             run.write({'state': 'cancelled'})
+            run._audit('agent_cancelled', input_summary=(run.goal or '')[:4000])
             run._post_status(_('Stopped the background task.'))
             run._notify()
         return True
@@ -181,6 +209,10 @@ class AiAgentRun(models.Model):
                 'state': 'error',
                 'error_message': _('The agent or session is no longer available.'),
             })
+            self._audit(
+                'agent_error', status='error',
+                error_message=_('The agent or session is no longer available.'),
+                input_summary=(self.goal or '')[:4000])
             self._post_status(_(
                 'The background task stopped because the agent or session '
                 'is no longer available.'))
@@ -199,7 +231,8 @@ class AiAgentRun(models.Model):
             'skip_memory': True,
         }
         service = self.env['ai.base.service'].with_user(self.user_id).with_company(
-            self.company_id or self.env.company)
+            self.company_id or self.env.company).with_context(
+            ai_run_id=self.id, ai_session_id=session.id)
         try:
             result = service.chat(
                 self.goal,
@@ -215,6 +248,10 @@ class AiAgentRun(models.Model):
                 'state': 'error',
                 'error_message': str(exc)[:500],
             })
+            self._audit(
+                'agent_error', status='error',
+                error_message=str(exc)[:500],
+                input_summary=(self.goal or '')[:4000])
             self._post_status(_('The background task failed: %s') % str(exc)[:500])
             self._notify()
             return
@@ -230,14 +267,23 @@ class AiAgentRun(models.Model):
         if vals:
             self.write(vals)
             if vals.get('state') == 'error':
+                self._audit(
+                    'agent_error', status='error',
+                    error_message=vals.get('error_message') or '',
+                    input_summary=(self.goal or '')[:4000])
                 self._post_status(_(
                     'The background task failed: %s'
                 ) % (vals.get('error_message') or ''))
-            if vals.get('state') == 'done' and agent.memory_enabled:
-                self.env['ai.agent.memory'].sudo()._remember_from_turn(
-                    agent, self.goal, result.get('reply') or '',
-                    user=self.user_id,
-                    company=self.company_id or self.env.company)
+            if vals.get('state') == 'done':
+                self._audit(
+                    'agent_done',
+                    input_summary=(self.goal or '')[:4000],
+                    output_summary=(result.get('reply') or '')[:4000])
+                if agent.memory_enabled:
+                    self.env['ai.agent.memory'].sudo()._remember_from_turn(
+                        agent, self.goal, result.get('reply') or '',
+                        user=self.user_id,
+                        company=self.company_id or self.env.company)
         self._notify()
         if self.state in _ACTIVE_STATES:
             self._schedule_step()

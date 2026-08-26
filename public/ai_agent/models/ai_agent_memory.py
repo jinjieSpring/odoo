@@ -61,6 +61,12 @@ class AiAgentMemory(models.Model):
             'company_id': company.id if company else False,
             'content': text[:_MAX_MEMORY_CHARS],
         })
+        self.env['ai.audit.log']._record(
+            'memory_write',
+            agent_id=agent.id,
+            status='success',
+            input_summary=text[:_MAX_MEMORY_CHARS],
+        )
         keep = max(1, agent.memory_limit or 20)
         extra = self.search([
             ('agent_id', '=', agent.id),

@@ -85,7 +85,7 @@
         </field>
     </record>
     <record id="ai_request_log_action" model="ir.actions.act_window">
-        <field name="name">Usage &amp; Audit</field>
+        <field name="name">Usage</field>
         <field name="res_model">ai.request.log</field>
         <field name="view_mode">list,form,pivot,graph</field>
     </record>

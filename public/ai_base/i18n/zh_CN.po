@@ -176,8 +176,15 @@ msgstr "对话记录"
 #: model:ir.ui.menu,name:ai_base.ai_menu_logs
 #: model:ir.actions.act_window,name:ai_base.ai_request_log_action
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__log_count
-msgid "Usage & Audit"
-msgstr "用量与审计"
+msgid "Usage"
+msgstr "用量"
+
+#. module: ai_base
+#: model:ir.ui.menu,name:ai_base.ai_menu_audit
+#: model:ir.actions.act_window,name:ai_base.ai_audit_log_action
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__audit_count
+msgid "Audit"
+msgstr "审计"
 
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_settings
@@ -286,6 +293,7 @@ msgstr "可选备注..."
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__company_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__company_id
 msgid "Company"
 msgstr "公司"
 
@@ -607,6 +615,7 @@ msgstr "提取文本"
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__status
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__status
 msgid "Status"
 msgstr "状态"
 
@@ -633,7 +642,9 @@ msgstr "已向量化"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__error_message
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_message
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__error_message
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__error
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__status__error
 msgid "Error"
 msgstr "错误"
 
@@ -696,6 +707,7 @@ msgstr "发给模型，说明何时调用此工具。可以用中文。"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_name
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__tool_name
 msgid "Tool Name"
 msgstr "工具名称"
 
@@ -833,6 +845,7 @@ msgstr "会话名称"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__user_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__user_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__user_id
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__user
 msgid "User"
 msgstr "用户"
@@ -977,6 +990,7 @@ msgstr "已关闭"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__create_date
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__create_date
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__create_date
 msgid "Created On"
 msgstr "创建时间"
 
@@ -1045,6 +1059,7 @@ msgstr "总 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__session_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__session_id
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Chat Session"
 msgstr "对话会话"
@@ -1071,6 +1086,7 @@ msgstr "Agent"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__tool
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__tool_call
 msgid "Tool Call"
 msgstr "工具调用"
 
@@ -1081,11 +1097,13 @@ msgstr "连通性测试"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__latency_ms
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__latency_ms
 msgid "Latency (ms)"
 msgstr "耗时（毫秒）"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__success
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__status__success
 msgid "Success"
 msgstr "成功"
 
@@ -2258,4 +2276,78 @@ msgstr "点踩"
 #: code:addons/ai_base/models/ai_chat.py:0
 msgid "Feedback must be thumbs up or thumbs down."
 msgstr "反馈只能是点赞或点踩。"
+
+#. module: ai_base
+#: model:ir.model,name:ai_base.model_ai_audit_log
+msgid "AI Audit Log"
+msgstr "AI 审计日志"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_audit_log.py:0
+msgid "Audit logs cannot be modified."
+msgstr "审计日志不可修改。"
+
+#. module: ai_base
+#. odoo-python
+#: code:addons/ai_base/models/ai_audit_log.py:0
+msgid "Audit logs cannot be deleted."
+msgstr "审计日志不可删除。"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__event_type
+msgid "Event"
+msgstr "事件"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__tool_blocked
+msgid "Tool Blocked"
+msgstr "工具拦截"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__agent_start
+msgid "Agent Started"
+msgstr "智能体已启动"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__agent_done
+msgid "Agent Finished"
+msgstr "智能体已完成"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__agent_error
+msgid "Agent Error"
+msgstr "智能体错误"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__agent_cancelled
+msgid "Agent Cancelled"
+msgstr "智能体已取消"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__memory_write
+msgid "Memory Write"
+msgstr "写入记忆"
+
+#. module: ai_base
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__status__blocked
+msgid "Blocked"
+msgstr "已拦截"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__error_code
+msgid "Error Code"
+msgstr "错误码"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__input_summary
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_audit_log_form_view
+msgid "Input"
+msgstr "输入"
+
+#. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__output_summary
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_audit_log_form_view
+msgid "Output"
+msgstr "输出"
 

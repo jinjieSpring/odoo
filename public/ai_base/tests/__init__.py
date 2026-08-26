@@ -11,3 +11,4 @@ from . import test_tools
 from . import test_stream
 from . import test_security
 from . import test_reasoning
+from . import test_audit

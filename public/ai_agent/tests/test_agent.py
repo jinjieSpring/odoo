@@ -234,3 +234,98 @@ class TestAgent(AiBaseCase):
         self.assertTrue(any(
             'still working' in (msg.get('content') or '').lower()
             for msg in payload['messages'] if msg['role'] == 'assistant'))
+
+    def test_agent_whitelist_blocks_are_audited(self):
+        count_tool = self.env['ai.tool'].search(
+            [('name', '=', 'generic.search_count')], limit=1)
+        self.chat_agent.tool_ids = count_tool
+        session = self.env['ai.chat.session'].create({'name': 'Filtered'})
+        calls = {'n': 0}
+
+        def fake_chat(this, model, messages, options=None):
+            calls['n'] += 1
+            if calls['n'] == 1:
+                return self._ok('', tool_calls=[{
+                    'id': '1',
+                    'name': 'generic.search_read',
+                    'arguments': {'model': 'res.users'},
+                }])
+            return self._ok('blocked')
+
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                fake_chat):
+            self.env['ai.base.service'].chat(
+                'read users', session=session)
+        audit = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'tool_blocked'),
+            ('tool_name', '=', 'generic.search_read'),
+            ('session_id', '=', session.id),
+        ], limit=1)
+        self.assertTrue(audit)
+        self.assertEqual(audit.status, 'blocked')
+        self.assertEqual(audit.agent_id, self.chat_agent)
+
+    def test_goal_start_writes_usage_and_audit(self):
+        session = self.env['ai.chat.session'].create({
+            'name': 'Goal',
+            'agent_id': self.goal_agent.id,
+        })
+        self.env['ai.chat'].send_message(session, 'close the books')
+        run = self.env['ai.agent.run'].search(
+            [('session_id', '=', session.id)], limit=1)
+        audit = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'agent_start'),
+            ('session_id', '=', session.id),
+        ], limit=1)
+        self.assertTrue(audit)
+        self.assertEqual(audit.run_id, run)
+        self.assertEqual(audit.agent_id, self.goal_agent)
+        self.assertIn('close the books', audit.input_summary or '')
+        log = self.env['ai.request.log'].search([
+            ('request_type', '=', 'agent'),
+            ('session_id', '=', session.id),
+        ], limit=1)
+        self.assertTrue(log)
+        self.assertIn('close the books', log.input_summary or '')
+
+    def test_goal_done_and_cancel_are_audited(self):
+        session = self.env['ai.chat.session'].create({
+            'name': 'Goal',
+            'agent_id': self.goal_agent.id,
+        })
+        self.env['ai.chat'].send_message(session, 'close the books')
+        run = self.env['ai.agent.run'].search(
+            [('session_id', '=', session.id)], limit=1)
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._ok('books closed')):
+            self.env['ai.agent.run']._cron_step_runs()
+        self.assertTrue(self.env['ai.audit.log'].search([
+            ('event_type', '=', 'agent_done'),
+            ('run_id', '=', run.id),
+        ], limit=1))
+
+        session2 = self.env['ai.chat.session'].create({
+            'name': 'Cancel',
+            'agent_id': self.goal_agent.id,
+        })
+        self.env['ai.chat'].send_message(session2, 'long job')
+        run2 = self.env['ai.agent.run'].search(
+            [('session_id', '=', session2.id)], limit=1)
+        session2.action_cancel_agent_run()
+        cancelled = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'agent_cancelled'),
+            ('run_id', '=', run2.id),
+        ], limit=1)
+        self.assertTrue(cancelled)
+
+    def test_memory_write_is_audited(self):
+        self.chat_agent.memory_enabled = True
+        self.env['ai.agent.memory']._remember(self.chat_agent, 'alpha fact')
+        audit = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'memory_write'),
+            ('agent_id', '=', self.chat_agent.id),
+        ], limit=1)
+        self.assertTrue(audit)
+        self.assertIn('alpha fact', audit.input_summary or '')

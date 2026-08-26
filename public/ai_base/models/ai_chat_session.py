@@ -45,7 +45,9 @@ class AiChatSession(models.Model):
     context_usage = fields.Integer(
         compute='_compute_context_usage', string='Context Usage %')
     log_count = fields.Integer(
-        compute='_compute_log_count', string='Usage & Audit')
+        compute='_compute_log_count', string='Usage')
+    audit_count = fields.Integer(
+        compute='_compute_audit_count', string='Audit')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('open', 'In Progress'),
@@ -100,13 +102,32 @@ class AiChatSession(models.Model):
         for session in self:
             session.log_count = count_map.get(session.id, 0)
 
+    def _compute_audit_count(self):
+        data = self.env['ai.audit.log']._read_group(
+            [('session_id', 'in', self.ids)],
+            ['session_id'], ['session_id:count'])
+        count_map = {session.id: count for session, count in data}
+        for session in self:
+            session.audit_count = count_map.get(session.id, 0)
+
     def action_open_request_logs(self):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Usage & Audit'),
+            'name': _('Usage'),
             'res_model': 'ai.request.log',
             'view_mode': 'list,form,pivot,graph',
+            'domain': [('session_id', '=', self.id)],
+            'context': {'default_session_id': self.id},
+        }
+
+    def action_open_audit_logs(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Audit'),
+            'res_model': 'ai.audit.log',
+            'view_mode': 'list,form',
             'domain': [('session_id', '=', self.id)],
             'context': {'default_session_id': self.id},
         }

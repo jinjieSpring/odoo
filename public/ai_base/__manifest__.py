@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'AI Base',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Productivity/AI',
     'summary': 'Odoo 19 AI foundation: providers, prompts, tools, chat',
     'description': """
@@ -32,6 +32,7 @@ This module does not depend on OCA ``queue_job``.
         'views/ai_tool_views.xml',
         'views/ai_session_views.xml',
         'views/ai_request_log_views.xml',
+        'views/ai_audit_log_views.xml',
         'views/ai_config_views.xml',
         'views/ai_menus.xml',
     ],

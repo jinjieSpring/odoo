@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'AI Agent',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Productivity/AI',
     'summary': 'Configurable agents with memory and background goal runs',
     'description': """
@@ -28,6 +28,7 @@ intact.
         'data/ai_agent_data.xml',
         'views/ai_agent_views.xml',
         'views/ai_session_views.xml',
+        'views/ai_audit_log_views.xml',
         'views/ai_menus.xml',
     ],
     'assets': {

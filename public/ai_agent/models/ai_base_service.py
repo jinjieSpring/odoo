@@ -91,6 +91,9 @@ class AiBaseService(models.AbstractModel):
                                 tool._tool_label() if tool else name),
                     },
                 }
+                self.env['ai.audit.log']._record_tool(
+                    'tool_blocked', name, params=arguments, status='blocked',
+                    message=card['error']['message'], session=session)
                 return card, 'blocked', {}
         return super()._execute_loop_call(name, arguments, session=session)
 

@@ -165,12 +165,14 @@ class AiBaseService(models.AbstractModel):
             if session:
                 self._persist_rounds(session, result)
             self._log_request(
-                request_type='chat', scenario_key=scenario,
+                request_type=self._request_type_for_scenario(scenario),
+                scenario_key=scenario,
                 session=session, model=model, result=result,
                 input_summary=content)
             result = self.on_ai_request_done(payload, result) or result
             return result
         except Exception as exc:
+            self._log_request_error(scenario, session, model, content, exc)
             self.on_ai_request_error(payload, exc)
             raise
 
@@ -275,7 +277,7 @@ class AiBaseService(models.AbstractModel):
                 可被 agent 覆盖。
             prompt_key / record / context / model_code / options: 同 ``chat``。
         返回:
-            dict: 与 ``chat`` 相同。若产生了 rounds，会把最近一条请求日志标成 ``agent``。
+            dict: 与 ``chat`` 相同。
         """
         options = dict(options or {})
         if max_rounds is not None:
@@ -284,10 +286,6 @@ class AiBaseService(models.AbstractModel):
             content, prompt_key=prompt_key, record=record, context=context,
             model_code=model_code, session=session, options=options,
             scenario='agent')
-        if result.get('rounds'):
-            log = self.env['ai.request.log'].sudo().search([], limit=1)
-            if log:
-                log.request_type = 'agent'
         return result
 
     def stream_chat(self, content, session, options=None):
@@ -338,15 +336,19 @@ class AiBaseService(models.AbstractModel):
         options['session'] = session
         history = session._build_history()
         messages = self._system_messages(session, options, content) + history
-        result = self._run_tool_loop(
-            model, messages, options, emit=lambda event: events.append(event))
-        result['reply'] = self._guard_output(result.get('reply') or '')
-        self._persist_rounds(session, result)
-        self._log_request(
-            request_type='chat', scenario_key='chat',
-            session=session, model=model, result=result,
-            input_summary=content)
-        return {'result': result, 'events': events, 'error': result.get('error')}
+        try:
+            result = self._run_tool_loop(
+                model, messages, options, emit=lambda event: events.append(event))
+            result['reply'] = self._guard_output(result.get('reply') or '')
+            self._persist_rounds(session, result)
+            self._log_request(
+                request_type='chat', scenario_key='chat',
+                session=session, model=model, result=result,
+                input_summary=content)
+            return {'result': result, 'events': events, 'error': result.get('error')}
+        except Exception as exc:
+            self._log_request_error('chat', session, model, content, exc)
+            raise
 
     def invoke_tool(self, tool_name, params=None, context=None):
         """按名称直接调一次已注册工具，不经过模型。
@@ -523,6 +525,31 @@ class AiBaseService(models.AbstractModel):
                 hits.append(word)
         return hits
 
+    def _request_type_for_scenario(self, scenario, default='chat'):
+        """Map a chat scenario key to ``ai.request.log.request_type``."""
+        return {
+            'agent': 'agent',
+            'rag': 'rag',
+            'embed': 'embed',
+        }.get(scenario, default)
+
+    def _log_request_error(self, scenario, session, model, content, exc):
+        """Write an error usage row when chat/stream raises."""
+        vals = {
+            'request_type': self._request_type_for_scenario(scenario),
+            'scenario_key': scenario or 'chat',
+            'session_id': session.id if session else False,
+            'status': 'error',
+            'error_message': str(exc)[:500],
+            'error_traceback': traceback.format_exc()[:8000],
+            'input_summary': (content or '')[:4000],
+        }
+        if model:
+            vals['provider_id'] = model.provider_id.id
+            vals['model_id'] = model.id
+            vals['model_code'] = model.code
+        self._log(**vals)
+
     def _log(self, **vals):
         """写入一条 ``ai.request.log``，自动补当前用户和公司。
 
@@ -549,6 +576,8 @@ class AiBaseService(models.AbstractModel):
             None（副作用是建日志）。
         """
         error = result.get('error') or {}
+        request_type = self._request_type_for_scenario(
+            scenario_key, request_type)
         self._log(
             request_type=request_type,
             scenario_key=scenario_key,
@@ -891,7 +920,7 @@ class AiBaseService(models.AbstractModel):
         入参:
             name (str): 工具 name。
             arguments (dict): 模型给出的参数。
-            session: 当前会话，子类过滤工具时用；本实现不读它。
+            session: 当前会话；写入审计并传给工具调用。
         返回:
             tuple: ``(card, status, result_data)``
                 card (dict): 前端卡片，含 ``name`` / ``status`` / ``arguments``，失败有 ``error``。
@@ -908,8 +937,15 @@ class AiBaseService(models.AbstractModel):
         }
         if not tool:
             card['error'] = {'message': _('Unknown tool "%s".') % name}
+            self.env['ai.audit.log']._record_tool(
+                'tool_blocked', name, params=arguments, status='blocked',
+                error_code=404, message=card['error']['message'],
+                session=session)
             return card, 'blocked', {}
-        result = self.env['ai.tool'].action_invoke_tool(name, arguments)
+        tool_env = self.env['ai.tool']
+        if session:
+            tool_env = tool_env.with_context(ai_session_id=session.id)
+        result = tool_env.action_invoke_tool(name, arguments)
         if result.get('status') == 'success':
             card['status'] = 'done'
             card['summary'] = result.get('message') or _('Done')

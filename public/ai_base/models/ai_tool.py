@@ -386,23 +386,40 @@ class AiTool(models.Model):
         context = context or {}
         tool = self.sudo().search(
             [('name', '=', tool_name), ('is_active', '=', True)], limit=1)
+        Audit = self.env['ai.audit.log']
         if not tool:
-            return self._tool_error(
+            result = self._tool_error(
                 404, _('Tool "%s" is not registered.') % tool_name,
                 started, tool_name, params)
+            Audit._record_tool(
+                'tool_blocked', tool_name, params=params, result=result,
+                started=started, status='blocked', error_code=404)
+            return result
         if not self._check_permissions(tool):
-            return self._tool_error(
+            result = self._tool_error(
                 421, _('You do not have permission to call tool "%s".') % tool_name,
                 started, tool_name, params)
+            Audit._record_tool(
+                'tool_blocked', tool.name, params=params, result=result,
+                started=started, status='blocked', error_code=421)
+            return result
         if self._is_rate_limited(tool):
-            return self._tool_error(
+            result = self._tool_error(
                 429, _('Tool "%s" was called too frequently.') % tool_name,
                 started, tool_name, params)
+            Audit._record_tool(
+                'tool_blocked', tool.name, params=params, result=result,
+                started=started, status='blocked', error_code=429)
+            return result
         ok, errors = validate_tool_schema(params, tool.input_schema or {})
         if not ok:
-            return self._tool_error(
+            result = self._tool_error(
                 400, _('Invalid tool parameters: %s') % '; '.join(errors),
                 started, tool_name, params)
+            Audit._record_tool(
+                'tool_call', tool.name, params=params, result=result,
+                started=started, status='error', error_code=400)
+            return result
         try:
             result = self._execute_tool(tool, params, context)
         except (AccessError, UserError) as exc:
@@ -421,8 +438,8 @@ class AiTool(models.Model):
         if limit <= 0:
             return False
         since = fields.Datetime.now() - timedelta(seconds=60)
-        count = self.env['ai.request.log'].sudo().search_count([
-            ('request_type', '=', 'tool'),
+        count = self.env['ai.audit.log'].sudo().search_count([
+            ('event_type', '=', 'tool_call'),
             ('tool_name', '=', tool.name),
             ('user_id', '=', self.env.user.id),
             ('create_date', '>=', since),
@@ -607,22 +624,9 @@ class AiTool(models.Model):
         }
 
     def _log_call(self, tool, params, result, started):
-        self.env['ai.request.log'].sudo().create({
-            'request_type': 'tool',
-            'tool_name': tool.name,
-            'user_id': self.env.user.id,
-            'company_id': self.env.company.id,
-            'latency_ms': int((time.time() - started) * 1000),
-            'status': 'success' if result.get('status') == 'success' else 'error',
-            'error_message': result.get('message') if result.get('status') == 'error' else False,
-            'input_summary': json.dumps(params, ensure_ascii=False)[:2000],
-            'output_summary': json.dumps(result, ensure_ascii=False)[:2000],
-            'tool_calls': json.dumps([{
-                'name': tool.name,
-                'params': params,
-                'result_status': result.get('status'),
-            }], ensure_ascii=False),
-        })
+        self.env['ai.audit.log']._record_tool(
+            'tool_call', tool.name, params=params, result=result,
+            started=started)
 
 
 class AiGenericTools(models.AbstractModel):

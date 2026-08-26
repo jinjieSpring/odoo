@@ -56,6 +56,7 @@ class TestSession(AiBaseCase):
         self.assertEqual(action['res_model'], 'ai.request.log')
         self.assertEqual(action['domain'], [('session_id', '=', session.id)])
         self.assertGreaterEqual(session.log_count, 1)
+        self.assertEqual(action['name'], self.env._('Usage'))
 
     def test_message_preview_collapses_long_content(self):
         session = self.env['ai.chat.session'].create({'name': 'Preview'})

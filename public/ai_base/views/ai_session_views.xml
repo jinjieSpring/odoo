@@ -15,7 +15,11 @@
                         </button>
                         <button name="action_open_request_logs" type="object"
                                 class="oe_stat_button" icon="fa-list-alt">
-                            <field name="log_count" widget="statinfo" string="Usage &amp; Audit"/>
+                            <field name="log_count" widget="statinfo" string="Usage"/>
+                        </button>
+                        <button name="action_open_audit_logs" type="object"
+                                class="oe_stat_button" icon="fa-shield">
+                            <field name="audit_count" widget="statinfo" string="Audit"/>
                         </button>
                     </div>
                     <group>

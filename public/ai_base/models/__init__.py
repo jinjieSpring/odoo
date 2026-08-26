@@ -7,5 +7,6 @@ from . import ai_tool
 from . import ai_chat_session
 from . import ai_chat
 from . import ai_request_log
+from . import ai_audit_log
 from . import ai_base_service
 from . import ai_config
