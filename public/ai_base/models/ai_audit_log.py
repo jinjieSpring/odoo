@@ -122,30 +122,3 @@ class AiAuditLog(models.Model):
             output_summary=json.dumps(result, ensure_ascii=False)[:2000]
             if result else False,
         )
-
-    @api.model
-    def _migrate_from_request_logs(self):
-        """Copy legacy ``request_type=tool`` usage rows into this table."""
-        logs = self.env['ai.request.log'].sudo().search([
-            ('request_type', '=', 'tool'),
-        ])
-        if not logs:
-            return
-        vals_list = []
-        for log in logs:
-            vals_list.append({
-                'event_type': 'tool_call',
-                'user_id': log.user_id.id,
-                'company_id': log.company_id.id if log.company_id else False,
-                'session_id': log.session_id.id if log.session_id else False,
-                'tool_name': log.tool_name,
-                'status': log.status if log.status in ('success', 'error')
-                else 'error',
-                'error_message': log.error_message,
-                'latency_ms': log.latency_ms,
-                'input_summary': log.input_summary,
-                'output_summary': log.output_summary,
-                'create_date': log.create_date,
-            })
-        self.sudo().create(vals_list)
-        logs.unlink()

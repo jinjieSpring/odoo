@@ -158,28 +158,3 @@ class TestAuditLog(AiBaseCase):
         self.assertEqual(action['res_model'], 'ai.audit.log')
         self.assertEqual(action['domain'], [('session_id', '=', session.id)])
         self.assertGreaterEqual(session.audit_count, 1)
-
-    def test_migrate_copies_all_tool_request_logs(self):
-        first = self.env['ai.request.log'].sudo().create({
-            'request_type': 'tool',
-            'tool_name': 'generic.search_count',
-            'user_id': self.env.user.id,
-            'status': 'success',
-            'input_summary': 'first',
-        })
-        second = self.env['ai.request.log'].sudo().create({
-            'request_type': 'tool',
-            'tool_name': 'generic.search_read',
-            'user_id': self.env.user.id,
-            'status': 'error',
-            'input_summary': 'second',
-        })
-        self.env['ai.audit.log']._migrate_from_request_logs()
-        self.assertFalse(first.exists())
-        self.assertFalse(second.exists())
-        copied = self.env['ai.audit.log'].search([
-            ('event_type', '=', 'tool_call'),
-            ('tool_name', 'in', ('generic.search_count', 'generic.search_read')),
-        ])
-        self.assertEqual(len(copied), 2)
-        self.assertEqual(set(copied.mapped('input_summary')), {'first', 'second'})
