@@ -10,39 +10,39 @@ class AiAuditLog(models.Model):
     """Append-only action audit. Usage and prompt text stay on ``ai.request.log``."""
 
     _name = 'ai.audit.log'
-    _description = 'AI Audit Log'
+    _description = 'AI 审计日志'
     _order = 'create_date desc, id desc'
     _check_company_auto = True
 
-    create_date = fields.Datetime(string='Created On', readonly=True)
+    create_date = fields.Datetime(string='创建时间', readonly=True)
     company_id = fields.Many2one(
-        'res.company', string='Company', index=True,
+        'res.company', string='公司', index=True,
         default=lambda self: self.env.company)
     user_id = fields.Many2one(
-        'res.users', string='User', required=True, index=True,
+        'res.users', string='用户', required=True, index=True,
         ondelete='restrict', default=lambda self: self.env.user)
     session_id = fields.Many2one(
-        'ai.chat.session', string='Chat Session', ondelete='set null', index=True)
+        'ai.chat.session', string='对话会话', ondelete='set null', index=True)
     event_type = fields.Selection([
-        ('tool_call', 'Tool Call'),
-        ('tool_blocked', 'Tool Blocked'),
-        ('agent_start', 'Agent Started'),
-        ('agent_done', 'Agent Finished'),
-        ('agent_error', 'Agent Error'),
-        ('agent_cancelled', 'Agent Cancelled'),
-        ('memory_write', 'Memory Write'),
-    ], string='Event', required=True, index=True)
-    tool_name = fields.Char(string='Tool Name', index=True)
+        ('tool_call', '工具调用'),
+        ('tool_blocked', '工具拦截'),
+        ('agent_start', '智能体已启动'),
+        ('agent_done', '智能体已完成'),
+        ('agent_error', '智能体错误'),
+        ('agent_cancelled', '智能体已取消'),
+        ('memory_write', '写入记忆'),
+    ], string='事件', required=True, index=True)
+    tool_name = fields.Char(string='工具名称', index=True)
     status = fields.Selection([
-        ('success', 'Success'),
-        ('error', 'Error'),
-        ('blocked', 'Blocked'),
-    ], string='Status', default='success', required=True, index=True)
-    error_code = fields.Integer(string='Error Code')
-    error_message = fields.Char(string='Error')
-    latency_ms = fields.Integer(string='Latency (ms)', default=0)
-    input_summary = fields.Text(string='Input')
-    output_summary = fields.Text(string='Output')
+        ('success', '成功'),
+        ('error', '错误'),
+        ('blocked', '已拦截'),
+    ], string='状态', default='success', required=True, index=True)
+    error_code = fields.Integer(string='错误码')
+    error_message = fields.Char(string='错误')
+    latency_ms = fields.Integer(string='耗时（毫秒）', default=0)
+    input_summary = fields.Text(string='输入')
+    output_summary = fields.Text(string='输出')
 
     def write(self, vals):
         if self.env.context.get('_ai_audit_mutable'):

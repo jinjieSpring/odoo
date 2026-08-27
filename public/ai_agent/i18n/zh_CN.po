@@ -127,14 +127,22 @@ msgstr "启用"
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__agent_id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__agent_id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__agent_id
-#: model:ir.model.fields,field_description:ai_agent.field_ai_audit_log__agent_id
 msgid "Agent"
 msgstr "智能体"
 
 #. module: ai_agent
-#: model:ir.model.fields,field_description:ai_agent.field_ai_audit_log__run_id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_audit_log__agent_id
+msgid "智能体"
+msgstr "智能体"
+
+#. module: ai_agent
 #: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_run_form_view
 msgid "Agent Run"
+msgstr "智能体运行"
+
+#. module: ai_agent
+#: model:ir.model.fields,field_description:ai_agent.field_ai_audit_log__run_id
+msgid "智能体运行"
 msgstr "智能体运行"
 
 #. module: ai_agent
