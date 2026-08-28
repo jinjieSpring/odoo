@@ -165,13 +165,13 @@ class AiChat(models.AbstractModel):
             ['id', 'name'], order='name')
 
     def defaults(self):
-        """打开聊天窗时的初始状态：模型、布局、提示词、知识库、agent 占位。
+        """打开聊天窗时的初始状态：模型、布局、提示词、知识库。
 
         入参:
             无（读当前用户设置和默认 chat 模型）。
         返回:
             dict: 前端 OWL 用的 defaults，含 ``model_id`` / ``model_ready`` /
-            ``prompts`` / ``agents``（恒为 ``[]``，托盘对话不绑智能体）等。
+            ``prompts`` 等。
         """
         model = self.env['ai.model']._get_model_for_scenario('chat')
         model_ready, model_status = self.model_status(model)
@@ -295,7 +295,6 @@ class AiChat(models.AbstractModel):
             session: 单条 ``ai.chat.session``。
         返回:
             dict: ``messages`` 加 ``session``（token、prompt、是否已附上下文等）。
-            有 ``ai_agent`` 且会话绑了智能体时，再补 ``agent_id``。
         """
         session.ensure_one()
         session.invalidate_recordset([
@@ -359,7 +358,7 @@ class AiChat(models.AbstractModel):
         return [int(part) for part in text.split() if part.isdigit()]
 
     def set_options(self, session, options):
-        """同时写会话选项和用户默认偏好。不含 ``agent_id``（托盘对话不绑智能体）。
+        """同时写会话选项和用户默认偏好。
 
         入参:
             session: ``ai.chat.session`` 或空（只改用户设置）。
@@ -394,7 +393,6 @@ class AiChat(models.AbstractModel):
             options (dict): 透传给 service，如 ``max_rounds``。
         返回:
             dict: ``result()`` 结构（messages + session + error）。
-            ``ai_agent`` 在 goal 模式下会覆盖本方法，改走后台 run。
         """
         session.ensure_one()
         result = self.env['ai.base.service'].chat(
