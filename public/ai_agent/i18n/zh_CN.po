@@ -315,13 +315,12 @@ msgstr "留空表示允许使用当前用户本就可以调用的全部工具。
 #. module: ai_agent
 #: model_terms:ir.ui.view,arch_db:ai_agent.ai_agent_form_view
 msgid ""
-"Mark one agent as default for the systray. Extra agents\n"
-"                        are for dedicated menus that create a session with that\n"
-"                        agent; they are not a chat dropdown and do not call\n"
-"                        each other."
+"Systray chat does not use an agent. Bind an agent by\n"
+"                        creating a session with agent_id from a dedicated menu.\n"
+"                        Agents do not call each other."
 msgstr ""
-"将其中一个智能体标为托盘默认。额外智能体供专用菜单创建会话时绑定；"
-"它们不会出现在聊天下拉里，也不会互相调用。"
+"托盘对话不绑定智能体。由专用菜单在创建会话时传入 agent_id 来绑定。"
+"智能体之间不会互相调用。"
 
 #. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__max_rounds
@@ -416,9 +415,9 @@ msgstr "会话"
 #. module: ai_agent
 #: model:ir.model.fields,help:ai_agent.field_ai_chat_session__agent_id
 msgid ""
-"Set on create by the default assistant or a dedicated entry. The chat UI "
-"does not switch agents."
-msgstr "创建时由默认助手或专用入口写入。聊天界面不会切换智能体。"
+"Empty for systray chat. Dedicated menus pass agent_id when creating a "
+"session."
+msgstr "托盘对话为空。专用菜单应在创建会话时传入 agent_id。"
 
 #. module: ai_agent
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__state
@@ -438,16 +437,16 @@ msgstr "系统提示词"
 #. module: ai_agent
 #: model:ai.agent,description:ai_agent.agent_default_assistant
 msgid ""
-"Systray default assistant. Uses every tool the current user may call. Extra "
-"agents are for dedicated menus, not a chat picker."
-msgstr "托盘默认助手。使用当前用户可调用的全部工具。额外智能体供专用菜单绑定，不是聊天下拉里的选项。"
+"Fallback agent for dedicated menus that do not pass an agent. Systray chat "
+"does not bind this record."
+msgstr "供未指定智能体的专用菜单回退使用。托盘对话不会绑定此记录。"
 
 #. module: ai_agent
 #: model:ir.model.fields,help:ai_agent.field_ai_agent__is_default
 msgid ""
-"Systray new sessions use this agent. Dedicated menus should pass agent_id "
-"when creating a session."
-msgstr "托盘新建会话使用此智能体。专用菜单应在创建会话时传入 agent_id。"
+"Fallback for dedicated menus that call _get_default_agent. Systray chat does "
+"not use this."
+msgstr "供调用 _get_default_agent 的专用菜单回退。托盘对话不使用此项。"
 
 #. module: ai_agent
 #. odoo-python

@@ -30,10 +30,9 @@
                         <field name="description" placeholder="When a dedicated menu should bind this agent"/>
                     </group>
                     <p class="text-muted">
-                        Mark one agent as default for the systray. Extra agents
-                        are for dedicated menus that create a session with that
-                        agent; they are not a chat dropdown and do not call
-                        each other.
+                        Systray chat does not use an agent. Bind an agent by
+                        creating a session with agent_id from a dedicated menu.
+                        Agents do not call each other.
                     </p>
                     <notebook>
                         <page string="Prompt">

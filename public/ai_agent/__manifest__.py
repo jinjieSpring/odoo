@@ -11,8 +11,7 @@ AI Agent
 Optional agent layer on top of AI Base.
 
 * Named agents with a system prompt and optional tool subset
-* Systray chat always uses the default agent (no picker)
-* Extra agents are for dedicated menus that set session.agent_id on create
+* Systray chat has no agent; dedicated menus set session.agent_id on create
 * Per-agent, per-user memory injected into the system prompt
 * Goal mode: accept a task in chat and continue it in the background
 

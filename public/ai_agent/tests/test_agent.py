@@ -39,16 +39,14 @@ class TestAgent(AiBaseCase):
             },
         }
 
-    def test_defaults_expose_default_agent_only(self):
+    def test_defaults_do_not_expose_agents(self):
         defaults = self.env['ai.chat.session'].action_get_defaults()
-        names = {item['name'] for item in defaults['agents']}
-        self.assertIn(self.chat_agent.name, names)
-        self.assertNotIn('Closer', names)
-        self.assertEqual(defaults['default_agent_id'], self.chat_agent.id)
+        self.assertEqual(defaults['agents'], [])
+        self.assertFalse(defaults['default_agent_id'])
 
-    def test_new_session_gets_default_agent(self):
+    def test_new_session_has_no_agent(self):
         session = self.env['ai.chat.session'].create({'name': 'S'})
-        self.assertEqual(session.agent_id, self.chat_agent)
+        self.assertFalse(session.agent_id)
 
     def test_dedicated_entry_binds_agent(self):
         session = self.env['ai.chat.session'].create({
@@ -68,7 +66,10 @@ class TestAgent(AiBaseCase):
             [('name', '=', 'generic.search_read')], limit=1)
         self.assertTrue(count_tool and read_tool)
         self.chat_agent.tool_ids = count_tool
-        session = self.env['ai.chat.session'].create({'name': 'Filtered'})
+        session = self.env['ai.chat.session'].create({
+            'name': 'Filtered',
+            'agent_id': self.chat_agent.id,
+        })
         names = [
             item['name']
             for item in self.env['ai.tool'].action_get_manifest_for_user(
@@ -100,7 +101,10 @@ class TestAgent(AiBaseCase):
         })
         self.assertEqual(self.chat_agent._effective_max_rounds(), 3)
         self.assertEqual(self.chat_agent._effective_max_calls_per_round(), 2)
-        session = self.env['ai.chat.session'].create({'name': 'Limits'})
+        session = self.env['ai.chat.session'].create({
+            'name': 'Limits',
+            'agent_id': self.chat_agent.id,
+        })
         rounds, calls = self.env['ai.base.service']._tool_loop_limits({}, session)
         self.assertEqual((rounds, calls), (3, 2))
 
@@ -120,13 +124,17 @@ class TestAgent(AiBaseCase):
     def test_memory_injected_into_system_prompt(self):
         self.chat_agent.memory_enabled = True
         self.env['ai.agent.memory']._remember(self.chat_agent, 'prefers lists')
-        session = self.env['ai.chat.session'].create({'name': 'Mem'})
+        session = self.env['ai.chat.session'].create({
+            'name': 'Mem',
+            'agent_id': self.chat_agent.id,
+        })
         messages = self.env['ai.base.service']._system_messages(
             session, query='hello')
         self.assertIn('prefers lists', messages[0]['content'])
 
     def test_chat_mode_still_replies_inline(self):
         session = self.env['ai.chat.session'].create({'name': 'Chat'})
+        self.assertFalse(session.agent_id)
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok('hello there')):
@@ -239,7 +247,10 @@ class TestAgent(AiBaseCase):
         count_tool = self.env['ai.tool'].search(
             [('name', '=', 'generic.search_count')], limit=1)
         self.chat_agent.tool_ids = count_tool
-        session = self.env['ai.chat.session'].create({'name': 'Filtered'})
+        session = self.env['ai.chat.session'].create({
+            'name': 'Filtered',
+            'agent_id': self.chat_agent.id,
+        })
         calls = {'n': 0}
 
         def fake_chat(this, model, messages, options=None):

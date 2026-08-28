@@ -3,7 +3,7 @@
     <data>
         <record id="agent_default_assistant" model="ai.agent">
             <field name="name">Assistant</field>
-            <field name="description">Systray default assistant. Uses every tool the current user may call. Extra agents are for dedicated menus, not a chat picker.</field>
+            <field name="description">Fallback agent for dedicated menus that do not pass an agent. Systray chat does not bind this record.</field>
             <field name="system_prompt">You are an Odoo assistant. Use registered tools when they help answer the user. Do not invent records that are not in the database.</field>
             <field name="run_mode">chat</field>
             <field name="is_default" eval="True"/>

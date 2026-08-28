@@ -3,11 +3,10 @@ from odoo import api, fields, models
 
 
 class AiAgent(models.Model):
-    """Persona bound to a chat session.
+    """Persona for a dedicated entry that creates a session with ``agent_id``.
 
-    Systray chat always uses the default agent; extra records exist so a
-    dedicated menu can create a session with a fixed ``agent_id``. Agents do
-    not call other agents. Tools and background runs stay on that one agent.
+    Systray chat does not bind an agent. Agents do not call other agents.
+    Tools and background runs stay on that one agent.
     """
     _name = 'ai.agent'
     _description = 'AI Agent'
@@ -23,8 +22,8 @@ class AiAgent(models.Model):
         default=lambda self: self.env.company)
     is_default = fields.Boolean(
         string='Default Agent',
-        help='Systray new sessions use this agent. Dedicated menus should '
-             'pass agent_id when creating a session.')
+        help='Fallback for dedicated menus that call _get_default_agent. '
+             'Systray chat does not use this.')
     run_mode = fields.Selection([
         ('chat', 'Chat'),
         ('goal', 'Goal (background)'),
