@@ -485,7 +485,7 @@ export class AiChat extends Component {
             return;
         }
         this.notification.add(
-            `Command /${name} is available in a future release.`,
+            _t("Command /%s is available in a future release.", name),
             { type: "info" }
         );
     }

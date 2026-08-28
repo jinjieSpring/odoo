@@ -2391,3 +2391,624 @@ msgstr "输入"
 msgid "输出"
 msgstr "输出"
 
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Search sessions"
+msgstr "搜索会话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Ask the AI assistant... or type / for commands"
+msgstr "向 AI 助手提问…或输入 / 查看命令"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Rename"
+msgstr "改名"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Delete"
+msgstr "删除"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Drag to resize the grids"
+msgstr "拖拽调整网格高度"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Drag to resize the sidebar"
+msgstr "拖拽调整侧边栏宽度"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Collapse Sidebar"
+msgstr "折叠侧边栏"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Expand Sidebar"
+msgstr "展开侧边栏"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Insert the current record context into the conversation"
+msgstr "将当前记录上下文插入对话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Open in Discuss"
+msgstr "在 Discuss 中打开"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Stop Generating"
+msgstr "停止生成"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Copy"
+msgstr "复制"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Edit"
+msgstr "编辑"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Resend"
+msgstr "重新发送"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Regenerate"
+msgstr "重新生成"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Send as Message"
+msgstr "作为消息发送"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Log as Note"
+msgstr "记录为日志"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Send (Enter)"
+msgstr "发送（回车）"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "User Settings"
+msgstr "用户设置"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Cancel background task"
+msgstr "取消后台任务"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Context usage"
+msgstr "上下文占用"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Manage Prompts"
+msgstr "管理提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Sessions"
+msgstr "会话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "No sessions"
+msgstr "暂无会话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Insert context"
+msgstr "插入上下文"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Ask the AI assistant to start a conversation"
+msgstr "向 AI 助手提问以开始对话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Type a question below, or / for commands"
+msgstr "在下方输入问题，或输入 / 查看命令"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Cancel"
+msgstr "取消"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "No matching command"
+msgstr "没有匹配的命令"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "No Prompt"
+msgstr "无提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat_dialog.xml:0
+msgid "Close"
+msgstr "关闭"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_chat_dialog.xml:0
+msgid "Delete Current Session"
+msgstr "删除当前会话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "AI Assistant Settings"
+msgstr "AI 助手设置"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "New Prompt"
+msgstr "新建提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Edit Prompt"
+msgstr "编辑提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Delete Prompt"
+msgstr "删除提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Default Chat Options"
+msgstr "默认对话选项"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Defaults applied to new sessions; you can still change them per session in the chat window."
+msgstr "新会话使用的默认值，仍可在对话窗口中按会话修改。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Attach current record context by default"
+msgstr "默认附加当前记录上下文"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Prompts"
+msgstr "提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Select the default prompt used by new sessions."
+msgstr "选择新会话使用的默认提示词。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "No prompts yet. Click \"+\" to create one."
+msgstr "还没有提示词，点击“+”创建一个。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Layout"
+msgstr "布局"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Chat window layout preferences, saved with your settings."
+msgstr "聊天窗口布局偏好，随用户设置一起保存。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Collapse the sidebar"
+msgstr "折叠侧边栏"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Collapse the session history grid"
+msgstr "折叠会话历史网格"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_prompt_dialog.xml:0
+msgid "Prompt title"
+msgstr "提示词标题"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_prompt_dialog.xml:0
+msgid "System prompt content injected into chat requests"
+msgstr "注入到对话请求中的系统提示词内容"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_prompt_dialog.xml:0
+msgid "AI Prompt"
+msgstr "AI 提示词"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Idle"
+msgstr "空闲"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "%s messages"
+msgstr "%s 条消息"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "%s messages · Input %s · Output %s · Updated %s"
+msgstr "%s 条消息 · 输入 %s · 输出 %s · 更新于 %s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Just now"
+msgstr "刚刚"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "%s min ago"
+msgstr "%s 分钟前"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "%s h ago"
+msgstr "%s 小时前"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "%s d ago"
+msgstr "%s 天前"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Input %s · Output %s · Context %s"
+msgstr "输入 %s · 输出 %s · 上下文 %s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed to save the layout: %s"
+msgstr "布局保存失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Available commands"
+msgstr "可用命令"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Choose the export format for the current conversation."
+msgstr "请选择当前对话的导出格式。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Export conversation"
+msgstr "导出对话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Command /%s is available in a future release."
+msgstr "命令 /%s 将在后续版本提供。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Configure a model provider first (Settings > AI Assistant)."
+msgstr "请先配置模型提供方（设置 > AI 助手）。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Delete session"
+msgstr "删除会话"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Delete the session \"%s\" and all its messages?"
+msgstr "删除会话“%s”及其全部消息？"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed to send the message: %s"
+msgstr "发送消息失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed"
+msgstr "失败"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Stream request failed (%s)"
+msgstr "流式请求失败（%s）"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Streaming failed: %s"
+msgstr "流式输出失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Stopped"
+msgstr "已停止"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed to save the options: %s"
+msgstr "保存选项失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Copied to clipboard."
+msgstr "已复制到剪贴板。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Action failed: %s"
+msgstr "操作失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Failed to open in Discuss: %s"
+msgstr "在 Discuss 中打开失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Current %s view does not support context awareness"
+msgstr "当前%s视图不支持上下文感知"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Total %s %s records"
+msgstr "共%s条%s记录"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat_dialog.js:0
+msgid "Model OK"
+msgstr "模型正常"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat_dialog.js:0
+msgid "Model config error"
+msgstr "模型配置异常"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_systray.js:0
+msgid "Failed to start the conversation: %s"
+msgstr "启动对话失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_systray.js:0
+msgid "Open AI Assistant Settings"
+msgstr "打开 AI 助手设置"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_user_settings_dialog.js:0
+msgid "Failed to load user settings: %s"
+msgstr "加载用户设置失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_user_settings_dialog.js:0
+msgid "Delete failed: %s"
+msgstr "删除失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_user_settings_dialog.js:0
+msgid "Save failed: %s"
+msgstr "保存失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_user_settings_dialog.js:0
+msgid "Are you sure you want to delete the prompt \"%s\"?"
+msgstr "确定要删除提示词“%s”吗？"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Execute"
+msgstr "执行"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Notify Administrators"
+msgstr "通知管理员"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Add to Whitelist"
+msgstr "加入白名单"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Open Whitelist Settings"
+msgstr "打开白名单设置"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Install Module"
+msgstr "安装模块"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Open Apps Install"
+msgstr "打开应用安装"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Installing module %s... this can take a few minutes. Please wait."
+msgstr "正在安装模块 %s……可能需要几分钟，请稍候。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Module install failed: %s"
+msgstr "模块安装失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Executing tool..."
+msgstr "正在执行工具…"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Tool execution failed: %s"
+msgstr "工具执行失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Failed to notify administrators: %s"
+msgstr "通知管理员失败：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Add the model \"%s\" to the Open View Models whitelist?"
+msgstr "将模型“%s”加入「打开视图模型」白名单？"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_tool_card.js:0
+msgid "Install the module \"%s\"? The server will restart."
+msgstr "安装模块“%s”？服务器将重启。"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_formatted_text.js:0
+msgid "Could not open the source document: %s"
+msgstr "无法打开源文档：%s"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_formatted_text.js:0
+msgid "Download"
+msgstr "下载"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid ""
+"/help - Show available commands\n"
+"/settings - Open user settings\n"
+"/export - Export the conversation (JSON or Markdown)\n"
+"/compact - Compact the conversation context (planned)\n"
+"/share - Share the conversation (planned)"
+msgstr ""
+"/help - 显示可用命令\n"
+"/settings - 打开用户设置\n"
+"/export - 导出对话（JSON 或 Markdown）\n"
+"/compact - 压缩会话上下文（规划中）\n"
+"/share - 分享会话（规划中）"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Generating..."
+msgstr "正在生成…"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
+msgid "Loading..."
+msgstr "加载中..."
