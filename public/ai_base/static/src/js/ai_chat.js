@@ -627,8 +627,7 @@ export class AiChat extends Component {
         } else {
             await this.attachAutoContext();
         }
-        // Sense the current view so the insert toggle can be enabled, but
-        // do not overwrite an existing session's remembered record.
+        // Bind the insert switch to the current view: records → on, none → off.
         await this.attachAutoContext();
     }
 
@@ -685,12 +684,9 @@ export class AiChat extends Component {
         this.state.promptId = data.session.prompt_id || 0;
         this.state.thinkingEnabled = Boolean(data.session.thinking_enabled);
         this.applyAgentSession(data.session);
-        // attach_context is a user preference persisted in the user
-        // settings; switching sessions must not overwrite it.
-        this.state.sessionContextName =
-            data.session.context_display_name || "";
-        this.state.contextDisplayName = this.state.sessionContextName;
-        this.state.contextAttached = Boolean(data.session.context_attached);
+        this.state.sessionContextName = "";
+        this.state.contextDisplayName = "";
+        this.state.contextAttached = false;
         this.state.historyIndex = -1;
         this.state.historyMode = false;
         if (autoSend && this.state.draft.trim()) {
@@ -700,6 +696,8 @@ export class AiChat extends Component {
             // must appear immediately with the user message and an empty
             // reply box; streamed content fills it as it arrives.
             this.sendMessage(content);
+        } else {
+            await this.attachAutoContext();
         }
         this.scrollToBottom();
     }
@@ -1612,30 +1610,32 @@ export class AiChat extends Component {
         return null;
     }
 
-    _keepSessionContextLabel(fallback = "") {
-        if (this.state.sessionContextName) {
-            this.state.contextDisplayName = this.state.sessionContextName;
+    async _setInsertFromRecords(available, displayName = "") {
+        const enabled = Boolean(available);
+        this.state.contextAvailable = enabled;
+        this.state.attachContext = enabled;
+        if (enabled) {
+            this.state.contextDisplayName = displayName || this.state.contextDisplayName;
             return;
         }
-        this.state.contextDisplayName = fallback || "";
+        this.state.contextAttached = false;
+        this.state.sessionContextName = "";
+        this.state.contextDisplayName = displayName || "";
+        if (this.state.currentId) {
+            await this.clearContext();
+        }
     }
 
     async attachAutoContext({ replace = false } = {}) {
         const context = this._routerRecordContext();
-        const shouldAttach = Boolean(
-            this.state.currentId &&
-            this.state.attachContext &&
-            (replace || !this.state.sessionContextName)
-        );
         if (!context) {
-            this.state.contextAvailable = false;
-            this._keepSessionContextLabel();
+            await this._setInsertFromRecords(false);
             return;
         }
         try {
             if (context.viewType === "unsupported") {
-                this.state.contextAvailable = false;
-                this._keepSessionContextLabel(
+                await this._setInsertFromRecords(
+                    false,
                     _t(
                         "Current %s view does not support context awareness",
                         context.viewName
@@ -1643,10 +1643,6 @@ export class AiChat extends Component {
                 );
                 return;
             }
-            // Detect and display the record even before a session exists:
-            // the strip must not say "No record detected" while the user is
-            // actually viewing a record (the session is auto-created on the
-            // first send and the context is attached then).
             if (context.viewType === "list" || context.viewType === "kanban") {
                 const info = await this.orm.call(
                     "ai.chat.session",
@@ -1662,12 +1658,13 @@ export class AiChat extends Component {
                         label
                     );
                 }
-                this.state.contextAvailable = Boolean(info && info.count > 0);
-                this._keepSessionContextLabel(detected);
-                if (!info || info.count <= 0 || !shouldAttach) {
-                    if (!this.state.attachContext) {
-                        this.state.contextAttached = false;
-                    }
+                if (!info || info.count <= 0) {
+                    await this._setInsertFromRecords(false);
+                    return;
+                }
+                await this._setInsertFromRecords(true, detected);
+                if (!this.state.currentId) {
+                    this.state.contextAttached = false;
                     return;
                 }
                 const result = await this.orm.call(
@@ -1681,7 +1678,6 @@ export class AiChat extends Component {
                 );
                 if (this.state.contextAttached) {
                     this.state.sessionContextName = detected;
-                    this.state.contextDisplayName = detected;
                 }
                 return;
             }
@@ -1690,18 +1686,13 @@ export class AiChat extends Component {
                 "action_get_record_context",
                 [context.modelName, context.resId]
             );
-            if (info && info.display_name) {
-                this.state.contextAvailable = true;
-                this._keepSessionContextLabel(info.display_name);
-            } else {
-                this.state.contextAvailable = false;
-                this._keepSessionContextLabel();
+            if (!(info && info.display_name)) {
+                await this._setInsertFromRecords(false);
                 return;
             }
-            if (!shouldAttach) {
-                if (!this.state.attachContext) {
-                    this.state.contextAttached = false;
-                }
+            await this._setInsertFromRecords(true, info.display_name);
+            if (!this.state.currentId) {
+                this.state.contextAttached = false;
                 return;
             }
             const result = await this.orm.call(
@@ -1712,7 +1703,6 @@ export class AiChat extends Component {
             if (result && result.attached) {
                 this.state.contextAttached = true;
                 this.state.sessionContextName = info.display_name;
-                this.state.contextDisplayName = info.display_name;
             } else {
                 this.state.contextAttached = false;
             }
@@ -1728,7 +1718,9 @@ export class AiChat extends Component {
         }
         this.state.attachContext = true;
         await this.attachAutoContext({ replace: true });
-        await this.saveOptions();
+        if (this.state.currentId) {
+            await this.saveOptions();
+        }
     }
 
     async removeAttachedContext() {
@@ -1739,7 +1731,6 @@ export class AiChat extends Component {
         if (this.state.currentId) {
             await this.saveOptions();
         }
-        await this.attachAutoContext();
     }
 
     async clearContext() {
