@@ -163,6 +163,11 @@ class AiChatSession(models.Model):
                 vals['prompt_id'] = settings.default_prompt_id.id
         return super().create(vals_list)
 
+    def _ai_service(self):
+        """Model-call engine for this session. Systray chat uses chat service."""
+        self.ensure_one()
+        return self.env['ai.chat.service']
+
     def _build_history(self):
         self.ensure_one()
         messages = []
@@ -212,7 +217,7 @@ class AiChatSession(models.Model):
             '%s: %s' % (msg.get('role'), (msg.get('content') or '')[:400])
             for msg in messages[-12:])
         try:
-            result = self.env['ai.base.service'].chat(
+            result = self._ai_service().chat(
                 'Summarize the following conversation for later context:\n%s' % blob,
                 session=None,
                 options={'max_tokens': 256},

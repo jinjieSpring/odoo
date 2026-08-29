@@ -45,7 +45,7 @@ class AiBaseStreamController(http.Controller):
                 status=403,
                 content_type='text/event-stream; charset=utf-8')
 
-        payload = request.env['ai.base.service'].stream_chat(
+        payload = session._ai_service().stream_chat(
             content, session, options)
         events = payload.get('events') or []
         loop_error = payload.get('error')

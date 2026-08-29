@@ -29,6 +29,12 @@ class AiChatSession(models.Model):
         self.ensure_one()
         return bool(self.agent_id and self.agent_id.run_mode == 'goal')
 
+    def _ai_service(self):
+        self.ensure_one()
+        if self.agent_id:
+            return self.env['ai.agent.service']
+        return super()._ai_service()
+
     def _restricted_tool_names(self):
         """Agent 限定的工具名。``None`` 表示不限制。"""
         self.ensure_one()

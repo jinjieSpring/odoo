@@ -73,10 +73,10 @@ class TestAuditLog(AiBaseCase):
         self.assertTrue(found)
 
     def test_chat_exception_writes_request_log(self):
-        Service = type(self.env['ai.base.service'])
+        Service = type(self.env['ai.chat.service'])
         with patch.object(Service, '_run_tool_loop', side_effect=RuntimeError('boom')):
             try:
-                self.env['ai.base.service'].chat('ping')
+                self.env['ai.chat.service'].chat('ping')
             except RuntimeError:
                 pass
             else:
@@ -88,19 +88,6 @@ class TestAuditLog(AiBaseCase):
         self.assertTrue(log)
         self.assertIn('boom', log.error_message or '')
         self.assertTrue(log.error_traceback)
-
-    def test_chat_agent_scenario_logs_request_type_agent(self):
-        with patch(
-                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
-                return_value=self._ok('done')):
-            self.env['ai.base.service'].chat(
-                'how many users?', scenario='agent')
-        log = self.env['ai.request.log'].search([
-            ('request_type', '=', 'agent'),
-            ('scenario_key', '=', 'agent'),
-        ], limit=1)
-        self.assertTrue(log)
-        self.assertEqual(log.status, 'success')
 
     def test_tool_loop_audit_includes_session(self):
         self.env['ai.tool']._sync_registry()
@@ -138,7 +125,7 @@ class TestAuditLog(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            self.env['ai.base.service'].chat(
+            self.env['ai.chat.service'].chat(
                 'how many users?', session=session)
         audit = self.env['ai.audit.log'].search([
             ('event_type', '=', 'tool_call'),

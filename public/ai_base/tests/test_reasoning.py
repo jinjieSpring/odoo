@@ -202,7 +202,7 @@ class TestReasoning(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            result = self.env['ai.base.service'].chat(
+            result = self.env['ai.chat.service'].chat(
                 'how many users?',
                 options={'thinking_enabled': True},
             )

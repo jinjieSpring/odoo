@@ -1,28 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Unified AI service facade used by every business module.
+"""Agent service: persona, tools, memory, and goal runs.
 
-Example (from another Odoo module)::
-
-    # Chat with a prompt template and the current record
-    result = self.env['ai.base.service'].chat(
-        prompt_key='sale.email.draft',
-        record=self,
-        context={'tone': 'formal'},
-        model_code='gpt-4o-mini',
-    )
-    reply = result['reply']
-
-    # Embeddings
-    vectors = self.env['ai.base.service'].embedding(['hello world'])
-
-    # RAG lives in the optional ai_knowledge module.
-
-Override hooks by inheriting ``ai.base.service``::
-
-    def on_ai_request_before(self, payload):
-        payload = super().on_ai_request_before(payload)
-        # intercept / mutate payload
-        return payload
+Copied from ``ai.chat.service`` so this layer can diverge. Does not inherit
+the chat service. Bind a session with ``agent_id`` to use this engine.
 """
 
 import json
@@ -34,8 +14,8 @@ import traceback
 from odoo import _, models
 from odoo.exceptions import UserError
 
-from ..tools import AiError, get_provider
-from .ai_tool import extract_tool_calls, strip_tool_blocks
+from odoo.addons.ai_base.tools import AiError, get_provider
+from odoo.addons.ai_base.models.ai_tool import extract_tool_calls, strip_tool_blocks
 
 _logger = logging.getLogger(__name__)
 
@@ -48,16 +28,16 @@ _SENSITIVE_FIELD_HINTS = (
 )
 
 
-class AiBaseService(models.AbstractModel):
-    _name = 'ai.base.service'
-    _description = 'AI Base Service'
+class AiAgentService(models.AbstractModel):
+    _name = 'ai.agent.service'
+    _description = 'AI Agent Service'
 
     # ------------------------------------------------------------------
     # Extension hooks
     # ------------------------------------------------------------------
 
     def on_ai_request_before(self, payload):
-        """请求发出前的扩展钩子，可改 payload。``ai_agent`` 等模块可继承重写。
+        """请求发出前的扩展钩子，可改 payload。其他模块可继承重写。
 
         入参:
             payload (dict): 即将发给厂商的请求包，常见键 ``content`` / ``session`` /
@@ -68,14 +48,20 @@ class AiBaseService(models.AbstractModel):
         return payload
 
     def on_ai_request_done(self, payload, result):
-        """厂商调用成功后的扩展钩子。``ai_agent`` 在此写入记忆。
-
-        入参:
-            payload (dict): 请求前的 payload。
-            result (dict): 本轮结果，含 ``reply`` / ``usage`` / ``rounds`` 等。
-        返回:
-            dict: 原样或修改后的 result。
-        """
+        """一轮成功后把问答总结进 agent 记忆。"""
+        options = payload.get('options') or {}
+        if options.get('skip_memory') or payload.get('scenario') == 'summary':
+            return result
+        session = payload.get('session')
+        if not session or not session.agent_id or not session.agent_id.memory_enabled:
+            return result
+        if session._is_goal_run():
+            return result
+        self.env['ai.agent.memory']._remember_from_turn(
+            session.agent_id,
+            payload.get('content'),
+            (result or {}).get('reply'),
+        )
         return result
 
     def on_ai_request_error(self, payload, error):
@@ -96,7 +82,7 @@ class AiBaseService(models.AbstractModel):
     def chat(
         self, content=None, prompt_key=None, record=None, context=None,
         stream=False, model_code=None, session=None, options=None,
-        history=None, model=None, scenario='chat', persist_user=True,
+        history=None, model=None, scenario='agent', persist_user=True,
     ):
         """同步聊天：组 system + 历史，跑工具循环，可选写入 session。
 
@@ -111,7 +97,7 @@ class AiBaseService(models.AbstractModel):
             options (dict): 调用选项，如 ``system_prompt`` / ``max_rounds`` / ``skip_memory``。
             history (list): 无 session 时的消息列表 ``[{role, content}, ...]``。
             model: 已解析的 ``ai.model`` 记录。
-            scenario (str): 场景键，默认 ``chat``，影响选模型和日志。
+            scenario (str): 场景键，默认 ``agent``，影响选模型和日志。
             persist_user (bool): 有 session 时是否先写入一条 user 消息。
         返回:
             dict: ``reply`` 最终回复；``usage`` token 累计；``rounds`` 工具循环各轮；
@@ -259,20 +245,23 @@ class AiBaseService(models.AbstractModel):
         return self.embedding(texts, model=model, model_code=model_code)
 
     def stream_chat(self, content, session, options=None):
-        """流式聊天：在本方法里做完全部 ORM，返回可给 SSE 回放的纯数据事件。
-
-        HTTP 生成器不应再碰 ORM。校验失败不抛异常，而是把 error 放进返回值。
-
-        入参:
-            content (str): 用户本轮原文。
-            session: 必填 ``ai.chat.session``。
-            options (dict): 会话调用选项。
-        返回:
-            dict:
-                ``result``: 与 ``chat`` 类似的结果（含 ``reply`` / ``rounds`` / ``usage``）。
-                ``events``: SSE 事件列表，如 ``delta`` / ``tool_call`` / ``usage``。
-                ``error``: 失败时为 ``{message, code}``，成功多为 ``result`` 里的 error 或假值。
-        """
+        """流式：goal 模式改走后台 run；chat 模式跑工具循环。"""
+        if session and session._is_goal_run():
+            payload = self.env['ai.chat'].send_message(
+                session, content, options)
+            accepted = ''
+            messages = payload.get('messages') or []
+            for message in reversed(messages):
+                if message.get('role') == 'assistant':
+                    accepted = message.get('content') or ''
+                    break
+            return {
+                'result': {'reply': accepted, 'usage': {}, 'rounds': []},
+                'events': (
+                    [{'type': 'delta', 'delta': accepted}] if accepted else []
+                ),
+                'error': False,
+            }
         events = []
         options = dict(options or {})
         content = (content or '').strip()
@@ -312,12 +301,12 @@ class AiBaseService(models.AbstractModel):
             result['reply'] = self._guard_output(result.get('reply') or '')
             self._persist_rounds(session, result)
             self._log_request(
-                request_type='chat', scenario_key='chat',
+                request_type='agent', scenario_key='agent',
                 session=session, model=model, result=result,
                 input_summary=content)
             return {'result': result, 'events': events, 'error': result.get('error')}
         except Exception as exc:
-            self._log_request_error('chat', session, model, content, exc)
+            self._log_request_error('agent', session, model, content, exc)
             raise
 
     def invoke_tool(self, tool_name, params=None, context=None):
@@ -387,31 +376,24 @@ class AiBaseService(models.AbstractModel):
         return int(self.env['ir.config_parameter'].sudo().get_param(key, str(default)) or default)
 
     def _tool_loop_limits(self, options, session=None):
-        """Resolve round / per-round call caps: options, then agent, then fallback.
-
-        入参:
-            options (dict): 可含 ``max_rounds`` / ``max_tool_calls_per_round``；>0 优先生效。
-            session: 可选，读该会话绑定 agent 上的两项上限。
-        返回:
-            tuple: ``(max_rounds, max_calls_per_round)``，均至少为 1。
-        """
-        options = options or {}
-        agent = getattr(session, 'agent_id', None) if session else None
+        """调用选项优先，否则用当前 session 上 agent 的上限。"""
+        options = dict(options or {})
+        agent = session.agent_id if session else None
+        if agent:
+            if not int(options.get('max_rounds') or 0):
+                options['max_rounds'] = agent._effective_max_rounds()
+            if not int(options.get('max_tool_calls_per_round') or 0):
+                options['max_tool_calls_per_round'] = (
+                    agent._effective_max_calls_per_round())
         explicit_rounds = int(options.get('max_rounds') or 0)
         explicit_calls = int(options.get('max_tool_calls_per_round') or 0)
-        if explicit_rounds:
-            max_rounds = explicit_rounds
-        elif agent and hasattr(agent, '_effective_max_rounds'):
-            max_rounds = agent._effective_max_rounds()
-        else:
-            max_rounds = self._param_int('ai_base.max_tool_rounds', 10)
-        if explicit_calls:
-            max_calls = explicit_calls
-        elif agent and hasattr(agent, '_effective_max_calls_per_round'):
-            max_calls = agent._effective_max_calls_per_round()
-        else:
-            max_calls = self._param_int('ai_base.max_tool_calls_per_round', 10)
+        max_rounds = explicit_rounds or self._param_int('ai_base.max_tool_rounds', 10)
+        max_calls = explicit_calls or self._param_int(
+            'ai_base.max_tool_calls_per_round', 10)
         return max(1, max_rounds), max(1, max_calls)
+
+    def _rate_limit_request_types(self):
+        return ('chat', 'rag', 'embed', 'agent')
 
     def _check_rate_limit(self):
         """按最近 60 秒检查全站 / 当前用户的请求次数。
@@ -427,9 +409,10 @@ class AiBaseService(models.AbstractModel):
         from datetime import timedelta
         from odoo import fields as odoo_fields
         start = odoo_fields.Datetime.now() - timedelta(seconds=60)
+        types = self._rate_limit_request_types()
         if global_limit > 0:
             total = since.search_count([
-                ('request_type', 'in', ('chat', 'rag', 'agent', 'embed')),
+                ('request_type', 'in', types),
                 ('create_date', '>=', start),
             ])
             if total >= global_limit:
@@ -437,7 +420,7 @@ class AiBaseService(models.AbstractModel):
         if user_limit > 0:
             mine = since.search_count([
                 ('user_id', '=', self.env.user.id),
-                ('request_type', 'in', ('chat', 'rag', 'agent', 'embed')),
+                ('request_type', 'in', types),
                 ('create_date', '>=', start),
             ])
             if mine >= user_limit:
@@ -533,10 +516,10 @@ class AiBaseService(models.AbstractModel):
         return self.env['ai.request.log'].sudo().create(vals)
 
     def _log_request(self, request_type, scenario_key, session, model, result, input_summary=''):
-        """从一次 chat/agent 结果整理字段，再调用 ``_log``。
+        """从一次 chat 结果整理字段，再调用 ``_log``。
 
         入参:
-            request_type (str): ``chat`` / ``agent`` / ``embed`` 等。
+            request_type (str): ``chat`` / ``embed`` 等。
             scenario_key (str): 场景键，写入日志。
             session: ``ai.chat.session`` 或空。
             model: 本次 ``ai.model``。
@@ -570,29 +553,32 @@ class AiBaseService(models.AbstractModel):
         )
 
     def _knowledge_system_parts(self, session, query):
-        """拼进 system prompt 的知识库片段。本模块返回空；``ai_knowledge`` 重写。
-
-        入参:
-            session: 当前会话或空。
-            query (str): 本轮用户问题，用于检索。
-        返回:
-            list[str]: 要拼进 system 的文本块。
-        """
-        return []
+        """复用对话服务上的知识库钩子（``ai_knowledge`` 挂在 chat service 上）。"""
+        return self.env['ai.chat.service']._knowledge_system_parts(session, query)
 
     def _agent_system_parts(self, session, query):
-        """拼进 system prompt 的 agent 人设和记忆。本模块返回空；``ai_agent`` 重写。
+        if not session or not session.agent_id:
+            return []
+        agent = session.agent_id
+        parts = []
+        if agent.prompt_id:
+            try:
+                parts.append(agent.prompt_id.render({
+                    'user': self.env.user.name,
+                    'company': self.env.company.name,
+                    'query': query or '',
+                }))
+            except Exception:  # noqa: BLE001
+                parts.append(agent.prompt_id._combined_content() or '')
+        elif (agent.system_prompt or '').strip():
+            parts.append(agent.system_prompt.strip())
+        memory = self.env['ai.agent.memory']._prompt_text(agent)
+        if memory:
+            parts.append(memory)
+        return parts
 
-        入参:
-            session: 当前会话或空（需要 ``session.agent_id``）。
-            query (str): 本轮用户问题，可给模板渲染。
-        返回:
-            list[str]: 人设 / 记忆等文本块。
-        """
-        return []
-
-    def _system_messages(self, session=None, options=None, query=None, record=None):
-        """组装发给模型的 system 消息：模板、记录快照、知识库、agent、界面语言。
+    def _system_content_parts(self, session=None, options=None, query=None, record=None):
+        """拼 system 正文（不含界面语言指令）。其他模块可追加文本块。
 
         入参:
             session: 可选会话，取其 ``prompt_id`` / 上下文快照。
@@ -600,7 +586,7 @@ class AiBaseService(models.AbstractModel):
             query (str): 本轮用户问题。
             record: 可选业务记录，生成字段快照。
         返回:
-            list[dict]: 通常一条 ``{'role': 'system', 'content': '...'}``。
+            list[str]: 文本块，稍后与语言指令拼成一条 system。
         """
         options = options or {}
         parts = []
@@ -631,6 +617,20 @@ class AiBaseService(models.AbstractModel):
                         parts.append(_('Current business record:\n%s') % snapshot)
         parts.extend(self._knowledge_system_parts(session, query))
         parts.extend(self._agent_system_parts(session, query))
+        return parts
+
+    def _system_messages(self, session=None, options=None, query=None, record=None):
+        """组装发给模型的 system 消息：模板、记录快照、知识库、界面语言。
+
+        入参:
+            session: 可选会话，取其 ``prompt_id`` / 上下文快照。
+            options (dict): 无 session 模板时可用 ``system_prompt``。
+            query (str): 本轮用户问题。
+            record: 可选业务记录，生成字段快照。
+        返回:
+            list[dict]: 通常一条 ``{'role': 'system', 'content': '...'}``。
+        """
+        parts = self._system_content_parts(session, options, query, record)
         parts.append(self._user_language_instruction())
         return [{'role': 'system', 'content': '\n\n'.join(parts)}]
 
@@ -885,18 +885,27 @@ class AiBaseService(models.AbstractModel):
         }
 
     def _execute_loop_call(self, name, arguments, session=None):
-        """工具循环里真正调一次工具。``ai_agent`` 会先按 agent 白名单拦截。
-
-        入参:
-            name (str): 工具 name。
-            arguments (dict): 模型给出的参数。
-            session: 当前会话；写入审计并传给工具调用。
-        返回:
-            tuple: ``(card, status, result_data)``
-                card (dict): 前端卡片，含 ``name`` / ``status`` / ``arguments``，失败有 ``error``。
-                status (str): ``executed`` 成功，``blocked`` 未知工具或调用失败。
-                result_data (dict): 工具原始返回；blocked 时可能是 ``{}`` 或失败 result。
-        """
+        """执行工具前按 agent.tool_ids 白名单拦截；名单为空则不限制。"""
+        if session:
+            allowed = session._restricted_tool_names()
+            if allowed is not None and name not in allowed:
+                tool = self.env['ai.tool'].sudo().search(
+                    [('name', '=', name)], limit=1)
+                card = {
+                    'name': name,
+                    'label': tool._tool_label() if tool else name,
+                    'status': 'blocked',
+                    'arguments': arguments,
+                    'error': {
+                        'message': _(
+                            'Tool "%s" is not enabled for this agent.') % (
+                                tool._tool_label() if tool else name),
+                    },
+                }
+                self.env['ai.audit.log']._record_tool(
+                    'tool_blocked', name, params=arguments, status='blocked',
+                    message=card['error']['message'], session=session)
+                return card, 'blocked', {}
         tool = self.env['ai.tool'].sudo().search(
             [('name', '=', name), ('is_active', '=', True)], limit=1)
         card = {

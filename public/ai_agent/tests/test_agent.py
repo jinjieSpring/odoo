@@ -89,7 +89,7 @@ class TestAgent(AiBaseCase):
             'name': 'Persona',
             'agent_id': self.goal_agent.id,
         })
-        messages = self.env['ai.base.service']._system_messages(
+        messages = self.env['ai.agent.service']._system_messages(
             session, query='hello')
         self.assertTrue(messages)
         self.assertIn('month-end', messages[0]['content'])
@@ -105,7 +105,7 @@ class TestAgent(AiBaseCase):
             'name': 'Limits',
             'agent_id': self.chat_agent.id,
         })
-        rounds, calls = self.env['ai.base.service']._tool_loop_limits({}, session)
+        rounds, calls = self.env['ai.agent.service']._tool_loop_limits({}, session)
         self.assertEqual((rounds, calls), (3, 2))
 
     def test_memory_isolated_by_user(self):
@@ -128,9 +128,22 @@ class TestAgent(AiBaseCase):
             'name': 'Mem',
             'agent_id': self.chat_agent.id,
         })
-        messages = self.env['ai.base.service']._system_messages(
+        messages = self.env['ai.agent.service']._system_messages(
             session, query='hello')
         self.assertIn('prefers lists', messages[0]['content'])
+
+    def test_chat_scenario_agent_logs_request_type_agent(self):
+        with patch(
+                'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
+                return_value=self._ok('done')):
+            self.env['ai.agent.service'].chat(
+                'how many users?', scenario='agent')
+        log = self.env['ai.request.log'].search([
+            ('request_type', '=', 'agent'),
+            ('scenario_key', '=', 'agent'),
+        ], limit=1)
+        self.assertTrue(log)
+        self.assertEqual(log.status, 'success')
 
     def test_chat_mode_still_replies_inline(self):
         session = self.env['ai.chat.session'].create({'name': 'Chat'})
@@ -266,7 +279,7 @@ class TestAgent(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            self.env['ai.base.service'].chat(
+            self.env['ai.agent.service'].chat(
                 'read users', session=session)
         audit = self.env['ai.audit.log'].search([
             ('event_type', '=', 'tool_blocked'),

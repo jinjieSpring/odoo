@@ -7,7 +7,7 @@ from odoo.addons.ai_knowledge.models.ai_vector_store import get_vector_store
 
 
 class AiBaseService(models.AbstractModel):
-    _inherit = 'ai.base.service'
+    _inherit = 'ai.chat.service'
 
     def rag_chat(
         self, query, knowledge_ids=None, document_ids=None, top_k=5,

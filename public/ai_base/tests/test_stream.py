@@ -26,7 +26,7 @@ class TestStream(AiBaseCase):
                         'total_tokens': 2,
                     },
                 }):
-            payload = self.env['ai.base.service'].stream_chat('hi', session)
+            payload = self.env['ai.chat.service'].stream_chat('hi', session)
         types = [event['type'] for event in payload['events']]
         self.assertIn('delta', types)
         self.assertIn('reasoning_delta', types)

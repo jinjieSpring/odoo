@@ -121,9 +121,9 @@ msgid "AI Base Configuration"
 msgstr "AI 底座配置"
 
 #. module: ai_base
-#: model:ir.model,name:ai_base.model_ai_base_service
-msgid "AI Base Service"
-msgstr "AI 底座服务"
+#: model:ir.model,name:ai_base.model_ai_chat_service
+msgid "AI Chat Service"
+msgstr "AI 对话服务"
 
 #. module: ai_base
 #: model:ir.model,name:ai_base.model_ai_vector_store
@@ -349,8 +349,8 @@ msgstr "模型编码"
 
 #. module: ai_base
 #: model:ir.model.fields,help:ai_base.field_ai_model__code
-msgid "Business modules pass this code to ai.base.service."
-msgstr "业务模块通过该编码调用 ai.base.service。"
+msgid "Business modules pass this code to ai.chat.service."
+msgstr "业务模块通过该编码调用 ai.chat.service。"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__provider_id
@@ -1190,7 +1190,7 @@ msgstr "摘要"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Done"
 msgstr "完成"
 
@@ -1482,7 +1482,7 @@ msgstr "当前使用 %s"
 #. module: ai_base
 #. odoo-python
 #: code:addons/ai_base/models/ai_chat_session.py:0
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "No default model is configured."
 msgstr "尚未配置默认模型。"
 
@@ -1494,86 +1494,86 @@ msgstr "为控制上下文长度，较早的对话内容已省略。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Unknown prompt key \"%s\"."
 msgstr "未知的提示词编码“%s”。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Message content cannot be empty."
 msgstr "消息内容不能为空。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Streaming is disabled for this model."
 msgstr "该模型未启用流式输出。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "The global AI rate limit has been reached. Retry shortly."
 msgstr "已达到全局 AI 调用频率上限，请稍后再试。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "You have reached the per-user AI rate limit. Retry shortly."
 msgstr "已达到当前用户的 AI 调用频率上限，请稍后再试。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Input exceeds the maximum length of %s characters."
 msgstr "输入超过最大长度 %s 个字符。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Input contains blocked sensitive terms: %s"
 msgstr "输入包含被拦截的敏感词：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Relevant knowledge:"
 msgstr "相关知识："
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Current business record:\n%s"
 msgstr "当前业务单据：\n%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "No default model is configured. Configure a provider and a model, then test the connection before using AI."
 msgstr "尚未配置默认模型。请先配置提供方和模型，并测试连接后再使用 AI。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "The tool loop reached the maximum number of rounds."
 msgstr "工具调用已达到最大轮次。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 #: code:addons/ai_base/models/ai_tool.py:0
 msgid "Tool \"%s\" failed: %s"
 msgstr "工具“%s”执行失败：%s"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Unknown tool \"%s\"."
 msgstr "未知工具“%s”。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_base_service.py:0
+#: code:addons/ai_base/models/ai_chat_service.py:0
 msgid "Tool failed"
 msgstr "工具执行失败"
 

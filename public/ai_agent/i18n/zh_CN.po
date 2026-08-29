@@ -42,9 +42,9 @@ msgid "AI Agent: Continue goal runs"
 msgstr "AI 智能体：继续目标运行"
 
 #. module: ai_agent
-#: model:ir.model,name:ai_agent.model_ai_base_service
-msgid "AI Base Service"
-msgstr "AI 底座服务"
+#: model:ir.model,name:ai_agent.model_ai_agent_service
+msgid "AI Agent Service"
+msgstr "AI 智能体服务"
 
 #. module: ai_agent
 #: model:ir.model,name:ai_agent.model_ai_chat
@@ -247,7 +247,7 @@ msgstr "描述"
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__display_name
-#: model:ir.model.fields,field_description:ai_agent.field_ai_base_service__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_service__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_tool__display_name
@@ -286,7 +286,7 @@ msgstr "目标（后台）"
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__id
-#: model:ir.model.fields,field_description:ai_agent.field_ai_base_service__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_service__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_tool__id
@@ -456,7 +456,7 @@ msgstr "该智能体或会话已不可用。"
 
 #. module: ai_agent
 #. odoo-python
-#: code:addons/ai_agent/models/ai_base_service.py:0
+#: code:addons/ai_agent/models/ai_agent_service.py:0
 msgid "Tool \"%s\" is not enabled for this agent."
 msgstr "工具“%s”未对该智能体启用。"
 

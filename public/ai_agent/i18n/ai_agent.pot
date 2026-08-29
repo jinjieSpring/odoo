@@ -40,8 +40,8 @@ msgid "AI Agent: Continue goal runs"
 msgstr ""
 
 #. module: ai_agent
-#: model:ir.model,name:ai_agent.model_ai_base_service
-msgid "AI Base Service"
+#: model:ir.model,name:ai_agent.model_ai_agent_service
+msgid "AI Agent Service"
 msgstr ""
 
 #. module: ai_agent
@@ -224,7 +224,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__display_name
-#: model:ir.model.fields,field_description:ai_agent.field_ai_base_service__display_name
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_service__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__display_name
 #: model:ir.model.fields,field_description:ai_agent.field_ai_tool__display_name
@@ -263,7 +263,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_memory__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_agent_run__id
-#: model:ir.model.fields,field_description:ai_agent.field_ai_base_service__id
+#: model:ir.model.fields,field_description:ai_agent.field_ai_agent_service__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_chat_session__id
 #: model:ir.model.fields,field_description:ai_agent.field_ai_tool__id
@@ -432,7 +432,7 @@ msgstr ""
 
 #. module: ai_agent
 #. odoo-python
-#: code:addons/ai_agent/models/ai_base_service.py:0
+#: code:addons/ai_agent/models/ai_agent_service.py:0
 msgid "Tool \"%s\" is not enabled for this agent."
 msgstr ""
 

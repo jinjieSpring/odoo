@@ -311,7 +311,7 @@ class AiKnowledgeDocument(models.Model):
                 return
             texts = [text for _page, text in pieces]
             model = self.knowledge_id.embedding_model_id
-            vectors = self.env['ai.base.service'].embedding(texts, model=model)
+            vectors = self.env['ai.chat.service'].embedding(texts, model=model)
             chunks = self.env['ai.knowledge.chunk']
             for index, ((page, text), vector) in enumerate(zip(pieces, vectors)):
                 chunks |= chunks.create({

@@ -101,7 +101,7 @@ class AiAgentRun(models.Model):
         ) % content
         run._audit('agent_start', input_summary=(content or '')[:4000])
         model = session.model_id
-        self.env['ai.base.service']._log(
+        self.env['ai.agent.service']._log(
             request_type='agent',
             scenario_key='agent',
             session_id=session.id,
@@ -230,7 +230,7 @@ class AiAgentRun(models.Model):
             'max_rounds': per_tick,
             'skip_memory': True,
         }
-        service = self.env['ai.base.service'].with_user(self.user_id).with_company(
+        service = self.env['ai.agent.service'].with_user(self.user_id).with_company(
             self.company_id or self.env.company).with_context(
             ai_run_id=self.id, ai_session_id=session.id)
         try:

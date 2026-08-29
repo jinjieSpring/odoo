@@ -25,7 +25,7 @@ class AiModel(models.Model):
     name = fields.Char(string='Display Name', required=True)
     code = fields.Char(
         string='Model Code', required=True, index=True,
-        help='Business modules pass this code to ai.base.service.')
+        help='Business modules pass this code to ai.chat.service.')
     provider_id = fields.Many2one(
         'ai.provider', string='Provider', required=True, ondelete='cascade',
         check_company=True)

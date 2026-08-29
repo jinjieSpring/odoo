@@ -95,7 +95,7 @@ class AiAgentMemory(models.Model):
     def _summarize(self, blob):
         snippet = (blob or '')[:2000]
         try:
-            result = self.env['ai.base.service'].chat(
+            result = self.env['ai.agent.service'].chat(
                 'Summarize the following exchange in at most two sentences '
                 'for later agent memory. Keep concrete facts, drop greetings.\n\n%s'
                 % snippet,

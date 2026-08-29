@@ -385,7 +385,7 @@ class AiChat(models.AbstractModel):
         return True
 
     def send_message(self, session, content, options=None):
-        """发送一轮用户消息：交给 ``ai.base.service.chat``，再返回刷新后的会话。
+        """发送一轮用户消息：交给本会话的 chat/agent 服务，再返回刷新后的会话。
 
         入参:
             session: 单条 ``ai.chat.session``（多轮历史在这个 session 上）。
@@ -395,7 +395,7 @@ class AiChat(models.AbstractModel):
             dict: ``result()`` 结构（messages + session + error）。
         """
         session.ensure_one()
-        result = self.env['ai.base.service'].chat(
+        result = session._ai_service().chat(
             content, session=session, options=options or {})
         error = result.get('error') if isinstance(result, dict) else False
         return self.result(session, error=error)
@@ -424,7 +424,7 @@ class AiChat(models.AbstractModel):
             ordered[index + 1:].unlink()
         if session.name == _('New Session'):
             session.name = content[:30]
-        result = self.env['ai.base.service'].chat(
+        result = session._ai_service().chat(
             content, session=session, persist_user=False)
         return self.result(session, error=result.get('error'))
 
@@ -453,7 +453,7 @@ class AiChat(models.AbstractModel):
             ordered[index:].unlink()
         if not query:
             raise UserError(_('No user message found to regenerate from.'))
-        result = self.env['ai.base.service'].chat(
+        result = session._ai_service().chat(
             query, session=session, persist_user=False)
         return self.result(session, error=result.get('error'))
 

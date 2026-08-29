@@ -86,7 +86,7 @@ class AiAsyncJob(models.Model):
             return _('Indexed')
         if self.job_type == 'summarize':
             text = (self.payload or {}).get('text') or ''
-            result = self.env['ai.base.service'].chat(
+            result = self.env['ai.chat.service'].chat(
                 text, prompt_key='summary.default', scenario='summary')
             return result.get('reply') or ''
         return _('Nothing to do.')

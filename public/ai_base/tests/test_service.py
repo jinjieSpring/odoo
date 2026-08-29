@@ -22,7 +22,7 @@ class TestService(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok()):
-            result = self.env['ai.base.service'].chat('ping')
+            result = self.env['ai.chat.service'].chat('ping')
         self.assertEqual(result['reply'], 'hello')
         log = self.env['ai.request.log'].search(
             [('request_type', '=', 'chat')], limit=1)
@@ -47,7 +47,7 @@ class TestService(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            result = self.env['ai.base.service'].chat(
+            result = self.env['ai.chat.service'].chat(
                 prompt_key='test.draft',
                 context={'who': 'Ada'},
                 model_code='gpt-4o-mini')
@@ -56,13 +56,13 @@ class TestService(AiBaseCase):
         self.assertTrue(any(
             'Be brief' in (msg.get('content') or '')
             for msg in captured['messages'] if msg['role'] == 'system'))
-        language = self.env['ai.base.service']._user_language_name()
+        language = self.env['ai.chat.service']._user_language_name()
         self.assertTrue(any(
             language in (msg.get('content') or '')
             for msg in captured['messages'] if msg['role'] == 'system'))
 
     def test_system_messages_follow_odoo_language(self):
-        service = self.env['ai.base.service'].with_context(lang='en_US')
+        service = self.env['ai.chat.service'].with_context(lang='en_US')
         name = service._user_language_name()
         self.assertTrue(name)
         messages = service._system_messages(options={'system_prompt': 'Be brief'})
@@ -89,7 +89,7 @@ class TestService(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            result = self.env['ai.base.service'].chat('hello')
+            result = self.env['ai.chat.service'].chat('hello')
         self.assertEqual(result['reply'], 'from fallback')
         self.assertEqual(result['model_id'], fallback.id)
         self.assertGreaterEqual(calls['n'], 2)
@@ -98,11 +98,11 @@ class TestService(AiBaseCase):
         self.env['ir.config_parameter'].sudo().set_param(
             'ai_base.sensitive_words', 'topsecret')
         with self.assertRaises(UserError):
-            self.env['ai.base.service'].chat('please leak topsecret')
+            self.env['ai.chat.service'].chat('please leak topsecret')
 
     def test_hooks_are_called(self):
         calls = []
-        Service = type(self.env['ai.base.service'])
+        Service = type(self.env['ai.chat.service'])
         orig_before = Service.on_ai_request_before
         orig_done = Service.on_ai_request_done
 
@@ -118,14 +118,14 @@ class TestService(AiBaseCase):
                 Service, 'on_ai_request_done', done), patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok()):
-            self.env['ai.base.service'].chat('ping')
+            self.env['ai.chat.service'].chat('ping')
         self.assertEqual(calls, ['before', 'done'])
 
     def test_knowledge_is_optional(self):
         if 'ai.knowledge.base' in self.env:
             return
-        self.assertEqual(self.env['ai.base.service'].retrieve('hello'), [])
+        self.assertEqual(self.env['ai.chat.service'].retrieve('hello'), [])
         with self.assertRaises(UserError):
-            self.env['ai.base.service'].rag_chat('hello')
+            self.env['ai.chat.service'].rag_chat('hello')
         defaults = self.env['ai.chat.session'].action_get_defaults()
         self.assertFalse(defaults['has_knowledge'])

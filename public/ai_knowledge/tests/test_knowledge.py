@@ -24,7 +24,7 @@ class TestKnowledge(AiBaseCase):
         })
 
     def test_empty_kb_returns_nothing(self):
-        items = self.env['ai.base.service'].retrieve('anything')
+        items = self.env['ai.chat.service'].retrieve('anything')
         self.assertEqual(items, [])
 
     def test_chunk_strategies(self):
@@ -64,7 +64,7 @@ class TestKnowledge(AiBaseCase):
     def test_index_uses_embed_and_fallback(self):
         document = self._document()
         with patch.object(
-                type(self.env['ai.base.service']), 'embedding',
+                type(self.env['ai.chat.service']), 'embedding',
                 return_value=[[0.1, 0.2, 0.3]]):
             document.action_index()
         self.assertEqual(document.state, 'ready')
@@ -108,11 +108,11 @@ class TestKnowledge(AiBaseCase):
             }
 
         with patch.object(
-                type(self.env['ai.base.service']), 'embedding',
+                type(self.env['ai.chat.service']), 'embedding',
                 return_value=[[1.0, 0.0]]), patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            self.env['ai.base.service'].chat(
+            self.env['ai.chat.service'].chat(
                 'What about meals?', session=session)
         system = ' '.join(
             msg['content'] for msg in captured['messages']
@@ -140,7 +140,7 @@ class TestKnowledge(AiBaseCase):
         document = self._document()
         self.assertFalse(document._should_delay())
         with patch.object(
-                type(self.env['ai.base.service']), 'embedding',
+                type(self.env['ai.chat.service']), 'embedding',
                 return_value=[[0.1, 0.2]]):
             result = document.action_index()
         self.assertTrue(result)

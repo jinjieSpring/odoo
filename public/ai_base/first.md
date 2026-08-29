@@ -98,9 +98,9 @@
 1. **Python 底层服务 API（供其他 Odoo 模块内部调用）**
 
 ```
-self.env['ai.base.service'].chat(...)
-self.env['ai.base.service'].rag_chat(...)
-self.env['ai.base.service'].embedding(...)
+self.env['ai.chat.service'].chat(...)
+self.env['ai.chat.service'].rag_chat(...)
+self.env['ai.chat.service'].embedding(...)
 ```
 
 - 入参支持：prompt_key、record、context、stream、model_code
@@ -149,7 +149,7 @@ ai_base/
 │   ├── ai_tool.py             # Agent工具注册
 │   ├── ai_chat_session.py     # AI会话消息
 │   ├── ai_request_log.py      # 请求日志审计
-│   └── ai_base_service.py     # 统一服务入口
+│   └── ai_chat_service.py     # 对话服务入口
 ├── controllers/               # jsonrpc + SSE流式接口
 ├── static/src/                # web聊天组件、widget
 ├── data/
