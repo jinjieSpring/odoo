@@ -120,7 +120,7 @@ class TestTools(AiBaseCase):
             'tool_type': 'http',
             'http_url': 'https://example.com',
         })
-        manifest = self.env['ai.tool'].action_get_manifest_for_user()
+        manifest = self.env['ai.tool'].allowed_tools()
         item = next(
             row for row in manifest if row['name'] == 'search_partners')
         self.assertEqual(item['label'], '查询客户')
@@ -288,3 +288,64 @@ class TestTools(AiBaseCase):
         })
         self.assertEqual(result['status'], 'error')
         self.assertEqual(result['code'], 400)
+
+    def test_allowed_tools_without_session_are_generic_only(self):
+        self.env['ai.tool']._sync_registry()
+        partner_tool = self.env['ai.tool'].create({
+            'name': 'custom.partner.only',
+            'description': 'Partner-only tool',
+            'tool_type': 'http',
+            'http_url': 'https://example.com',
+            'applicable_models': 'res.partner',
+        })
+        names = {
+            item['name']
+            for item in self.env['ai.tool'].allowed_tools()
+        }
+        self.assertIn('generic.search_count', names)
+        self.assertNotIn(partner_tool.name, names)
+
+    def test_allowed_tools_match_session_context_model(self):
+        self.env['ai.tool']._sync_registry()
+        partner = self.env['res.partner'].create({'name': 'Tool Context'})
+        partner_tool = self.env['ai.tool'].create({
+            'name': 'custom.partner.only',
+            'description': 'Partner-only tool',
+            'tool_type': 'http',
+            'http_url': 'https://example.com',
+            'applicable_models': 'res.partner',
+        })
+        user_tool = self.env['ai.tool'].create({
+            'name': 'custom.users.only',
+            'description': 'Users-only tool',
+            'tool_type': 'http',
+            'http_url': 'https://example.com',
+            'applicable_models': 'res.users',
+        })
+        session = self.env['ai.chat.session'].create({'name': 'Ctx'})
+        names = {
+            item['name']
+            for item in self.env['ai.tool'].allowed_tools(session=session)
+        }
+        self.assertIn('generic.search_count', names)
+        self.assertNotIn(partner_tool.name, names)
+        self.assertNotIn(user_tool.name, names)
+        session.action_attach_context('res.partner', partner.id)
+        names = {
+            item['name']
+            for item in self.env['ai.tool'].allowed_tools(session=session)
+        }
+        self.assertIn('generic.search_count', names)
+        self.assertIn(partner_tool.name, names)
+        self.assertNotIn(user_tool.name, names)
+
+    def test_invoke_fills_model_from_session_context(self):
+        self.env['ai.tool']._sync_registry()
+        partner = self.env['res.partner'].create({'name': 'Fill Model'})
+        session = self.env['ai.chat.session'].create({'name': 'Fill'})
+        session.action_attach_context('res.partner', partner.id)
+        result = self.env['ai.tool'].with_context(
+            ai_session_id=session.id
+        ).action_invoke_tool('generic.search_count', {})
+        self.assertEqual(result['status'], 'success')
+        self.assertIn('count', result['data'])

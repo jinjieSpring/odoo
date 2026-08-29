@@ -752,7 +752,7 @@ class AiChatService(models.AbstractModel):
         """
         options = dict(options or {})
         session = options.pop('session', None)
-        manifest = self.env['ai.tool'].action_get_manifest_for_user(session=session)
+        manifest = self.env['ai.tool'].allowed_tools(session=session)
         name_map = {}
         if manifest:
             name_map = self.env['ai.tool']._openai_name_map(manifest)

@@ -72,14 +72,14 @@ class TestAgent(AiBaseCase):
         })
         names = [
             item['name']
-            for item in self.env['ai.tool'].action_get_manifest_for_user(
+            for item in self.env['ai.tool'].allowed_tools(
                 session=session)
         ]
         self.assertEqual(names, ['generic.search_count'])
         self.chat_agent.tool_ids = self.env['ai.tool']
         names = [
             item['name']
-            for item in self.env['ai.tool'].action_get_manifest_for_user(
+            for item in self.env['ai.tool'].allowed_tools(
                 session=session)
         ]
         self.assertIn('generic.search_read', names)

@@ -234,6 +234,19 @@ msgid "Timeout (seconds)"
 msgstr "超时（秒）"
 
 #. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_tool__applicable_models
+msgid "Applicable Models"
+msgstr "适用模型"
+
+#. module: ai_base
+#: model:ir.model.fields,help:ai_base.field_ai_tool__applicable_models
+msgid ""
+"Comma-separated technical names, e.g. sale.order, project.project. "
+"Empty means the tool is generic and is offered in every chat. "
+"ORM Model is also used as a restriction when set."
+msgstr "逗号分隔的模型技术名，例如 sale.order, project.project。留空表示通用工具，每次对话都会提供。已填写的 ORM 模型也会作为限制。"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_provider__proxy
 msgid "HTTP Proxy"
 msgstr "HTTP 代理"

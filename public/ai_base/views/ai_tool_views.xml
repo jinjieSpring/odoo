@@ -23,6 +23,8 @@
                             <field name="required_groups" readonly="is_builtin"/>
                             <field name="rate_limit" readonly="is_builtin"/>
                             <field name="timeout" readonly="is_builtin"/>
+                            <field name="applicable_models" readonly="is_builtin"
+                                   placeholder="sale.order, project.project"/>
                         </group>
                     </group>
                     <field name="description" readonly="is_builtin"/>

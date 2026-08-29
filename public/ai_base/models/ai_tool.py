@@ -65,6 +65,7 @@ def ai_tool(
     rate_limit=30,
     timeout=15,
     label='',
+    applicable_models='',
 ):
     """Register a method as a pre-declared AI tool. Arbitrary code is forbidden."""
 
@@ -81,6 +82,7 @@ def ai_tool(
             'rate_limit': rate_limit,
             'timeout': timeout,
             'read_only': True,
+            'applicable_models': applicable_models or '',
         }
         if not name or not description or not input_schema:
             raise ValueError('ai_tool requires name, description and input_schema')
@@ -208,6 +210,11 @@ class AiTool(models.Model):
     read_only = fields.Boolean(string='Read Only', default=True)
     rate_limit = fields.Integer(string='Rate Limit / minute', default=30)
     timeout = fields.Integer(string='Timeout (seconds)', default=15)
+    applicable_models = fields.Char(
+        string='Applicable Models',
+        help='Comma-separated technical names, e.g. sale.order, project.project. '
+             'Empty means the tool is generic and is offered in every chat. '
+             'ORM Model is also used as a restriction when set.')
     # ORM tools
     orm_model = fields.Char(string='ORM Model')
     orm_method = fields.Selection([
@@ -272,7 +279,11 @@ class AiTool(models.Model):
     def _register_hook(self):
         super()._register_hook()
         try:
-            if 'ai.tool' in self.env.registry.models:
+            if 'ai.tool' not in self.env.registry.models:
+                return
+            # Isolate sync from the load transaction: a missing column
+            # (module not upgraded yet) must not abort registry loading.
+            with self.env.cr.savepoint():
                 self._sync_registry()
         except Exception:  # noqa: BLE001
             _logger.exception('ai_base tool registry sync failed')
@@ -317,13 +328,25 @@ class AiTool(models.Model):
                     vals, name=name, label=default_label, is_active=True,
                     rate_limit=metadata.get('rate_limit') or 30,
                     timeout=metadata.get('timeout') or 15,
+                    applicable_models=metadata.get('applicable_models') or '',
                 ))
 
     @api.model
-    def action_get_manifest_for_user(self, session=None):
-        """ACL-filtered tool list. ``session`` lets ``ai_agent`` narrow by agent."""
+    def allowed_tools(self, session=None):
+        """Tools this user may send to the model for this session.
+
+        ACL first, then the session's current record model
+        (``context_model`` or ``res_model``). Tools with no model
+        restriction stay generic. ``session`` is omitted for non-chat
+        callers and keeps only generic tools.
+        """
         tools = self.search([('is_active', '=', True)])
-        allowed = [tool for tool in tools if self._check_permissions(tool)]
+        context_model = self._session_context_model(session)
+        allowed = [
+            tool for tool in tools
+            if self._check_permissions(tool)
+            and self._tool_fits_context(tool, context_model)
+        ]
         return [{
             'name': tool.name,
             'label': tool._tool_label(),
@@ -332,6 +355,48 @@ class AiTool(models.Model):
             'tool_type': tool.tool_type,
             'read_only': tool.read_only,
         } for tool in allowed]
+
+    @api.model
+    def _session_context_model(self, session):
+        if not session:
+            return False
+        return session.context_model or session.res_model or False
+
+    @api.model
+    def _tool_model_names(self, tool):
+        names = [
+            part.strip()
+            for part in (tool.applicable_models or '').split(',')
+            if part.strip()
+        ]
+        if tool.orm_model:
+            names.append(tool.orm_model)
+        return list(dict.fromkeys(names))
+
+    @api.model
+    def _tool_fits_context(self, tool, context_model):
+        models = self._tool_model_names(tool)
+        if not models:
+            return True
+        return bool(context_model) and context_model in models
+
+    @api.model
+    def _params_with_session_defaults(self, params, tool):
+        """Fill ``model`` from the chat session when the caller omitted it."""
+        params = dict(params or {})
+        properties = (tool.input_schema or {}).get('properties') or {}
+        if params.get('model') or 'model' not in properties:
+            return params
+        session_id = self.env.context.get('ai_session_id')
+        if not session_id:
+            return params
+        session = self.env['ai.chat.session'].browse(session_id).exists()
+        if not session:
+            return params
+        model_name = self._session_context_model(session)
+        if model_name:
+            params['model'] = model_name
+        return params
 
     @api.model
     def _openai_name_map(self, manifest):
@@ -355,7 +420,7 @@ class AiTool(models.Model):
     @api.model
     def _function_schemas(self, manifest=None):
         manifest = manifest if manifest is not None \
-            else self.action_get_manifest_for_user(session=None)
+            else self.allowed_tools(session=None)
         name_map = self._openai_name_map(manifest)
         internal_to_api = {
             internal: api_name for api_name, internal in name_map.items()
@@ -395,6 +460,7 @@ class AiTool(models.Model):
                 'tool_blocked', tool_name, params=params, result=result,
                 started=started, status='blocked', error_code=404)
             return result
+        params = self._params_with_session_defaults(params, tool)
         if not self._check_permissions(tool):
             result = self._tool_error(
                 421, _('You do not have permission to call tool "%s".') % tool_name,
