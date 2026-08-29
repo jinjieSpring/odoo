@@ -23,7 +23,6 @@ export class AiUserSettingsDialog extends Component {
         this.state = useState({
             loading: true,
             capabilities: { streaming: false },
-            attachContext: true,
             sidebarCollapsed: false,
             gridSessionsCollapsed: false,
             gridKnowledgeCollapsed: false,
@@ -46,7 +45,6 @@ export class AiUserSettingsDialog extends Component {
                 capabilities: settings.capabilities || {
                     streaming: false,
                 },
-                attachContext: Boolean(settings.attach_context),
                 sidebarCollapsed: Boolean(settings.sidebar_collapsed),
                 gridSessionsCollapsed: Boolean(
                     settings.grid_sessions_collapsed),
@@ -64,10 +62,6 @@ export class AiUserSettingsDialog extends Component {
                 { type: "danger" }
             );
         }
-    }
-
-    toggleAttachContext(ev) {
-        this.state.attachContext = ev.target.checked;
     }
 
     toggleSidebarCollapsed(ev) {
@@ -145,7 +139,6 @@ export class AiUserSettingsDialog extends Component {
         try {
             await this.orm.call("ai.chat.session", "action_save_user_settings", [
                 {
-                    attach_context: this.state.attachContext,
                     sidebar_collapsed: this.state.sidebarCollapsed,
                     grid_sessions_collapsed: this.state.gridSessionsCollapsed,
                     grid_knowledge_collapsed:

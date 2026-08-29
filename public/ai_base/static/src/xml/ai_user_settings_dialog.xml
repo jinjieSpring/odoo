@@ -9,15 +9,6 @@
                     </div>
                     <t t-else="">
                         <div class="o_ai_user_settings_section">
-                            <h6>Default Chat Options</h6>
-                            <div class="text-muted small mb-2">Defaults applied to new sessions; you can still change them per session in the chat window.</div>
-                            <label class="o_ai_user_settings_option d-flex align-items-center mb-1">
-                                <input type="checkbox" t-att-checked="state.attachContext"
-                                       t-on-change="toggleAttachContext"/>
-                                <span class="ms-1">Attach current record context by default</span>
-                            </label>
-                        </div>
-                        <div class="o_ai_user_settings_section mt-3 pt-3 border-top">
                             <div class="d-flex align-items-center">
                                 <h6 class="mb-0">Prompts</h6>
                                 <button type="button" class="btn btn-link px-1 ms-auto"

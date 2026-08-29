@@ -2620,24 +2620,6 @@ msgstr "删除提示词"
 #. module: ai_base
 #. odoo-javascript
 #: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
-msgid "Default Chat Options"
-msgstr "默认对话选项"
-
-#. module: ai_base
-#. odoo-javascript
-#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
-msgid "Defaults applied to new sessions; you can still change them per session in the chat window."
-msgstr "新会话使用的默认值，仍可在对话窗口中按会话修改。"
-
-#. module: ai_base
-#. odoo-javascript
-#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
-msgid "Attach current record context by default"
-msgstr "默认附加当前记录上下文"
-
-#. module: ai_base
-#. odoo-javascript
-#: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
 msgid "Prompts"
 msgstr "提示词"
 
