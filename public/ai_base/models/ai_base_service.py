@@ -40,8 +40,8 @@ import traceback
 from odoo import _, models
 from odoo.exceptions import UserError
 
-from odoo.addons.ai_base.tools import AiError, get_provider
-from odoo.addons.ai_base.models.ai_tool import extract_tool_calls, strip_tool_blocks
+from ..tools import AiError, get_provider
+from .ai_tool import extract_tool_calls, strip_tool_blocks
 
 _logger = logging.getLogger(__name__)
 

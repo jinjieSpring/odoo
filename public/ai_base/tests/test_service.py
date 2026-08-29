@@ -71,7 +71,7 @@ class TestService(AiBaseCase):
         self.assertIn(name, messages[0]['content'])
 
     def test_failover_uses_next_model(self):
-        from odoo.addons.ai_base.tools import AiError
+        from ..tools import AiError
         fallback = self.env['ai.model'].create({
             'name': 'Fallback',
             'code': 'fallback-svc',

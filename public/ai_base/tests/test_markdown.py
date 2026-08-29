@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.tests import TransactionCase
 
-from odoo.addons.ai_base.tools import markdown_to_html
+from ..tools import markdown_to_html
 
 
 class TestMarkdownToHtml(TransactionCase):

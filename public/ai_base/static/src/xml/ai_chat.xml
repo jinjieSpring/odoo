@@ -199,7 +199,7 @@
                                             </t>
                                             <t t-elif="messageCards(msg).length">
                                                 <AiFormattedText
-                                                    content="msg.content"
+                                                    content="msg.content or ''"
                                                     className="'o_ai_msg_md'"/>
                                                 <t t-foreach="messageCards(msg)" t-as="card" t-key="card_index">
                                                     <AiToolCard
@@ -210,18 +210,18 @@
                                             </t>
                                             <t t-elif="msg.tool">
                                                 <AiFormattedText
-                                                    content="msg.content_before_tool"
+                                                    content="msg.content_before_tool or ''"
                                                     className="'o_ai_msg_md'"/>
                                                 <AiToolCard
                                                     tool="msg.tool"
                                                     onUpdate="(card) => this.updateToolCard(msg, card)"
                                                     onTask="(text, busy, error) => this.setTask(text, busy, error)"/>
                                                 <AiFormattedText
-                                                    content="msg.content_after_tool"
+                                                    content="msg.content_after_tool or ''"
                                                     className="'o_ai_msg_md'"/>
                                             </t>
                                             <AiFormattedText t-else=""
-                                                content="msg.content"
+                                                content="msg.content or ''"
                                                 className="'o_ai_msg_md'"/>
                                             <span t-if="msg.role === 'assistant' and msg.pending and (msg.content or messageCards(msg).length)"
                                                   class="o_ai_chat_cursor"/>

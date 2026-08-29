@@ -3,7 +3,7 @@ import re
 from unittest.mock import patch
 
 from odoo.exceptions import UserError
-from odoo.addons.ai_base.models.ai_tool import validate_tool_schema
+from ..models.ai_tool import validate_tool_schema
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
 _OPENAI_FUNCTION_NAME = re.compile(r'^[a-zA-Z0-9_-]+$')

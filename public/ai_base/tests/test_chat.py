@@ -169,10 +169,16 @@ class TestChat(AiBaseCase):
             'content': 'hi',
             'prompt_tokens': 4,
         })
+        self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'assistant',
+        })
         payload = session.action_get_session()
         self.assertIn('capabilities', payload['session'])
         self.assertEqual(payload['session']['name'], 'Payload')
         self.assertEqual(payload['messages'][0]['content'], 'hi')
+        self.assertEqual(payload['messages'][1]['content'], '')
+        self.assertEqual(payload['messages'][1]['reasoning_content'], '')
         self.assertIn('feedback', payload['messages'][0])
 
     def test_submit_feedback_on_assistant_message(self):

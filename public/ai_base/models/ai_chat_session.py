@@ -22,7 +22,7 @@ class AiChatSession(models.Model):
     prompt_id = fields.Many2one(
         'ai.prompt.template', string='Prompt', ondelete='set null')
     res_model = fields.Char(string='Related Model')
-    res_id = fields.Integer(string='Related Record')
+    res_id = fields.Integer(string='Related Record ID')
     res_name = fields.Char(compute='_compute_res_name', string='Related Record')
     message_ids = fields.One2many(
         'ai.chat.message', 'session_id', string='Messages')

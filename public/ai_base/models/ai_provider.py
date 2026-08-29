@@ -2,7 +2,7 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.ai_base.tools import (
+from ..tools import (
     AiError, get_provider, normalize_base_url, pretty_model_name)
 
 

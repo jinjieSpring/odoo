@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import patch
 
-from odoo.addons.ai_base.tools import AiError, get_provider
+from ..tools import AiError, get_provider
 from odoo.addons.ai_base.tests.common import AiBaseCase
 
 

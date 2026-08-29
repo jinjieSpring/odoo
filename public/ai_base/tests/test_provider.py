@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import Mock, patch
 
-from odoo.addons.ai_base.tools import (
+from ..tools import (
     AiError,
     OpenAICompatibleAdapter,
     get_provider,
@@ -76,7 +76,7 @@ class TestProvider(AiBaseCase):
         self.assertEqual(chunks[0]['content'], '中')
 
     def test_http_error_on_models_is_actionable(self):
-        from odoo.addons.ai_base.tools.http import _http_error_message
+        from ..tools.http import _http_error_message
         message = _http_error_message(
             'http://127.0.0.1:8080/models', 404, 'Not Found')
         self.assertIn('/v1/models', message)

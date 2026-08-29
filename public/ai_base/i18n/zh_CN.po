@@ -888,6 +888,10 @@ msgstr "关联模型"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__res_id
+msgid "Related Record ID"
+msgstr "关联记录 ID"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__res_name
 msgid "Related Record"
 msgstr "关联单据"

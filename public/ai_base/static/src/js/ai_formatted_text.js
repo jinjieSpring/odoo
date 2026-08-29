@@ -17,7 +17,7 @@ import {
 export class AiFormattedText extends Component {
     static template = "ai_base.FormattedText";
     static props = {
-        content: { type: String },
+        content: { type: String, optional: true },
         className: { type: String, optional: true },
     };
 

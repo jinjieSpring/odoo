@@ -13,7 +13,7 @@ from markupsafe import Markup
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.ai_base.tools import markdown_to_html
+from ..tools import markdown_to_html
 
 _logger = logging.getLogger(__name__)
 
@@ -278,8 +278,8 @@ class AiChat(models.AbstractModel):
             result.append({
                 'id': message.id,
                 'role': message.role,
-                'content': message.content,
-                'reasoning_content': message.reasoning_content,
+                'content': message.content or '',
+                'reasoning_content': message.reasoning_content or '',
                 'total_tokens': message.total_tokens,
                 'create_date': message.create_date,
                 'tool_cards': message.tool_cards or [],
