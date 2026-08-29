@@ -1046,6 +1046,11 @@ msgid "RAG Sources"
 msgstr "RAG 来源"
 
 #. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
+msgid "Tokens"
+msgstr "Token"
+
+#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__prompt_tokens
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Input Tokens"
