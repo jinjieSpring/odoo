@@ -130,6 +130,13 @@
                             <i class="fa fa-paperclip me-1"/>
                             <span class="text-truncate"
                                   t-esc="state.contextDisplayName or 'No record detected'"/>
+                            <button t-if="state.contextAttached"
+                                    type="button"
+                                    class="btn btn-link p-0 ms-1 o_ai_context_clear"
+                                    title="Remove attached context"
+                                    t-on-click.stop="removeAttachedContext">
+                                <i class="fa fa-times"/>
+                            </button>
                         </div>
                         <div class="ms-auto d-flex align-items-center gap-3">
                             <label class="o_ai_chat_ctl form-check form-switch mb-0"

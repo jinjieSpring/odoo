@@ -1722,19 +1722,29 @@ export class AiChat extends Component {
     }
 
     async onToggleAttachContext(ev) {
-        const checked = ev.target.checked;
-        this.state.attachContext = checked;
-        if (!checked) {
-            await this.clearContext();
-        } else {
-            await this.attachAutoContext();
+        if (!ev.target.checked) {
+            await this.removeAttachedContext();
+            return;
         }
+        this.state.attachContext = true;
+        await this.attachAutoContext();
         await this.saveOptions();
+    }
+
+    async removeAttachedContext() {
+        this.state.attachContext = false;
+        await this.clearContext();
+        if (this.state.currentId) {
+            await this.saveOptions();
+        }
+        await this.attachAutoContext();
     }
 
     async clearContext() {
         this.state.contextAttached = false;
-        this.state.contextDisplayName = "";
+        if (!this.state.currentId) {
+            return;
+        }
         try {
             await this.orm.call(
                 "ai.chat.session",

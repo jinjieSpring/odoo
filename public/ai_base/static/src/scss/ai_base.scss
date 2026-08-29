@@ -1215,8 +1215,18 @@
             background: $o-brand-lightsecondary;
             border: 1px solid $o-gray-200;
 
-            i {
+            > .fa-paperclip {
                 color: $o-brand-primary;
+            }
+
+            .o_ai_context_clear {
+                flex-shrink: 0;
+                line-height: 1;
+                color: $o-gray-600;
+
+                &:hover {
+                    color: $o-gray-900;
+                }
             }
 
             &.o_ai_context_empty {
