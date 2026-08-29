@@ -22,7 +22,7 @@ class AiAuditLog(models.Model):
         'res.users', string='用户', required=True, index=True,
         ondelete='restrict', default=lambda self: self.env.user)
     session_id = fields.Many2one(
-        'ai.chat.session', string='对话会话', ondelete='set null', index=True)
+        'ai.chat.session', string='Session', ondelete='set null', index=True)
     event_type = fields.Selection([
         ('tool_call', '工具调用'),
         ('tool_blocked', '工具拦截'),

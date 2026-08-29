@@ -111,8 +111,8 @@ msgstr "AI 会话消息"
 
 #. module: ai_base
 #: model:ir.model,name:ai_base.model_ai_request_log
-msgid "AI Request Log"
-msgstr "AI 请求日志"
+msgid "AI Usage Line"
+msgstr "用量明细"
 
 #. module: ai_base
 #: model:ir.model,name:ai_base.model_ai_config
@@ -173,14 +173,8 @@ msgid "AI Tools"
 msgstr "AI 工具"
 
 #. module: ai_base
-#: model:ir.actions.act_window,name:ai_base.ai_session_action
-msgid "Chat Sessions"
-msgstr "对话记录"
-
-#. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_logs
 #: model:ir.actions.act_window,name:ai_base.ai_request_log_action
-#: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__log_count
 msgid "Usage"
 msgstr "用量"
 
@@ -357,6 +351,7 @@ msgstr "私有 / 自定义"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__code
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_code
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__model_code
 msgid "Model Code"
 msgstr "模型编码"
 
@@ -369,6 +364,7 @@ msgstr "业务模块通过该编码调用 ai.chat.service。"
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__provider_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__provider_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__provider_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__provider_id
 msgid "Provider"
 msgstr "提供方"
 
@@ -633,6 +629,7 @@ msgstr "提取文本"
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__status
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__status
 msgid "Status"
 msgstr "状态"
 
@@ -664,7 +661,9 @@ msgstr "已向量化"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__error_message
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_message
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__error_message
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__error
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__status__error
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
 msgid "Error"
 msgstr "错误"
@@ -888,6 +887,7 @@ msgstr "用户"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__model_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_id
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__model_id
 msgid "Model"
 msgstr "模型"
 
@@ -1102,14 +1102,9 @@ msgstr "总 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__session_id
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
-msgid "Chat Session"
-msgstr "对话会话"
-
-#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__session_id
-msgid "对话会话"
-msgstr "对话会话"
+msgid "Session"
+msgstr "会话"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__scenario_key
@@ -1148,6 +1143,8 @@ msgstr "连通性测试"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__latency_ms
+#: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__latency_ms
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Latency (ms)"
 msgstr "耗时（毫秒）"
 
@@ -1158,6 +1155,7 @@ msgstr "耗时（毫秒）"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__success
+#: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__status__success
 msgid "Success"
 msgstr "成功"
 
@@ -2043,12 +2041,6 @@ msgstr "已将 %s 条记录分成 %s 组。"
 #. module: ai_base
 #. odoo-python
 #: code:addons/ai_base/models/ai_request_log.py:0
-msgid "Request Log"
-msgstr "请求日志"
-
-#. module: ai_base
-#. odoo-python
-#: code:addons/ai_base/models/ai_request_log.py:0
 msgid "AI Base error rate alert"
 msgstr "AI 底座错误率告警"
 
@@ -2546,8 +2538,13 @@ msgstr "管理提示词"
 #. module: ai_base
 #. odoo-javascript
 #: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+#: model:ir.ui.menu,name:ai_base.ai_menu_sessions
+#: model:ir.actions.act_window,name:ai_base.ai_session_action
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_pivot_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_graph_view
 msgid "Sessions"
-msgstr "会话"
+msgstr "会话记录"
 
 #. module: ai_base
 #. odoo-javascript

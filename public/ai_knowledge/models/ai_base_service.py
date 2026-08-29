@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
-
 from odoo import _, models
 
 from odoo.addons.ai_knowledge.models.ai_vector_store import get_vector_store
@@ -29,15 +27,6 @@ class AiBaseService(models.AbstractModel):
                 lambda m: m.role == 'assistant')[-1:]
             if last:
                 last.rag_sources = retrieved
-        log = self.env['ai.request.log'].sudo().search([
-            ('user_id', '=', self.env.user.id),
-            ('scenario_key', '=', 'rag'),
-        ], order='id desc', limit=1)
-        if log:
-            log.write({
-                'request_type': 'rag',
-                'rag_snippets': json.dumps(retrieved, ensure_ascii=False)[:4000],
-            })
         return result
 
     def retrieve(self, query, top_k=5, document_ids=None, knowledge_ids=None, model=None):

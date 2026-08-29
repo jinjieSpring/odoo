@@ -149,11 +149,12 @@ class AiChatService(models.AbstractModel):
             result['reply'] = self._guard_output(result.get('reply') or '')
             if session:
                 self._persist_rounds(session, result)
-            self._log_request(
-                request_type=self._request_type_for_scenario(scenario),
-                scenario_key=scenario,
-                session=session, model=model, result=result,
-                input_summary=content)
+            else:
+                self._log_request(
+                    request_type=self._request_type_for_scenario(scenario),
+                    scenario_key=scenario,
+                    session=session, model=model, result=result,
+                    input_summary=content)
             result = self.on_ai_request_done(payload, result) or result
             return result
         except Exception as exc:
@@ -302,10 +303,6 @@ class AiChatService(models.AbstractModel):
                 model, messages, options, emit=lambda event: events.append(event))
             result['reply'] = self._guard_output(result.get('reply') or '')
             self._persist_rounds(session, result)
-            self._log_request(
-                request_type='chat', scenario_key='chat',
-                session=session, model=model, result=result,
-                input_summary=content)
             return {'result': result, 'events': events, 'error': result.get('error')}
         except Exception as exc:
             self._log_request_error('chat', session, model, content, exc)
@@ -395,39 +392,40 @@ class AiChatService(models.AbstractModel):
         return max(1, max_rounds), max(1, max_calls)
 
     def _rate_limit_request_types(self):
-        """计入限流的 ``ai.request.log.request_type``。"""
-        return ('chat', 'rag', 'embed')
+        """计入限流的无会话 ``ai.request.log.request_type``（向量化等）。"""
+        return ('chat', 'rag', 'embed', 'agent')
+
+    def _rate_limit_count(self, start, user_id=None):
+        """最近窗口内的模型调用次数：助手消息 + 无会话请求日志。"""
+        msg_domain = [
+            ('role', '=', 'assistant'),
+            ('model_id', '!=', False),
+            ('create_date', '>=', start),
+        ]
+        log_domain = [
+            ('request_type', 'in', self._rate_limit_request_types()),
+            ('create_date', '>=', start),
+        ]
+        if user_id:
+            msg_domain.append(('session_id.user_id', '=', user_id))
+            log_domain.append(('user_id', '=', user_id))
+        return (
+            self.env['ai.chat.message'].sudo().search_count(msg_domain)
+            + self.env['ai.request.log'].sudo().search_count(log_domain)
+        )
 
     def _check_rate_limit(self):
-        """按最近 60 秒检查全站 / 当前用户的请求次数。
-
-        入参:
-            无（用 ``self.env.user`` 和 ``ai.request.log``）。
-        返回:
-            None。超限抛 ``UserError``。
-        """
+        """按最近 60 秒检查全站 / 当前用户的请求次数。"""
         global_limit = self._param_int('ai_base.rate_limit_global_per_minute', 120)
         user_limit = self._param_int('ai_base.rate_limit_user_per_minute', 30)
-        since = self.env['ai.request.log'].sudo()
         from datetime import timedelta
         from odoo import fields as odoo_fields
         start = odoo_fields.Datetime.now() - timedelta(seconds=60)
-        types = self._rate_limit_request_types()
-        if global_limit > 0:
-            total = since.search_count([
-                ('request_type', 'in', types),
-                ('create_date', '>=', start),
-            ])
-            if total >= global_limit:
-                raise UserError(_('The global AI rate limit has been reached. Retry shortly.'))
-        if user_limit > 0:
-            mine = since.search_count([
-                ('user_id', '=', self.env.user.id),
-                ('request_type', 'in', types),
-                ('create_date', '>=', start),
-            ])
-            if mine >= user_limit:
-                raise UserError(_('You have reached the per-user AI rate limit. Retry shortly.'))
+        if global_limit > 0 and self._rate_limit_count(start) >= global_limit:
+            raise UserError(_('The global AI rate limit has been reached. Retry shortly.'))
+        if user_limit > 0 and self._rate_limit_count(
+                start, user_id=self.env.user.id) >= user_limit:
+            raise UserError(_('You have reached the per-user AI rate limit. Retry shortly.'))
 
     def _guard_input(self, text):
         """校验用户输入：超长、敏感词拦截；疑似注入只记日志不拦截。
@@ -489,11 +487,15 @@ class AiChatService(models.AbstractModel):
         }.get(scenario, default)
 
     def _log_request_error(self, scenario, session, model, content, exc):
-        """Write an error usage row when chat/stream raises."""
+        """会话失败写在助手消息上；没有会话才写 ``ai.request.log``。"""
+        if session:
+            self._persist_error_message(session, model, {
+                'message': str(exc),
+            })
+            return
         vals = {
             'request_type': self._request_type_for_scenario(scenario),
             'scenario_key': scenario or 'chat',
-            'session_id': session.id if session else False,
             'status': 'error',
             'error_message': str(exc)[:500],
             'error_traceback': traceback.format_exc()[:8000],
@@ -763,8 +765,10 @@ class AiChatService(models.AbstractModel):
         started = time.time()
         max_rounds, max_calls = self._tool_loop_limits(options, session)
         for _round in range(max_rounds):
+            call_started = time.time()
             result, current, options, last_error = self._complete_with_failover(
                 current, history, options, candidates)
+            call_ms = int((time.time() - call_started) * 1000)
             if result is None:
                 payload = {'model': current, 'history': history}
                 self.on_ai_request_error(payload, last_error)
@@ -773,6 +777,7 @@ class AiChatService(models.AbstractModel):
                     'usage': cumulative,
                     'rounds': rounds,
                     'latency_ms': int((time.time() - started) * 1000),
+                    'model_id': current.id,
                     'error': {
                         'message': str(last_error),
                         'code': 'model_call_failed',
@@ -845,6 +850,7 @@ class AiChatService(models.AbstractModel):
             rounds.append({
                 'content': content, 'reasoning': reasoning,
                 'cards': cards, 'usage': usage, 'model_id': current.id,
+                'latency_ms': call_ms,
             })
             if not tool_calls:
                 break
@@ -909,21 +915,45 @@ class AiChatService(models.AbstractModel):
         }
         return card, 'blocked', result
 
+    def _message_model_vals(self, model):
+        if not model:
+            return {}
+        return {
+            'model_id': model.id,
+            'provider_id': model.provider_id.id,
+            'model_code': model.code,
+        }
+
+    def _persist_error_message(self, session, model, error):
+        """会话上落一条失败的助手消息（带用量字段）。"""
+        message = (error or {}).get('message') or ''
+        self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'assistant',
+            'content': message,
+            'status': 'error',
+            'error_message': message[:500],
+            **self._message_model_vals(model),
+        })
+
     def _persist_rounds(self, session, result):
-        """把工具循环每一轮写成 ``ai.chat.message``（assistant，带 tool_cards 和 token）。
+        """把工具循环每一轮写成助手消息，用量字段写在同一条上。
 
         入参:
             session: ``ai.chat.session``。
-            result (dict): ``_run_tool_loop`` 的返回值，读 ``rounds``。
+            result (dict): ``_run_tool_loop`` 的返回值，读 ``rounds`` / ``error``。
         返回:
-            None。空轮（无正文、无卡片、无推理）会跳过。
+            None。空轮（无正文、无卡片、无推理）会跳过；循环失败会再补一条错误消息。
         """
+        fallback = self.env['ai.model'].browse(result.get('model_id') or 0).exists()
         for round_info in result.get('rounds') or []:
             content = round_info.get('content') or ''
             cards = round_info.get('cards') or []
             if not content and not cards and not round_info.get('reasoning'):
                 continue
             usage = round_info.get('usage') or {}
+            model = self.env['ai.model'].browse(
+                round_info.get('model_id') or 0).exists() or fallback
             self.env['ai.chat.message'].create({
                 'session_id': session.id,
                 'role': 'assistant',
@@ -933,4 +963,10 @@ class AiChatService(models.AbstractModel):
                 'prompt_tokens': usage.get('prompt_tokens') or 0,
                 'completion_tokens': usage.get('completion_tokens') or 0,
                 'total_tokens': usage.get('total_tokens') or 0,
+                'latency_ms': round_info.get('latency_ms') or 0,
+                'status': 'success',
+                **self._message_model_vals(model),
             })
+        error = result.get('error') or {}
+        if error:
+            self._persist_error_message(session, fallback, error)

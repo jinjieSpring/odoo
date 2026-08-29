@@ -44,8 +44,6 @@ class AiChatSession(models.Model):
         compute='_compute_context_usage', string='Context Tokens')
     context_usage = fields.Integer(
         compute='_compute_context_usage', string='Context Usage %')
-    log_count = fields.Integer(
-        compute='_compute_log_count', string='Usage')
     audit_count = fields.Integer(
         compute='_compute_audit_count', string='Audit')
     state = fields.Selection([
@@ -94,14 +92,6 @@ class AiChatSession(models.Model):
             budget = session.model_id.max_context_tokens or 8192
             session.context_usage = int(tokens * 100 / budget) if budget else 0
 
-    def _compute_log_count(self):
-        data = self.env['ai.request.log']._read_group(
-            [('session_id', 'in', self.ids)],
-            ['session_id'], ['session_id:count'])
-        count_map = {session.id: count for session, count in data}
-        for session in self:
-            session.log_count = count_map.get(session.id, 0)
-
     def _compute_audit_count(self):
         data = self.env['ai.audit.log']._read_group(
             [('session_id', 'in', self.ids)],
@@ -109,17 +99,6 @@ class AiChatSession(models.Model):
         count_map = {session.id: count for session, count in data}
         for session in self:
             session.audit_count = count_map.get(session.id, 0)
-
-    def action_open_request_logs(self):
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Usage'),
-            'res_model': 'ai.request.log',
-            'view_mode': 'list,form,pivot,graph',
-            'domain': [('session_id', '=', self.id)],
-            'context': {'default_session_id': self.id},
-        }
 
     def action_open_audit_logs(self):
         self.ensure_one()
@@ -374,6 +353,17 @@ class AiChatMessage(models.Model):
     prompt_tokens = fields.Integer(string='Input Tokens', default=0)
     completion_tokens = fields.Integer(string='Output Tokens', default=0)
     total_tokens = fields.Integer(string='Total Tokens', default=0)
+    provider_id = fields.Many2one(
+        'ai.provider', string='Provider', ondelete='set null')
+    model_id = fields.Many2one(
+        'ai.model', string='Model', ondelete='set null')
+    model_code = fields.Char(string='Model Code')
+    latency_ms = fields.Integer(string='Latency (ms)', default=0)
+    status = fields.Selection([
+        ('success', 'Success'),
+        ('error', 'Error'),
+    ], string='Status')
+    error_message = fields.Char(string='Error')
 
     @api.depends('content', 'reasoning_content')
     def _compute_previews(self):

@@ -7,6 +7,9 @@
         <field name="action" eval="False"/>
     </record>
 
+    <menuitem id="ai_menu_logs" name="Usage"
+              parent="ai_menu_root" action="ai_request_log_action"
+              groups="ai_base.group_log" sequence="6" active="False"/>
     <menuitem id="ai_menu_foundation" name="Foundation"
               parent="ai_menu_root"
               groups="ai_base.group_log" sequence="10"/>
@@ -22,8 +25,8 @@
     <menuitem id="ai_menu_tools" name="AI Tools"
               parent="ai_menu_foundation" action="ai_tool_action"
               groups="ai_base.group_manager" sequence="50"/>
-    <menuitem id="ai_menu_logs" name="Usage"
-              parent="ai_menu_foundation" action="ai_request_log_action"
+    <menuitem id="ai_menu_sessions" name="Sessions"
+              parent="ai_menu_foundation" action="ai_session_action"
               groups="ai_base.group_log" sequence="70"/>
     <menuitem id="ai_menu_audit" name="Audit"
               parent="ai_menu_foundation" action="ai_audit_log_action"

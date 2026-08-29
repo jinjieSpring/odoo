@@ -5,10 +5,12 @@ from odoo import _, api, fields, models
 
 
 class AiRequestLog(models.Model):
-    """LLM usage rows (tokens, model, latency). Tool/agent actions live on ``ai.audit.log``."""
+    """Session-less usage (embed, API chat without a session). Conversation
+    usage lives on ``ai.chat.message``. Tool actions stay on ``ai.audit.log``.
+    """
 
     _name = 'ai.request.log'
-    _description = 'AI Request Log'
+    _description = 'AI Usage Line'
     _order = 'create_date desc, id desc'
     _check_company_auto = True
 
@@ -20,7 +22,7 @@ class AiRequestLog(models.Model):
         'res.users', string='User', required=True, index=True,
         default=lambda self: self.env.user)
     session_id = fields.Many2one(
-        'ai.chat.session', string='Chat Session', ondelete='set null', index=True)
+        'ai.chat.session', string='Session', ondelete='cascade', index=True)
     provider_id = fields.Many2one(
         'ai.provider', string='Provider', ondelete='set null')
     model_id = fields.Many2one(
@@ -37,7 +39,6 @@ class AiRequestLog(models.Model):
         ('audio', 'Audio'),
         ('probe', 'Connection Test'),
     ], string='Request Type', default='chat', required=True, index=True)
-    tool_name = fields.Char(string='Tool Name')
     prompt_tokens = fields.Integer(string='Input Tokens', default=0)
     completion_tokens = fields.Integer(string='Output Tokens', default=0)
     total_tokens = fields.Integer(string='Total Tokens', default=0)
@@ -51,13 +52,11 @@ class AiRequestLog(models.Model):
     input_summary = fields.Text(string='Input Prompt')
     output_summary = fields.Text(string='Output Result')
     rag_snippets = fields.Text(string='RAG Snippets')
-    tool_calls = fields.Text(string='Tool Calls')
-    raw_response = fields.Text(string='Raw Vendor Response')
 
     def action_export_xlsx(self):
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Request Log'),
+            'name': _('Usage'),
             'res_model': 'ai.request.log',
             'view_mode': 'list,form,pivot,graph',
             'target': 'current',
@@ -79,10 +78,17 @@ class AiRequestLog(models.Model):
         threshold = float(params.get_param('ai_base.alert_error_rate', '0.3') or 0.3)
         since = fields.Datetime.now() - timedelta(minutes=window)
         logs = self.sudo().search([('create_date', '>=', since)])
-        if len(logs) < 5:
+        messages = self.env['ai.chat.message'].sudo().search([
+            ('role', '=', 'assistant'),
+            ('model_id', '!=', False),
+            ('create_date', '>=', since),
+        ])
+        total = len(logs) + len(messages)
+        if total < 5:
             return
-        errors = logs.filtered(lambda log: log.status == 'error')
-        rate = len(errors) / float(len(logs))
+        errors = len(logs.filtered(lambda log: log.status == 'error')) + len(
+            messages.filtered(lambda msg: msg.status == 'error'))
+        rate = errors / float(total)
         if rate < threshold:
             return
         users = self.env.ref('ai_base.group_manager').all_user_ids.filtered('email')
@@ -96,8 +102,8 @@ class AiRequestLog(models.Model):
             ) % {
                 'rate': rate * 100,
                 'window': window,
-                'errors': len(errors),
-                'total': len(logs),
+                'errors': errors,
+                'total': total,
             },
             'email_to': ','.join(users.mapped('email')),
             'auto_delete': True,

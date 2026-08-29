@@ -4,7 +4,7 @@
         <field name="name">ai.chat.session.form</field>
         <field name="model">ai.chat.session</field>
         <field name="arch" type="xml">
-            <form string="Chat Session" create="0" edit="0" delete="0" duplicate="0">
+            <form string="Sessions" create="0" edit="0" delete="0" duplicate="0">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <field name="res_id" invisible="1"/>
@@ -12,10 +12,6 @@
                                 class="oe_stat_button" icon="fa-file-text-o"
                                 invisible="not res_id">
                             <field name="res_name" widget="statinfo" string="Related Record"/>
-                        </button>
-                        <button name="action_open_request_logs" type="object"
-                                class="oe_stat_button" icon="fa-list-alt">
-                            <field name="log_count" widget="statinfo" string="Usage"/>
                         </button>
                         <button name="action_open_audit_logs" type="object"
                                 class="oe_stat_button" icon="fa-shield">
@@ -48,6 +44,9 @@
                                     <field name="prompt_tokens" optional="hide" sum="Input Tokens"/>
                                     <field name="completion_tokens" optional="hide" sum="Output Tokens"/>
                                     <field name="total_tokens" optional="show" sum="Total Tokens"/>
+                                    <field name="latency_ms" optional="hide" sum="Latency (ms)"/>
+                                    <field name="model_code" optional="hide"/>
+                                    <field name="status" optional="hide"/>
                                 </list>
                                 <form create="0" edit="0" delete="0">
                                     <group>
@@ -59,6 +58,10 @@
                                             <field name="prompt_tokens"/>
                                             <field name="completion_tokens"/>
                                             <field name="total_tokens"/>
+                                            <field name="latency_ms" invisible="role != 'assistant'"/>
+                                            <field name="model_id" invisible="role != 'assistant'"/>
+                                            <field name="status" invisible="role != 'assistant'"/>
+                                            <field name="error_message" invisible="not error_message"/>
                                         </group>
                                     </group>
                                     <group string="Content">
@@ -88,14 +91,39 @@
                 <field name="model_id"/>
                 <field name="res_name"/>
                 <field name="message_count"/>
+                <field name="input_tokens" optional="hide" sum="Input Tokens"/>
+                <field name="output_tokens" optional="hide" sum="Output Tokens"/>
                 <field name="state"/>
             </list>
         </field>
     </record>
+    <record id="ai_session_pivot_view" model="ir.ui.view">
+        <field name="name">ai.chat.session.pivot</field>
+        <field name="model">ai.chat.session</field>
+        <field name="arch" type="xml">
+            <pivot string="Sessions">
+                <field name="user_id" type="row"/>
+                <field name="model_id" type="row"/>
+                <field name="input_tokens" type="measure"/>
+                <field name="output_tokens" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="ai_session_graph_view" model="ir.ui.view">
+        <field name="name">ai.chat.session.graph</field>
+        <field name="model">ai.chat.session</field>
+        <field name="arch" type="xml">
+            <graph string="Sessions" type="bar">
+                <field name="user_id"/>
+                <field name="input_tokens" type="measure"/>
+                <field name="output_tokens" type="measure"/>
+            </graph>
+        </field>
+    </record>
     <record id="ai_session_action" model="ir.actions.act_window">
-        <field name="name">Chat Sessions</field>
+        <field name="name">Sessions</field>
         <field name="res_model">ai.chat.session</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,form,pivot,graph</field>
         <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
     </record>
 </odoo>

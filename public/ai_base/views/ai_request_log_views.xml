@@ -43,7 +43,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Prompt / Reply">
+                        <page string="Prompt / Reply" invisible="not input_summary and not output_summary">
                             <field name="input_summary"/>
                             <field name="output_summary"/>
                         </page>

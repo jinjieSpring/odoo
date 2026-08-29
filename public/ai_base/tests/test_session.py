@@ -46,17 +46,20 @@ class TestSession(AiBaseCase):
             ('id', '=', session.id)])
         self.assertFalse(found)
 
-    def test_open_request_logs_filters_current_session(self):
+    def test_assistant_message_stores_usage(self):
         session = self.env['ai.chat.session'].create({'name': 'Logged'})
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._chat_ok()):
             session.action_send_message('hello there')
-        action = session.action_open_request_logs()
-        self.assertEqual(action['res_model'], 'ai.request.log')
-        self.assertEqual(action['domain'], [('session_id', '=', session.id)])
-        self.assertGreaterEqual(session.log_count, 1)
-        self.assertEqual(action['name'], self.env._('Usage'))
+        assistant = session.message_ids.filtered(lambda m: m.role == 'assistant')
+        self.assertEqual(len(assistant), 1)
+        self.assertEqual(assistant.total_tokens, 2)
+        self.assertEqual(assistant.status, 'success')
+        self.assertTrue(assistant.model_id)
+        self.assertFalse(self.env['ai.request.log'].search([
+            ('session_id', '=', session.id),
+        ]))
 
     def test_message_preview_collapses_long_content(self):
         session = self.env['ai.chat.session'].create({'name': 'Preview'})

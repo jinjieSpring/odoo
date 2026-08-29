@@ -32,7 +32,6 @@ class TestAuditLog(AiBaseCase):
         self.assertEqual(audit.status, 'success')
         self.assertFalse(self.env['ai.request.log'].search([
             ('request_type', '=', 'tool'),
-            ('tool_name', '=', 'generic.search_count'),
         ]))
 
     def test_unknown_tool_is_audited_as_blocked(self):
@@ -133,11 +132,11 @@ class TestAuditLog(AiBaseCase):
             ('session_id', '=', session.id),
         ], limit=1)
         self.assertTrue(audit)
-        usage = self.env['ai.request.log'].search([
+        assistant = session.message_ids.filtered(lambda m: m.role == 'assistant')
+        self.assertTrue(assistant)
+        self.assertFalse(self.env['ai.request.log'].search([
             ('session_id', '=', session.id),
-        ], limit=1)
-        self.assertTrue(usage)
-        self.assertFalse(usage.tool_calls)
+        ]))
 
     def test_open_audit_logs_filters_current_session(self):
         session = self.env['ai.chat.session'].create({'name': 'Audited'})

@@ -95,25 +95,7 @@ class AiAgentRun(models.Model):
             'state': 'pending',
         })
         session.write({'state': 'open'})
-        accepted = _(
-            "I'll keep working on this even if you leave this chat. "
-            "Progress will appear here.\n\nTask: %s"
-        ) % content
         run._audit('agent_start', input_summary=(content or '')[:4000])
-        model = session.model_id
-        self.env['ai.agent.service']._log(
-            request_type='agent',
-            scenario_key='agent',
-            session_id=session.id,
-            user_id=session.user_id.id,
-            company_id=session.company_id.id if session.company_id else False,
-            provider_id=model.provider_id.id if model else False,
-            model_id=model.id if model else False,
-            model_code=model.code if model else False,
-            status='success',
-            input_summary=(content or '')[:4000],
-            output_summary=accepted[:4000],
-        )
         run._notify()
         run._schedule_step()
         return self.env['ai.chat'].result(session)

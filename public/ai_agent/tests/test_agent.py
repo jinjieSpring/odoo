@@ -306,12 +306,10 @@ class TestAgent(AiBaseCase):
         self.assertEqual(audit.run_id, run)
         self.assertEqual(audit.agent_id, self.goal_agent)
         self.assertIn('close the books', audit.input_summary or '')
-        log = self.env['ai.request.log'].search([
+        self.assertFalse(self.env['ai.request.log'].search([
             ('request_type', '=', 'agent'),
             ('session_id', '=', session.id),
-        ], limit=1)
-        self.assertTrue(log)
-        self.assertIn('close the books', log.input_summary or '')
+        ]))
 
     def test_goal_done_and_cancel_are_audited(self):
         session = self.env['ai.chat.session'].create({
