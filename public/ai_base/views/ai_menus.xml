@@ -22,7 +22,7 @@
     <menuitem id="ai_menu_tools" name="AI Tools"
               parent="ai_menu_foundation" action="ai_tool_action"
               groups="ai_base.group_manager" sequence="50"/>
-    <menuitem id="ai_menu_sessions" name="Sessions"
+    <menuitem id="ai_menu_sessions" name="Session History"
               parent="ai_menu_foundation" action="ai_session_action"
               groups="ai_base.group_log" sequence="70"/>
     <menuitem id="ai_menu_audit" name="Audit"

@@ -2423,13 +2423,18 @@ msgstr "管理提示词"
 #. module: ai_base
 #. odoo-javascript
 #: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+msgid "Sessions"
+msgstr "会话"
+
+#. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_sessions
 #: model:ir.actions.act_window,name:ai_base.ai_session_action
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_session_list_view
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_pivot_view
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_graph_view
-msgid "Sessions"
-msgstr "会话记录"
+msgid "Session History"
+msgstr "会话历史"
 
 #. module: ai_base
 #. odoo-javascript
@@ -2554,8 +2559,8 @@ msgstr "折叠侧边栏"
 #. module: ai_base
 #. odoo-javascript
 #: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
-msgid "Collapse the session history grid"
-msgstr "折叠会话历史网格"
+msgid "Collapse the sessions grid"
+msgstr "折叠会话网格"
 
 #. module: ai_base
 #. odoo-javascript
