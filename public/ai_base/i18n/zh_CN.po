@@ -2087,9 +2087,15 @@ msgstr "当前模型不支持思考。"
 
 #. module: ai_base
 #. odoo-javascript
-#: code:addons/ai_base/static/src/xml/ai_chat.xml:0
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
 msgid "Thinking..."
 msgstr "思考中…"
+
+#. module: ai_base
+#. odoo-javascript
+#: code:addons/ai_base/static/src/js/ai_chat.js:0
+msgid "Waiting..."
+msgstr "等待中…"
 
 #. module: ai_base
 #. odoo-javascript

@@ -165,6 +165,12 @@ export class AiChat extends Component {
         return _t("Thinking: On");
     }
 
+    get pendingReplyLabel() {
+        return this.state.thinkingEnabled
+            ? _t("Thinking...")
+            : _t("Waiting...");
+    }
+
     get agentRunBusy() {
         const state = this.state.agentRun && this.state.agentRun.state;
         return state === "pending" || state === "running";

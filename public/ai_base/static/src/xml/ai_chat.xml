@@ -195,7 +195,7 @@
                                         </div>
                                         <div t-else="" class="o_ai_chat_msg_content">
                                             <t t-if="msg.role === 'assistant' and msg.pending and !msg.content and !messageCards(msg).length">
-                                                <i class="fa fa-circle-o-notch fa-spin"/> Thinking...
+                                                <i class="fa fa-circle-o-notch fa-spin"/> <t t-esc="pendingReplyLabel"/>
                                             </t>
                                             <t t-elif="messageCards(msg).length">
                                                 <AiFormattedText
