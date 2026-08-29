@@ -456,35 +456,39 @@ class AiTool(models.Model):
             result = self._tool_error(
                 404, _('Tool "%s" is not registered.') % tool_name,
                 started, tool_name, params)
-            Audit._record_tool(
+            audit = Audit._record_tool(
                 'tool_blocked', tool_name, params=params, result=result,
                 started=started, status='blocked', error_code=404)
+            result['audit_id'] = audit.id
             return result
         params = self._params_with_session_defaults(params, tool)
         if not self._check_permissions(tool):
             result = self._tool_error(
                 421, _('You do not have permission to call tool "%s".') % tool_name,
                 started, tool_name, params)
-            Audit._record_tool(
+            audit = Audit._record_tool(
                 'tool_blocked', tool.name, params=params, result=result,
-                started=started, status='blocked', error_code=421)
+                started=started, status='blocked', error_code=421, tool=tool)
+            result['audit_id'] = audit.id
             return result
         if self._is_rate_limited(tool):
             result = self._tool_error(
                 429, _('Tool "%s" was called too frequently.') % tool_name,
                 started, tool_name, params)
-            Audit._record_tool(
+            audit = Audit._record_tool(
                 'tool_blocked', tool.name, params=params, result=result,
-                started=started, status='blocked', error_code=429)
+                started=started, status='blocked', error_code=429, tool=tool)
+            result['audit_id'] = audit.id
             return result
         ok, errors = validate_tool_schema(params, tool.input_schema or {})
         if not ok:
             result = self._tool_error(
                 400, _('Invalid tool parameters: %s') % '; '.join(errors),
                 started, tool_name, params)
-            Audit._record_tool(
+            audit = Audit._record_tool(
                 'tool_call', tool.name, params=params, result=result,
-                started=started, status='error', error_code=400)
+                started=started, status='error', error_code=400, tool=tool)
+            result['audit_id'] = audit.id
             return result
         try:
             result = self._execute_tool(tool, params, context)
@@ -496,7 +500,8 @@ class AiTool(models.Model):
             result = self._tool_error(
                 500, _('Tool "%s" failed: %s') % (tool_name, exc),
                 started, tool_name, params)
-        self._log_call(tool, params, result, started)
+        audit = self._log_call(tool, params, result, started)
+        result['audit_id'] = audit.id
         return result
 
     def _is_rate_limited(self, tool):
@@ -690,9 +695,9 @@ class AiTool(models.Model):
         }
 
     def _log_call(self, tool, params, result, started):
-        self.env['ai.audit.log']._record_tool(
+        return self.env['ai.audit.log']._record_tool(
             'tool_call', tool.name, params=params, result=result,
-            started=started)
+            started=started, tool=tool)
 
 
 class AiGenericTools(models.AbstractModel):

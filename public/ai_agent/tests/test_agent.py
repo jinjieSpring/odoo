@@ -283,6 +283,8 @@ class TestAgent(AiBaseCase):
         ], limit=1)
         self.assertTrue(audit)
         self.assertEqual(audit.status, 'blocked')
+        self.assertEqual(audit.block_reason, 'agent_deny')
+        self.assertEqual(audit.source, 'llm')
         self.assertEqual(audit.agent_id, self.chat_agent)
 
     def test_goal_start_writes_usage_and_audit(self):
@@ -300,6 +302,7 @@ class TestAgent(AiBaseCase):
         self.assertTrue(audit)
         self.assertEqual(audit.run_id, run)
         self.assertEqual(audit.agent_id, self.goal_agent)
+        self.assertEqual(audit.source, 'agent_run')
         self.assertIn('close the books', audit.input_summary or '')
 
     def test_goal_done_and_cancel_are_audited(self):
@@ -335,10 +338,17 @@ class TestAgent(AiBaseCase):
 
     def test_memory_write_is_audited(self):
         self.chat_agent.memory_enabled = True
-        self.env['ai.agent.memory']._remember(self.chat_agent, 'alpha fact')
+        session = self.env['ai.chat.session'].create({
+            'name': 'Mem',
+            'agent_id': self.chat_agent.id,
+        })
+        self.env['ai.agent.memory'].with_context(
+            ai_session_id=session.id,
+        )._remember(self.chat_agent, 'alpha fact')
         audit = self.env['ai.audit.log'].search([
             ('event_type', '=', 'memory_write'),
             ('agent_id', '=', self.chat_agent.id),
         ], limit=1)
         self.assertTrue(audit)
+        self.assertEqual(audit.session_id, session)
         self.assertIn('alpha fact', audit.input_summary or '')

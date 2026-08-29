@@ -175,6 +175,22 @@ msgid "Audit"
 msgstr "审计"
 
 #. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_audit_log_list_view
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_audit_log_form_view
+msgid "Record"
+msgstr "业务记录"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_audit_log_form_view
+msgid "Parameters"
+msgstr "参数"
+
+#. module: ai_base
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_audit_log_form_view
+msgid "Result"
+msgstr "结果"
+
+#. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_settings
 #: model:ir.actions.server,name:ai_base.ai_config_action
 msgid "Configuration"

@@ -65,6 +65,7 @@ class AiAgentMemory(models.Model):
             'memory_write',
             agent_id=agent.id,
             status='success',
+            session_id=self.env.context.get('ai_session_id') or False,
             input_summary=text[:_MAX_MEMORY_CHARS],
         )
         keep = max(1, agent.memory_limit or 20)

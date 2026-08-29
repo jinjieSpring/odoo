@@ -106,6 +106,7 @@ class AiAgentRun(models.Model):
         vals.setdefault('agent_id', self.agent_id.id)
         vals.setdefault('run_id', self.id)
         vals.setdefault('status', 'success' if event_type != 'agent_error' else 'error')
+        vals.setdefault('source', 'agent_run')
         return self.env['ai.audit.log']._record(event_type, **vals)
 
     def action_cancel(self):
@@ -262,7 +263,10 @@ class AiAgentRun(models.Model):
                     input_summary=(self.goal or '')[:4000],
                     output_summary=(result.get('reply') or '')[:4000])
                 if agent.memory_enabled:
-                    self.env['ai.agent.memory'].sudo()._remember_from_turn(
+                    self.env['ai.agent.memory'].sudo().with_context(
+                        ai_session_id=session.id,
+                        ai_run_id=self.id,
+                    )._remember_from_turn(
                         agent, self.goal, result.get('reply') or '',
                         user=self.user_id,
                         company=self.company_id or self.env.company)

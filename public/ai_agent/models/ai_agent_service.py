@@ -57,7 +57,9 @@ class AiAgentService(models.AbstractModel):
             return result
         if session._is_goal_run():
             return result
-        self.env['ai.agent.memory']._remember_from_turn(
+        self.env['ai.agent.memory'].with_context(
+            ai_session_id=session.id,
+        )._remember_from_turn(
             session.agent_id,
             payload.get('content'),
             (result or {}).get('reply'),
@@ -117,7 +119,9 @@ class AiAgentService(models.AbstractModel):
         content = (content or '').strip()
         if not content:
             raise UserError(_('Message content cannot be empty.'))
-        content = self._guard_input(content)
+        if session:
+            self = self.with_context(ai_session_id=session.id)
+        content = self._guard_input(content, session=session)
         if model_code and not model:
             model = self.env['ai.model']._get_by_code(model_code)
         model = self._resolve_model(
@@ -127,7 +131,7 @@ class AiAgentService(models.AbstractModel):
             'options': options, 'scenario': scenario,
         }
         payload = self.on_ai_request_before(payload) or payload
-        self._check_rate_limit()
+        self._check_rate_limit(session=session)
         try:
             if session:
                 self._prepare_session_turn(
@@ -246,8 +250,8 @@ class AiAgentService(models.AbstractModel):
             return {'error': {'message': _('Message content cannot be empty.'),
                               'code': 'empty'}, 'events': []}
         try:
-            content = self._guard_input(content)
-            self._check_rate_limit()
+            content = self._guard_input(content, session=session)
+            self._check_rate_limit(session=session)
         except UserError as exc:
             return {'error': {'message': str(exc), 'code': 'blocked'}, 'events': []}
         model = session.model_id or self.env['ai.model']._get_model_for_scenario('chat')
@@ -368,26 +372,11 @@ class AiAgentService(models.AbstractModel):
     def _rate_limit_count(self, start, user_id=None):
         return self.env['ai.chat.service']._rate_limit_count(start, user_id=user_id)
 
-    def _check_rate_limit(self):
-        return self.env['ai.chat.service']._check_rate_limit()
+    def _check_rate_limit(self, session=None):
+        return self.env['ai.chat.service']._check_rate_limit(session=session)
 
-    def _guard_input(self, text):
-        """校验用户输入：超长、敏感词拦截；疑似注入只记日志不拦截。
-
-        入参:
-            text (str): 用户原文。
-        返回:
-            str: 原文本。超长或命中敏感词抛 ``UserError``。
-        """
-        max_len = self._param_int('ai_base.max_input_chars', 20000)
-        if max_len and len(text) > max_len:
-            raise UserError(_('Input exceeds the maximum length of %s characters.') % max_len)
-        blocked = self._sensitive_hits(text, direction='input')
-        if blocked:
-            raise UserError(_('Input contains blocked sensitive terms: %s') % ', '.join(blocked))
-        if _INJECTION_RE.search(text):
-            _logger.warning('ai_base possible prompt injection from uid=%s', self.env.uid)
-        return text
+    def _guard_input(self, text, session=None):
+        return self.env['ai.chat.service']._guard_input(text, session=session)
 
     def _guard_output(self, text):
         """清洗模型输出：命中敏感词的片段替换成 ``***``。
@@ -781,9 +770,13 @@ class AiAgentService(models.AbstractModel):
                                 tool._tool_label() if tool else name),
                     },
                 }
-                self.env['ai.audit.log']._record_tool(
+                audit = self.env['ai.audit.log'].with_context(
+                    ai_audit_source='llm',
+                )._record_tool(
                     'tool_blocked', name, params=arguments, status='blocked',
+                    block_reason='agent_deny',
                     message=card['error']['message'], session=session)
+                card['audit_id'] = audit.id
                 return card, 'blocked', {}
         tool = self.env['ai.tool'].sudo().search(
             [('name', '=', name), ('is_active', '=', True)], limit=1)
@@ -795,15 +788,18 @@ class AiAgentService(models.AbstractModel):
         }
         if not tool:
             card['error'] = {'message': _('Unknown tool "%s".') % name}
-            self.env['ai.audit.log']._record_tool(
+            audit = self.env['ai.audit.log']._record_tool(
                 'tool_blocked', name, params=arguments, status='blocked',
                 error_code=404, message=card['error']['message'],
                 session=session)
+            card['audit_id'] = audit.id
             return card, 'blocked', {}
-        tool_env = self.env['ai.tool']
+        ctx = {'ai_audit_source': 'llm'}
         if session:
-            tool_env = tool_env.with_context(ai_session_id=session.id)
-        result = tool_env.action_invoke_tool(name, arguments)
+            ctx['ai_session_id'] = session.id
+        result = self.env['ai.tool'].with_context(**ctx).action_invoke_tool(
+            name, arguments)
+        card['audit_id'] = result.pop('audit_id', None)
         if result.get('status') == 'success':
             card['status'] = 'done'
             card['summary'] = result.get('message') or _('Done')

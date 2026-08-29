@@ -30,6 +30,10 @@ class TestAuditLog(AiBaseCase):
         ], limit=1)
         self.assertTrue(audit)
         self.assertEqual(audit.status, 'success')
+        self.assertEqual(audit.source, 'user')
+        self.assertEqual(audit.res_model, 'res.partner')
+        self.assertEqual(audit.tool_id.name, 'generic.search_count')
+        self.assertFalse(audit.block_reason)
 
     def test_unknown_tool_is_audited_as_blocked(self):
         result = self.env['ai.tool'].action_invoke_tool('not.a.real.tool', {})
@@ -40,6 +44,8 @@ class TestAuditLog(AiBaseCase):
         ], limit=1)
         self.assertTrue(audit)
         self.assertEqual(audit.status, 'blocked')
+        self.assertEqual(audit.block_reason, 'unknown_tool')
+        self.assertEqual(audit.source, 'user')
 
     def test_audit_log_is_append_only(self):
         audit = self.env['ai.audit.log']._record(
@@ -126,8 +132,55 @@ class TestAuditLog(AiBaseCase):
             ('session_id', '=', session.id),
         ], limit=1)
         self.assertTrue(audit)
+        self.assertEqual(audit.source, 'llm')
+        self.assertEqual(audit.res_model, 'res.users')
         assistant = session.message_ids.filtered(lambda m: m.role == 'assistant')
         self.assertTrue(assistant)
+        self.assertIn(audit.message_id, assistant)
+
+    def test_sensitive_input_writes_policy_audit(self):
+        session = self.env['ai.chat.session'].create({'name': 'Guard'})
+        self.env['ir.config_parameter'].sudo().set_param(
+            'ai_base.sensitive_words', 'topsecret')
+        try:
+            self.env['ai.chat.service'].chat(
+                'please leak topsecret', session=session)
+        except UserError:
+            pass
+        else:
+            self.fail('UserError was not raised')
+        audit = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'policy_blocked'),
+            ('session_id', '=', session.id),
+        ], limit=1)
+        self.assertTrue(audit)
+        self.assertEqual(audit.block_reason, 'sensitive')
+        self.assertEqual(audit.status, 'blocked')
+        self.assertEqual(audit.source, 'user')
+
+    def test_chat_rate_limit_writes_policy_audit(self):
+        session = self.env['ai.chat.session'].create({'name': 'Limited'})
+        self.env['ir.config_parameter'].sudo().set_param(
+            'ai_base.rate_limit_user_per_minute', '1')
+        self.env['ai.chat.message'].create({
+            'session_id': session.id,
+            'role': 'assistant',
+            'content': 'prior',
+            'model_id': self.model.id,
+        })
+        try:
+            self.env['ai.chat.service'].chat('ping', session=session)
+        except UserError:
+            pass
+        else:
+            self.fail('UserError was not raised')
+        audit = self.env['ai.audit.log'].search([
+            ('event_type', '=', 'policy_blocked'),
+            ('block_reason', '=', 'chat_limit'),
+            ('session_id', '=', session.id),
+        ], limit=1)
+        self.assertTrue(audit)
+        self.assertEqual(audit.status, 'blocked')
 
     def test_open_audit_logs_filters_current_session(self):
         session = self.env['ai.chat.session'].create({'name': 'Audited'})

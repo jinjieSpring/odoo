@@ -122,7 +122,9 @@ class AiChatService(models.AbstractModel):
         content = (content or '').strip()
         if not content:
             raise UserError(_('Message content cannot be empty.'))
-        content = self._guard_input(content)
+        if session:
+            self = self.with_context(ai_session_id=session.id)
+        content = self._guard_input(content, session=session)
         if model_code and not model:
             model = self.env['ai.model']._get_by_code(model_code)
         model = self._resolve_model(
@@ -132,7 +134,7 @@ class AiChatService(models.AbstractModel):
             'options': options, 'scenario': scenario,
         }
         payload = self.on_ai_request_before(payload) or payload
-        self._check_rate_limit()
+        self._check_rate_limit(session=session)
         try:
             if session:
                 self._prepare_session_turn(
@@ -248,8 +250,10 @@ class AiChatService(models.AbstractModel):
             return {'error': {'message': _('Message content cannot be empty.'),
                               'code': 'empty'}, 'events': []}
         try:
-            content = self._guard_input(content)
-            self._check_rate_limit()
+            content = self.with_context(
+                ai_session_id=session.id)._guard_input(content, session=session)
+            self.with_context(
+                ai_session_id=session.id)._check_rate_limit(session=session)
         except UserError as exc:
             return {'error': {'message': str(exc), 'code': 'blocked'}, 'events': []}
         model = session.model_id or self.env['ai.model']._get_model_for_scenario('chat')
@@ -378,7 +382,7 @@ class AiChatService(models.AbstractModel):
             domain.append(('session_id.user_id', '=', user_id))
         return self.env['ai.chat.message'].sudo().search_count(domain)
 
-    def _check_rate_limit(self):
+    def _check_rate_limit(self, session=None):
         """按最近 60 秒检查全站 / 当前用户的请求次数。"""
         global_limit = self._param_int('ai_base.rate_limit_global_per_minute', 120)
         user_limit = self._param_int('ai_base.rate_limit_user_per_minute', 30)
@@ -386,16 +390,23 @@ class AiChatService(models.AbstractModel):
         from odoo import fields as odoo_fields
         start = odoo_fields.Datetime.now() - timedelta(seconds=60)
         if global_limit > 0 and self._rate_limit_count(start) >= global_limit:
-            raise UserError(_('The global AI rate limit has been reached. Retry shortly.'))
+            message = _('The global AI rate limit has been reached. Retry shortly.')
+            self.env['ai.audit.log']._record_policy(
+                'chat_limit', message, session=session)
+            raise UserError(message)
         if user_limit > 0 and self._rate_limit_count(
                 start, user_id=self.env.user.id) >= user_limit:
-            raise UserError(_('You have reached the per-user AI rate limit. Retry shortly.'))
+            message = _('You have reached the per-user AI rate limit. Retry shortly.')
+            self.env['ai.audit.log']._record_policy(
+                'chat_limit', message, session=session)
+            raise UserError(message)
 
-    def _guard_input(self, text):
+    def _guard_input(self, text, session=None):
         """校验用户输入：超长、敏感词拦截；疑似注入只记日志不拦截。
 
         入参:
             text (str): 用户原文。
+            session: 可选会话，写入策略审计时带上。
         返回:
             str: 原文本。超长或命中敏感词抛 ``UserError``。
         """
@@ -404,7 +415,12 @@ class AiChatService(models.AbstractModel):
             raise UserError(_('Input exceeds the maximum length of %s characters.') % max_len)
         blocked = self._sensitive_hits(text, direction='input')
         if blocked:
-            raise UserError(_('Input contains blocked sensitive terms: %s') % ', '.join(blocked))
+            message = _(
+                'Input contains blocked sensitive terms: %s'
+            ) % ', '.join(blocked)
+            self.env['ai.audit.log']._record_policy(
+                'sensitive', message, session=session, input_summary=text[:2000])
+            raise UserError(message)
         if _INJECTION_RE.search(text):
             _logger.warning('ai_base possible prompt injection from uid=%s', self.env.uid)
         return text
@@ -794,15 +810,18 @@ class AiChatService(models.AbstractModel):
         }
         if not tool:
             card['error'] = {'message': _('Unknown tool "%s".') % name}
-            self.env['ai.audit.log']._record_tool(
+            audit = self.env['ai.audit.log']._record_tool(
                 'tool_blocked', name, params=arguments, status='blocked',
                 error_code=404, message=card['error']['message'],
                 session=session)
+            card['audit_id'] = audit.id
             return card, 'blocked', {}
-        tool_env = self.env['ai.tool']
+        ctx = {'ai_audit_source': 'llm'}
         if session:
-            tool_env = tool_env.with_context(ai_session_id=session.id)
-        result = tool_env.action_invoke_tool(name, arguments)
+            ctx['ai_session_id'] = session.id
+        result = self.env['ai.tool'].with_context(**ctx).action_invoke_tool(
+            name, arguments)
+        card['audit_id'] = result.pop('audit_id', None)
         if result.get('status') == 'success':
             card['status'] = 'done'
             card['summary'] = result.get('message') or _('Done')
@@ -852,12 +871,16 @@ class AiChatService(models.AbstractModel):
             usage = round_info.get('usage') or {}
             model = self.env['ai.model'].browse(
                 round_info.get('model_id') or 0).exists() or fallback
-            self.env['ai.chat.message'].create({
+            audit_ids = [card.get('audit_id') for card in cards if card.get('audit_id')]
+            stored_cards = [{
+                key: value for key, value in card.items() if key != 'audit_id'
+            } for card in cards]
+            message = self.env['ai.chat.message'].create({
                 'session_id': session.id,
                 'role': 'assistant',
                 'content': self._guard_output(content),
                 'reasoning_content': round_info.get('reasoning') or '',
-                'tool_cards': cards,
+                'tool_cards': stored_cards,
                 'prompt_tokens': usage.get('prompt_tokens') or 0,
                 'completion_tokens': usage.get('completion_tokens') or 0,
                 'total_tokens': usage.get('total_tokens') or 0,
@@ -865,6 +888,8 @@ class AiChatService(models.AbstractModel):
                 'status': 'success',
                 **self._message_model_vals(model),
             })
+            if audit_ids:
+                self.env['ai.audit.log'].browse(audit_ids)._link_to_message(message)
         error = result.get('error') or {}
         if error:
             self._persist_error_message(session, fallback, error)
