@@ -94,6 +94,7 @@ export class AiChat extends Component {
             agentRun: false,
             contextAttached: false,
             contextDisplayName: "",
+            sessionContextName: "",
             contextAvailable: false,
             reasoningCollapsed: {},
             sidebarCollapsed: false,
@@ -206,6 +207,9 @@ export class AiChat extends Component {
 
     sessionMeta(session) {
         const parts = [];
+        if (session.res_name) {
+            parts.push(session.res_name);
+        }
         const count = Number(session.message_count) || 0;
         parts.push(
             _t("%s messages", count)
@@ -623,11 +627,8 @@ export class AiChat extends Component {
         } else {
             await this.attachAutoContext();
         }
-        // Always re-detect the record context on dialog open: an existing
-        // session may carry a stale/wrong context (e.g. attached earlier
-        // from another page), and the user expects the current form record
-        // to be sensed. attachAutoContext keeps the previous context when
-        // no record is detected and respects the user preference toggle.
+        // Sense the current view so the insert toggle can be enabled, but
+        // do not overwrite an existing session's remembered record.
         await this.attachAutoContext();
     }
 
@@ -636,7 +637,7 @@ export class AiChat extends Component {
             "ai.chat.session",
             [["user_id", "=", user.userId]],
             ["id", "name", "message_count", "write_date",
-             "input_tokens", "output_tokens"],
+             "input_tokens", "output_tokens", "res_name"],
             { order: "write_date desc, id desc", limit: 50 }
         );
         this.state.sessions = sessions;
@@ -686,9 +687,10 @@ export class AiChat extends Component {
         this.applyAgentSession(data.session);
         // attach_context is a user preference persisted in the user
         // settings; switching sessions must not overwrite it.
-        this.state.contextAttached = Boolean(data.session.context_attached);
-        this.state.contextDisplayName =
+        this.state.sessionContextName =
             data.session.context_display_name || "";
+        this.state.contextDisplayName = this.state.sessionContextName;
+        this.state.contextAttached = Boolean(data.session.context_attached);
         this.state.historyIndex = -1;
         this.state.historyMode = false;
         if (autoSend && this.state.draft.trim()) {
@@ -717,6 +719,7 @@ export class AiChat extends Component {
         );
         if (emptyNew) {
             await this.selectSession(emptyNew.id);
+            await this.attachAutoContext();
             return;
         }
         const id = await this.orm.call(
@@ -734,6 +737,7 @@ export class AiChat extends Component {
             };
         this.state.contextAttached = false;
         this.state.contextDisplayName = "";
+        this.state.sessionContextName = "";
         this.state.currentName = "New Session";
         this.state.sessionSearch = "";
         this.state.agentId = this.state.defaultAgentId || 0;
@@ -742,6 +746,7 @@ export class AiChat extends Component {
         this.state.agentRun = false;
         await this.loadSessions();
         this.scrollToBottom();
+        await this.attachAutoContext();
     }
 
     async closeSession(sessionId, name) {
@@ -1607,28 +1612,35 @@ export class AiChat extends Component {
         return null;
     }
 
-    async attachAutoContext() {
+    _keepSessionContextLabel(fallback = "") {
+        if (this.state.sessionContextName) {
+            this.state.contextDisplayName = this.state.sessionContextName;
+            return;
+        }
+        this.state.contextDisplayName = fallback || "";
+    }
+
+    async attachAutoContext({ replace = false } = {}) {
         const context = this._routerRecordContext();
+        const shouldAttach = Boolean(
+            this.state.currentId &&
+            this.state.attachContext &&
+            (replace || !this.state.sessionContextName)
+        );
         if (!context) {
-            // No record is being viewed: drop any stale context so the
-            // dialog does not keep answering with an old record.
             this.state.contextAvailable = false;
-            this.state.contextDisplayName = "";
-            if (this.state.contextAttached) {
-                await this.clearContext();
-            }
+            this._keepSessionContextLabel();
             return;
         }
         try {
             if (context.viewType === "unsupported") {
                 this.state.contextAvailable = false;
-                this.state.contextDisplayName = _t(
-                    "Current %s view does not support context awareness",
-                    context.viewName
+                this._keepSessionContextLabel(
+                    _t(
+                        "Current %s view does not support context awareness",
+                        context.viewName
+                    )
                 );
-                if (this.state.contextAttached) {
-                    await this.clearContext();
-                }
                 return;
             }
             // Detect and display the record even before a session exists:
@@ -1636,35 +1648,26 @@ export class AiChat extends Component {
             // actually viewing a record (the session is auto-created on the
             // first send and the context is attached then).
             if (context.viewType === "list" || context.viewType === "kanban") {
-                // List/kanban record set: read-only info for the strip, and
-                // attach only when the user preference is enabled. Empty
-                // views have no context: the toggle is disabled.
                 const info = await this.orm.call(
                     "ai.chat.session",
                     "action_get_list_context",
                     [context.modelName, context.resIds || [], context.count || 0]
                 );
+                let detected = "";
                 if (info && info.model) {
                     const label = info.display_name || info.model;
-                    this.state.contextDisplayName = _t(
+                    detected = _t(
                         "Total %s %s records",
                         info.count,
                         label
                     );
                 }
-                this.state.contextAvailable = info.count > 0;
-                if (info.count <= 0) {
-                    if (this.state.contextAttached) {
-                        await this.clearContext();
+                this.state.contextAvailable = Boolean(info && info.count > 0);
+                this._keepSessionContextLabel(detected);
+                if (!info || info.count <= 0 || !shouldAttach) {
+                    if (!this.state.attachContext) {
+                        this.state.contextAttached = false;
                     }
-                    return;
-                }
-                if (!this.state.currentId) {
-                    this.state.contextAttached = false;
-                    return;
-                }
-                if (!this.state.attachContext) {
-                    this.state.contextAttached = false;
                     return;
                 }
                 const result = await this.orm.call(
@@ -1676,34 +1679,29 @@ export class AiChat extends Component {
                 this.state.contextAttached = Boolean(
                     result && result.attached
                 );
+                if (this.state.contextAttached) {
+                    this.state.sessionContextName = detected;
+                    this.state.contextDisplayName = detected;
+                }
                 return;
             }
-            // Read-only detection: always show the current record info.
             const info = await this.orm.call(
                 "ai.chat.session",
                 "action_get_record_context",
                 [context.modelName, context.resId]
             );
             if (info && info.display_name) {
-                this.state.contextDisplayName = info.display_name;
                 this.state.contextAvailable = true;
+                this._keepSessionContextLabel(info.display_name);
             } else {
-                // Missing/deleted record: no attachable context.
-                this.state.contextDisplayName = "";
                 this.state.contextAvailable = false;
-                if (this.state.contextAttached) {
-                    await this.clearContext();
+                this._keepSessionContextLabel();
+                return;
+            }
+            if (!shouldAttach) {
+                if (!this.state.attachContext) {
+                    this.state.contextAttached = false;
                 }
-                return;
-            }
-            if (!this.state.currentId) {
-                // Defer attaching until the session exists; sendCurrent
-                // calls attachAutoContext again after auto-creating it.
-                this.state.contextAttached = false;
-                return;
-            }
-            if (!this.state.attachContext) {
-                this.state.contextAttached = false;
                 return;
             }
             const result = await this.orm.call(
@@ -1713,6 +1711,8 @@ export class AiChat extends Component {
             );
             if (result && result.attached) {
                 this.state.contextAttached = true;
+                this.state.sessionContextName = info.display_name;
+                this.state.contextDisplayName = info.display_name;
             } else {
                 this.state.contextAttached = false;
             }
@@ -1727,12 +1727,14 @@ export class AiChat extends Component {
             return;
         }
         this.state.attachContext = true;
-        await this.attachAutoContext();
+        await this.attachAutoContext({ replace: true });
         await this.saveOptions();
     }
 
     async removeAttachedContext() {
         this.state.attachContext = false;
+        this.state.sessionContextName = "";
+        this.state.contextDisplayName = "";
         await this.clearContext();
         if (this.state.currentId) {
             await this.saveOptions();
@@ -1742,6 +1744,7 @@ export class AiChat extends Component {
 
     async clearContext() {
         this.state.contextAttached = false;
+        this.state.sessionContextName = "";
         if (!this.state.currentId) {
             return;
         }

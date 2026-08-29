@@ -58,6 +58,10 @@ class TestChat(AiBaseCase):
         self.assertIn('Acme Context', session.context_snapshot)
         session.action_clear_context()
         self.assertFalse(session.context_model)
+        self.assertFalse(session.context_res_id)
+        self.assertFalse(session.context_snapshot)
+        self.assertFalse(session.res_model)
+        self.assertFalse(session.res_id)
         self.assertTrue(session.attach_context)
 
     def test_list_context_snapshot(self):

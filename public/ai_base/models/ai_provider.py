@@ -66,7 +66,8 @@ class AiProvider(models.Model):
         'res.company', string='Company', index=True,
         help='Empty means the provider is available to every company.')
     model_ids = fields.One2many('ai.model', 'provider_id', string='Models')
-    model_count = fields.Integer(compute='_compute_model_count', string='Models')
+    model_count = fields.Integer(
+        compute='_compute_model_count', string='Model Count')
 
     @api.model_create_multi
     def create(self, vals_list):

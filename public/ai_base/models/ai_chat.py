@@ -318,7 +318,7 @@ class AiChat(models.AbstractModel):
                 'context_attached': bool(
                     session.context_model and (
                         session.context_res_id or session.context_snapshot)),
-                'context_display_name': snapshot.splitlines()[0] if snapshot else '',
+                'context_display_name': self._context_display_name(session),
                 'capabilities': (
                     model._allowed_options()
                     if model else self.empty_capabilities()),
@@ -723,10 +723,31 @@ class AiChat(models.AbstractModel):
             'res_model': context['model'],
             'res_id': context['res_id'],
         })
-        return {'attached': True, 'snapshot': session.context_snapshot}
+        return {
+            'attached': True,
+            'snapshot': session.context_snapshot,
+            'display_name': context['display_name'],
+        }
+
+    def _context_display_name(self, session):
+        """给对话框顶栏用的记录名：优先关联单据名，否则快照第一行。"""
+        if session.res_name:
+            return session.res_name
+        snapshot = (session.context_snapshot or '').strip()
+        if not snapshot:
+            return ''
+        first = snapshot.splitlines()[0]
+        if first.startswith('Viewing ') and ' (ids:' in first:
+            return first.split(' (ids:')[0]
+        if first.startswith('Current record: '):
+            rest = first[len('Current record: '):]
+            if rest.endswith(')') and '(' in rest:
+                return rest[:rest.rfind('(')].strip()
+            return rest
+        return first
 
     def clear_context(self, session):
-        """清掉会话上附带的记录/列表上下文快照。
+        """清掉会话上附带的记录/列表上下文，以及关联单据。
 
         入参:
             session: 当前会话。
@@ -738,6 +759,8 @@ class AiChat(models.AbstractModel):
             'context_model': False,
             'context_res_id': False,
             'context_snapshot': False,
+            'res_model': False,
+            'res_id': False,
         })
         return True
 
@@ -776,17 +799,12 @@ class AiChat(models.AbstractModel):
             session: 当前会话。
             model_name / res_ids / total_count: 同 ``list_context``。
         返回:
-            dict: ``{attached, snapshot}``。模型无效时清空上下文并 ``attached=False``。
+            dict: ``{attached, snapshot}``。模型无效时 ``attached=False``，不改已有记录。
         """
         session.ensure_one()
         info = self.list_context(model_name, res_ids, total_count)
         if not info['model']:
-            session.write({
-                'context_model': False,
-                'context_res_id': False,
-                'context_snapshot': False,
-            })
-            return {'attached': False, 'snapshot': ''}
+            return {'attached': False, 'snapshot': session.context_snapshot or ''}
         label = info.get('display_name') or info['model']
         if info['count']:
             snapshot = 'Viewing %s %s records (ids: %s)' % (

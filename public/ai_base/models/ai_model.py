@@ -22,7 +22,7 @@ class AiModel(models.Model):
         ('summary', 'Summary / Rewrite'),
     )
 
-    name = fields.Char(string='Display Name', required=True)
+    name = fields.Char(string='Name', required=True)
     code = fields.Char(
         string='Model Code', required=True, index=True,
         help='Business modules pass this code to ai.chat.service.')

@@ -144,6 +144,11 @@ msgid "Models"
 msgstr "模型"
 
 #. module: ai_base
+#: model:ir.model.fields,field_description:ai_base.field_ai_provider__model_count
+msgid "Model Count"
+msgstr "模型数量"
+
+#. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_foundation
 msgid "Foundation"
 msgstr "基础"
@@ -337,11 +342,6 @@ msgid "Private / Custom"
 msgstr "私有 / 自定义"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_model__name
-msgid "Display Name"
-msgstr "显示名称"
-
-#. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__code
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_code
 msgid "Model Code"
@@ -480,6 +480,7 @@ msgstr "语音"
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__name
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__name
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__name
+#: model:ir.model.fields,field_description:ai_base.field_ai_model__name
 msgid "Name"
 msgstr "名称"
 
