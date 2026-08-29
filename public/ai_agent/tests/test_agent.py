@@ -132,18 +132,13 @@ class TestAgent(AiBaseCase):
             session, query='hello')
         self.assertIn('prefers lists', messages[0]['content'])
 
-    def test_chat_scenario_agent_logs_request_type_agent(self):
+    def test_chat_scenario_agent_replies(self):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok('done')):
-            self.env['ai.agent.service'].chat(
+            result = self.env['ai.agent.service'].chat(
                 'how many users?', scenario='agent')
-        log = self.env['ai.request.log'].search([
-            ('request_type', '=', 'agent'),
-            ('scenario_key', '=', 'agent'),
-        ], limit=1)
-        self.assertTrue(log)
-        self.assertEqual(log.status, 'success')
+        self.assertEqual(result['reply'], 'done')
 
     def test_chat_mode_still_replies_inline(self):
         session = self.env['ai.chat.session'].create({'name': 'Chat'})
@@ -306,10 +301,6 @@ class TestAgent(AiBaseCase):
         self.assertEqual(audit.run_id, run)
         self.assertEqual(audit.agent_id, self.goal_agent)
         self.assertIn('close the books', audit.input_summary or '')
-        self.assertFalse(self.env['ai.request.log'].search([
-            ('request_type', '=', 'agent'),
-            ('session_id', '=', session.id),
-        ]))
 
     def test_goal_done_and_cancel_are_audited(self):
         session = self.env['ai.chat.session'].create({

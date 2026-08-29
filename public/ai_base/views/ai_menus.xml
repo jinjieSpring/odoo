@@ -7,9 +7,6 @@
         <field name="action" eval="False"/>
     </record>
 
-    <menuitem id="ai_menu_logs" name="Usage"
-              parent="ai_menu_root" action="ai_request_log_action"
-              groups="ai_base.group_log" sequence="6" active="False"/>
     <menuitem id="ai_menu_foundation" name="Foundation"
               parent="ai_menu_root"
               groups="ai_base.group_log" sequence="10"/>

@@ -102,7 +102,7 @@ class AiChatService(models.AbstractModel):
             options (dict): 调用选项，如 ``system_prompt`` / ``max_rounds`` / ``skip_memory``。
             history (list): 无 session 时的消息列表 ``[{role, content}, ...]``。
             model: 已解析的 ``ai.model`` 记录。
-            scenario (str): 场景键，默认 ``chat``，影响选模型和日志。
+            scenario (str): 场景键，默认 ``chat``，影响选模型。
             persist_user (bool): 有 session 时是否先写入一条 user 消息。
         返回:
             dict: ``reply`` 最终回复；``usage`` token 累计；``rounds`` 工具循环各轮；
@@ -149,12 +149,6 @@ class AiChatService(models.AbstractModel):
             result['reply'] = self._guard_output(result.get('reply') or '')
             if session:
                 self._persist_rounds(session, result)
-            else:
-                self._log_request(
-                    request_type=self._request_type_for_scenario(scenario),
-                    scenario_key=scenario,
-                    session=session, model=model, result=result,
-                    input_summary=content)
             result = self.on_ai_request_done(payload, result) or result
             return result
         except Exception as exc:
@@ -189,7 +183,7 @@ class AiChatService(models.AbstractModel):
         return []
 
     def embedding(self, texts, model=None, model_code=None):
-        """把文本列表做成向量，并写一条 embed 请求日志。
+        """把文本列表做成向量。
 
         入参:
             texts (list[str]): 要向量化的文本。
@@ -202,29 +196,11 @@ class AiChatService(models.AbstractModel):
         if model_code and not model:
             model = self.env['ai.model']._get_by_code(model_code)
         model = self._resolve_model(model, 'embed')
-        started = time.time()
         client = get_provider(model.provider_id)
         try:
-            vectors = client.embedding(model, list(texts))
-            status = 'success'
-            error = False
+            return client.embedding(model, list(texts))
         except AiError as exc:
-            vectors = [[] for _ in texts]
-            status = 'error'
-            error = str(exc)
-        self._log(
-            request_type='embed',
-            provider_id=model.provider_id.id,
-            model_id=model.id,
-            model_code=model.code,
-            scenario_key='embed',
-            latency_ms=int((time.time() - started) * 1000),
-            status=status,
-            error_message=error,
-        )
-        if status == 'error':
-            raise UserError(error)
-        return vectors
+            raise UserError(str(exc)) from exc
 
     def _prepare_session_turn(self, session, model, content, persist_user=True):
         """给会话补模型、标成进行中，并按需写入本轮用户消息。"""
@@ -391,28 +367,16 @@ class AiChatService(models.AbstractModel):
             'ai_base.max_tool_calls_per_round', 10)
         return max(1, max_rounds), max(1, max_calls)
 
-    def _rate_limit_request_types(self):
-        """计入限流的无会话 ``ai.request.log.request_type``（向量化等）。"""
-        return ('chat', 'rag', 'embed', 'agent')
-
     def _rate_limit_count(self, start, user_id=None):
-        """最近窗口内的模型调用次数：助手消息 + 无会话请求日志。"""
-        msg_domain = [
+        """最近窗口内带模型的助手消息条数。"""
+        domain = [
             ('role', '=', 'assistant'),
             ('model_id', '!=', False),
             ('create_date', '>=', start),
         ]
-        log_domain = [
-            ('request_type', 'in', self._rate_limit_request_types()),
-            ('create_date', '>=', start),
-        ]
         if user_id:
-            msg_domain.append(('session_id.user_id', '=', user_id))
-            log_domain.append(('user_id', '=', user_id))
-        return (
-            self.env['ai.chat.message'].sudo().search_count(msg_domain)
-            + self.env['ai.request.log'].sudo().search_count(log_domain)
-        )
+            domain.append(('session_id.user_id', '=', user_id))
+        return self.env['ai.chat.message'].sudo().search_count(domain)
 
     def _check_rate_limit(self):
         """按最近 60 秒检查全站 / 当前用户的请求次数。"""
@@ -479,78 +443,12 @@ class AiChatService(models.AbstractModel):
                 hits.append(word)
         return hits
 
-    def _request_type_for_scenario(self, scenario, default='chat'):
-        """Map a chat scenario key to ``ai.request.log.request_type``."""
-        return {
-            'rag': 'rag',
-            'embed': 'embed',
-        }.get(scenario, default)
-
     def _log_request_error(self, scenario, session, model, content, exc):
-        """会话失败写在助手消息上；没有会话才写 ``ai.request.log``。"""
+        """会话失败时写一条助手错误消息。"""
         if session:
             self._persist_error_message(session, model, {
                 'message': str(exc),
             })
-            return
-        vals = {
-            'request_type': self._request_type_for_scenario(scenario),
-            'scenario_key': scenario or 'chat',
-            'status': 'error',
-            'error_message': str(exc)[:500],
-            'error_traceback': traceback.format_exc()[:8000],
-            'input_summary': (content or '')[:4000],
-        }
-        if model:
-            vals['provider_id'] = model.provider_id.id
-            vals['model_id'] = model.id
-            vals['model_code'] = model.code
-        self._log(**vals)
-
-    def _log(self, **vals):
-        """写入一条 ``ai.request.log``，自动补当前用户和公司。
-
-        入参:
-            **vals: 日志字段，如 ``request_type`` / ``model_id`` / ``status``。
-        返回:
-            ai.request.log: 新建的日志记录。
-        """
-        vals.setdefault('user_id', self.env.user.id)
-        vals.setdefault('company_id', self.env.company.id)
-        return self.env['ai.request.log'].sudo().create(vals)
-
-    def _log_request(self, request_type, scenario_key, session, model, result, input_summary=''):
-        """从一次 chat 结果整理字段，再调用 ``_log``。
-
-        入参:
-            request_type (str): ``chat`` / ``embed`` 等。
-            scenario_key (str): 场景键，写入日志。
-            session: ``ai.chat.session`` 或空。
-            model: 本次 ``ai.model``。
-            result (dict): ``_run_tool_loop`` / ``chat`` 的返回值。
-            input_summary (str): 输入摘要，截到 4000 字。
-        返回:
-            None（副作用是建日志）。
-        """
-        error = result.get('error') or {}
-        request_type = self._request_type_for_scenario(
-            scenario_key, request_type)
-        self._log(
-            request_type=request_type,
-            scenario_key=scenario_key,
-            session_id=session.id if session else False,
-            provider_id=model.provider_id.id,
-            model_id=model.id,
-            model_code=model.code,
-            prompt_tokens=(result.get('usage') or {}).get('prompt_tokens') or 0,
-            completion_tokens=(result.get('usage') or {}).get('completion_tokens') or 0,
-            total_tokens=(result.get('usage') or {}).get('total_tokens') or 0,
-            latency_ms=result.get('latency_ms') or 0,
-            status='error' if error else 'success',
-            error_message=error.get('message') if error else False,
-            input_summary=(input_summary or '')[:4000],
-            output_summary=(result.get('reply') or '')[:4000],
-        )
 
     def _knowledge_system_parts(self, session, query):
         """拼进 system prompt 的知识库片段。本模块返回空；``ai_knowledge`` 重写。

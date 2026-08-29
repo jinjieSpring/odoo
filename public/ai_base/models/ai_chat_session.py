@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import timedelta
+
 from odoo import _, api, fields, models
 
 
@@ -384,3 +386,70 @@ class AiChatMessage(models.Model):
         for session in records.session_id:
             session.write({'state': session.state or 'open'})
         return records
+
+    @api.model
+    def _register_hook(self):
+        super()._register_hook()
+        gc = self.env.ref('ai_base.ir_cron_gc_logs', raise_if_not_found=False)
+        if gc:
+            gc.sudo().unlink()
+        alert = self.env.ref('ai_base.ir_cron_error_alert', raise_if_not_found=False)
+        if alert:
+            model = self.env['ir.model']._get('ai.chat.message')
+            if model:
+                alert.sudo().write({
+                    'model_id': model.id,
+                    'code': 'model._cron_error_alert()',
+                })
+        for xmlid in (
+            'ai_base.ai_menu_logs',
+            'ai_base.ai_request_log_action',
+            'ai_base.ai_request_log_list_view',
+            'ai_base.ai_request_log_form_view',
+            'ai_base.ai_request_log_pivot_view',
+            'ai_base.ai_request_log_graph_view',
+            'ai_base.access_ai_request_log_user',
+            'ai_base.access_ai_request_log_viewer',
+            'ai_base.access_ai_request_log_manager',
+            'ai_base.rule_request_log_user',
+            'ai_base.rule_request_log_viewer',
+        ):
+            record = self.env.ref(xmlid, raise_if_not_found=False)
+            if record:
+                record.sudo().unlink()
+        self.env.cr.execute('DROP TABLE IF EXISTS ai_request_log CASCADE')
+
+    @api.model
+    def _cron_error_alert(self):
+        params = self.env['ir.config_parameter'].sudo()
+        window = int(params.get_param('ai_base.alert_window_minutes', '15') or 15)
+        threshold = float(params.get_param('ai_base.alert_error_rate', '0.3') or 0.3)
+        since = fields.Datetime.now() - timedelta(minutes=window)
+        messages = self.sudo().search([
+            ('role', '=', 'assistant'),
+            ('model_id', '!=', False),
+            ('create_date', '>=', since),
+        ])
+        if len(messages) < 5:
+            return
+        errors = messages.filtered(lambda msg: msg.status == 'error')
+        rate = len(errors) / float(len(messages))
+        if rate < threshold:
+            return
+        users = self.env.ref('ai_base.group_manager').all_user_ids.filtered('email')
+        if not users:
+            return
+        self.env['mail.mail'].sudo().create({
+            'subject': _('AI Base error rate alert'),
+            'body_html': _(
+                '<p>AI request error rate is %(rate).0f%% over the last '
+                '%(window)s minutes (%(errors)s / %(total)s).</p>'
+            ) % {
+                'rate': rate * 100,
+                'window': window,
+                'errors': len(errors),
+                'total': len(messages),
+            },
+            'email_to': ','.join(users.mapped('email')),
+            'auto_delete': True,
+        }).send()

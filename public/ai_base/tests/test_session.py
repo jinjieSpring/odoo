@@ -57,9 +57,6 @@ class TestSession(AiBaseCase):
         self.assertEqual(assistant.total_tokens, 2)
         self.assertEqual(assistant.status, 'success')
         self.assertTrue(assistant.model_id)
-        self.assertFalse(self.env['ai.request.log'].search([
-            ('session_id', '=', session.id),
-        ]))
 
     def test_message_preview_collapses_long_content(self):
         session = self.env['ai.chat.session'].create({'name': 'Preview'})

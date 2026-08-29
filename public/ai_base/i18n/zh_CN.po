@@ -110,11 +110,6 @@ msgid "AI Chat Message"
 msgstr "AI 会话消息"
 
 #. module: ai_base
-#: model:ir.model,name:ai_base.model_ai_request_log
-msgid "AI Usage Line"
-msgstr "用量明细"
-
-#. module: ai_base
 #: model:ir.model,name:ai_base.model_ai_config
 #: model:ir.ui.view,arch_db:ai_base.ai_config_form_view
 msgid "AI Base Configuration"
@@ -171,12 +166,6 @@ msgstr "知识库"
 #: model:ir.actions.act_window,name:ai_base.ai_tool_action
 msgid "AI Tools"
 msgstr "AI 工具"
-
-#. module: ai_base
-#: model:ir.ui.menu,name:ai_base.ai_menu_logs
-#: model:ir.actions.act_window,name:ai_base.ai_request_log_action
-msgid "Usage"
-msgstr "用量"
 
 #. module: ai_base
 #: model:ir.ui.menu,name:ai_base.ai_menu_audit
@@ -304,7 +293,6 @@ msgstr "可选备注..."
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_base__company_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__company_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__company_id
 msgid "Company"
 msgstr "公司"
 
@@ -350,7 +338,6 @@ msgstr "私有 / 自定义"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__code
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_code
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__model_code
 msgid "Model Code"
 msgstr "模型编码"
@@ -363,7 +350,6 @@ msgstr "业务模块通过该编码调用 ai.chat.service。"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_model__provider_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__provider_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__provider_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__provider_id
 msgid "Provider"
 msgstr "提供方"
@@ -455,13 +441,11 @@ msgstr "厂商参数"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__chat
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__chat
 msgid "Chat"
 msgstr "对话"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__embedding
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__embed
 msgid "Embedding"
 msgstr "嵌入"
 
@@ -471,19 +455,13 @@ msgid "Image Generation"
 msgstr "图像生成"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__image
-msgid "Image"
-msgstr "图像"
-
-#. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_model__model_kind__audio_transcribe
 msgid "Audio Transcribe"
 msgstr "语音转写"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__audio
-msgid "Audio"
-msgstr "语音"
+msgid "Summary / Rewrite"
+msgstr "摘要 / 改写"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_prompt_template__name
@@ -628,7 +606,6 @@ msgstr "提取文本"
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__state
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__state
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__status
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__status
 msgid "Status"
 msgstr "状态"
@@ -660,11 +637,8 @@ msgstr "已向量化"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__error_message
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_message
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__error_message
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__error
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__status__error
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
 msgid "Error"
 msgstr "错误"
 
@@ -730,11 +704,6 @@ msgstr "列表、智能体工具和聊天卡片上显示的名称。"
 msgid ""
 "Told to the model so it knows when to call this tool. Chinese is fine."
 msgstr "发给模型，说明何时调用此工具。可以用中文。"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_name
-msgid "Tool Name"
-msgstr "工具名称"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__tool_name
@@ -874,7 +843,6 @@ msgstr "会话名称"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__user_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__user_id
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__role__user
 msgid "User"
 msgstr "用户"
@@ -886,7 +854,6 @@ msgstr "用户"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_session__model_id
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__model_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__model_id
 msgid "Model"
 msgstr "模型"
@@ -1028,7 +995,6 @@ msgstr "已关闭"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__create_date
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__create_date
 msgid "Created On"
 msgstr "创建时间"
 
@@ -1081,55 +1047,26 @@ msgstr "RAG 来源"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__prompt_tokens
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__prompt_tokens
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Input Tokens"
 msgstr "输入 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__completion_tokens
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__completion_tokens
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Output Tokens"
 msgstr "输出 Token"
 
 #. module: ai_base
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__total_tokens
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__total_tokens
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Total Tokens"
 msgstr "总 Token"
 
 #. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__session_id
 #: model:ir.model.fields,field_description:ai_base.field_ai_audit_log__session_id
 msgid "Session"
 msgstr "会话"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__scenario_key
-msgid "Scenario Key"
-msgstr "场景 Key"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__request_type
-msgid "Request Type"
-msgstr "请求类型"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__rag
-msgid "RAG Chat"
-msgstr "RAG 对话"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__agent
-msgid "Agent"
-msgstr "Agent"
-
-#. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__tool
-msgid "Tool Call"
-msgstr "工具调用"
 
 #. module: ai_base
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__event_type__tool_call
@@ -1137,12 +1074,6 @@ msgid "工具调用"
 msgstr "工具调用"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__request_type__probe
-msgid "Connection Test"
-msgstr "连通性测试"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__latency_ms
 #: model:ir.model.fields,field_description:ai_base.field_ai_chat_message__latency_ms
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_session_form_view
 msgid "Latency (ms)"
@@ -1154,7 +1085,6 @@ msgid "耗时（毫秒）"
 msgstr "耗时（毫秒）"
 
 #. module: ai_base
-#: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__success
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_chat_message__status__success
 msgid "Success"
 msgstr "成功"
@@ -1163,36 +1093,6 @@ msgstr "成功"
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_audit_log__status__success
 msgid "成功"
 msgstr "成功"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_traceback
-msgid "Traceback"
-msgstr "异常堆栈"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__input_summary
-msgid "Input Prompt"
-msgstr "输入提示词"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__output_summary
-msgid "Output Result"
-msgstr "输出结果"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__rag_snippets
-msgid "RAG Snippets"
-msgstr "RAG 片段"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__tool_calls
-msgid "Tool Calls"
-msgstr "工具调用记录"
-
-#. module: ai_base
-#: model:ir.model.fields,field_description:ai_base.field_ai_request_log__raw_response
-msgid "Raw Vendor Response"
-msgstr "厂商原始响应"
 
 #. module: ai_base
 #. odoo-javascript
@@ -1354,22 +1254,6 @@ msgstr "向量化"
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_document_form_view
 msgid "Knowledge Document"
 msgstr "知识文档"
-
-#. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
-msgid "Prompt / Reply"
-msgstr "提示 / 回复"
-
-#. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
-msgid "RAG"
-msgstr "RAG"
-
-#. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_pivot_view
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_graph_view
-msgid "AI Usage"
-msgstr "AI 用量"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_config_form_view
@@ -2040,13 +1924,13 @@ msgstr "已将 %s 条记录分成 %s 组。"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_request_log.py:0
+#: code:addons/ai_base/models/ai_chat_session.py:0
 msgid "AI Base error rate alert"
 msgstr "AI 底座错误率告警"
 
 #. module: ai_base
 #. odoo-python
-#: code:addons/ai_base/models/ai_request_log.py:0
+#: code:addons/ai_base/models/ai_chat_session.py:0
 msgid "<p>AI request error rate is %(rate).0f%% over the last %(window)s minutes (%(errors)s / %(total)s).</p>"
 msgstr "<p>过去 %(window)s 分钟内，AI 请求错误率为 %(rate).0f%%（%(errors)s / %(total)s）。</p>"
 
@@ -2192,10 +2076,6 @@ msgstr "PGVector"
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_knowledge_base__vector_store_type__chroma
 msgid "Chroma"
 msgstr "Chroma"
-
-#. module: ai_base
-msgid "Summary / Rewrite"
-msgstr "摘要 / 改写"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_tool_form_view
@@ -3017,3 +2897,4 @@ msgstr "正在生成…"
 #: code:addons/ai_base/static/src/xml/ai_user_settings_dialog.xml:0
 msgid "Loading..."
 msgstr "加载中..."
+

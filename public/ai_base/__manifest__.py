@@ -31,7 +31,6 @@ This module does not depend on OCA ``queue_job``.
         'views/ai_prompt_views.xml',
         'views/ai_tool_views.xml',
         'views/ai_session_views.xml',
-        'views/ai_request_log_views.xml',
         'views/ai_audit_log_views.xml',
         'views/ai_config_views.xml',
         'views/ai_menus.xml',

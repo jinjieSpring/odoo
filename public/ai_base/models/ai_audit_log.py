@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 
 
 class AiAuditLog(models.Model):
-    """Append-only action audit. Usage and prompt text stay on ``ai.request.log``."""
+    """Append-only action audit. Conversation usage lives on ``ai.chat.message``."""
 
     _name = 'ai.audit.log'
     _description = 'AI 审计日志'

@@ -12,9 +12,6 @@ access_ai_tool_manager,ai.tool.manager,model_ai_tool,ai_base.group_manager,1,1,1
 access_ai_session_user,ai.chat.session.user,model_ai_chat_session,base.group_user,1,1,1,1
 access_ai_message_user,ai.chat.message.user,model_ai_chat_message,base.group_user,1,1,1,1
 access_ai_user_settings_user,ai.user.settings.user,model_ai_user_settings,base.group_user,1,1,1,1
-access_ai_request_log_user,ai.request.log.user,model_ai_request_log,ai_base.group_user,1,0,0,0
-access_ai_request_log_viewer,ai.request.log.viewer,model_ai_request_log,ai_base.group_log,1,0,0,0
-access_ai_request_log_manager,ai.request.log.manager,model_ai_request_log,ai_base.group_manager,1,1,0,1
 access_ai_audit_log_user,ai.audit.log.user,model_ai_audit_log,ai_base.group_user,1,0,0,0
 access_ai_audit_log_viewer,ai.audit.log.viewer,model_ai_audit_log,ai_base.group_log,1,0,0,0
 access_ai_audit_log_manager,ai.audit.log.manager,model_ai_audit_log,ai_base.group_manager,1,0,0,0

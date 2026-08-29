@@ -19,7 +19,7 @@ class TestAuditLog(AiBaseCase):
             },
         }
 
-    def test_tool_call_writes_audit_not_request_log(self):
+    def test_tool_call_writes_audit(self):
         self.env['ai.tool']._sync_registry()
         result = self.env['ai.tool'].action_invoke_tool(
             'generic.search_count', {'model': 'res.partner'})
@@ -30,9 +30,6 @@ class TestAuditLog(AiBaseCase):
         ], limit=1)
         self.assertTrue(audit)
         self.assertEqual(audit.status, 'success')
-        self.assertFalse(self.env['ai.request.log'].search([
-            ('request_type', '=', 'tool'),
-        ]))
 
     def test_unknown_tool_is_audited_as_blocked(self):
         result = self.env['ai.tool'].action_invoke_tool('not.a.real.tool', {})
@@ -71,22 +68,19 @@ class TestAuditLog(AiBaseCase):
             ('id', '=', audit.id)])
         self.assertTrue(found)
 
-    def test_chat_exception_writes_request_log(self):
+    def test_chat_exception_writes_assistant_error(self):
+        session = self.env['ai.chat.session'].create({'name': 'Boom'})
         Service = type(self.env['ai.chat.service'])
         with patch.object(Service, '_run_tool_loop', side_effect=RuntimeError('boom')):
             try:
-                self.env['ai.chat.service'].chat('ping')
+                self.env['ai.chat.service'].chat('ping', session=session)
             except RuntimeError:
                 pass
             else:
                 self.fail('RuntimeError was not raised')
-        log = self.env['ai.request.log'].search([
-            ('status', '=', 'error'),
-            ('request_type', '=', 'chat'),
-        ], limit=1)
-        self.assertTrue(log)
-        self.assertIn('boom', log.error_message or '')
-        self.assertTrue(log.error_traceback)
+        error_msg = session.message_ids.filtered(lambda m: m.status == 'error')
+        self.assertTrue(error_msg)
+        self.assertIn('boom', error_msg.error_message or '')
 
     def test_tool_loop_audit_includes_session(self):
         self.env['ai.tool']._sync_registry()
@@ -134,9 +128,6 @@ class TestAuditLog(AiBaseCase):
         self.assertTrue(audit)
         assistant = session.message_ids.filtered(lambda m: m.role == 'assistant')
         self.assertTrue(assistant)
-        self.assertFalse(self.env['ai.request.log'].search([
-            ('session_id', '=', session.id),
-        ]))
 
     def test_open_audit_logs_filters_current_session(self):
         session = self.env['ai.chat.session'].create({'name': 'Audited'})

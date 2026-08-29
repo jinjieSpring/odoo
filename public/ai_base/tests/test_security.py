@@ -17,17 +17,14 @@ class TestSecurity(AiBaseCase):
         with self.assertRaises(AccessError):
             template.with_user(user).write({'user_template': 'hacked'})
 
-    def test_log_viewer_can_read_logs(self):
-        log = self.env['ai.request.log'].sudo().create({
-            'request_type': 'chat',
-            'user_id': self.env.user.id,
-            'status': 'success',
-        })
+    def test_log_viewer_can_read_audit(self):
+        audit = self.env['ai.audit.log']._record(
+            'tool_call', tool_name='generic.search_count', status='success')
         viewer = new_test_user(
             self.env, login='ai_logs',
             groups='base.group_user,ai_base.group_log')
-        found = self.env['ai.request.log'].with_user(viewer).search([
-            ('id', '=', log.id)])
+        found = self.env['ai.audit.log'].with_user(viewer).search([
+            ('id', '=', audit.id)])
         self.assertTrue(found)
 
     def test_log_viewer_can_read_other_sessions_but_not_write(self):

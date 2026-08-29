@@ -18,17 +18,13 @@ class TestService(AiBaseCase):
             },
         }
 
-    def test_chat_writes_request_log(self):
+    def test_chat_returns_reply(self):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok()):
             result = self.env['ai.chat.service'].chat('ping')
         self.assertEqual(result['reply'], 'hello')
-        log = self.env['ai.request.log'].search(
-            [('request_type', '=', 'chat')], limit=1)
-        self.assertTrue(log)
-        self.assertEqual(log.total_tokens, 5)
-        self.assertEqual(log.status, 'success')
+        self.assertEqual(result['usage']['total_tokens'], 5)
 
     def test_chat_prompt_key_and_model_code(self):
         self.env['ai.prompt.template'].create({
