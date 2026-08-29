@@ -5,6 +5,8 @@ from odoo import _, api, fields, models
 
 
 class AiRequestLog(models.Model):
+    """LLM usage rows (tokens, model, latency). Tool/agent actions live on ``ai.audit.log``."""
+
     _name = 'ai.request.log'
     _description = 'AI Request Log'
     _order = 'create_date desc, id desc'

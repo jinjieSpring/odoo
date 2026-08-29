@@ -133,6 +133,11 @@ class TestAuditLog(AiBaseCase):
             ('session_id', '=', session.id),
         ], limit=1)
         self.assertTrue(audit)
+        usage = self.env['ai.request.log'].search([
+            ('session_id', '=', session.id),
+        ], limit=1)
+        self.assertTrue(usage)
+        self.assertFalse(usage.tool_calls)
 
     def test_open_audit_logs_filters_current_session(self):
         session = self.env['ai.chat.session'].create({'name': 'Audited'})

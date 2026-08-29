@@ -546,10 +546,6 @@ class AiAgentService(models.AbstractModel):
             error_message=error.get('message') if error else False,
             input_summary=(input_summary or '')[:4000],
             output_summary=(result.get('reply') or '')[:4000],
-            tool_calls=json.dumps([
-                card for round_info in (result.get('rounds') or [])
-                for card in (round_info.get('cards') or [])
-            ], ensure_ascii=False)[:4000],
         )
 
     def _knowledge_system_parts(self, session, query):

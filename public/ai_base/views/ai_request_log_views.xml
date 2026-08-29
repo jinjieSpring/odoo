@@ -11,7 +11,6 @@
                 <field name="request_type"/>
                 <field name="scenario_key"/>
                 <field name="model_code"/>
-                <field name="tool_name"/>
                 <field name="total_tokens"/>
                 <field name="latency_ms"/>
                 <field name="status"/>
@@ -33,7 +32,6 @@
                             <field name="scenario_key"/>
                             <field name="provider_id"/>
                             <field name="model_id"/>
-                            <field name="tool_name"/>
                         </group>
                         <group>
                             <field name="status"/>
@@ -45,13 +43,12 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Input / Output">
+                        <page string="Prompt / Reply">
                             <field name="input_summary"/>
                             <field name="output_summary"/>
                         </page>
-                        <page string="RAG / Tools" invisible="not rag_snippets and not tool_calls">
-                            <field name="rag_snippets"/>
-                            <field name="tool_calls"/>
+                        <page string="RAG" invisible="not rag_snippets">
+                            <field name="rag_snippets" nolabel="1"/>
                         </page>
                         <page string="Error" invisible="not error_traceback">
                             <field name="error_traceback" nolabel="1"/>

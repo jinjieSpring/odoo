@@ -1359,13 +1359,13 @@ msgstr "知识文档"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
-msgid "Input / Output"
-msgstr "输入 / 输出"
+msgid "Prompt / Reply"
+msgstr "提示 / 回复"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
-msgid "RAG / Tools"
-msgstr "RAG / 工具"
+msgid "RAG"
+msgstr "RAG"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_pivot_view
