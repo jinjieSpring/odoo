@@ -89,11 +89,12 @@ class TestAuditLog(AiBaseCase):
         self.assertIn('boom', log.error_message or '')
         self.assertTrue(log.error_traceback)
 
-    def test_agent_run_logs_request_type_agent(self):
+    def test_chat_agent_scenario_logs_request_type_agent(self):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 return_value=self._ok('done')):
-            self.env['ai.base.service'].agent_run('how many users?')
+            self.env['ai.base.service'].chat(
+                'how many users?', scenario='agent')
         log = self.env['ai.request.log'].search([
             ('request_type', '=', 'agent'),
             ('scenario_key', '=', 'agent'),
@@ -137,7 +138,7 @@ class TestAuditLog(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            self.env['ai.base.service'].agent_run(
+            self.env['ai.base.service'].chat(
                 'how many users?', session=session)
         audit = self.env['ai.audit.log'].search([
             ('event_type', '=', 'tool_call'),

@@ -161,7 +161,7 @@ class TestTools(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            result = self.env['ai.base.service'].agent_run('how many users?')
+            result = self.env['ai.base.service'].chat('how many users?')
         self.assertEqual(result['reply'], 'there are users')
         self.assertEqual(calls['n'], 2)
         log = self.env['ai.audit.log'].search([
@@ -212,7 +212,7 @@ class TestTools(AiBaseCase):
         with patch(
                 'odoo.addons.ai_base.tools.providers.OpenAICompatibleAdapter.chat_completion',
                 fake_chat):
-            result = self.env['ai.base.service'].agent_run('how many users?')
+            result = self.env['ai.base.service'].chat('how many users?')
         self.assertEqual(result['reply'], 'there are users')
         self.assertEqual(calls['n'], 2)
         log = self.env['ai.audit.log'].search([

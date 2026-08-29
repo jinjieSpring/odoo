@@ -17,12 +17,6 @@ Example (from another Odoo module)::
 
     # RAG lives in the optional ai_knowledge module.
 
-    # Agent loop (model may call registered tools)
-    result = self.env['ai.base.service'].agent_run(
-        'How many partners do we have?',
-        max_rounds=6,
-    )
-
 Override hooks by inheriting ``ai.base.service``::
 
     def on_ai_request_before(self, payload):
@@ -263,30 +257,6 @@ class AiBaseService(models.AbstractModel):
         入参 / 返回: 见 ``embedding``。
         """
         return self.embedding(texts, model=model, model_code=model_code)
-
-    def agent_run(
-        self, content, session=None, max_rounds=None, prompt_key=None,
-        record=None, context=None, model_code=None, options=None,
-    ):
-        """带工具循环的聊天（只调用已注册工具）。内部走 ``chat(..., scenario='agent')``。
-
-        入参:
-            content (str): 用户任务 / 问题。
-            session: 可选 ``ai.chat.session``。
-            max_rounds (int): 工具循环上限；省略则用系统配置，有 agent 时
-                可被 agent 覆盖。
-            prompt_key / record / context / model_code / options: 同 ``chat``。
-        返回:
-            dict: 与 ``chat`` 相同。
-        """
-        options = dict(options or {})
-        if max_rounds is not None:
-            options['max_rounds'] = max_rounds
-        result = self.chat(
-            content, prompt_key=prompt_key, record=record, context=context,
-            model_code=model_code, session=session, options=options,
-            scenario='agent')
-        return result
 
     def stream_chat(self, content, session, options=None):
         """流式聊天：在本方法里做完全部 ORM，返回可给 SSE 回放的纯数据事件。

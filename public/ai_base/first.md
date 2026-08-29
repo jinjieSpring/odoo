@@ -101,14 +101,13 @@
 self.env['ai.base.service'].chat(...)
 self.env['ai.base.service'].rag_chat(...)
 self.env['ai.base.service'].embedding(...)
-self.env['ai.base.service'].agent_run(...)
 ```
 
 - 入参支持：prompt_key、record、context、stream、model_code
 
 2. **JSON‑RPC 接口（前端 web 组件调用）**
    - 非流式、流式 SSE 接口；Odoo 标准 jsonrpc，继承 odoo 控制器
-   - 会话创建、发送消息、获取历史、执行 agent
+   - 会话创建、发送消息、获取历史
 3. **计划任务支持**
    - 支持在 cron 任务中调用 AI 底座：批量文档解析、批量摘要、后台异步 AI 任务
 4. **异步任务封装**

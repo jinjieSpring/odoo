@@ -44,14 +44,6 @@ class AiBaseJsonRpcController(http.Controller):
             return {'error': {'message': 'Session not found', 'code': 'not_found'}}
         return session.action_send_message(content, options or {})
 
-    @http.route('/ai_base/session/agent', type='jsonrpc', auth='user')
-    def session_agent(self, session_id, content, options=None):
-        session = request.env['ai.chat.session'].browse(int(session_id)).exists()
-        if not session:
-            return {'error': {'message': 'Session not found', 'code': 'not_found'}}
-        return request.env['ai.base.service'].agent_run(
-            content, session=session, options=options or {})
-
     @http.route('/ai_base/session/delete', type='jsonrpc', auth='user')
     def session_delete(self, session_id):
         session = request.env['ai.chat.session'].browse(int(session_id)).exists()
