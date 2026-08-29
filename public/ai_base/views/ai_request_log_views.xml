@@ -49,13 +49,12 @@
                             <field name="input_summary"/>
                             <field name="output_summary"/>
                         </page>
-                        <page string="RAG / Tools">
+                        <page string="RAG / Tools" invisible="not rag_snippets and not tool_calls">
                             <field name="rag_snippets"/>
                             <field name="tool_calls"/>
                         </page>
-                        <page string="Trace">
-                            <field name="error_traceback"/>
-                            <field name="raw_response"/>
+                        <page string="Error" invisible="not error_traceback">
+                            <field name="error_traceback" nolabel="1"/>
                         </page>
                     </notebook>
                 </sheet>

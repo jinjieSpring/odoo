@@ -665,6 +665,7 @@ msgstr "已向量化"
 #: model:ir.model.fields,field_description:ai_base.field_ai_knowledge_document__error_message
 #: model:ir.model.fields,field_description:ai_base.field_ai_request_log__error_message
 #: model:ir.model.fields.selection,name:ai_base.selection__ai_request_log__status__error
+#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
 msgid "Error"
 msgstr "错误"
 
@@ -1365,11 +1366,6 @@ msgstr "输入 / 输出"
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
 msgid "RAG / Tools"
 msgstr "RAG / 工具"
-
-#. module: ai_base
-#: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_form_view
-msgid "Trace"
-msgstr "追踪"
 
 #. module: ai_base
 #: model_terms:ir.ui.view,arch_db:ai_base.ai_request_log_pivot_view
