@@ -792,6 +792,7 @@ class AccountMove(models.Model):
         "(name, journal_id) WHERE (state = 'posted'AND name != '/')",
         "Another entry with the same name already exists.",
     )
+    _journal_id_date_idx = models.Index('(journal_id, date)')
     _journal_id_company_id_idx = models.Index('(journal_id, company_id, date)')
     # used in <account.journal>._query_has_sequence_holes
     _made_gaps = models.Index('(journal_id, state, payment_state, move_type, date) WHERE (made_sequence_gap IS TRUE)')
@@ -5809,6 +5810,19 @@ class AccountMove(models.Model):
     def _set_next_made_sequence_gap(self, made_gap: bool):
         self._update_sequence_made_gap(invalidate_current=made_gap)
 
+    def _get_sequence_suffix(self):
+        """
+        Return this move's sequence suffix (the part of `name` right after the
+        number), or '' if it doesn't have a real sequence assigned yet.
+
+        Avoids calling `_get_sequence_format_param` on an unset/placeholder sequence
+        (e.g. '/'), which some localizations treat as an unexpected format.
+        """
+        self.ensure_one()
+        if not self.name or self.name == '/':
+            return ''
+        return self._get_sequence_format_param(self.name)[1].get('suffix', '')
+
     def _update_sequence_made_gap(self, invalidate_current=False):
         """Update the field made_sequence_gap on the current, next and previous moves.
 
@@ -5817,7 +5831,8 @@ class AccountMove(models.Model):
           sequence as broken on the next moves before updating (invalidate_current=True)
         - we are filling a gap, so we need to update the next move to remove the flag (invalidate_current=False)
         """
-        if not self:
+        moves_to_update = self.browse(self.ids)
+        if not moves_to_update:
             return
 
         def check_around(previous, current, next_move):
@@ -5847,8 +5862,12 @@ class AccountMove(models.Model):
             # bypassing record rules here is safe.
             return self.sudo().browse(ids).with_prefetch(all_ids)
 
+        def _escape_like(value):
+            return value.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
         sequence_mixin_cache = self._get_sequence_cache()
         self.env['account.move'].flush_model(['name', 'sequence_prefix', 'sequence_number', 'journal_id'])
+        suffix_pairs = [(move.id, _escape_like(move._get_sequence_suffix())) for move in moves_to_update]
         made_gap_data = self.env.execute_query(SQL("""
             SELECT ARRAY(
                             SELECT other.id
@@ -5856,6 +5875,7 @@ class AccountMove(models.Model):
                              WHERE other.journal_id = move.journal_id
                                AND other.sequence_prefix = move.sequence_prefix
                                AND other.sequence_number < move.sequence_number
+                               AND other.name LIKE '%%' || other.sequence_number || ms.suffix
                           ORDER BY other.sequence_number DESC
                              LIMIT 2
                    ),
@@ -5866,12 +5886,14 @@ class AccountMove(models.Model):
                              WHERE other.journal_id = move.journal_id
                                AND other.sequence_prefix = move.sequence_prefix
                                AND other.sequence_number > move.sequence_number
+                               AND other.name LIKE '%%' || other.sequence_number || ms.suffix
                           ORDER BY other.sequence_number ASC
                              LIMIT 2
                    )
               FROM account_move move
-             WHERE move.id = ANY(%s)
-        """, self.ids))
+              JOIN (VALUES %(suffix_pairs)s) AS ms(move_id, suffix) ON ms.move_id = move.id
+             WHERE move.id = ANY(%(move_ids)s)
+        """, suffix_pairs=SQL(", ").join(suffix_pairs), move_ids=moves_to_update.ids))
         all_ids = tuple({id_ for row in made_gap_data for ids in row for id_ in (ids if isinstance(ids, list) else [ids])})
         for previous_ids, current_id, next_ids in made_gap_data:
             move_p1, move_p2 = browse(previous_ids) if len(previous_ids) == 2 else (browse(previous_ids), browse())
@@ -5889,7 +5911,7 @@ class AccountMove(models.Model):
                 if move_n1.made_sequence_gap != n1_made_gap:
                     move_n1.made_sequence_gap = n1_made_gap
 
-            if move_p1 and (not is_computed_with_mixin(current_move) or current_move.state != 'posted'):
+            if move_p1 and (not is_computed_with_mixin(current_move) or current_move.state != 'posted' or move_p1.state != 'posted'):
                 p1_made_gap = bool(check_around(move_p2, move_p1, self.browse() if invalidate_current else current_move))
                 if move_p1.made_sequence_gap != p1_made_gap:
                     move_p1.made_sequence_gap = p1_made_gap

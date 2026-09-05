@@ -836,7 +836,14 @@ class WebsiteSale(payment_portal.PaymentPortal):
                             and ptav.product_attribute_value_id.id in attribute_value_ids
                         )
                     )[:1]
-                ) or ptal.product_template_value_ids.filtered('ptav_active')[:1]
+                )
+                or (
+                    ptal.product_template_value_ids.filtered(
+                        lambda ptav: (
+                            ptav.ptav_active and ptal.attribute_id.display_type != "multi"
+                        )
+                    )[:1]
+                )
             )
             combination_info = product._get_combination_info(
                 combination=request.env['product.template.attribute.value'].concat(combination)
@@ -1755,6 +1762,18 @@ class WebsiteSale(payment_portal.PaymentPortal):
         # Check that public orders are allowed.
         if request.env.user._is_public() and request.website.account_on_checkout == 'mandatory':
             return request.redirect('/web/login?redirect=/shop/checkout')
+
+        # Check that the cart does not contain products priced at 0 while the
+        # website forbids the sale of zero-priced products
+        if zero_priced_lines := order_sudo._get_zero_priced_lines():
+            zero_priced_lines.shop_warning = request.env._(
+                "This product is not available for purchase in your country."
+            )
+            order_sudo.shop_warning = request.env._(
+                "Some products in your cart are not available for purchase in your"
+                " country. Please remove them or contact us."
+            )
+            return request.redirect('/shop/cart')
 
     def _check_addresses(self, order_sudo):
         """ Check whether the cart's addresses are complete and valid.
