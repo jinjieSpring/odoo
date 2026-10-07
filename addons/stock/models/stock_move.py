@@ -287,8 +287,10 @@ class StockMove(models.Model):
                 move.picked = False
 
     def _inverse_picked(self):
-        for move in self:
-            move.move_line_ids.picked = move.picked
+        picked_moves = self.filtered('picked')
+        not_picked_moves = self - picked_moves
+        picked_moves.move_line_ids.picked = True
+        not_picked_moves.move_line_ids.picked = False
 
     @api.depends('picking_id.priority')
     def _compute_priority(self):
@@ -2233,10 +2235,11 @@ Please change the quantity done or the rounding precision in your settings.""",
         return
 
     def _skip_push(self):
+        move_dest_ids = self.sudo().move_dest_ids
         return self.is_inventory or (
-            self.move_dest_ids and any(
+            move_dest_ids and any(
                 m.location_id._child_of(self.location_dest_id) or self.location_dest_id._child_of(m.location_id)
-                for m in self.move_dest_ids
+                for m in move_dest_ids
             )
         )
 
