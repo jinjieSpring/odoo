@@ -1076,7 +1076,7 @@
 												<input type="radio" class="form-check-input font-checkbox"
 													t-att-id="config_vals.id"
 													data-id="rubik_font"
-													t-att-checked="True if not any(font.is_selected for font in config_vals.google_font_links_ids) else None"
+													t-att-checked="True if not any(font.is_selected for font in config_fonts) else None"
 													t-att-data-backend-config-id="config_vals.id" />
 												<label class="custom-control-label">
 													<span class="text-style-design">
@@ -1086,9 +1086,9 @@
 											</div>
 										</div>
 									</div>
-									<t t-if="config_vals.google_font_links_ids and len(config_vals.google_font_links_ids) > 0">
+									<t t-if="config_fonts and len(config_fonts) > 0">
 										<!-- Existing loop for available fonts -->
-										<t t-foreach="config_vals.google_font_links_ids" t-as="font">
+										<t t-foreach="config_fonts" t-as="font">
 											<div class="col-md-6 mb-3" t-att-id="'font_container_%s' % font.id">
 												<div class="form_check_content d-flex align-items-center">
 													<div class="form-check d-flex align-items-center w-100">

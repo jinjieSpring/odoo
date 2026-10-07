@@ -4,9 +4,6 @@
 # Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
 
 from odoo import models, api
-import logging
-
-_logger = logging.getLogger(__name__)
 
 
 class IrModel(models.Model):
@@ -23,10 +20,7 @@ class IrModel(models.Model):
                 res[model_name] = False
                 continue
 
-            # check read access
-            try:
-                model.check_access_rights("read")
-            except Exception:
+            if not model.has_access("read"):
                 res[model_name] = False
                 continue
 

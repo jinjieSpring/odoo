@@ -319,75 +319,72 @@ patch(NavBar.prototype, {
         this._all_apps_menu_data()
     },
     
-    _all_apps_menu_data: async function () {
-        var menu_data = this.menuService.getApps()
-        var self = this;
-        var rec_ids = []
-        menu_data.map(app => rec_ids.push(app.id))
-        await rpc('/get/irmenu/icondata', {
-            'menu_ids':rec_ids,
-        }).then(function (rec) {
-            $.each(menu_data, function (key, value) {
-                var target_tag = '.o_navbar_apps_menu a.main_link[data-menu=' + value.id + ']'
-                var $tagtarget = $(self.root.el).find(target_tag)
-                $tagtarget.find('.app_icon').empty()
-                if (rec[value.id] && rec[value.id][0]) {
-                    var current_record = rec[value.id][0]
-                    var spiffy_app_group = rec["spiffy_app_group"]
-                    value.id = current_record.id
-                    value.use_icon = current_record.use_icon
-                    value.icon_class_name = current_record.icon_class_name
-                    value.icon_img = current_record.icon_img
-                    value.spiffy_app_group_id = current_record.spiffy_app_group_id
-                    value.spiffy_app_group = spiffy_app_group
-                    if (current_record.app_menu_list) {
-                        try {
-                            value.app_menu_list = JSON.parse(current_record.app_menu_list)
-                        } catch (e) {
-                            value.app_menu_list = []
-                        }
-                    } else {
-                        value.app_menu_list = []
+    _all_apps_menu_data: function () {
+        if (this._spiffyMenuDataLoading) {
+            return this._spiffyMenuDataLoading;
+        }
+        const load = async () => {
+            const menu_data = this.menuService.getApps();
+            const rec_ids = menu_data.map((app) => app.id);
+            const rec = await rpc('/get/irmenu/icondata', { menu_ids: rec_ids });
+            const spiffy_app_group = rec.spiffy_app_group;
+            let app_menu_list = [];
+            for (const value of menu_data) {
+                const target_tag = '.o_navbar_apps_menu a.main_link[data-menu=' + value.id + ']';
+                $(this.root.el).find(target_tag).find('.app_icon').empty();
+                const current_record = rec[value.id] && rec[value.id][0];
+                if (!current_record) {
+                    continue;
+                }
+                value.use_icon = current_record.use_icon;
+                value.icon_class_name = current_record.icon_class_name;
+                value.icon_img = current_record.icon_img;
+                value.spiffy_app_group_id = current_record.spiffy_app_group_id;
+                value.spiffy_app_group = spiffy_app_group;
+                if (!app_menu_list.length && current_record.app_menu_list) {
+                    try {
+                        app_menu_list = JSON.parse(current_record.app_menu_list);
+                    } catch (e) {
+                        app_menu_list = [];
                     }
                 }
+            }
 
-                function renderMenu(containerSelector, templateName, options) {
-                    const container = $(containerSelector);
-                    if (!container.data('menu-rendered')) {
-                        const template = $(renderToElement(templateName, options));
-                        container.empty().append(template);
-                        container.data('menu-rendered', true);
-                    }
+            const options = {
+                group_info: spiffy_app_group,
+                menu_info: menu_data,
+                getMenuItemHref: this.getMenuItemHref,
+                menuService: this.menuService,
+                app_menu_list,
+            };
+            const selector = $('body').hasClass('top_menu_horizontal')
+                ? ".spiffy-app-group"
+                : ".all-apps-menus";
+            const renderMenu = () => {
+                const container = $(selector);
+                if (!container.length || container.data('menu-rendered')) {
+                    return Boolean(container.data('menu-rendered'));
                 }
-
-                const options = {
-                    group_info: value.spiffy_app_group,
-                    menu_info: menu_data,
-                    getMenuItemHref: self.getMenuItemHref,
-                    menuService: self.menuService,
-                    app_menu_list: value.app_menu_list,
-                };
-
-                const selector = $('body').hasClass('top_menu_horizontal')
-                    ? ".spiffy-app-group"
-                    : ".all-apps-menus";
-
-                const targetNode = document.body;
-                const observer = new MutationObserver(() => {
-                    const container = $(selector);
-                    if (container.length) {
-                        renderMenu(selector, "spiffy_theme_backend.AppMenuGroup", options);
-                        observer.disconnect();
-                    }
-                });
-
-                observer.observe(targetNode, { childList: true, subtree: true });
-
-                // fallback timeout
-                setTimeout(() => observer.disconnect(), 3000);
-
+                container.empty().append($(renderToElement("spiffy_theme_backend.AppMenuGroup", options)));
+                container.data('menu-rendered', true);
+                return true;
+            };
+            if (renderMenu()) {
+                return;
+            }
+            const observer = new MutationObserver(() => {
+                if (renderMenu()) {
+                    observer.disconnect();
+                }
             });
-        })
+            observer.observe(document.body, { childList: true, subtree: true });
+            setTimeout(() => observer.disconnect(), 3000);
+        };
+        this._spiffyMenuDataLoading = load().catch((error) => {
+            this._spiffyMenuDataLoading = null;
+            throw error;
+        });
+        return this._spiffyMenuDataLoading;
     },
     
     

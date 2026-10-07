@@ -124,29 +124,8 @@ class BackendConfigration(http.Controller):
 
     @http.route(['/color/pallet/data/'], type='http', auth='public', sitemap=False)
     def selected_pallet_data(self, **kw):
-        company = request.env.company
         user = request.env.user
-        admin_users = request.env['res.users'].sudo().search([
-            ('group_ids', 'in', request.env.ref('base.user_admin').id),
-            ('backend_theme_config', '!=', False),
-        ], order="id asc", limit=1)
-
-        admin_config = admin_users.backend_theme_config if admin_users else False
-
-        if company.backend_theme_level == 'user_level':
-            if user.backend_theme_config:
-                config_vals = user.backend_theme_config
-            elif admin_config:
-                config_vals = admin_config
-            else:
-                config_vals = request.env['backend.config'].sudo().search(
-                    [], order="id asc", limit=1)
-        else:
-            if admin_config:
-                config_vals = admin_config
-            else:
-                config_vals = request.env['backend.config'].sudo().search(
-                    [], order="id asc", limit=1)
+        config_vals, _can_edit = self._get_effective_backend_config()
 
         values = {}
         separator_selection_dict = dict(
@@ -160,13 +139,9 @@ class BackendConfigration(http.Controller):
         config_fonts = config_vals.google_font_links_ids.filtered(
             lambda font: font.user_id == user and font.config_id == config_vals
         )
-        if not config_fonts:
-            config_fonts = request.env['google.font.family']
-
-        config_vals = config_vals.with_context(filtered_fonts=True)
-        config_vals.google_font_links_ids = config_fonts
         values.update({
             'config_vals': config_vals,
+            'config_fonts': config_fonts,
             'separator_selection_dict': separator_selection_dict,
             'tab_selection_dict': tab_selection_dict,
             'checkbox_selection_dict': checkbox_selection_dict,
@@ -707,7 +682,6 @@ class BackendConfigration(http.Controller):
     @http.route(['/active/dark/mode'], type='jsonrpc', auth='user')
     def active_dark_mode(self, **kw):
         dark_mode = kw.get('dark_mode')
-        backend_theme_config = request.env['backend.config'].sudo().search([])
         user = request.env.user
         if dark_mode == 'on':
             user.update({
@@ -871,17 +845,22 @@ class BackendConfigration(http.Controller):
         if not search_field:
             return {'error': f"No displayable field found in model '{related_model}'"}
 
-        domain = [(search_field, 'ilike', search_term)] if search_term else []
-        fields = ['id', search_field]
-
-        related_records = RelatedModel.search_read(domain, fields=fields)
+        # The dropdown shows 6 rows and a "search more" entry, so 7 is enough.
+        limit = 7
+        rec_name = RelatedModel._rec_name
+        if rec_name and rec_name in RelatedModel._fields:
+            pairs = RelatedModel.name_search(search_term or '', operator='ilike', limit=limit)
+            records = [{'id': rec_id, 'name': label} for rec_id, label in pairs]
+            search_field = rec_name
+        else:
+            domain = [(search_field, 'ilike', search_term)] if search_term else []
+            rows = RelatedModel.search_read(domain, [search_field], limit=limit)
+            records = [{'id': rec['id'], 'name': rec.get(search_field)} for rec in rows]
 
         return {
             'related_model': related_model,
             'search_field': search_field,
-            'records': [
-                {'id': rec['id'], 'name': rec.get(search_field)} for rec in related_records
-            ],
+            'records': records,
         }
 
     @http.route('/filter/relational/field/data', type='jsonrpc', auth='user', methods=['POST'])
@@ -967,94 +946,79 @@ class BackendConfigration(http.Controller):
 
     @http.route(['/get/attachment/data'], type='jsonrpc', auth='user')
     def get_attachment_data(self, **kw):
-        rec_ids = kw.get('rec_ids')
-        for rec in rec_ids:
-            if isinstance(rec, str):
-                rec_ids.remove(rec)
-        if kw.get('model') and rec_ids:
-            attachments = request.env['ir.attachment'].search([
-                ('res_model', '=', kw.get('model')), ('res_id', 'in', rec_ids)
-            ])
-            attachment_data = []
-            attachment_res_id_set = set()
-            for attachment in attachments:
-                attachment_res_id_set.add(attachment.res_id)
-            dict = {}
-            for res_id in attachment_res_id_set:
-                filtered_attachment_record = attachments.filtered(
-                    lambda attachment: attachment.res_id == res_id)
-                for fac in filtered_attachment_record:
-                    if dict.get(res_id):
-                        dict[res_id].append({
-                            'attachment_id': fac.id,
-                            'attachment_mimetype': fac.mimetype,
-                            'attachment_name': fac.name,
-                        })
-                    else:
-                        dict[res_id] = [{
-                            'attachment_id': fac.id,
-                            'attachment_mimetype': fac.mimetype,
-                            'attachment_name': fac.name,
-                        }]
-            attachment_data.append(dict)
-            return attachment_data
+        rec_ids = [
+            rec_id for rec_id in (kw.get('rec_ids') or [])
+            if not isinstance(rec_id, str)
+        ]
+        if not kw.get('model') or not rec_ids:
+            return [{}]
+
+        rows = request.env['ir.attachment'].search_read(
+            [('res_model', '=', kw.get('model')), ('res_id', 'in', rec_ids)],
+            ['res_id', 'mimetype', 'name'],
+        )
+        grouped = {}
+        for row in rows:
+            grouped.setdefault(row['res_id'], []).append({
+                'attachment_id': row['id'],
+                'attachment_mimetype': row['mimetype'],
+                'attachment_name': row['name'],
+            })
+        return [grouped]
 
     @http.route(['/get/irmenu/icondata'], type='jsonrpc', auth='user')
     def get_irmenu_icondata(self, **kw):
-        irmenuobj = request.env['ir.ui.menu']
-        spiffy_app_group = request.env['spiffy.app.group'].sudo().search_read([], fields=['id', 'name', 'group_menu_icon', 'sequence'])
-        spiffy_app_group = sorted(spiffy_app_group, key=lambda group: group['sequence'])
+        menu_ids = kw.get('menu_ids') or []
+        Menu = request.env['ir.ui.menu'].sudo()
+        menus = Menu.browse(menu_ids).exists()
+        # bin_size returns a size marker for icon_img. The client loads the
+        # image itself from /web/image and only needs to know it is set.
+        menu_rows = menus.with_context(bin_size=True).read([
+            'use_icon', 'icon_class_name', 'icon_img',
+            'spiffy_app_group_id', 'web_icon',
+        ])
 
-        irmenu = request.env['ir.ui.menu'].sudo().search([('id', 'in', kw.get('menu_ids'))])
+        icon_data_ids = []
+        for row in menu_rows:
+            web_icon = row.get('web_icon') or ''
+            needs_icon_data = (
+                web_icon
+                and not row.get('icon_img')
+                and not (row.get('use_icon') and row.get('icon_class_name'))
+                and '/icon.svg' not in web_icon
+            )
+            if needs_icon_data:
+                icon_data_ids.append(row['id'])
+        icon_data_by_id = {}
+        if icon_data_ids:
+            for row in Menu.browse(icon_data_ids).read(['web_icon_data']):
+                icon_data_by_id[row['id']] = row.get('web_icon_data') or False
+
+        ungrouped_ids = [
+            row['id'] for row in menu_rows if not row.get('spiffy_app_group_id')
+        ]
+        app_menu_list = str(ungrouped_ids) if ungrouped_ids else "[]"
 
         app_menu_dict = {}
-        processed_spiffy_app_group_ids = set()
+        linked_group_ids = []
+        seen_groups = set()
+        for row in menu_rows:
+            group = row.get('spiffy_app_group_id')
+            if group and group[0] not in seen_groups:
+                seen_groups.add(group[0])
+                linked_group_ids.append(group[0])
+            row['web_icon_data'] = icon_data_by_id.get(row['id']) or False
+            row['app_menu_list'] = app_menu_list
+            app_menu_dict[row['id']] = [row]
 
-        menu_data = []
-        groups = request.env['spiffy.app.group'].sudo().search([])
-
-        for group in groups:
-            group_data = {
-                'id': group.id,
-                'name': group.name,
-                'menus': []
-            }
-
-            for menu in group.group_menu_list_ids:
-                group_data['menus'].append({
-                    'id': menu.id,
-                    'name': menu.name,
-                    'icon_class_name': menu.icon_class_name or "",
-                    'use_icon': menu.use_icon,
-                    'icon_img': menu.icon_img.decode('utf-8') if menu.icon_img else "",
-                })
-
-            menu_data.append(group_data)
-        menu_list = []
-        for menu in irmenu:
-            if not menu.spiffy_app_group_id:
-                menu_list.append(menu.id)
-        app_menu_list = str(menu_list) if menu_list else "[]"
-        for menu in irmenu:
-            if menu.spiffy_app_group_id:
-                spiffy_app_group_id = menu.spiffy_app_group_id[0].id
-
-                if spiffy_app_group_id not in processed_spiffy_app_group_ids:
-                    spiffy_app_group_data = request.env['spiffy.app.group'].sudo().search_read(
-                        [('id', '=', spiffy_app_group_id)], 
-                        fields=['id', 'name', 'sequence', 'group_menu_icon', 'group_menu_list_ids', 'use_group_icon', 'group_icon_class_name']
-                    )
-                    if spiffy_app_group_data:
-                        app_menu_dict.setdefault('spiffy_app_group', []).append(spiffy_app_group_data[0])
-                        processed_spiffy_app_group_ids.add(spiffy_app_group_id)
-            
-            menu_dict = menu.read(set(irmenuobj._fields))
-            app_menu_dict[menu.id] = menu_dict
-            [item.update({'app_menu_list': app_menu_list}) for item in app_menu_dict[menu.id] if 'app_menu_list' in item]
-        
-        if 'spiffy_app_group' in app_menu_dict:
-            app_menu_dict['spiffy_app_group'] = sorted(app_menu_dict['spiffy_app_group'], key=lambda group: group['sequence'])
-        
+        groups = []
+        if linked_group_ids:
+            groups = request.env['spiffy.app.group'].sudo().with_context(bin_size=True).search_read(
+                [('id', 'in', linked_group_ids)],
+                ['name', 'sequence', 'group_menu_icon', 'group_menu_list_ids', 'use_group_icon', 'group_icon_class_name'],
+                order='sequence, id',
+            )
+        app_menu_dict['spiffy_app_group'] = groups
         return app_menu_dict
 
     # TO DO LIST CONTROLLERS

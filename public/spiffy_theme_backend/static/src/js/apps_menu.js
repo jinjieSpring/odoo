@@ -376,23 +376,18 @@ patch(NavBar.prototype, {
         this._AppdrawerIcons()
     },
 
-    _AppdrawerIcons: function() {
-        var self = this
+    _applyAppdrawerIcons: function(rec) {
         var apps = this.menuService.getApps()
-        var rec_ids = []
-        apps.map(app => rec_ids.push(app.id))
-        rpc('/get/irmenu/icondata', {
-            'menu_ids':rec_ids,
-        }).then(function(rec) {
-            $.each(apps, function( key, value ) {
-                var target_tag = '.appdrawer_section a.o_app[data-menu-id='+value.id+']'
+        $.each(apps, function( key, value ) {
+            var target_tag = '.appdrawer_section a.o_app[data-menu-id='+value.id+']'
                 var $tagtarget = $(target_tag)
                 $tagtarget.find('.app-image').empty()
 
-                var current_record = rec[value.id][0]
+                var current_record = rec[value.id] && rec[value.id][0]
+                if (!current_record) {
+                    return
+                }
                 var spiffy_app_group = rec["spiffy_app_group"]
-
-                var current_record = rec[value.id][0]
                 value.id = current_record.id
                 value.use_icon = current_record.use_icon
                 value.icon_class_name = current_record.icon_class_name
@@ -432,8 +427,24 @@ patch(NavBar.prototype, {
                     }
                     $tagtarget.find('.app-image').append($(icon_image))
                 }
+        })
+    },
+
+    _AppdrawerIcons: function() {
+        var self = this
+        if (this._iconData) {
+            this._applyAppdrawerIcons(this._iconData)
+            return
+        }
+        if (!this._iconDataPromise) {
+            var rec_ids = this.menuService.getApps().map(app => app.id)
+            this._iconDataPromise = rpc('/get/irmenu/icondata', {
+                'menu_ids': rec_ids,
             })
-            
+        }
+        this._iconDataPromise.then(function(rec) {
+            self._iconData = rec
+            self._applyAppdrawerIcons(rec)
         })
     },
 

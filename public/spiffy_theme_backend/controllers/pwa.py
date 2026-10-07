@@ -10,9 +10,7 @@ from odoo.addons.web.controllers import webmanifest
 class WebManifest(webmanifest.WebManifest):
     def _get_webmanifest(self):
         manifest = super()._get_webmanifest()
-        company_id = request.env.company.id
-        company = request.env['res.company'].search(
-            [('id', '=', company_id)]) if company_id else request.env.company
+        company = request.env.company
 
         manifest.update({
             "name": company.app_name_pwa or manifest.get("name"),

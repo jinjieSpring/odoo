@@ -186,86 +186,50 @@ msgstr "Android apparaat/tokens"
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__app_actionid
 msgid "App Action Id"
-<<<<<<< HEAD
-msgstr "App actie ID"
-=======
 msgstr "App-actie-ID"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__description_pwa
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__description_pwa
 msgid "App Description"
-<<<<<<< HEAD
-msgstr "App beschrijving"
-=======
 msgstr "App-beschrijving"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "App Drawer"
-<<<<<<< HEAD
-msgstr "Applicatielade"
-=======
 msgstr "App-lade"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__appdrawer_custom_bg_color
 msgid "App Drawer Custom Background Color"
-<<<<<<< HEAD
-msgstr "Aangepaste achtergrondkleur van applicatielade"
-=======
 msgstr "Aangepaste achtergrondkleur van app-lade"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__appdrawer_custom_text_color
 msgid "App Drawer Custom Text Color"
-<<<<<<< HEAD
-msgstr "Aangepaste tekstkleur van applicatielade"
-=======
 msgstr "Aangepaste tekstkleur van app-lade"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__app_id
 msgid "App Id"
-<<<<<<< HEAD
-msgstr "App ID"
-=======
 msgstr "App-ID"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__app_name_pwa
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__app_name_pwa
 msgid "App Name"
-<<<<<<< HEAD
-msgstr "App naam"
-=======
 msgstr "App-naam"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__start_url_pwa
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__start_url_pwa
 msgid "App Start Url"
-<<<<<<< HEAD
-msgstr "Start URL van app"
-=======
 msgstr "Start-URL van app"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__app_xmlid
 msgid "App XML Id"
-<<<<<<< HEAD
-msgstr "App XML ID"
-=======
 msgstr "App XML-ID"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
@@ -392,20 +356,12 @@ msgstr "Achtergrondafbeelding twee"
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_body_bg_color
 msgid "Body Background Color for dark"
-<<<<<<< HEAD
-msgstr "Body achtergrondkleur voor donkere modus"
-=======
 msgstr "Body-achtergrondkleur voor donkere modus"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_body_text_color
 msgid "Body Text Color for dark"
-<<<<<<< HEAD
-msgstr "Body tekstkleur voor donkere modus"
-=======
 msgstr "Body-tekstkleur voor donkere modus"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model,name:spiffy_theme_backend.model_bookmark_link
@@ -679,11 +635,7 @@ msgstr "Bedrijf"
 #. module: spiffy_theme_backend
 #: model:ir.model,name:spiffy_theme_backend.model_res_config_settings
 msgid "Config Settings"
-<<<<<<< HEAD
-msgstr "Configuratie instellingen"
-=======
 msgstr "Configuratie-instellingen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model,name:spiffy_theme_backend.model_backend_config
@@ -766,20 +718,12 @@ msgstr "Beschrijving"
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__os
 msgid "Device OS"
-<<<<<<< HEAD
-msgstr "Apparaat OS"
-=======
 msgstr "Apparaat-OS"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__token
 msgid "Device firebase token"
-<<<<<<< HEAD
-msgstr "Firebase token van apparaat"
-=======
 msgstr "Firebase-token van apparaat"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #. odoo-javascript
@@ -844,11 +788,7 @@ msgstr "Bewerken"
 #. module: spiffy_theme_backend
 #: model:ir.model,name:spiffy_theme_backend.model_mail_thread
 msgid "Email Thread"
-<<<<<<< HEAD
-msgstr "Emaildiscussie"
-=======
 msgstr "E-mail discussie"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__enable_right_click_menu
@@ -870,11 +810,7 @@ msgstr "Voer hier de klassenaam in.. (bijv. ri-class-name)"
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__menu_shape_bg_color
 msgid "Enterprise Menu BG Color"
-<<<<<<< HEAD
-msgstr "Achtergrondkleur van enterprisemenu"
-=======
 msgstr "Achtergrondkleur van enterprise-menu"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__right_click_menu_excluded_models
@@ -887,11 +823,7 @@ msgstr "Uitgesloten modellen"
 #. odoo-javascript
 #: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
 msgid "Expand/Collapse Groups"
-<<<<<<< HEAD
-msgstr "Groepen uitklappen/inklappen"
-=======
 msgstr "Groepen uit-/inklappen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
@@ -932,11 +864,7 @@ msgstr "Record dupliceren mislukt"
 #. odoo-javascript
 #: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
 msgid "Failed to generate PDF preview."
-<<<<<<< HEAD
-msgstr "PDF voorbeeld genereren mislukt."
-=======
 msgstr "PDF-voorvertoning genereren mislukt."
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #. odoo-javascript
@@ -956,31 +884,19 @@ msgstr "Bestandsindeling wordt niet ondersteund"
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__firebase_key_file
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_company_form_inherit_firebase_key
 msgid "Firebase Key File"
-<<<<<<< HEAD
-msgstr "Firebase sleutelbestand"
-=======
 msgstr "Firebase-sleutelbestand"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__firebase_server_key
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__firebase_server_key
 msgid "Firebase key"
-<<<<<<< HEAD
-msgstr "Firebase sleutel"
-=======
 msgstr "Firebase-sleutel"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #. odoo-python
 #: code:addons/spiffy_theme_backend/models/mail_channel.py:0
 msgid "Firebase key file for spiffy app is missing from the configuration."
-<<<<<<< HEAD
-msgstr "Het Firebase sleutelbestand voor de Spiffy app ontbreekt in de configuratie."
-=======
 msgstr "Het Firebase-sleutelbestand voor de Spiffy-app ontbreekt in de configuratie."
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
@@ -1000,20 +916,12 @@ msgstr "Lettertypevoorbeeld"
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Font Setting"
-<<<<<<< HEAD
-msgstr "Lettertype instelling"
-=======
 msgstr "Lettertype-instelling"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Font Settings"
-<<<<<<< HEAD
-msgstr "Lettertype instellingen"
-=======
 msgstr "Lettertype-instellingen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
@@ -1070,20 +978,12 @@ msgstr "Globaal zoeken"
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__google_font_family
 msgid "Google Font Family"
-<<<<<<< HEAD
-msgstr "Google lettertypefamilie"
-=======
 msgstr "Google-lettertypefamilie"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model,name:spiffy_theme_backend.model_google_font_family
 msgid "Google Font Link"
-<<<<<<< HEAD
-msgstr "Google lettertypelink"
-=======
 msgstr "Google-lettertypelink"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.actions.act_window,name:spiffy_theme_backend.action_google_font_family
@@ -1091,11 +991,7 @@ msgstr "Google-lettertypelink"
 #: model:ir.ui.menu,name:spiffy_theme_backend.menu_google_font_family
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_google_font_family_tree
 msgid "Google Font Links"
-<<<<<<< HEAD
-msgstr "Google lettertypelinks"
-=======
 msgstr "Google-lettertypelinks"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__group_icon_class_name
@@ -1262,11 +1158,7 @@ msgstr "Vaste koptekst in lijstweergave"
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "List/Tree view Sticky Header and Footer"
-<<<<<<< HEAD
-msgstr "Vaste kop en voettekst in lijst/boomweergave"
-=======
 msgstr "Vaste kop- en voettekst in lijst-/boomweergave"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_1
@@ -1553,21 +1445,13 @@ msgstr "Open tabbladen / max. tabbladen"
 #. odoo-javascript
 #: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
 msgid "PDF file"
-<<<<<<< HEAD
-msgstr "PDF bestand"
-=======
 msgstr "PDF-bestand"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #. odoo-javascript
 #: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
 msgid "PDF preview is not available for this report."
-<<<<<<< HEAD
-msgstr "PDF voorbeeld is niet beschikbaar voor dit rapport."
-=======
 msgstr "PDF-voorvertoning is niet beschikbaar voor dit rapport."
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #. odoo-javascript
@@ -1575,38 +1459,22 @@ msgstr "PDF-voorvertoning is niet beschikbaar voor dit rapport."
 msgid ""
 "PDF preview is not available for this report. The report may not produce a "
 "valid PDF."
-<<<<<<< HEAD
-msgstr "PDF voorbeeld is niet beschikbaar voor dit rapport. Het rapport produceert mogelijk geen geldige PDF."
-=======
 msgstr "PDF-voorvertoning is niet beschikbaar voor dit rapport. Het rapport produceert mogelijk geen geldige PDF."
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
 msgid "PWA Icon (192 x 192)"
-<<<<<<< HEAD
-msgstr "PWA pictogram (192 x 192)"
-=======
 msgstr "PWA-pictogram (192 x 192)"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
 msgid "PWA Icon (512 x 512)"
-<<<<<<< HEAD
-msgstr "PWA pictogram (512 x 512)"
-=======
 msgstr "PWA-pictogram (512 x 512)"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
 msgid "PWA Name"
-<<<<<<< HEAD
-msgstr "PWA naam"
-=======
 msgstr "PWA-naam"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.actions.act_window,name:spiffy_theme_backend.act_open_pwa_shortcuts_view
@@ -1616,21 +1484,13 @@ msgstr "PWA-naam"
 #: model:ir.ui.menu,name:spiffy_theme_backend.pwa_shortcuts_view_tree_menuitem
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
 msgid "PWA Shortcuts"
-<<<<<<< HEAD
-msgstr "PWA snelkoppelingen"
-=======
 msgstr "PWA-snelkoppelingen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.bizople_pwa_shortcuts_form_view
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.bizople_pwa_shortcuts_list_view
 msgid "PWA shortcuts"
-<<<<<<< HEAD
-msgstr "PWA snelkoppelingen"
-=======
 msgstr "PWA-snelkoppelingen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_1
@@ -1681,11 +1541,7 @@ msgstr "Vastgezette zijbalk"
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Popup Animation"
-<<<<<<< HEAD
-msgstr "Popupanimatie"
-=======
 msgstr "Pop-upanimatie"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__prevent_auto_save
@@ -1980,11 +1836,7 @@ msgstr "Eigen kleuren instellen"
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Set Your Own Drawer Colors"
-<<<<<<< HEAD
-msgstr "Eigen kleuren voor applicatielade instellen"
-=======
 msgstr "Eigen kleuren voor app-lade instellen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__shape_style
@@ -2028,11 +1880,7 @@ msgid ""
 "                                            A page refresh is required after changing this setting."
 msgstr ""
 "Toon een aangepast contextmenu bij rechtsklikken op lijstrijen,\n"
-<<<<<<< HEAD
-"                                            kanbankaarten en many2one velden.\n"
-=======
 "                                            kanban-kaarten en many2one-velden.\n"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 "                                            Na het wijzigen van deze instelling is een paginavernieuwing vereist."
 
 #. module: spiffy_theme_backend
@@ -2041,11 +1889,7 @@ msgstr ""
 msgid ""
 "Show a custom context menu when right-clicking on list rows, kanban cards, "
 "and many2one fields."
-<<<<<<< HEAD
-msgstr "Toon een aangepast contextmenu bij rechtsklikken op lijstrijen, kanbankaarten en many2one velden."
-=======
 msgstr "Toon een aangepast contextmenu bij rechtsklikken op lijstrijen, kanban-kaarten en many2one-velden."
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__bookmark_panel
@@ -2056,11 +1900,7 @@ msgstr "Rechter bladwijzerpaneel tonen"
 #: model:ir.model,name:spiffy_theme_backend.model_spiffy_app_group
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__spiffy_app_group_id
 msgid "Spiffy App Group"
-<<<<<<< HEAD
-msgstr "Spiffy appgroep"
-=======
 msgstr "Spiffy-appgroep"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.actions.act_window,name:spiffy_theme_backend.action_spiffy_app_group
@@ -2068,49 +1908,29 @@ msgstr "Spiffy-appgroep"
 #: model:ir.ui.menu,name:spiffy_theme_backend.spiffy_app_group
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_spiffy_app_group_list
 msgid "Spiffy App Groups"
-<<<<<<< HEAD
-msgstr "Spiffy appgroepen"
-=======
 msgstr "Spiffy-appgroepen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__app_menu_list
 msgid "Spiffy App Groups List"
-<<<<<<< HEAD
-msgstr "Lijst met Spiffy appgroepen"
-=======
 msgstr "Lijst met Spiffy-appgroepen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.ui.menu,name:spiffy_theme_backend.bizople_backend_theme_configuration_mainmenu
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.spiffy_configuration_res_user_view
 msgid "Spiffy Configuration"
-<<<<<<< HEAD
-msgstr "Spiffy configuratie"
-=======
 msgstr "Spiffy-configuratie"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.actions.act_url,name:spiffy_theme_backend.action_spiffy_documentation
 #: model:ir.ui.menu,name:spiffy_theme_backend.spiffy_documentation_menu
 msgid "Spiffy Documentation"
-<<<<<<< HEAD
-msgstr "Spiffy documentatie"
-=======
 msgstr "Spiffy-documentatie"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
 msgid "Spiffy General Setting"
-<<<<<<< HEAD
-msgstr "Algemene Spiffy instelling"
-=======
 msgstr "Algemene Spiffy-instelling"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
@@ -2148,11 +1968,7 @@ msgstr "Standaardthema"
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
 msgid "Start url"
-<<<<<<< HEAD
-msgstr "Start URL"
-=======
 msgstr "Start-URL"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #. odoo-javascript
@@ -2219,20 +2035,12 @@ msgstr "Themakleur"
 #. odoo-javascript
 #: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
 msgid "Theme Setting"
-<<<<<<< HEAD
-msgstr "Thema instelling"
-=======
 msgstr "Thema-instelling"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Theme Settings"
-<<<<<<< HEAD
-msgstr "Thema instellingen"
-=======
 msgstr "Thema-instellingen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__theme_style
@@ -2458,47 +2266,27 @@ msgstr "https://fonts.google.com/specimen/Lato"
 #. module: spiffy_theme_backend
 #: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_1
 msgid "popup Style 1"
-<<<<<<< HEAD
-msgstr "Popupstijl 1"
-=======
 msgstr "Pop-upstijl 1"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_2
 msgid "popup Style 2"
-<<<<<<< HEAD
-msgstr "Popupstijl 2"
-=======
 msgstr "Pop-upstijl 2"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_3
 msgid "popup Style 3"
-<<<<<<< HEAD
-msgstr "Popupstijl 3"
-=======
 msgstr "Pop-upstijl 3"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_4
 msgid "popup Style 4"
-<<<<<<< HEAD
-msgstr "Popupstijl 4"
-=======
 msgstr "Pop-upstijl 4"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__popup
 msgid "popup Styles"
-<<<<<<< HEAD
-msgstr "Popupstijlen"
-=======
 msgstr "Pop-upstijlen"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__sequence
@@ -2538,11 +2326,7 @@ msgstr "Verkleinen"
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Body Image"
-<<<<<<< HEAD
-msgstr "Bodyafbeelding"
-=======
 msgstr "Body-afbeelding"
->>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
 
 #. module: spiffy_theme_backend
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
