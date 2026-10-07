@@ -49,7 +49,7 @@
 						</t>
 						<t t-else="">
 							<t t-if="web_icon_ext == 'false'">
-								<img class='img img-fluid o_image_64_max' src='/spiffy_theme_backend/static/description/bizople-icon.png' />
+								<span class="ri ri-apps-2-line o_image_64_max"></span>
 							</t>
 							<t t-elif="web_icon_ext === 'svg'">
 								<img class='img img-fluid o_image_64_max' t-attf-src='#{web_svg_src}' />
@@ -65,7 +65,7 @@
 						</t>
 						<t t-else="">
 							<t t-if="web_icon_ext == 'false'">
-								<img class='img img-fluid o_image_64_max' src='/spiffy_theme_backend/static/description/bizople-icon.png' />
+								<span class="ri ri-apps-2-line o_image_64_max"></span>
 							</t>
 							<t t-elif="web_icon_ext === 'svg'">
 								<img class='img img-fluid o_image_64_max' t-attf-src='#{web_svg_src}' />

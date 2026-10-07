@@ -128,9 +128,11 @@ patch(NavBar.prototype, {
 
         // close magnifier when clicked outside the magnifer div
         $(document).on("click", function (e) {
-            if (!$(e.target).closest('.magnifier_section').length) {
-                $('#magnifier').collapse("hide")
+            const magnifier = document.getElementById('magnifier');
+            if (!magnifier || !magnifier.classList.contains('show') || e.target.closest('.magnifier_section')) {
+                return;
             }
+            $('#magnifier').collapse("hide");
         });
         $(document).ready(function () {
             $(document).on('click', '.current_app_sections a[data-menu], .child_menus', function () {
@@ -269,22 +271,29 @@ patch(NavBar.prototype, {
 
     _ShowCurrentMenus: function (ev) {
         var $clicked = $(ev.currentTarget);
-        var $menuItem = $clicked.closest('.col-1, .col-2').find('> .spiffy_main_app, > .spiffy_main_group');
-        $('.spiffy_main_app, .spiffy_main_group').each(function () {
+        // Group buttons are toggled by _onMenuGroupClick. Closing them here
+        // and opening them again there makes the top-level button unable to collapse.
+        if ($clicked.closest('.app_menu_group').length) {
+            return;
+        }
+        var $menuItem = $clicked.closest('.col-1, .col-2').children('.spiffy_main_app, .spiffy_main_group');
+        var clickedTopButton = $menuItem.length && ($clicked.is($menuItem) || $.contains($menuItem[0], ev.target));
+        // Only the open item is touched. slideUp/slideDown on every app forces a layout
+        // pass and waits 200ms, which is why the menu bar felt slow.
+        $('.spiffy_main_app.active, .spiffy_main_group.active').each(function () {
             if (this !== $menuItem[0]) {
-                $(this).removeClass('active');
-                $(this).next('.header-sub-menus').removeClass('show').slideUp(200);
+                $(this).removeClass('active').next('.header-sub-menus').removeClass('show').addClass('d-none');
             }
         });
-        if (!$menuItem.hasClass('active')) {
-            $menuItem.addClass('active');
-            $menuItem.next('.header-sub-menus').removeClass('d-none').addClass('show').slideDown(200);
+        if (clickedTopButton && $menuItem.hasClass('active')) {
+            $menuItem.removeClass('active').next('.header-sub-menus').removeClass('show').addClass('d-none');
+        } else if (!$menuItem.hasClass('active')) {
+            $menuItem.addClass('active').next('.header-sub-menus').removeClass('d-none').addClass('show');
         }
         if (!$clicked.closest('.col-2').length) {
-            $('.app_menu_group').removeClass('active');
-            $('.spiffy-submenu-group').removeClass('show').addClass('d-none');
+            $('.app_menu_group.active').removeClass('active');
+            $('.spiffy-submenu-group.show').removeClass('show').addClass('d-none');
         }
-        this._all_apps_menu_data();
     },
 
     _ShowCurrentMenusNew: function (ev) {
@@ -372,13 +381,14 @@ patch(NavBar.prototype, {
             if (renderMenu()) {
                 return;
             }
-            const observer = new MutationObserver(() => {
-                if (renderMenu()) {
-                    observer.disconnect();
+            let attempts = 0;
+            const retry = () => {
+                if (renderMenu() || attempts++ > 60) {
+                    return;
                 }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-            setTimeout(() => observer.disconnect(), 3000);
+                requestAnimationFrame(retry);
+            };
+            requestAnimationFrame(retry);
         };
         this._spiffyMenuDataLoading = load().catch((error) => {
             this._spiffyMenuDataLoading = null;
@@ -487,9 +497,10 @@ patch(NavBar.prototype, {
             var $clicked = $(ev.currentTarget);
             var $submenuGroup = $clicked.siblings('.spiffy-submenu-group');
 
-            // If already active, do nothing
             if ($clicked.hasClass('active')) {
-                return; 
+                $clicked.removeClass('active');
+                $submenuGroup.removeClass('show').addClass('d-none');
+                return;
             }
 
             $('.app_menu_group').not($clicked).removeClass('active')

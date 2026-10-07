@@ -21,7 +21,7 @@
 				</t>
 			</t>
 			<t t-else="">
-				<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+				<span class="ri ri-apps-2-line group_app_icon"></span>
 			</t>
 		</t>
 		<t t-else="">
@@ -38,7 +38,7 @@
 				</t>
 			</t>
 			<t t-else="">
-				<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+				<span class="ri ri-apps-2-line group_app_icon"></span>
 			</t>
 		</t>
 	
@@ -65,7 +65,7 @@
 										<img class="img img-fluid group_app_icon" t-att-src="'/web/image/spiffy.app.group/' + result.id + '/group_menu_icon'" />
 									</t>
 									<t t-else="">
-										<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+										<span class="ri ri-apps-2-line group_app_icon"></span>
 									</t>
 								</t>
 								<t t-else="">
@@ -73,7 +73,7 @@
 										<img class="img img-fluid group_app_icon" t-att-src="'/web/image/spiffy.app.group/' + result.id + '/group_menu_icon'" />
 									</t>
 									<t t-else="">
-										<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+										<span class="ri ri-apps-2-line group_app_icon"></span>
 									</t>
 								</t>
 							</div>

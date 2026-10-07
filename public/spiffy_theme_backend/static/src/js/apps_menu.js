@@ -269,7 +269,7 @@ patch(NavBar.prototype, {
                     } else if (app.icon_img) {
                         iconHtml = "<img class='img img-fluid' src='/web/image/ir.ui.menu/" + app.id + "/icon_img' />";
                     } else if (!app.webIconData || app.webIconData.toString() === 'false' || app.webIconData === '/web_enterprise/static/img/default_icon_app.png') {
-                        iconHtml = "<img class='img img-fluid' src='/spiffy_theme_backend_ent/static/description/bizople-icon.png' />";
+                        iconHtml = "<span class='ri ri-apps-2-line'></span>";
                     } else {
                         iconHtml = "<img class='img img-fluid use_icon' src='/web/image/ir.ui.menu/" + app.id + "/web_icon_data' />";
                     }
@@ -277,7 +277,7 @@ patch(NavBar.prototype, {
                     if (app.icon_img) {
                         iconHtml = "<img class='img img-fluid' src='/web/image/ir.ui.menu/" + app.id + "/icon_img' />";
                     } else if (!app.webIconData || app.webIconData.toString() === 'false' || app.webIconData === '/web_enterprise/static/img/default_icon_app.png') {
-                        iconHtml = "<img class='img img-fluid' src='/spiffy_theme_backend_ent/static/description/bizople-icon.png' />";
+                        iconHtml = "<span class='ri ri-apps-2-line'></span>";
                     } else {
                         iconHtml = "<img class='img img-fluid else' src='/web/image/ir.ui.menu/" + app.id + "/web_icon_data' />";
                     }
@@ -408,7 +408,7 @@ patch(NavBar.prototype, {
                             var icon_image = "<img class='img img-fluid' src='data:image/"+icon_data[1]+";base64,"+current_record.web_icon_data+"' />"
                         }
                     } else{
-                        var icon_image = "<img class='img img-fluid' src='/spiffy_theme_backend/static/description/bizople-icon.png' />"
+                        var icon_image = "<span class='ri ri-apps-2-line'></span>"
                         }
                     $tagtarget.find('.app-image').append($(icon_image))
                 } else {
@@ -423,7 +423,7 @@ patch(NavBar.prototype, {
                             var icon_image = "<img class='img img-fluid' src='data:image/"+icon_data[1]+";base64,"+current_record.web_icon_data+"' />"
                         }
                     } else{
-                        var icon_image = "<img class='img img-fluid' src='/spiffy_theme_backend/static/description/bizople-icon.png' />"
+                        var icon_image = "<span class='ri ri-apps-2-line'></span>"
                     }
                     $tagtarget.find('.app-image').append($(icon_image))
                 }

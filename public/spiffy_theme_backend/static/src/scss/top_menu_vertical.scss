@@ -164,6 +164,10 @@
                 }
             }
             .header-sub-menus {
+                .collapsing {
+                    height: 0 !important;
+                    transition: none !important;
+                }
                 p {
                     font-size: 12px;
                     background-color: rgba(255, 255, 255, 0.1) !important;

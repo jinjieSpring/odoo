@@ -987,7 +987,7 @@ body.o_web_client {
                                 height: 0 !important;
                                 margin: 0 !important;
                                 overflow: hidden;
-                                transition: all 0.2s ease-in-out;
+                                transition: none !important;
                             }
 
                             .app-image {
@@ -1061,7 +1061,7 @@ body.o_web_client {
                 }
     
                 width: 80px !important;
-                transition: 0.3s;
+                transition: none;
             }
     
             header+.o_action_manager {
@@ -1079,7 +1079,7 @@ body.o_web_client {
             }
         }
         .o_main_navbar {
-            transition: 0.3s;
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
 
             .o_app_drawer {
                 display: none;
