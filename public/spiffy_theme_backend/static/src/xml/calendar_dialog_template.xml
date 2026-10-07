@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<t t-name="biz.CalendarDialog">
+    <div
+        t-ref="calendarDialog"
+        class="o_popover popover mw-100 o-popover--with-arrow bs-popover-top o-popover-top o-popover--tm"
+        t-att-style="'position: fixed; top: ' + props.position.top + 'px; left: ' + props.position.left + 'px; z-index: 1050;'">
+        <t t-call="web.DateTimePickerPopover" />
+    </div>
+</t>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<odoo>
+    <record id="view_company_form_inherit_firebase_key" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.firebase.key</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Firebase Key File" groups="base.group_no_one">
+                    <group>
+                        <field name="firebase_key_file"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

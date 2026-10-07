@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<odoo>
+    <template id="biz_web_layout_inheirt" name="Web Main layout" inherit_id="web.layout">
+        <xpath expr="//head//link" position="replace">
+            <t t-set="company" t-value="request.env.company.sudo()"/>
+            <link type="image/x-icon" rel="shortcut icon" t-att-href="x_icon or '/web/image/res.company/%s/spiffy_favicon' % (company.id)"/>
+        </xpath>
+    </template>
+
+</odoo>

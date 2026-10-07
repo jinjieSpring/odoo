@@ -1,0 +1,291 @@
+// Part of Bizople Solutions Pvt. Ltd.
+// Licensed under the Bizople Proprietary License v1.0.
+// Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
+// Split View Panel — Spiffy Theme Backend
+// Part of Odoo Module Developed by Bizople Solutions Pvt. Ltd.
+
+:root {
+    --spiffy-split-width: 520px;
+}
+body.spiffy-split-resizing {
+    cursor: col-resize !important;
+    user-select: none !important;
+
+    * {
+        pointer-events: none !important;
+    }
+
+    .spiffy-split-resizer {
+        pointer-events: all !important;
+    }
+}
+
+// Drag handle on left edge of panel
+.spiffy-split-resizer {
+    position: fixed;
+    right: var(--spiffy-split-width);
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: col-resize;
+    z-index: 51;
+    background: transparent;
+    transition: background 0.15s;
+
+    &:hover {
+        background: var(--biz-theme-primary-color, #875a7b);
+        opacity: 0.25;
+    }
+}
+
+// Tab bar
+.spiffy-split-tabbar {
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+    background: var(--bs-light, #f8f9fa);
+    min-height: 42px;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+
+.spiffy-split-tabs {
+    gap: 2px;
+    padding: 5px 0;
+    background: transparent;
+}
+
+.spiffy-split-tab {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    max-width: 180px;
+    white-space: nowrap;
+    color: var(--body-color, #6c757d);
+    transition: background 0.1s, border-color 0.1s;
+    flex-shrink: 0;
+    border-color: var(--border-color, #dee2e6);
+
+    &.active, &:hover {
+        background: var(--biz-theme-primary-color);
+        color: var(--biz-theme-primary-text-color);
+        font-weight: 500;
+    }
+
+    .spiffy-split-tab-label {
+        max-width: 130px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .spiffy-split-tab-close {
+        opacity: 0.4;
+        font-size: 11px;
+        line-height: 1;
+        vertical-align: middle;
+
+        &:hover {
+            opacity: 1;
+            color: #dc3545;
+        }
+    }
+}
+
+// Tab counter badge
+.spiffy-split-tab-count {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--bs-secondary-bg, #e9ecef);
+    color: var(--body-color, #6c757d);
+    border-radius: 10px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+    margin: 0 4px;
+}
+
+// Shared action button (gear + close-all)
+.spiffy-split-action-btn {
+    border: none;
+    background: transparent;
+    color: var(--body-color, #6c757d);
+    font-size: 15px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+        background: #e9ecef;
+        color: var(--biz-theme-primary-color, #875a7b);
+    }
+
+    &.active {
+        color: var(--biz-theme-primary-color, #875a7b);
+        background: #e9ecef;
+    }
+}
+
+.spiffy-split-close-btn:hover {
+    color: #dc3545;
+    background: #fde8ea;
+}
+
+// Settings bar
+.spiffy-split-settings {
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+    background: var(--bs-light, #f8f9fa);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    font-size: 13px;
+}
+
+.spiffy-split-settings-label {
+    font-weight: 500;
+    color: var(--body-color, #495057);
+    white-space: nowrap;
+}
+
+.spiffy-split-limit-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--body-color, #6c757d);
+    transition: background 0.1s, border-color 0.1s, color 0.1s;
+
+    &:hover {
+        background: #e9ecef;
+        border-color: #adb5bd;
+    }
+
+    &.active {
+        background: var(--biz-theme-primary-color, #875a7b);
+        border-color: var(--biz-theme-primary-color, #875a7b);
+        color: #fff;
+    }
+}
+
+// Content area
+.spiffy-split-content {
+    position: relative;
+    flex: 1;
+    overflow: auto;
+
+    .spiffy-split-tab-content {
+        height: 100%;
+
+        > .o_view_controller {
+            height: 100%;
+
+            .o_form_view {
+                height: 100%;
+            }
+        }
+    }
+}
+
+// Force chatter to bottom inside split panel regardless of the user's global
+// chatter-position setting. The panel is narrow so right-side chatter makes
+// the form unusable. Mirrors what body.chatter_bottom:not(.hasAttachment) does.
+.spiffy-split-panel {
+    position: fixed;
+    right: 0;
+    top: 56px;
+    bottom: 0;
+    z-index: 50;
+    background: var(--o-view-background-color, #fff);
+    border-left: 2px solid var(--border-color, #dee2e6);
+    border-top: 2px solid var(--border-color, #dee2e6);
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    // In split view forms opened via right-click, force form renderer layout
+    // to block so chatter stays below the form content.
+    .o_form_renderer.o_form_editable.d-flex {
+        display: block !important;
+    }
+
+    .o_view_controller.o_form_view {
+        flex-direction: column !important;
+        overflow: auto;
+
+        .o_form_view_container {
+            width: 100% !important;
+            background-color: var(--biz-theme-body-color) !important;
+        }
+    }
+
+    .o-mail-Form-chatter {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: unset !important;
+        flex-basis: 100% !important;
+        padding: 15px !important;
+
+        // Reset o-aside (right-side) positioning
+        &.o-aside {
+            position: static !important;
+            height: auto !important;
+            border-left: none !important;
+            border-top: 1px solid var(--border-color, #dee2e6);
+        }
+    }
+
+    .o_form_sheet_bg {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+}
+
+body.o_web_client.dark_mode {
+    .spiffy-split-panel {
+        background: var(--biz-theme-body-color, #1f2327);
+    }
+
+    .spiffy-split-tabbar,
+    .spiffy-split-settings,
+    .spiffy-split-tabs {
+        background: var(--biz-theme-secondary-color, #2a2f34);
+        color: var(--biz-theme-secondary-text-color, #d8dee4);
+    }
+
+    .spiffy-split-tab {
+        color: var(--biz-theme-secondary-text-color, #b9c0c7);
+    }
+
+    .spiffy-split-tab-count,
+    .spiffy-split-action-btn,
+    .spiffy-split-settings-label,
+    .spiffy-split-settings .text-muted {
+        color: var(--biz-theme-secondary-text-color) !important;
+    }
+
+    .spiffy-split-tab-count {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .spiffy-split-action-btn {
+        &:hover,
+        &.active {
+            background: rgba(255, 255, 255, 0.08);
+        }
+    }
+
+    .spiffy-split-limit-btn {
+        background: var(--biz-theme-body-color);
+        &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+        &.active {
+            background: var(--biz-theme-primary-color);
+        }
+    }
+}

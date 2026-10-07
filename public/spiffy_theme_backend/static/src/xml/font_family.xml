@@ -1,0 +1,25 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+    <t t-name="spiffy_theme_backend.AddNewFontFamily">
+        <div class="col-md-6 mb-3" t-attf-id="font_container_{{ fontId }}">
+            <div class="form_check_content d-flex align-items-center">
+                <div class="form-check d-flex align-items-center w-100">
+                    <input type="radio" class="form-check-input"
+                        t-att-id="'font_family_' + fontName.toLowerCase()"
+                        name="google_font_links_ids"
+                        t-att-value="fontName" />
+                    <label t-att-for="'font_family_' + fontName.toLowerCase()" class="custom-control-label">
+                        <span class="text-style-design">
+                            <t t-esc="fontName" />
+                        </span>
+                    </label>
+                </div>
+                <button class="btn btn-sm text-danger delete-font" t-att-data-id="fontId">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

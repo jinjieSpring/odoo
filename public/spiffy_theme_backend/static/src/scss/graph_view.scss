@@ -1,0 +1,26 @@
+// Part of Bizople Solutions Pvt. Ltd.
+// Licensed under the Bizople Proprietary License v1.0.
+// Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
+body.o_web_client{
+    .o_graph_controller {
+        @include media-breakpoint-down(sm){
+            .o_control_panel {
+                .o_cp_buttons {
+                    button {
+                        margin-right: 8px !important;
+                    }
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+            }
+            .o_graph_renderer {
+                padding: 30px 15px !important;
+            }
+        }
+    }
+    .o_graph_canvas_container{
+        .popover{
+            z-index: 89 !important;
+        }
+    }
+}

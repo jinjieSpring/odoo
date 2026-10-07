@@ -1,0 +1,2560 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* spiffy_theme_backend
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-30 07:51+0000\n"
+"PO-Revision-Date: 2026-04-30 07:51+0000\n"
+"Last-Translator: \n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/controllers/main.py:0
+msgid "%(browser)s on %(platform)s"
+msgstr "%(browser)s op %(platform)s"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "(oldest tab replaced when limit reached)"
+msgstr "(oudste tabblad wordt vervangen wanneer de limiet is bereikt)"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<b>Body Image</b>"
+msgstr "<b>Bodyafbeelding</b>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<b>Header Background Image</b>"
+msgstr "<b>Achtergrondafbeelding koptekst</b>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"font_large text-style-design\">Large</span>"
+msgstr "<span class=\"font_large text-style-design\">Groot</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"font_medium text-style-design\">Medium</span>"
+msgstr "<span class=\"font_medium text-style-design\">Middelgroot</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"font_small text-style-design\">Small</span>"
+msgstr "<span class=\"font_small text-style-design\">Klein</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_template
+msgid ""
+"<span class=\"ri ri-add-line\"/>\n"
+"\t\t\t\t\t<span class=\"text d-none\">CLOSE</span>"
+msgstr ""
+"<span class=\"ri ri-add-line\"/>\n"
+"\t\t\t\t\t<span class=\"text d-none\">SLUITEN</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_content_template
+msgid ""
+"<span class=\"ri ri-delete-bin-line align-middle\"/>\n"
+"\t\t\t\t\t\t\t\t\t\t<span class=\"ps-2 edit-note-text\">Delete Note</span>"
+msgstr ""
+"<span class=\"ri ri-delete-bin-line align-middle\"/>\n"
+"\t\t\t\t\t\t\t\t\t\t<span class=\"ps-2 edit-note-text\">Notitie verwijderen</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_content_template
+msgid ""
+"<span class=\"ri ri-pencil-line align-middle\"/>\n"
+"\t\t\t\t\t\t\t\t\t\t<span class=\"ps-2 edit-note-text\">Edit Note</span>"
+msgstr ""
+"<span class=\"ri ri-pencil-line align-middle\"/>\n"
+"\t\t\t\t\t\t\t\t\t\t<span class=\"ps-2 edit-note-text\">Notitie bewerken</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid ""
+"<span class=\"text-style-design\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\t\tRubik\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\t</span>"
+msgstr ""
+"<span class=\"text-style-design\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\t\tRubik\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\t</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"text-style-design\">BounceIn</span>"
+msgstr "<span class=\"text-style-design\">Binnen stuiteren</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"text-style-design\">Fade</span>"
+msgstr "<span class=\"text-style-design\">Vervagen</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"text-style-design\">Shrink</span>"
+msgstr "<span class=\"text-style-design\">Verkleinen</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "<span class=\"text-style-design\">Vertical Flip</span>"
+msgstr "<span class=\"text-style-design\">Verticaal spiegelen</span>"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_template
+msgid "<span>Notes</span>"
+msgstr "<span>Notities</span>"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__action_id
+msgid "Action"
+msgstr "Actie"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_ir_actions_actions
+msgid "Actions"
+msgstr "Acties"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Active"
+msgstr "Actief"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Activities"
+msgstr "Activiteiten"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Add"
+msgstr "Toevoegen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Add Bookmark"
+msgstr "Bladwijzer toevoegen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Add Google Font"
+msgstr "Google lettertype toevoegen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__show_bg_image
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__show_bg_image
+msgid "Add Login Background Image"
+msgstr "Achtergrondafbeelding voor login toevoegen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Add models to exclude…"
+msgstr "Modellen toevoegen om uit te sluiten…"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/list_renderer.xml:0
+msgid "Advanced Filter"
+msgstr "Geavanceerd filter"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/report_preview.js:0
+msgid "An unexpected error occurred while generating the PDF preview."
+msgstr "Er is een onverwachte fout opgetreden bij het genereren van de PDF voorbeeld."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__mail_firebase_tokens
+msgid "Android device(tokens)"
+msgstr "Android apparaat/tokens"
+
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__app_actionid
+msgid "App Action Id"
+<<<<<<< HEAD
+msgstr "App actie ID"
+=======
+msgstr "App-actie-ID"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__description_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__description_pwa
+msgid "App Description"
+<<<<<<< HEAD
+msgstr "App beschrijving"
+=======
+msgstr "App-beschrijving"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "App Drawer"
+<<<<<<< HEAD
+msgstr "Applicatielade"
+=======
+msgstr "App-lade"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__appdrawer_custom_bg_color
+msgid "App Drawer Custom Background Color"
+<<<<<<< HEAD
+msgstr "Aangepaste achtergrondkleur van applicatielade"
+=======
+msgstr "Aangepaste achtergrondkleur van app-lade"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__appdrawer_custom_text_color
+msgid "App Drawer Custom Text Color"
+<<<<<<< HEAD
+msgstr "Aangepaste tekstkleur van applicatielade"
+=======
+msgstr "Aangepaste tekstkleur van app-lade"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__app_id
+msgid "App Id"
+<<<<<<< HEAD
+msgstr "App ID"
+=======
+msgstr "App-ID"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__app_name_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__app_name_pwa
+msgid "App Name"
+<<<<<<< HEAD
+msgstr "App naam"
+=======
+msgstr "App-naam"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__start_url_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__start_url_pwa
+msgid "App Start Url"
+<<<<<<< HEAD
+msgstr "Start URL van app"
+=======
+msgstr "Start-URL van app"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__app_xmlid
+msgid "App XML Id"
+<<<<<<< HEAD
+msgstr "App XML ID"
+=======
+msgstr "App XML-ID"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Apply"
+msgstr "Toepassen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Apply Background"
+msgstr "Achtergrond toepassen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Apply Background Image"
+msgstr "Achtergrondafbeelding toepassen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__apply_menu_shape_style
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Apply Menu Shape Style"
+msgstr "Menustijlvorm toepassen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__apply_light_bg_img
+msgid "Apply light bg image"
+msgstr "Lichte achtergrondafbeelding toepassen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid ""
+"Are you sure you want to delete this record? This action cannot be undone."
+msgstr "Weet u zeker dat u dit record wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__prevent_auto_save_warning
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__prevent_auto_save_warning
+msgid "Auto Save Warning"
+msgstr "Waarschuwing voor automatisch opslaan"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/form_statusbar.xml:0
+msgid "Autosave is disabled, Click on save button."
+msgstr "Automatisch opslaan is uitgeschakeld. Klik op de knop Opslaan."
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.action_backend_config
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__config_id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__backend_theme_config
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.backend_config_form_view
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.backend_config_list_view
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.push_notifcation_list_view
+msgid "Backend Config"
+msgstr "Backendconfiguratie"
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.action_backend_configuration
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Backend Settings"
+msgstr "Backendinstellingen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__spiffy_favicon
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__spiffy_favicon
+msgid "Backend Tab Favicon"
+msgstr "Favicon van backendtabblad"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__tab_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__tab_name
+msgid "Backend Tab Name"
+msgstr "Naam van backendtabblad"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__backend_theme_level
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__backend_theme_level
+msgid "Backend Theme Level"
+msgstr "Backendthemaniveau"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__background_color_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__background_color_pwa
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Background Color"
+msgstr "Achtergrondkleur"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Background Color Opacity"
+msgstr "Dekking van achtergrondkleur"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__light_bg_image
+msgid "Background Image For light"
+msgstr "Achtergrondafbeelding voor lichte modus"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__top_menu_custom_bg_vertical
+msgid "Background Image For vertical menu"
+msgstr "Achtergrondafbeelding voor verticaal menu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__vertical_mini_bg_image_four
+msgid "Background Image Four"
+msgstr "Achtergrondafbeelding vier"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__vertical_mini_bg_image_one
+msgid "Background Image One"
+msgstr "Achtergrondafbeelding een"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__vertical_mini_bg_image_three
+msgid "Background Image Three"
+msgstr "Achtergrondafbeelding drie"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__vertical_mini_bg_image_two
+msgid "Background Image Two"
+msgstr "Achtergrondafbeelding twee"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_body_bg_color
+msgid "Body Background Color for dark"
+<<<<<<< HEAD
+msgstr "Body achtergrondkleur voor donkere modus"
+=======
+msgstr "Body-achtergrondkleur voor donkere modus"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_body_text_color
+msgid "Body Text Color for dark"
+<<<<<<< HEAD
+msgstr "Body tekstkleur voor donkere modus"
+=======
+msgstr "Body-tekstkleur voor donkere modus"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_bookmark_link
+msgid "Bookmark Link"
+msgstr "Bladwijzerlink"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__bookmark_ids
+msgid "Bookmark Links"
+msgstr "Bladwijzerlinks"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Bookmark Panel"
+msgstr "Bladwijzerpaneel"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Border Bottom"
+msgstr "Onderste rand"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__input_style__input_bordered
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Bordered"
+msgstr "Met rand"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__input_style__input_borderless
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Borderless"
+msgstr "Zonder rand"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__input_style__input_bottom_border
+msgid "Bottom Border"
+msgstr "Onderste rand"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/bookmark.xml:0
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Cancel"
+msgstr "Annuleren"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__chatter_position__chatter_bottom
+msgid "Chatter Bottom"
+msgstr "Chatter onderaan"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__chatter_position
+msgid "Chatter Position"
+msgstr "Chatterpositie"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__chatter_position__chatter_right
+msgid "Chatter Right"
+msgstr "Chatter rechts"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__checkbox__checkbox_style_1
+msgid "Checkbox Style 1"
+msgstr "Selectievakstijl 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__checkbox__checkbox_style_2
+msgid "Checkbox Style 2"
+msgstr "Selectievakstijl 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__checkbox__checkbox_style_3
+msgid "Checkbox Style 3"
+msgstr "Selectievakstijl 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__checkbox__checkbox_style_4
+msgid "Checkbox Style 4"
+msgstr "Selectievakstijl 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__checkbox
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Checkbox Styles"
+msgstr "Selectievakstijlen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Choose your loader"
+msgstr "Kies uw laadanimatie"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Circle"
+msgstr "Cirkel"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__shape_style__biz_shape_circle
+msgid "Circle Shape"
+msgstr "Cirkelvorm"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Close"
+msgstr "Sluiten"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Close menu"
+msgstr "Menu sluiten"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Close split view"
+msgstr "Gesplitste weergave sluiten"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Close tab"
+msgstr "Tabblad sluiten"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Color Combinations"
+msgstr "Kleurcombinaties"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_1
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_1
+msgid "Color Pallet 1"
+msgstr "Kleurenpalet 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_10
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_10
+msgid "Color Pallet 10"
+msgstr "Kleurenpalet 10"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_11
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_11
+msgid "Color Pallet 11"
+msgstr "Kleurenpalet 11"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_12
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_12
+msgid "Color Pallet 12"
+msgstr "Kleurenpalet 12"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_13
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_13
+msgid "Color Pallet 13"
+msgstr "Kleurenpalet 13"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_14
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_14
+msgid "Color Pallet 14"
+msgstr "Kleurenpalet 14"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_15
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_15
+msgid "Color Pallet 15"
+msgstr "Kleurenpalet 15"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_16
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_16
+msgid "Color Pallet 16"
+msgstr "Kleurenpalet 16"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_17
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_17
+msgid "Color Pallet 17"
+msgstr "Kleurenpalet 17"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_2
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_2
+msgid "Color Pallet 2"
+msgstr "Kleurenpalet 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_3
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_3
+msgid "Color Pallet 3"
+msgstr "Kleurenpalet 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_4
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_4
+msgid "Color Pallet 4"
+msgstr "Kleurenpalet 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_5
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_5
+msgid "Color Pallet 5"
+msgstr "Kleurenpalet 5"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_6
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_6
+msgid "Color Pallet 6"
+msgstr "Kleurenpalet 6"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_7
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_7
+msgid "Color Pallet 7"
+msgstr "Kleurenpalet 7"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_8
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_8
+msgid "Color Pallet 8"
+msgstr "Kleurenpalet 8"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__color_pallet__pallet_9
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__drawer_color_pallet__drawer_pallet_9
+msgid "Color Pallet 9"
+msgstr "Kleurenpalet 9"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__color_pallet
+msgid "Color Pallets"
+msgstr "Kleurenpaletten"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Colors"
+msgstr "Kleuren"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__list_view_density__list_comfortable
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Comfortable"
+msgstr "Comfortabel"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__list_view_density__list_compact
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Compact"
+msgstr "Compact"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_res_company
+msgid "Companies"
+msgstr "Bedrijven"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Company"
+msgstr "Bedrijf"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_res_config_settings
+msgid "Config Settings"
+<<<<<<< HEAD
+msgstr "Configuratie instellingen"
+=======
+msgstr "Configuratie-instellingen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_backend_config
+msgid "Configurator Backend Theme"
+msgstr "Configurator backendthema"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Copy Link"
+msgstr "Link kopiëren"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+msgid "Create"
+msgstr "Aanmaken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__create_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__create_uid
+msgid "Created by"
+msgstr "Aangemaakt door"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__create_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__create_date
+msgid "Created on"
+msgstr "Aangemaakt op"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_bg_vertical__top_menu_vertical_bg4
+msgid "Custom Vertical BG"
+msgstr "Aangepaste verticale achtergrond"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Deactive"
+msgstr "Inactief"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Debug"
+msgstr "Debuggen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Delete"
+msgstr "Verwijderen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Delete Record"
+msgstr "Record verwijderen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__description
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__description
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Description"
+msgstr "Beschrijving"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__os
+msgid "Device OS"
+<<<<<<< HEAD
+msgstr "Apparaat OS"
+=======
+msgstr "Apparaat-OS"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__token
+msgid "Device firebase token"
+<<<<<<< HEAD
+msgstr "Firebase token van apparaat"
+=======
+msgstr "Firebase-token van apparaat"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Discard"
+msgstr "Negeren"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_discuss_channel
+msgid "Discussion Channel"
+msgstr "Chatkanaal"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_discuss_channel__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_actions_actions__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_http__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_model__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_view__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_thread__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__display_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__display_name
+msgid "Display Name"
+msgstr "Weergavenaam"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+#: code:addons/spiffy_theme_backend/static/src/xml/fileviewer.xml:0
+msgid "Download"
+msgstr "Downloaden"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__drawer_color_pallet
+msgid "Drawer Color Pallets"
+msgstr "Kleurenpaletten van lade"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Duplicate"
+msgstr "Dupliceren"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+msgid "Edit"
+msgstr "Bewerken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_mail_thread
+msgid "Email Thread"
+<<<<<<< HEAD
+msgstr "Emaildiscussie"
+=======
+msgstr "E-mail discussie"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__enable_right_click_menu
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__enable_right_click_menu
+msgid "Enable Right-Click Context Menu"
+msgstr "Contextmenu met rechtermuisknop inschakelen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__enable_todo_list
+msgid "Enable To Do List"
+msgstr "Takenlijst inschakelen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.menu_icon_change_list_view
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_spiffy_app_group_list
+msgid "Enter class name here.. (e.g. ri-class-name)"
+msgstr "Voer hier de klassenaam in.. (bijv. ri-class-name)"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__menu_shape_bg_color
+msgid "Enterprise Menu BG Color"
+<<<<<<< HEAD
+msgstr "Achtergrondkleur van enterprisemenu"
+=======
+msgstr "Achtergrondkleur van enterprise-menu"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__right_click_menu_excluded_models
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__right_click_menu_excluded_models
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Excluded Models"
+msgstr "Uitgesloten modellen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Expand/Collapse Groups"
+<<<<<<< HEAD
+msgstr "Groepen uitklappen/inklappen"
+=======
+msgstr "Groepen uit-/inklappen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Explore on"
+msgstr "Verkennen op"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+msgid "Export All"
+msgstr "Alles exporteren"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Failed to archive/unarchive record"
+msgstr "Record archiveren/dearchiveren mislukt"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Failed to copy link"
+msgstr "Link kopiëren mislukt"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Failed to delete record"
+msgstr "Record verwijderen mislukt"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Failed to duplicate record"
+msgstr "Record dupliceren mislukt"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Failed to generate PDF preview."
+<<<<<<< HEAD
+msgstr "PDF voorbeeld genereren mislukt."
+=======
+msgstr "PDF-voorvertoning genereren mislukt."
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+#: model:ir.model,name:spiffy_theme_backend.model_favorite_apps
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__app_ids
+msgid "Favourite Apps"
+msgstr "Favoriete apps"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/list_view_renderer.js:0
+msgid "File Format Not Supported"
+msgstr "Bestandsindeling wordt niet ondersteund"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__firebase_key_file
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_company_form_inherit_firebase_key
+msgid "Firebase Key File"
+<<<<<<< HEAD
+msgstr "Firebase sleutelbestand"
+=======
+msgstr "Firebase-sleutelbestand"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__firebase_server_key
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__firebase_server_key
+msgid "Firebase key"
+<<<<<<< HEAD
+msgstr "Firebase sleutel"
+=======
+msgstr "Firebase-sleutel"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/models/mail_channel.py:0
+msgid "Firebase key file for spiffy app is missing from the configuration."
+<<<<<<< HEAD
+msgstr "Het Firebase sleutelbestand voor de Spiffy app ontbreekt in de configuratie."
+=======
+msgstr "Het Firebase-sleutelbestand voor de Spiffy-app ontbreekt in de configuratie."
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Font Family"
+msgstr "Lettertypefamilie"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__font_size__font_medium
+msgid "Font Medium"
+msgstr "Middelgroot lettertype"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Font Preview"
+msgstr "Lettertypevoorbeeld"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Font Setting"
+<<<<<<< HEAD
+msgstr "Lettertype instelling"
+=======
+msgstr "Lettertype-instelling"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Font Settings"
+<<<<<<< HEAD
+msgstr "Lettertype instellingen"
+=======
+msgstr "Lettertype-instellingen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Font Size"
+msgstr "Lettergrootte"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__font_size__font_small
+msgid "Font Small"
+msgstr "Klein lettertype"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Font already exists in the list."
+msgstr "Het lettertype bestaat al in de lijst."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__font_size__font_large
+msgid "Font large"
+msgstr "Groot lettertype"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__font_size
+msgid "Font size"
+msgstr "Lettergrootte"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__input_style
+msgid "Form View Mode"
+msgstr "Formulierweergavemodus"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "FullScreen"
+msgstr "Volledig scherm"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "General Settings"
+msgstr "Algemene instellingen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__res_company__backend_theme_level__global_level
+msgid "Global Level"
+msgstr "Globaal niveau"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/menu_providers.js:0
+msgid "Global Search"
+msgstr "Globaal zoeken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__google_font_family
+msgid "Google Font Family"
+<<<<<<< HEAD
+msgstr "Google lettertypefamilie"
+=======
+msgstr "Google-lettertypefamilie"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_google_font_family
+msgid "Google Font Link"
+<<<<<<< HEAD
+msgstr "Google lettertypelink"
+=======
+msgstr "Google-lettertypelink"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.action_google_font_family
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__google_font_links_ids
+#: model:ir.ui.menu,name:spiffy_theme_backend.menu_google_font_family
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_google_font_family_tree
+msgid "Google Font Links"
+<<<<<<< HEAD
+msgstr "Google lettertypelinks"
+=======
+msgstr "Google-lettertypelinks"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__group_icon_class_name
+msgid "Group Icon Class Name"
+msgstr "Klassenaam van groepspictogram"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__group_menu_icon
+msgid "Group Menu Icon"
+msgstr "Groepsmenupictogram"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__group_menu_list_ids
+msgid "Group Menu List"
+msgstr "Groepsmenulijst"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_ir_http
+msgid "HTTP Routing"
+msgstr "HTTP routing"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_discuss_channel__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_actions_actions__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_http__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_model__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_view__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_thread__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__id
+msgid "ID"
+msgstr "ID"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__icon_class_name
+msgid "Icon Class Name"
+msgstr "Klassenaam van pictogram"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Image"
+msgstr "Afbeelding"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__image_192_shortcut
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__image_192_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__image_192_pwa
+msgid "Image 192px"
+msgstr "Afbeelding 192px"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__image_512_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__image_512_pwa
+msgid "Image 512px"
+msgstr "Afbeelding 512px"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Input Style"
+msgstr "Invoerstijl"
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/controllers/main.py:0
+msgid "Invalid authentication code format."
+msgstr "Ongeldig formaat van authenticatiecode."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__table_color
+msgid "Is Body Color"
+msgstr "Is bodykleur"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__is_selected
+msgid "Is Selected"
+msgstr "Is geselecteerd"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__dark_mode
+msgid "Is dark Mode Active"
+msgstr "Is donkere modus actief"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Languages"
+msgstr "Talen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__write_date
+msgid "Last Updated On"
+msgstr "Laatst bijgewerkt op"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__write_uid
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__write_uid
+msgid "Last Updated by"
+msgstr "Laatst bijgewerkt door"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__write_date
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__write_date
+msgid "Last Updated on"
+msgstr "Laatst bijgewerkt op"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Light/Dark Mode"
+msgstr "Lichte/donkere modus"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Link copied to clipboard"
+msgstr "Link gekopieerd naar klembord"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "List Comfortable"
+msgstr "Comfortabele lijst"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "List Compact"
+msgstr "Compacte lijst"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__list_view_density
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "List View Density"
+msgstr "Dichtheid van lijstweergave"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__list_view_sticky_header
+msgid "List view Sticky Header"
+msgstr "Vaste koptekst in lijstweergave"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "List/Tree view Sticky Header and Footer"
+<<<<<<< HEAD
+msgstr "Vaste kop en voettekst in lijst/boomweergave"
+=======
+msgstr "Vaste kop- en voettekst in lijst-/boomweergave"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_1
+msgid "Loader Style 1"
+msgstr "Laadanimatiestijl 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_10
+msgid "Loader Style 10"
+msgstr "Laadanimatiestijl 10"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_2
+msgid "Loader Style 2"
+msgstr "Laadanimatiestijl 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_3
+msgid "Loader Style 3"
+msgstr "Laadanimatiestijl 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_4
+msgid "Loader Style 4"
+msgstr "Laadanimatiestijl 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_5
+msgid "Loader Style 5"
+msgstr "Laadanimatiestijl 5"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_6
+msgid "Loader Style 6"
+msgstr "Laadanimatiestijl 6"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_7
+msgid "Loader Style 7"
+msgstr "Laadanimatiestijl 7"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_8
+msgid "Loader Style 8"
+msgstr "Laadanimatiestijl 8"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__loader_style__loader_style_9
+msgid "Loader Style 9"
+msgstr "Laadanimatiestijl 9"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__loader_style
+msgid "Loader Styles"
+msgstr "Laadanimatiestijlen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Loaders"
+msgstr "Laadanimaties"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Loading…"
+msgstr "Laden…"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__login_page_background_color
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__login_page_background_color
+msgid "Login Background Color"
+msgstr "Achtergrondkleur van login"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__login_page_background_img
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__login_page_background_img
+msgid "Login Background Image"
+msgstr "Achtergrondafbeelding van login"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__res_company__login_page_style__login_style_1
+msgid "Login Style 1"
+msgstr "Loginstijl 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__res_company__login_page_style__login_style_2
+msgid "Login Style 2"
+msgstr "Loginstijl 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__res_company__login_page_style__login_style_3
+msgid "Login Style 3"
+msgstr "Loginstijl 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__res_company__login_page_style__login_style_4
+msgid "Login Style 4"
+msgstr "Loginstijl 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__login_page_style
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__login_page_style
+msgid "Login Styles"
+msgstr "Loginstijlen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__login_page_text_color
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__login_page_text_color
+msgid "Login Text Color"
+msgstr "Tekstkleur van login"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Magnifier"
+msgstr "Vergrootglas"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_mail_firebase
+msgid "Mail Firebase"
+msgstr "Mail Firebase"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Max 6 font families can be added."
+msgstr "Er kunnen maximaal 6 lettertypefamilies worden toegevoegd."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Max tabs:"
+msgstr "Max. tabbladen:"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_ir_ui_menu
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__menu_id
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.menu_icon_change_list_view
+msgid "Menu"
+msgstr "Menu"
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.change_menu_icon_action
+#: model:ir.ui.menu,name:spiffy_theme_backend.change_menu_icon_menu
+msgid "Menu Configuration"
+msgstr "Menuconfiguratie"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__icon_img
+msgid "Menu New Image"
+msgstr "Nieuwe menuafbeelding"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Menu Position"
+msgstr "Menupositie"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__menu_shape_bg_color_opacity
+msgid "Menu Shape BG Color Opacity"
+msgstr "Dekking van achtergrondkleur van menuvorm"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Menu Shape Background Color"
+msgstr "Achtergrondkleur van menuvorm"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Menu Shape Style"
+msgstr "Menustijlvorm"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Menu Vertical"
+msgstr "Verticaal menu"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Menu horizontal"
+msgstr "Horizontaal menu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__backend_menubar_logo
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__backend_menubar_logo
+msgid "Menubar Logo"
+msgstr "Menubalklogo"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__backend_menubar_logo_icon
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__backend_menubar_logo_icon
+msgid "Menubar Logo Icon"
+msgstr "Menubalklogopictogram"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_push_notification_menu__model_name
+msgid "Model"
+msgstr "Model"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_ir_model
+msgid "Models"
+msgstr "Modellen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,help:spiffy_theme_backend.field_res_company__right_click_menu_excluded_models
+#: model:ir.model.fields,help:spiffy_theme_backend.field_res_config_settings__right_click_menu_excluded_models
+msgid "Models that will NOT show the custom right-click context menu."
+msgstr "Modellen waarin het aangepaste contextmenu met rechtermuisknop NIET wordt weergegeven."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__name
+msgid "Name"
+msgstr "Naam"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Next"
+msgstr "Volgende"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/menu_providers.js:0
+msgid "No record found"
+msgstr "Geen record gevonden"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_template
+msgid "Note Title..."
+msgstr "Notitietitel..."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Notes"
+msgstr "Notities"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__note_color_pallet
+msgid "Notes Color Pallets"
+msgstr "Kleurenpaletten voor notities"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/inherit_mobile_apps_funnel.xml:0
+msgid "On Apple Store"
+msgstr "In de Apple Store"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/inherit_mobile_apps_funnel.xml:0
+msgid "On Google Play"
+msgstr "Op Google Play"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Open"
+msgstr "Openen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Open in New Tab"
+msgstr "Openen in nieuw tabblad"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Open in Split View"
+msgstr "Openen in gesplitste weergave"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Open tabs / max tabs"
+msgstr "Open tabbladen / max. tabbladen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "PDF file"
+<<<<<<< HEAD
+msgstr "PDF bestand"
+=======
+msgstr "PDF-bestand"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "PDF preview is not available for this report."
+<<<<<<< HEAD
+msgstr "PDF voorbeeld is niet beschikbaar voor dit rapport."
+=======
+msgstr "PDF-voorvertoning is niet beschikbaar voor dit rapport."
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/report_preview.js:0
+msgid ""
+"PDF preview is not available for this report. The report may not produce a "
+"valid PDF."
+<<<<<<< HEAD
+msgstr "PDF voorbeeld is niet beschikbaar voor dit rapport. Het rapport produceert mogelijk geen geldige PDF."
+=======
+msgstr "PDF-voorvertoning is niet beschikbaar voor dit rapport. Het rapport produceert mogelijk geen geldige PDF."
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "PWA Icon (192 x 192)"
+<<<<<<< HEAD
+msgstr "PWA pictogram (192 x 192)"
+=======
+msgstr "PWA-pictogram (192 x 192)"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "PWA Icon (512 x 512)"
+<<<<<<< HEAD
+msgstr "PWA pictogram (512 x 512)"
+=======
+msgstr "PWA-pictogram (512 x 512)"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "PWA Name"
+<<<<<<< HEAD
+msgstr "PWA naam"
+=======
+msgstr "PWA-naam"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.act_open_pwa_shortcuts_view
+#: model:ir.model,name:spiffy_theme_backend.model_pwa_shortcuts
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__pwa_shortcuts_ids
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__pwa_shortcuts_ids
+#: model:ir.ui.menu,name:spiffy_theme_backend.pwa_shortcuts_view_tree_menuitem
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "PWA Shortcuts"
+<<<<<<< HEAD
+msgstr "PWA snelkoppelingen"
+=======
+msgstr "PWA-snelkoppelingen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.bizople_pwa_shortcuts_form_view
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.bizople_pwa_shortcuts_list_view
+msgid "PWA shortcuts"
+<<<<<<< HEAD
+msgstr "PWA snelkoppelingen"
+=======
+msgstr "PWA-snelkoppelingen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_1
+msgid "Pallet 1"
+msgstr "Palet 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_2
+msgid "Pallet 2"
+msgstr "Palet 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_3
+msgid "Pallet 3"
+msgstr "Palet 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_4
+msgid "Pallet 4"
+msgstr "Palet 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_5
+msgid "Pallet 5"
+msgstr "Palet 5"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_6
+msgid "Pallet 6"
+msgstr "Palet 6"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__todo_list__note_color_pallet__pallet_7
+msgid "Pallet 7"
+msgstr "Palet 7"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Pin Sidebar"
+msgstr "Zijbalk vastzetten"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__vertical_sidebar_pinned
+msgid "Pinned Sidebar"
+msgstr "Vastgezette zijbalk"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Popup Animation"
+<<<<<<< HEAD
+msgstr "Popupanimatie"
+=======
+msgstr "Pop-upanimatie"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__prevent_auto_save
+msgid "Prevent Auto Save"
+msgstr "Automatisch opslaan voorkomen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__prevent_auto_save
+msgid "Prevent Auto Save ?"
+msgstr "Automatisch opslaan voorkomen?"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/report_preview.js:0
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Preview Failed"
+msgstr "Voorvertoning mislukt"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/report_preview.xml:0
+msgid "Preview PDF"
+msgstr "PDF voorvertonen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/list_view_renderer.js:0
+msgid "Preview for this file type can not be shown"
+msgstr "Voorvertoning voor dit bestandstype kan niet worden weergegeven"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Previous"
+msgstr "Vorige"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_primary_bg_color
+msgid "Primary Background Color for dark"
+msgstr "Primaire achtergrondkleur voor donkere modus"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__light_primary_bg_color
+msgid "Primary Background Color for light"
+msgstr "Primaire achtergrondkleur voor lichte modus"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Primary Color"
+msgstr "Primaire kleur"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_primary_text_color
+msgid "Primary Text Color for dark"
+msgstr "Primaire tekstkleur voor donkere modus"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__light_primary_text_color
+msgid "Primary Text Color for light"
+msgstr "Primaire tekstkleur voor lichte modus"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Print"
+msgstr "Afdrukken"
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.action_push_notification_menu
+#: model:ir.model,name:spiffy_theme_backend.model_push_notification_menu
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.push_notifcation_form_view
+msgid "Push Notification Menu"
+msgstr "Menu voor pushmeldingen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Quick View"
+msgstr "Snelle weergave"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+msgid "Quick actions"
+msgstr "Snelle acties"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__radio__radio_style_1
+msgid "Radio Style 1"
+msgstr "Keuzerondjestijl 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__radio__radio_style_2
+msgid "Radio Style 2"
+msgstr "Keuzerondjestijl 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__radio__radio_style_3
+msgid "Radio Style 3"
+msgstr "Keuzerondjestijl 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__radio__radio_style_4
+msgid "Radio Style 4"
+msgstr "Keuzerondjestijl 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__radio
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Radio Styles"
+msgstr "Keuzerondjestijlen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Record archived"
+msgstr "Record gearchiveerd"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Record deleted"
+msgstr "Record verwijderd"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Record duplicated successfully"
+msgstr "Record succesvol gedupliceerd"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Record unarchived"
+msgstr "Record uit archief gehaald"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Refresh"
+msgstr "Vernieuwen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/apps_menu.js:0
+msgid "Refresh App"
+msgstr "App vernieuwen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/bookmark.xml:0
+msgid "Remove"
+msgstr "Verwijderen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/bookmark.xml:0
+msgid "Rename"
+msgstr "Hernoemen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js:0
+msgid "Report"
+msgstr "Rapport"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/right_click_menu.xml:0
+msgid "Report Preview"
+msgstr "Rapportvoorvertoning"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Reset Backend Settings"
+msgstr "Backendinstellingen resetten"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Reset Zoom"
+msgstr "Zoom resetten"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Rotate"
+msgstr "Draaien"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Rounded"
+msgstr "Afgerond"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__shape_style__biz_shape_rounded
+msgid "Rounded Shape"
+msgstr "Afgeronde vorm"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__theme_style__biz_theme_rounded
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Rounded Theme"
+msgstr "Afgerond thema"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_template
+msgid "Save"
+msgstr "Opslaan"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Search"
+msgstr "Zoeken"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/menu_providers.js:0
+msgid "Search for a Record..."
+msgstr "Zoeken naar een record..."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_secondry_bg_color
+msgid "Secondry Background Color for dark"
+msgstr "Secundaire achtergrondkleur voor donkere modus"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__dark_secondry_text_color
+msgid "Secondry Text Color for dark"
+msgstr "Secundaire tekstkleur voor donkere modus"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Separator 1"
+msgstr "Scheiding 1"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Separator 2"
+msgstr "Scheiding 2"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Separator 3"
+msgstr "Scheiding 3"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Separator 4"
+msgstr "Scheiding 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__separator__separator_style_1
+msgid "Separator Style 1"
+msgstr "Scheidingsstijl 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__separator__separator_style_2
+msgid "Separator Style 2"
+msgstr "Scheidingsstijl 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__separator__separator_style_3
+msgid "Separator Style 3"
+msgstr "Scheidingsstijl 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__separator__separator_style_4
+msgid "Separator Style 4"
+msgstr "Scheidingsstijl 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__separator
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Separator Styles"
+msgstr "Scheidingsstijlen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__sequence
+msgid "Sequence"
+msgstr "Volgorde"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Set Your Own Colors"
+msgstr "Eigen kleuren instellen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Set Your Own Drawer Colors"
+<<<<<<< HEAD
+msgstr "Eigen kleuren voor applicatielade instellen"
+=======
+msgstr "Eigen kleuren voor app-lade instellen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__shape_style
+msgid "Shape Style"
+msgstr "Vormstijl"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__short_name
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__short_name_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__short_name_pwa
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Short Name"
+msgstr "Korte naam"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__attachment_in_tree_view
+msgid "Show Attachement in tree view"
+msgstr "Bijlage tonen in boomweergave"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Show Attachments in List View"
+msgstr "Bijlagen tonen in lijstweergave"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__show_filter_row
+msgid "Show Filter Row"
+msgstr "Filterrij tonen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Show Icon Pack"
+msgstr "Pictogrampakket tonen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid ""
+"Show a custom context menu when right-clicking on list rows,\n"
+"                                            kanban cards, and many2one fields.\n"
+"                                            A page refresh is required after changing this setting."
+msgstr ""
+"Toon een aangepast contextmenu bij rechtsklikken op lijstrijen,\n"
+<<<<<<< HEAD
+"                                            kanbankaarten en many2one velden.\n"
+=======
+"                                            kanban-kaarten en many2one-velden.\n"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+"                                            Na het wijzigen van deze instelling is een paginavernieuwing vereist."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,help:spiffy_theme_backend.field_res_company__enable_right_click_menu
+#: model:ir.model.fields,help:spiffy_theme_backend.field_res_config_settings__enable_right_click_menu
+msgid ""
+"Show a custom context menu when right-clicking on list rows, kanban cards, "
+"and many2one fields."
+<<<<<<< HEAD
+msgstr "Toon een aangepast contextmenu bij rechtsklikken op lijstrijen, kanbankaarten en many2one velden."
+=======
+msgstr "Toon een aangepast contextmenu bij rechtsklikken op lijstrijen, kanban-kaarten en many2one-velden."
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__bookmark_panel
+msgid "Show right bookmark panel"
+msgstr "Rechter bladwijzerpaneel tonen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_spiffy_app_group
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__spiffy_app_group_id
+msgid "Spiffy App Group"
+<<<<<<< HEAD
+msgstr "Spiffy appgroep"
+=======
+msgstr "Spiffy-appgroep"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_window,name:spiffy_theme_backend.action_spiffy_app_group
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__spiffy_app_group
+#: model:ir.ui.menu,name:spiffy_theme_backend.spiffy_app_group
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.view_spiffy_app_group_list
+msgid "Spiffy App Groups"
+<<<<<<< HEAD
+msgstr "Spiffy appgroepen"
+=======
+msgstr "Spiffy-appgroepen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__app_menu_list
+msgid "Spiffy App Groups List"
+<<<<<<< HEAD
+msgstr "Lijst met Spiffy appgroepen"
+=======
+msgstr "Lijst met Spiffy-appgroepen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.ui.menu,name:spiffy_theme_backend.bizople_backend_theme_configuration_mainmenu
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.spiffy_configuration_res_user_view
+msgid "Spiffy Configuration"
+<<<<<<< HEAD
+msgstr "Spiffy configuratie"
+=======
+msgstr "Spiffy-configuratie"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.actions.act_url,name:spiffy_theme_backend.action_spiffy_documentation
+#: model:ir.ui.menu,name:spiffy_theme_backend.spiffy_documentation_menu
+msgid "Spiffy Documentation"
+<<<<<<< HEAD
+msgstr "Spiffy documentatie"
+=======
+msgstr "Spiffy-documentatie"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Spiffy General Setting"
+<<<<<<< HEAD
+msgstr "Algemene Spiffy instelling"
+=======
+msgstr "Algemene Spiffy-instelling"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Spiffy Progressive Web Application (PWA)"
+msgstr "Spiffy Progressive Web Application (PWA)"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/split_view/split_view_panel_service.js:0
+msgid "Split View"
+msgstr "Gesplitste weergave"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Square"
+msgstr "Vierkant"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__shape_style__biz_shape_square
+msgid "Square Shape"
+msgstr "Vierkante vorm"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__theme_style__biz_theme_square
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Square Theme"
+msgstr "Vierkant thema"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__theme_style__biz_theme_standard
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Standard Theme"
+msgstr "Standaardthema"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Start url"
+<<<<<<< HEAD
+msgstr "Start URL"
+=======
+msgstr "Start-URL"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/apps_menu.js:0
+msgid "Switch/Add Account"
+msgstr "Account wisselen/toevoegen"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__tab__tab_style_1
+msgid "Tab Style 1"
+msgstr "Tabbladstijl 1"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__tab__tab_style_2
+msgid "Tab Style 2"
+msgstr "Tabbladstijl 2"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__tab__tab_style_3
+msgid "Tab Style 3"
+msgstr "Tabbladstijl 3"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__tab__tab_style_4
+msgid "Tab Style 4"
+msgstr "Tabbladstijl 4"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__tab
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Tab Styles"
+msgstr "Tabbladstijlen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/split_view/split_view_panel_service.js:0
+msgid "Tab limit (${"
+msgstr "Tabbladlimiet (${"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Tab limit settings"
+msgstr "Instellingen voor tabbladlimiet"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_template
+msgid "Take a Note..."
+msgstr "Maak een notitie..."
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Text Color"
+msgstr "Tekstkleur"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__theme_color_pwa
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__theme_color_pwa
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.res_config_settings_backend_config
+msgid "Theme Color"
+msgstr "Themakleur"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Theme Setting"
+<<<<<<< HEAD
+msgstr "Thema instelling"
+=======
+msgstr "Thema-instelling"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Theme Settings"
+<<<<<<< HEAD
+msgstr "Thema instellingen"
+=======
+msgstr "Thema-instellingen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__theme_style
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Theme Style"
+msgstr "Themastijl"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Themes Configuration"
+msgstr "Themaconfiguratie"
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/controllers/main.py:0
+msgid ""
+"There are too many rows (%(count)s rows, limit: %(limit)s) to export as "
+"Excel 2007-2013 (.xlsx) format. Consider splitting the export."
+msgstr "Er zijn te veel rijen (%(count)s rijen, limiet: %(limit)s) om te exporteren als Excel 2007-2013 (.xlsx). Overweeg de export op te splitsen."
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "This is a preview of your selected font."
+msgstr "Dit is een voorbeeld van het geselecteerde lettertype."
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__title
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__name
+msgid "Title"
+msgstr "Titel"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_todo_list
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__todo_list_ids
+msgid "To Do List"
+msgstr "Takenlijst"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/view_button_icons.xml:0
+msgid "Today"
+msgstr "Vandaag"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Toggle Filter Row"
+msgstr "Filterrij aan/uit zetten"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.constraint,message:spiffy_theme_backend.constraint_mail_firebase_uniq_token_not_false
+msgid "Token must be not null!"
+msgstr "Token mag niet null zijn!"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.constraint,message:spiffy_theme_backend.constraint_mail_firebase_uniq_token
+msgid "Token must be unique per user!"
+msgstr "Token moet uniek zijn per gebruiker!"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_users__tool_color_id
+msgid "Tool Color"
+msgstr "Hulpmiddelkleur"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_company__spiffy_toobar_color
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_res_config_settings__spiffy_toobar_color
+msgid "Toolbar Color"
+msgstr "Werkbalkkleur"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_position__top_menu_horizontal
+msgid "Top Menu Horizontal"
+msgstr "Bovenmenu horizontaal"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__top_menu_position
+msgid "Top Menu Position"
+msgstr "Positie van bovenmenu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_position__top_menu_vertical
+msgid "Top Menu Vertical"
+msgstr "Bovenmenu verticaal"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_bg_vertical__top_menu_vertical_bg1
+msgid "Top Menu Vertical BG 1"
+msgstr "Verticale achtergrond 1 van bovenmenu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_bg_vertical__top_menu_vertical_bg2
+msgid "Top Menu Vertical BG 2"
+msgstr "Verticale achtergrond 2 van bovenmenu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_bg_vertical__top_menu_vertical_bg3
+msgid "Top Menu Vertical BG 3"
+msgstr "Verticale achtergrond 3 van bovenmenu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__top_menu_bg_vertical
+msgid "Top Menu Vertical Backgoround Image"
+msgstr "Verticale achtergrondafbeelding van bovenmenu"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__top_menu_position__top_menu_vertical_mini
+msgid "Top Menu Vertical Mini"
+msgstr "Bovenmenu verticaal mini"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__url
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__url
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_pwa_shortcuts__url
+msgid "URL"
+msgstr "URL"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.to_do_list_template
+msgid "Update"
+msgstr "Bijwerken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__use_custom_colors
+msgid "Use Custom Colors"
+msgstr "Aangepaste kleuren gebruiken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__use_custom_drawer_color
+msgid "Use Custom Drawer Colors"
+msgstr "Aangepaste ladekleuren gebruiken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_spiffy_app_group__use_group_icon
+msgid "Use Group Icon"
+msgstr "Groepspictogram gebruiken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_ir_ui_menu__use_icon
+msgid "Use Icon"
+msgstr "Pictogram gebruiken"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_res_users
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_bookmark_link__user_id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_favorite_apps__user_id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_google_font_family__user_id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_mail_firebase__user_id
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__user_id
+msgid "User"
+msgstr "Gebruiker"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__res_company__backend_theme_level__user_level
+msgid "User Level"
+msgstr "Gebruikersniveau"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__vertical_background
+msgid "Vertical Background"
+msgstr "Verticale achtergrond"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Video"
+msgstr "Video"
+
+#. module: spiffy_theme_backend
+#: model:ir.model,name:spiffy_theme_backend.model_ir_ui_view
+msgid "View"
+msgstr "Weergave"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Viewer"
+msgstr "Viewer"
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/controllers/main.py:0
+msgid "You are not allowed to upload an attachment here."
+msgstr "U mag hier geen bijlage uploaden."
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/controllers/main.py:0
+msgid "You are not allowed to upload attachments on this channel."
+msgstr "U mag geen bijlagen uploaden op dit kanaal."
+
+#. module: spiffy_theme_backend
+#. odoo-python
+#: code:addons/spiffy_theme_backend/models/mail_channel.py:0
+msgid ""
+"You have to install \"google_auth>=1.18.0\" to be able to send push "
+"notifications."
+msgstr "U moet \"google_auth>=1.18.0\" installeren om pushmeldingen te kunnen verzenden."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Zoom In"
+msgstr "Inzoomen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Zoom Out"
+msgstr "Uitzoomen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "https://fonts.google.com/"
+msgstr "https://fonts.google.com/"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "https://fonts.google.com/specimen/Lato"
+msgstr "https://fonts.google.com/specimen/Lato"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_1
+msgid "popup Style 1"
+<<<<<<< HEAD
+msgstr "Popupstijl 1"
+=======
+msgstr "Pop-upstijl 1"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_2
+msgid "popup Style 2"
+<<<<<<< HEAD
+msgstr "Popupstijl 2"
+=======
+msgstr "Pop-upstijl 2"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_3
+msgid "popup Style 3"
+<<<<<<< HEAD
+msgstr "Popupstijl 3"
+=======
+msgstr "Pop-upstijl 3"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__popup__popup_style_4
+msgid "popup Style 4"
+<<<<<<< HEAD
+msgstr "Popupstijl 4"
+=======
+msgstr "Pop-upstijl 4"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_backend_config__popup
+msgid "popup Styles"
+<<<<<<< HEAD
+msgstr "Popupstijlen"
+=======
+msgstr "Pop-upstijlen"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields,field_description:spiffy_theme_backend.field_todo_list__sequence
+msgid "sequence"
+msgstr "volgorde"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "your image"
+msgstr "uw afbeelding"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Header Background Image"
+msgstr "Achtergrondafbeelding koptekst"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Fade"
+msgstr "Vervagen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Vertical Flip"
+msgstr "Verticaal spiegelen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "BounceIn"
+msgstr "Binnen stuiteren"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Shrink"
+msgstr "Verkleinen"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Body Image"
+<<<<<<< HEAD
+msgstr "Bodyafbeelding"
+=======
+msgstr "Body-afbeelding"
+>>>>>>> 7eb32b9ace9bbf594feec8abf21474ac86dae3ef
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Small"
+msgstr "Klein"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Medium"
+msgstr "Middelgroot"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Large"
+msgstr "Groot"

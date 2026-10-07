@@ -1,0 +1,38 @@
+// Part of Bizople Solutions Pvt. Ltd.
+// Licensed under the Bizople Proprietary License v1.0.
+// Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
+.spiffy-report-item-row {
+    > .dropdown-item,
+    > .o-dropdown-item {
+        width: auto !important;
+    }
+
+    .spiffy-report-item-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .spiffy-report-preview-btn {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        padding: 0 0.6rem;
+        border-left: 1px solid rgba(0, 0, 0, 0.08);
+        color: var(--o-gray-500, #6c757d);
+        cursor: pointer;
+        transition: color 0.15s ease, background-color 0.15s ease;
+
+        &:hover,
+        &:focus {
+            color: var(--o-brand-primary, #017e84);
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .fa {
+            font-size: 0.85rem;
+        }
+    }
+}

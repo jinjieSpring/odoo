@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<odoo>
+    <template id="biz_responsive_web_layout_template" inherit_id="web.layout" name="Bizople Responsive Web Layout">
+        <xpath expr="//meta[last()]" position="after">
+            <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+            <link rel="stylesheet" type="text/css" href="/spiffy_theme_backend/static/src/font/RemixIcon/remixicon.css" />
+        </xpath>
+    </template>
+
+    <template id="biz_webclient_bootstrap_inherit" inherit_id="web.webclient_bootstrap" name="webclient bootstrap inherit">
+        <xpath expr="//t[@t-set='head_web']" position="before">
+            <t t-set="html_data" t-value="{'class': ('o_enterprise' if request.env['ir.module.module'].sudo().search([('name', '=', 'web_enterprise'), ('state', '=', 'installed')], limit=1) else 'o_community') + ' spiffy_theme_backend'}"/>
+        </xpath>
+        <!-- Fix the issue where the PWA icon is not displayed on iPhone devices. -->
+        <xpath expr="//meta[@name='viewport']" position="after">
+            <meta name="theme-color" t-att-content="request.env.company.sudo().spiffy_toobar_color and request.env.company.sudo().spiffy_toobar_color or '#0097a7'"/>
+            <link rel="apple-touch-icon" t-attf-href="/web/image/res.company/{{request.env.company.sudo().id}}/image_192_pwa/192x192"/>
+        </xpath>
+    </template>
+
+    <template id="spiffy_web_neutralize_banner_template"  name="Neutralize Banner" inherit_id="web.neutralize_banner">
+        <xpath expr="//span[@id='oe_neutralize_banner']/.." position="attributes">
+            <attribute name="class">oe_neutralize_banner_active</attribute>
+        </xpath>
+    </template>
+</odoo>

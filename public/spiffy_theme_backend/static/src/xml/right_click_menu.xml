@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates xml:space="preserve">
+
+    <t t-name="spiffy_theme_backend.RightClickMenu">
+        <div t-if="state.visible" class="spiffy-rcm-wrapper">
+
+            <!-- Floating report submenu — sibling of main menu to avoid overflow clipping -->
+            <div t-if="state.submenuOpen"
+                class="spiffy-context-menu spiffy-rcm-submenu shadow"
+                t-att-style="submenuStyle"
+                t-on-mouseenter="onSubmenuMouseEnter"
+                t-on-mouseleave="onSubmenuMouseLeave"
+                t-on-click.stop="">
+                <div class="spiffy-rcm-group">
+                    <t t-foreach="state.menuData.reports" t-as="report" t-key="report.id">
+                        <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                            t-on-click="() => this.previewReport(report)">
+                            <span class="spiffy-rcm-icon"><i class="fa fa-file-pdf-o"/></span>
+                            <span class="spiffy-rcm-label" t-out="report.name"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <div class="spiffy-context-menu shadow"
+                t-att-style="menuStyle"
+                t-on-click.stop="">
+                <t t-if="state.loading">
+                    <div class="spiffy-rcm-loading">
+                        <i class="fa fa-circle-o-notch fa-spin me-2"/>
+                        <span>Loading…</span>
+                    </div>
+                </t>
+
+                <t t-elif="state.menuData">
+                    <div class="spiffy-rcm-group">
+                        <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                            t-on-click="openRecord">
+                            <span class="spiffy-rcm-icon"><i class="fa fa-window-maximize"/></span>
+                            <span class="spiffy-rcm-label">Open</span>
+                        </div>
+
+                        <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                            t-on-click="openInNewTab">
+                            <span class="spiffy-rcm-icon"><i class="fa fa-external-link"/></span>
+                            <span class="spiffy-rcm-label">Open in New Tab</span>
+                        </div>
+
+                        <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                            t-on-click="openInSplitView">
+                            <span class="spiffy-rcm-icon"><i class="fa fa-columns"/></span>
+                            <span class="spiffy-rcm-label">Open in Split View</span>
+                        </div>
+
+                        <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                            t-on-click="quickView">
+                            <span class="spiffy-rcm-icon"><i class="fa fa-eye"/></span>
+                            <span class="spiffy-rcm-label">Quick View</span>
+                        </div>
+                    </div>
+
+                    <div class="spiffy-rcm-separator" role="separator"/>
+                    <div class="spiffy-rcm-group">
+
+                        <t t-if="state.menuData.access.write">
+                            <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                                t-on-click="editRecord">
+                                <span class="spiffy-rcm-icon"><i class="fa fa-pencil"/></span>
+                                <span class="spiffy-rcm-label">Edit</span>
+                            </div>
+                        </t>
+
+                        <t t-if="state.menuData.access.create">
+                            <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                                t-on-click="duplicateRecord">
+                                <span class="spiffy-rcm-icon"><i class="fa fa-clone"/></span>
+                                <span class="spiffy-rcm-label">Duplicate</span>
+                            </div>
+                        </t>
+
+                        <t t-if="state.menuData.has_active and state.menuData.access.write">
+                            <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                                t-on-click="toggleArchive">
+                                <span class="spiffy-rcm-icon">
+                                    <i t-att-class="state.menuData.is_active ? 'fa fa-archive' : 'fa fa-undo'"/>
+                                </span>
+                                <span class="spiffy-rcm-label"
+                                    t-out="state.menuData.is_active ? 'Archive' : 'Unarchive'"/>
+                            </div>
+                        </t>
+
+                        <t t-if="state.menuData.access.unlink">
+                            <div class="spiffy-rcm-item spiffy-rcm-danger" role="menuitem" tabindex="0"
+                                t-on-click="deleteRecord">
+                                <span class="spiffy-rcm-icon"><i class="fa fa-trash"/></span>
+                                <span class="spiffy-rcm-label">Delete</span>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="spiffy-rcm-separator" role="separator"/>
+                    <div class="spiffy-rcm-group">
+
+                        <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                            t-on-click="copyLink">
+                            <span class="spiffy-rcm-icon"><i class="fa fa-link"/></span>
+                            <span class="spiffy-rcm-label">Copy Link</span>
+                        </div>
+
+                        <t t-if="state.menuData.has_report">
+                            <t t-if="state.menuData.reports.length === 1">
+                                <div class="spiffy-rcm-item" role="menuitem" tabindex="0"
+                                    t-on-click="() => this.previewReport(state.menuData.reports[0])">
+                                    <span class="spiffy-rcm-icon"><i class="fa fa-file-pdf-o"/></span>
+                                    <span class="spiffy-rcm-label">Report Preview</span>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="spiffy-rcm-item spiffy-rcm-has-submenu" role="menuitem" tabindex="0"
+                                    t-on-mouseenter="onReportItemMouseEnter"
+                                    t-on-mouseleave="onReportItemMouseLeave">
+                                    <span class="spiffy-rcm-icon"><i class="fa fa-file-pdf-o"/></span>
+                                    <span class="spiffy-rcm-label">Report Preview</span>
+                                    <span class="spiffy-rcm-submenu-arrow"><i class="fa fa-chevron-right"/></span>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

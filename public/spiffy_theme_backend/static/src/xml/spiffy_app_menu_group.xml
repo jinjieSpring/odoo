@@ -1,0 +1,168 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+    <t t-name="spiffy_theme_backend.spiffy-menu-icon">
+		<t t-if="menu.use_icon">
+			<t t-if="menu.icon_class_name">
+				<span t-att-class="'ri ' + menu.icon_class_name" class="group_app_icon"></span>
+			</t>
+			<t t-elif="menu.icon_img">
+				<img class="img img-fluid group_app_icon" t-att-src="'/web/image/ir.ui.menu/' + menu.id + '/icon_img'" />
+			</t>
+			<t t-elif="menu.webIcon">
+				<t t-set="icon_data" t-value="menu.webIcon and menu.webIcon.split('/icon.')"/>
+				<t t-if="icon_data and icon_data[1] == 'svg'">
+					<img class="img img-fluid group_app_icon" t-att-src="menu.webIcon.replace(',', '/')" />
+				</t>
+				<t t-else="">
+					<img class="img img-fluid group_app_icon" 
+						t-att-src="menu.webIconData"/>
+				</t>
+			</t>
+			<t t-else="">
+				<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+			</t>
+		</t>
+		<t t-else="">
+			<t t-if="menu.icon_img">
+				<img class="img img-fluid group_app_icon" t-att-src="'/web/image/ir.ui.menu/' + menu.id + '/icon_img'" />
+			</t>
+			<t t-elif="menu.webIcon">
+				<t t-set="icon_data" t-value="menu.webIcon and menu.webIcon.split('/icon.')"/>
+				<t t-if="icon_data and icon_data[1] == 'svg'">
+					<img class="img img-fluid group_app_icon" t-att-src="menu.webIcon.replace(',', '/')" />
+				</t>
+				<t t-else="">
+					<img class="img img-fluid group_app_icon" t-att-src="menu.webIconData" />
+				</t>
+			</t>
+			<t t-else="">
+				<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+			</t>
+		</t>
+	
+	</t>
+
+	<t t-name="spiffy_theme_backend.AppMenuGroup">
+		<div class="row m-0 spiffy-app">
+			<div id="blur-overlay" class="spiffy-menu-group-list" style="display: none;"></div>
+			<t t-if="group_info">
+				<t t-foreach="group_info" t-as="result" t-key="result.id">
+					<div class="app-box col-1 mb16 spiffy-menu-group">
+						<div class="top-menu-vertical-mini" style="display: none;"></div>
+						<a
+							t-att-data-menu="result.id"
+							t-attf-data-action-model="{{result.actionModel ? result.actionModel : ''}}"
+							t-attf-data-action-id="{{result.actionID ? result.actionID : ''}}"
+							t-att-data-menu-xmlid="result.xmlid" t-attf-class="app_menu_group text-center">
+							<div class="group-app-icon app-image mb8">
+								<t t-if="result.use_group_icon">
+									<t t-if="result.group_icon_class_name">
+										<span t-att-class="'ri ' + result.group_icon_class_name" class="group_app_icon"></span>
+									</t>
+									<t t-elif="result.group_menu_icon">
+										<img class="img img-fluid group_app_icon" t-att-src="'/web/image/spiffy.app.group/' + result.id + '/group_menu_icon'" />
+									</t>
+									<t t-else="">
+										<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+									</t>
+								</t>
+								<t t-else="">
+									<t t-if="result.group_menu_icon">
+										<img class="img img-fluid group_app_icon" t-att-src="'/web/image/spiffy.app.group/' + result.id + '/group_menu_icon'" />
+									</t>
+									<t t-else="">
+										<img class="img img-fluid group_app_icon" src="/spiffy_theme_backend/static/description/bizople-icon.png" />
+									</t>
+								</t>
+							</div>
+							<div class="menu-name">
+								<t t-esc="result.name" />
+							</div>
+							<div class="app-group-count ms-auto">
+								<span class="group-count">
+									<t t-esc="result.group_menu_list_ids.length" />
+								</span>
+								<span class="ri ri-arrow-right-s-line ms-auto dropdown_icon" />
+							</div>
+						</a>
+						<div class="submenu-group spiffy-submenu-group d-none" id="submenu-group">
+							<div class="row app-group-popup">
+								<t t-foreach="menu_info" t-as="menu" t-key="menu.id">
+									<t t-foreach="result.group_menu_list_ids" t-as="group" t-key="group.id">
+										<t t-if="menu">
+											<t t-if="menu.id == group">
+												<div class="app-box col-2 spiffy-main-group">
+													<a role="menuitem"
+														t-att-href="getMenuItemHref(menu)"
+														t-att-data-menu="menu.id"
+														t-attf-data-menu-xmlid="menu.xmlID"
+														t-attf-data-action-id="{{menu.actionID ? menu.actionID : ''}}"
+														class="main_link o_app submenu-link spiffy_main_group">
+														<div class="app-image mb8 menu-app-image">
+															<t t-call="spiffy_theme_backend.spiffy-menu-icon"/>
+														</div>
+														<div class="group-menu-name">
+															<t t-esc="menu.name" />
+														</div>
+														<t t-if="menu.children and menu.children.length > 0">
+															<span class="ri ri-arrow-right-s-line ms-auto dropdown_icon" />
+														</t>
+													</a>
+													<div t-attf-class="header-sub-menus d-none">
+														<t t-set="parent_menu_id" t-value="menu.id" />
+														<t t-foreach="menu.children" t-as="menuid" t-key="menuid">
+															<t t-set="menu" t-value="menuService.getMenuAsTree(menuid)"/>
+															<t t-call="AllmenuRecursive">
+															</t>
+														</t>
+													</div>
+												</div>
+											</t>
+										</t>
+									</t>
+								</t>
+							</div>
+						</div>
+					</div>
+				</t>
+			</t>
+			<t t-foreach="menu_info" t-as="menu" t-key="menu.id">
+				<t t-if="menu">
+					<t t-if="!menu.spiffy_app_group_id">
+						<div class="col-1 app-box mb16">
+							<a role="menuitem" 
+								t-att-href="getMenuItemHref(menu)"
+								class="d-block o_app spiffy_main_app text-center" 
+								t-att-data-menu-id="menu.id" 
+								t-att-data-menu-xmlid="menu.xmlID" 
+								t-att-data-action-id="menu.actionID">
+								<div class="app-image mb8">
+									<t t-call="spiffy_theme_backend.spiffy-menu-icon"/>
+								</div>
+								<div class="app-name">
+									<t t-esc="menu.name" />
+								</div>
+								<t t-if="menu.children and menu.children.length > 0">
+									<span class="ri ri-arrow-right-s-line ms-auto dropdown_icon" />
+								</t>
+							</a>
+							<div t-attf-class="header-sub-menus d-none">
+								<t t-set="parent_menu_id" t-value="menu.id" />
+								<t t-foreach="menu.children" t-as="menuid" t-key="menuid">
+									<t t-set="menu" t-value="menuService.getMenuAsTree(menuid)"/>
+									<t t-call="AllmenuRecursive">
+									</t>
+								</t>
+							</div>
+							<div class="fav_app_select d-none ">
+								<span class="ri ri-check-line"/>
+							</div>
+						</div>
+					</t>
+				</t>
+			</t>
+		</div>
+	</t>
+</templates>

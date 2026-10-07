@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates xml:space="preserve">
+
+    <t t-name="spiffy_theme_backend.SplitViewTab">
+        <View type="'form'"
+              resModel="props.resModel"
+              resId="props.resId"
+              loadActionMenus="true"/>
+    </t>
+
+    <t t-name="spiffy_theme_backend.SplitViewPanel">
+        <t t-if="service.isOpen">
+            <div class="spiffy-split-resizer" t-on-mousedown="onResizerMouseDown"/>
+            <div class="spiffy-split-panel" t-att-style="panelStyle">
+
+                <!-- Tab bar -->
+                <div class="spiffy-split-tabbar d-flex align-items-center">
+
+                    <!-- Scrollable tab list -->
+                    <div class="spiffy-split-tabs d-flex flex-grow-1 overflow-hidden">
+                        <t t-foreach="service.tabs" t-as="tab" t-key="tab.id">
+                            <button
+                                type="button"
+                                class="spiffy-split-tab d-flex align-items-center"
+                                t-att-class="{ 'active': tab.id === service.activeTabId }"
+                                t-on-click="() => service.activateTab(tab.id)">
+                                <span class="spiffy-split-tab-label text-truncate" t-out="tab.label"/>
+                                <span class="spiffy-split-tab-close ms-2"
+                                      t-on-click.stop="() => service.closeTab(tab.id)"
+                                      title="Close tab">
+                                    <i class="fa fa-times"/>
+                                </span>
+                            </button>
+                        </t>
+                    </div>
+
+                    <!-- Tab counter badge -->
+                    <span class="spiffy-split-tab-count badge" title="Open tabs / max tabs">
+                        <t t-out="service.tabs.length"/>/<t t-out="service.maxTabs"/>
+                    </span>
+
+                    <!-- Settings gear -->
+                    <button type="button"
+                            class="spiffy-split-action-btn"
+                            t-att-class="{ 'active': ui.settingsOpen }"
+                            title="Tab limit settings"
+                            t-on-click.stop="toggleSettings">
+                        <i class="fa fa-cog"/>
+                    </button>
+
+                    <!-- Close all -->
+                    <button type="button"
+                            class="spiffy-split-action-btn spiffy-split-close-btn"
+                            title="Close split view"
+                            t-on-click="() => service.closeAll()">
+                        <i class="fa fa-times-circle"/>
+                    </button>
+                </div>
+
+                <!-- Settings bar (inline, toggles open) -->
+                <div t-if="ui.settingsOpen" class="spiffy-split-settings d-flex align-items-center gap-2 px-3 py-2">
+                    <span class="spiffy-split-settings-label">Max tabs:</span>
+                    <t t-foreach="tabLimitOptions" t-as="n" t-key="n">
+                        <button type="button"
+                                class="spiffy-split-limit-btn"
+                                t-att-class="{ 'active': service.maxTabs === n }"
+                                t-on-click="() => service.setMaxTabs(n)">
+                            <t t-out="n"/>
+                        </button>
+                    </t>
+                    <span class="text-muted small">(oldest tab replaced when limit reached)</span>
+                </div>
+
+                <!-- Tab content — all tabs stay mounted; inactive ones hidden via d-none -->
+                <div class="spiffy-split-content flex-grow-1 overflow-auto">
+                    <t t-foreach="service.tabs" t-as="tab" t-key="tab.id">
+                        <div class="spiffy-split-tab-content h-100"
+                             t-att-class="{ 'd-none': tab.id !== service.activeTabId }">
+                            <SplitViewTab resId="tab.resId" resModel="tab.resModel"/>
+                        </div>
+                    </t>
+                </div>
+
+            </div>
+        </t>
+    </t>
+
+</templates>

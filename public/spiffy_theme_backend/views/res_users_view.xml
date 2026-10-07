@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<odoo>
+    <record model="ir.ui.view" id="spiffy_configuration_res_user_view">
+        <field name="name">res.users.form.view.inherit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='preferences_page']" position="after">
+                <page string="Spiffy Configuration" name="spiffy_config">
+                    <group>
+                        <field name="enable_todo_list"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    
+
+</odoo>

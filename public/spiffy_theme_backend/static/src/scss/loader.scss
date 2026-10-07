@@ -1,0 +1,46 @@
+// Part of Bizople Solutions Pvt. Ltd.
+// Licensed under the Bizople Proprietary License v1.0.
+// Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
+body.o_web_client {
+    @for $i from 1 through 10 {
+        &.loader_style_#{$i} {
+            .o_blockUI .o_spinner {
+                height: 100px !important;
+
+                img {
+                    content: url(/spiffy_theme_backend/static/src/image/loader_#{$i}.gif) !important;
+                    animation: none !important;
+                    max-width: 90px;
+                    max-height: 90px;
+                }
+            }
+        }
+    }
+
+    .loader_style {
+
+        .custom-control-label::after,
+        .custom-control-label::before {
+            top: 38%;
+        }
+    }
+}
+
+body.o_web_client {
+    @for $i from 1 through 10 {
+        &.loader_style_#{$i} {
+            .bi_loader {
+                content: url(/spiffy_theme_backend/static/src/image/loader_#{$i}.gif) !important;
+                animation: none !important;
+                max-width: 50px;
+                max-height: 50px;
+                z-index: 10500;
+                position: fixed;
+                top: 48%;
+                right: 50%;
+                transform: translate(50%, -48%);
+                
+            }
+        }
+    }
+}

@@ -1,0 +1,93 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+	<t t-name="show_icon_pack" t-inherit="web.ListView.Buttons" t-inherit-mode="primary"  >
+		<xpath expr="." position="inside">
+			<a class="btn btn-primary open_wizard_action" href="https://store.bizople.com/remix-icons" target="_blank">
+				Show Icon Pack
+			</a>
+		</xpath>
+	</t>
+
+	<t t-name="spiffy_theme_backend.UserMenuInherit" t-inherit="web.UserMenu" t-inherit-mode="extension" >
+		<xpath expr="//Dropdown/button/small" position="replace">
+			<div class="user-info">
+				<span class="oe_topbar_name text-truncate"><span class="user_name"><t t-esc="userName"/></span><span class="database_name"><t t-if="env.debug" t-esc="' (' + dbName + ')'"/></span></span>
+				<span class="greeting">
+					<t t-if="greeting">
+						<t t-esc="greeting"/>
+					</t>
+				</span>
+			</div>
+		</xpath>
+	</t>
+
+	<t t-inherit="web.SwitchCompanyMenu" t-inherit-mode="extension" >
+		<xpath expr="//Dropdown" position="replace">
+			<div class="o_switch_company_menu">
+				<div class="o_user_lang position-relative d-none">
+					<a role="button" class="dropdown-toggle lang_selector" data-bs-toggle="dropdown" data-display="static" aria-expanded="false" title="Languages">
+						<i class="ri ri-translate-2" role="img" aria-label="Activities" />
+					</a>
+					<div class="dropdown-menu" role="menu">
+						<div class="align-items-center active_lang">
+						</div>
+					</div>
+				</div>
+				<div class="company_selections d-inline-block position-relative">
+					<a role="button" class="dropdown-toggle o-no-caret" data-bs-toggle="dropdown" data-display="static" aria-expanded="false" href="#" title="Company">
+						<span t-attf-class="{{env.isSmall ? 'ri ri-building-2-line' : 'oe_topbar_name'}}">
+							<t t-if="!env.isSmall"><i class="ri ri-building-2-line" /></t>
+						</span>
+					</a>
+					<div class="dropdown-menu" role="menu">
+						<t t-call="web.SwitchCompanyMenu.Items"/>
+					</div>
+				</div>
+				<div class="debug_activator">
+					<!-- <a t-attf-class="activate_debug {{isDebug ? 'toggle' : ''}}" title="Debug"> -->
+					<a t-attf-class="activate_debug {{env.debug ? 'toggle' : ''}}" title="Debug">
+						<span class="ri ri-code-box-line" style="font-size: 18px;"/>
+					</a>
+				</div>
+				<div class="theme_selector list-unstyled ms-3">
+					<a class="theme-edit" title="Theme Setting">
+						<span aria-label="Themes Configuration" class="ri ri-paint-brush-line" />
+					</a>
+				</div>
+				<!-- <div class="chatter_position list-unstyled ms-3">
+					<a class="theme-edit" title="Chatter Position">
+						<span aria-label="Chatter Position Configuration" class="ri-chat-smile-fill" />
+					</a>
+				</div> -->
+				<div class="vertical_sidemenu_behaviour d-none ms-3">
+					<a class="pin_sidebar" title="Pin Sidebar">
+						<span class="ri ri-lock-unlock-line" style="font-size: 18px;"/>
+					</a>
+				</div>
+				<div class="header_to_do_list list-unstyled ms-3">
+					<a class="to_do_list" title="Notes">
+						<span aria-label="Notes" class="ri ri-sticky-note-line" />
+					</a>
+				</div>
+				<div class="dark_mode list-unstyled ms-3">
+					<div class="dark-light-mode-button-design">
+						<input id="dark_mod" type="checkbox" class="checkbox custom-control-input d-none" role="switch" />
+						<label for="dark_mod" class="label mb-0" title="Light/Dark Mode">
+							<i class='bulb-on ri ri-lightbulb-flash-fill'></i>
+						</label>
+					</div>
+				</div>
+			</div>
+		</xpath>
+	</t>
+	<t t-inherit="web.LoadingIndicator" t-inherit-mode="extension" >
+		<xpath expr="//Transition" position="attributes">
+            <attribute name="leaveDuration">700</attribute>
+        </xpath>
+		<xpath expr="//span[hasclass('o_loading_indicator')]" position="replace">
+			<img class="bi_loader"></img>
+		</xpath>
+	</t>
+</templates>

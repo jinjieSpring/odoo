@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<odoo>
+	<data>
+		<record id="action_backend_configuration" model="ir.actions.act_window">
+			<field name="name">Backend Settings</field>
+			<field name="res_model">res.config.settings</field>
+			<field name="view_mode">form</field>
+			<field name="target">current</field>
+			<field name="context">
+				{
+				'module': 'spiffy_theme_backend',
+				'bin_size': False
+				}
+			</field>
+		</record>
+
+		<menuitem id="bizople_backend_theme_configuration_mainmenu" name="Spiffy Configuration"
+			parent="base.menu_administration" sequence="10"
+			action="spiffy_theme_backend.action_backend_configuration"
+		/>
+
+		<record model='ir.actions.act_url' id='action_spiffy_documentation'>
+			<field name='name'>Spiffy Documentation</field>
+			<field name='url'>https://www.bizople.com/spiffy-document</field>
+		</record>
+		<menuitem action="spiffy_theme_backend.action_spiffy_app_group"
+			id="spiffy_app_group"
+			parent="bizople_backend_theme_configuration_mainmenu"
+			sequence="2" />
+
+		<menuitem id="spiffy_documentation_menu"
+			parent="bizople_backend_theme_configuration_mainmenu"
+			name="Spiffy Documentation" sequence="1" action="action_spiffy_documentation" />
+
+		<menuitem action="spiffy_theme_backend.change_menu_icon_action" id="change_menu_icon_menu"
+			parent="bizople_backend_theme_configuration_mainmenu" sequence="5" />
+
+		<menuitem action="spiffy_theme_backend.act_open_pwa_shortcuts_view"
+			id="pwa_shortcuts_view_tree_menuitem"
+			parent="bizople_backend_theme_configuration_mainmenu" sequence="5" />
+
+		<menuitem id="menu_google_font_family"
+			name="Google Font Links"
+			parent="bizople_backend_theme_configuration_mainmenu"
+			action="action_google_font_family"
+			sequence="1"
+			groups="base.group_no_one" />
+
+	</data>
+</odoo>

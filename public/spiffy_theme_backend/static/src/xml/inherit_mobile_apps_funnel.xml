@@ -1,0 +1,21 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+    <div t-inherit="res_config_edition" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('user-heading')]" position="before">
+            <div class="d-flex gap-2">
+                <div>
+                    <a class="d-block mx-auto" href="https://play.google.com/store/apps/details?id=com.bizople.spiffymobile" target="blank">
+                        <img alt="On Google Play" class="d-block mx-auto img img-fluid" src="/spiffy_theme_backend/static/src/image/spiffy-qr-code-android.png"/>
+                    </a>
+                </div>
+                <div>
+                    <a class='d-block mx-auto' href="https://apps.apple.com/in/app/spiffy-odoo-mobile-app/id6449771773" target="blank">
+                        <img alt="On Apple Store" class="d-block mx-auto img img-fluid" src="/spiffy_theme_backend/static/src/image/spiffy-qr-code-apple.png"/>
+                    </a>
+                </div>
+            </div>
+        </xpath>
+    </div>
+</templates>

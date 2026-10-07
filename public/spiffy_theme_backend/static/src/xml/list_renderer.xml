@@ -1,0 +1,60 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+    <t t-inherit="web.ListRenderer.RecordRow" t-inherit-mode="extension">
+        <xpath expr="//tr[hasclass('o_data_row')]" position="attributes">
+            <attribute name="t-att-resId">record.resId</attribute>
+            <attribute name="t-on-contextmenu">onRowContextMenu</attribute>
+        </xpath>
+    </t>
+
+    <t t-inherit="web.ListRenderer" t-name="spiffy_split_view.ListRenderer" t-inherit-mode="extension">
+        <xpath expr="//table[contains(@t-attf-class, 'o_list_table')]" position="before">
+            <t t-if="!this.isX2Many">
+                <div t-att-data-js="filterRow" t-attf-class="filter_row d-none p-3 pb-0 column-gap-1 row-gap-2 align-items-center">
+                    <td t-if="hasSelectors"></td>
+                    <t t-foreach="columns" t-as="column" t-key="column.id">
+                        <td t-if="column.type === 'field'">
+
+                            <t
+                                t-if="column.fieldType !== 'binary' and column.widget !== 'image'  and column.fieldType != 'boolean'">
+                            <div>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="form-control d-flex align-items-center py-0 px-0 me-1 focus">
+                                            <input type="text"
+                                                class="form-control form-control-md column-filter border-0"
+                                                t-att-data-column="column.name"
+                                                t-att-data-field-type="column.fieldType"
+                                                t-att-data-fieldname="column.string"
+                                                t-att-placeholder="column.string"
+                                                t-on-click="onColumnFilter"
+                                                t-on-keydown="onColumnFilter"
+                                                t-att-name="column.string"/>
+                                        
+                                            <span>
+                                                <button type="button"
+                                                    class="btn btn-md btn-primary-link domain-filter-btn"
+                                                    t-att-data-column="column.name"
+                                                    t-att-data-field-type="column.fieldType"
+                                                    t-on-click="onDomainFilterClick"
+                                                    title="Advanced Filter">
+                                                    <i class="fa fa-filter text-info"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </t>
+                        </td>
+                        <td t-else=""></td>
+                    </t>
+                    <td t-if="hasOpenFormViewColumn"></td>
+                    <td t-if="hasActionsColumn"></td>
+                </div>
+            </t>
+        </xpath>
+    </t>      
+</templates>

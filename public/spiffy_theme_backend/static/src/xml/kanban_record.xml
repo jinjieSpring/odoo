@@ -1,0 +1,11 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+    <t t-inherit="web.KanbanRecord" t-inherit-mode="extension">
+        <xpath expr="//article" position="attributes">
+            <attribute name="t-on-contextmenu">onKanbanContextMenu</attribute>
+            <attribute name="t-att-data-resid">props.record.resId</attribute>
+        </xpath>
+    </t>
+</templates>

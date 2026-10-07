@@ -1,0 +1,68 @@
+// Part of Bizople Solutions Pvt. Ltd.
+// Licensed under the Bizople Proprietary License v1.0.
+// Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
+body.o_web_client.show_filter_row {
+    .filter-dropdown {
+        position: absolute;
+        background: white;
+        border: 1px solid #ddd;
+        z-index: 9999;
+        max-height: 200px;
+
+        .relational_filter_data {
+            padding: 5px 30px 5px 15px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--primary-rgba) !important;
+                color: var(--biz-theme-primary-text-color) !important;
+            }
+        }
+
+        .search_more {
+            padding: 5px 10px;
+            cursor: pointer;
+            font-Weight: bold;
+
+            &:hover {
+                background-color: var(--primary-rgba) !important;
+                color: var(--biz-theme-primary-text-color) !important;
+            }
+        }
+
+        .selection-filter-dropdown {
+            padding: 5px 30px 5px 15px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--primary-rgba) !important;
+                color: var(--biz-theme-primary-text-color) !important;
+            }
+        }
+    }
+
+    .filter_row {
+
+        .form-control {
+            border-radius: var(--border-radius-md);
+
+            &:focus {
+                box-shadow: 0 2px 4px 0 rgba(79, 131, 183, 0.1);
+            }
+        }
+
+
+    }
+
+    &.dark_mode {
+        .filter-dropdown {
+            background-color: var(--biz-theme-body-color) !important;
+            color: var(--biz-theme-body-text-color) !important
+        }
+
+        .btn {
+            color: #495057;
+        }
+    }
+
+}
