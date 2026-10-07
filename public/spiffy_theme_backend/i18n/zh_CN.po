@@ -685,12 +685,14 @@ msgid "List View Density"
 msgstr "列表视图密度"
 
 #. module: spiffy_theme_backend
-#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__list_view_density__comfortable
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__list_view_density__list_comfortable
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Comfortable"
 msgstr "宽松"
 
 #. module: spiffy_theme_backend
-#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__list_view_density__compact
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__list_view_density__list_compact
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Compact"
 msgstr "紧凑"
 
@@ -1221,3 +1223,252 @@ msgstr "应用"
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Discard"
 msgstr "放弃"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Reset Backend Settings"
+msgstr "重置后台设置"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__input_style__input_borderless
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Borderless"
+msgstr "无边框"
+
+#. module: spiffy_theme_backend
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Border Bottom"
+msgstr "底边框"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__input_style__input_bottom_border
+msgid "Bottom Border"
+msgstr "底边框"
+
+#. module: spiffy_theme_backend
+#: model:ir.model.fields.selection,name:spiffy_theme_backend.selection__backend_config__input_style__input_bordered
+#: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
+msgid "Bordered"
+msgstr "有边框"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Languages"
+msgstr "语言"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Company"
+msgstr "公司"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Debug"
+msgstr "调试"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Theme Setting"
+msgstr "主题设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Pin Sidebar"
+msgstr "固定侧边栏"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Notes"
+msgstr "笔记"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/base.xml:0
+msgid "Light/Dark Mode"
+msgstr "浅色/深色模式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Add Bookmark"
+msgstr "添加书签"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Favourite Apps"
+msgstr "收藏应用"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Magnifier"
+msgstr "放大镜"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Search"
+msgstr "搜索"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "FullScreen"
+msgstr "全屏"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Bookmark Panel"
+msgstr "书签面板"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/menu.xml:0
+msgid "Close menu"
+msgstr "关闭菜单"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Toggle Filter Row"
+msgstr "切换筛选行"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Refresh"
+msgstr "刷新"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Chatter Right"
+msgstr "聊天框靠右"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Chatter Bottom"
+msgstr "聊天框靠下"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/web_inherit.xml:0
+msgid "Expand/Collapse Groups"
+msgstr "展开/折叠分组"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/list_renderer.xml:0
+msgid "Advanced Filter"
+msgstr "高级筛选"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/report_preview.xml:0
+msgid "Preview PDF"
+msgstr "预览 PDF"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Close tab"
+msgstr "关闭页签"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Open tabs / max tabs"
+msgstr "已打开页签 / 最大页签数"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Tab limit settings"
+msgstr "页签数量设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/split_view_panel.xml:0
+msgid "Close split view"
+msgstr "关闭分屏"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Image"
+msgstr "图片"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "PDF file"
+msgstr "PDF 文件"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Video"
+msgstr "视频"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Download"
+msgstr "下载"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Close"
+msgstr "关闭"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Zoom In"
+msgstr "放大"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Reset Zoom"
+msgstr "重置缩放"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Zoom Out"
+msgstr "缩小"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Rotate"
+msgstr "旋转"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Print"
+msgstr "打印"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Previous"
+msgstr "上一个"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
+msgid "Next"
+msgstr "下一个"

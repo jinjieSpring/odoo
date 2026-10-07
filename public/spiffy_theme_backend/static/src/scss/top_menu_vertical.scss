@@ -170,14 +170,18 @@
                 }
                 p {
                     font-size: 12px;
-                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    background-color: transparent !important;
                     border-radius: var(--border-radius-lg) !important;
-                    text-align: center;
-                    margin-bottom: 0.5rem !important;
-                    margin-top: 0.5rem !important;
+                    text-align: start;
+                    margin-bottom: 0.25rem !important;
+                    margin-top: 0.25rem !important;
                     padding: 5px 15px;
                     color: var(--biz-theme-primary-text-color);
-    
+
+                    > a.active {
+                        background-color: transparent !important;
+                    }
+
                     >a[aria-expanded=true] {
                         .ri::before {
                             content: "\ea4e";
@@ -208,7 +212,8 @@
                     transition: background-color 0.3s ease;
     
                     &.active {
-                        background-color: rgba(255, 255, 255, 0.1) !important;
+                        background-color: rgba(255, 255, 255, 0.16) !important;
+                        box-shadow: inset 3px 0 0 var(--biz-theme-primary-color);
                     }
                 }
     
