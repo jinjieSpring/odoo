@@ -1135,7 +1135,7 @@ body.o_web_client {
                         max-width: calc(var(--vertical-menu-width) - 30px);
                     }
                     .o-web-UserMenu-imStatus {
-                        right: 93px;
+                        right: calc(50% - 25px);
                     }
                 }
                 

@@ -169,7 +169,7 @@
                     transition: none !important;
                 }
                 p {
-                    font-size: 12px;
+                    font-size: inherit;
                     background-color: transparent !important;
                     border-radius: var(--border-radius-lg) !important;
                     text-align: start;
@@ -197,6 +197,8 @@
                 }
     
                 .child_menus {
+                    font-size: inherit;
+
                     span {
                         pointer-events: none;
                     }
