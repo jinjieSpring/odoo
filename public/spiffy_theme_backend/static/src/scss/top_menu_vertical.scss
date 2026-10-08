@@ -158,11 +158,11 @@
                 display: flex !important;
                 align-items: center;
             }
-            .spiffy_main_app {
-                &.active + .header-sub-menus {
-                    display: block !important;
-                }
-            }
+            /* The old jQuery theme expanded submenus via .active on the top
+               button; the OWL SpiffyMenuGroup now owns visibility through
+               expandedAppId (d-none/show), so no .active + .header-sub-menus
+               rule here — it would force the current app's submenu open and
+               make it impossible to collapse. */
             .header-sub-menus {
                 .collapsing {
                     height: 0 !important;

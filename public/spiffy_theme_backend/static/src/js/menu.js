@@ -169,7 +169,16 @@ patch(NavBar.prototype, {
         this._onBookmarkRouteChange = () => {
             this._syncActiveBookmark();
             // Keep the active app highlight in SpiffyMenuGroup up to date.
-            spiffyMenuStore.currentMenuId = this.menuService.getCurrentApp()?.id ?? null;
+            const newAppId = this.menuService.getCurrentApp()?.id ?? null;
+            if (spiffyMenuStore.currentMenuId !== newAppId) {
+                spiffyMenuStore.currentMenuId = newAppId;
+                // Switching apps auto-expands the new app's submenu in the
+                // vertical layout (old theme behavior). In-app navigation
+                // keeps the user's manual expand/collapse choice untouched.
+                if (spiffyMenuStore.vertical) {
+                    spiffyMenuStore.expandedAppId = newAppId;
+                }
+            }
         };
         routerBus.addEventListener("ROUTE_CHANGE", this._onBookmarkRouteChange);
         onWillUnmount(() => {
@@ -378,6 +387,11 @@ patch(NavBar.prototype, {
             spiffyMenuStore.horizontal = document.body.classList.contains("top_menu_horizontal");
             spiffyMenuStore.mini = document.body.classList.contains("top_menu_vertical_mini");
             spiffyMenuStore.vertical = document.body.classList.contains("top_menu_vertical");
+            // First load in the vertical layout: auto-expand the current
+            // app's submenu, like the old theme did on page load.
+            if (spiffyMenuStore.vertical && spiffyMenuStore.expandedAppId === null) {
+                spiffyMenuStore.expandedAppId = spiffyMenuStore.currentMenuId;
+            }
 
             addBodyClass(record.theme_style);
             addBodyClass(record.shape_style);

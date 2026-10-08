@@ -434,7 +434,7 @@
 		<div class="nav-item">
 			<t t-if="menu.childrenTree.length">
 				<p class="bg-muted">
-					<a class="d-flex align-items-center w-100" t-att-class="{ active: hasActiveDescendant(menu) }" data-bs-toggle="collapse" t-attf-data-bs-target="#child_menu_{{menu.id}}" t-att-data-menu-xmlid="menu.xmlid">
+					<a class="d-flex align-items-center w-100" t-att-class="{ active: hasActiveDescendant(menu) }" t-on-click="() => this.toggleSubmenu(menu)" t-att-aria-expanded="isSubmenuOpen(menu)" t-att-data-menu-xmlid="menu.xmlid" role="button">
 						<span><t t-esc="menu.name"/></span>
 						<span class="ri ri-arrow-right-s-line ms-auto"/>
 					</a>
@@ -447,7 +447,7 @@
 					</span>
 				</a>
 			</t>
-			<div t-attf-id="child_menu_{{menu.id}}" class="collapse" t-att-class="{ show: hasActiveDescendant(menu) }">
+			<div t-attf-id="child_menu_{{menu.id}}" class="collapse" t-att-class="{ show: isSubmenuOpen(menu) }">
 				<div t-if="menu.childrenTree.length" class="show">
 					<t t-foreach="menu.children" t-as="menuid" t-key="menuid">
 						<t t-set="menu" t-value="menuService.getMenuAsTree(menuid)"/>

@@ -18,6 +18,9 @@ export const spiffyMenuStore = reactive({
     expandedAppId: null,
     currentMenuId: null,
     activeChildId: null,
+    // Explicit expand/collapse choices for the recursive submenus,
+    // keyed by menu id. Entries win over the active-descendant default.
+    submenuToggles: {},
     blur: false,
     headerBg: false,
     _loading: null,
@@ -132,6 +135,11 @@ export class SpiffyMenuGroup extends Component {
         if (store.vertical) {
             const wasOpen = store.expandedAppId === menu.id;
             store.expandedAppId = wasOpen ? null : menu.id;
+            if (menu.children && menu.children.length) {
+                // Accordion toggle only: following the href would reload the
+                // page, and the submenu could never stay closed.
+                ev.preventDefault();
+            }
             if (!menu.spiffy_app_group_id) {
                 store.openGroupId = null;
             }
@@ -161,6 +169,20 @@ export class SpiffyMenuGroup extends Component {
         }
         const walk = (node) => node.id === id || (node.childrenTree || []).some(walk);
         return (menu.childrenTree || []).some(walk);
+    }
+
+    // The recursive submenus used to be Bootstrap collapses, but Bootstrap
+    // toggles the `show` class imperatively while OWL rewrites the class from
+    // t-att-class on every patch — whichever ran last won, so an expanded
+    // menu could never stay collapsed. OWL now owns the state: an explicit
+    // user toggle wins over the active-descendant default.
+    isSubmenuOpen(menu) {
+        const override = this.store.submenuToggles[menu.id];
+        return override !== undefined ? override : this.hasActiveDescendant(menu);
+    }
+
+    toggleSubmenu(menu) {
+        this.store.submenuToggles[menu.id] = !this.isSubmenuOpen(menu);
     }
 
     onOverlayClick() {
