@@ -1549,3 +1549,333 @@ msgstr "تطبيق"
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Discard"
 msgstr "تجاهل"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Theme Settings"
+msgstr "إعدادات السمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "General Settings"
+msgstr "الإعدادات العامة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Colors"
+msgstr "الألوان"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "App Drawer"
+msgstr "درج التطبيقات"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Settings"
+msgstr "إعدادات الخط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Loaders"
+msgstr "مؤشرات التحميل"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Theme Style"
+msgstr "نمط القالب"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Position"
+msgstr "موضع القائمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Background"
+msgstr "تطبيق الخلفية"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Header Background Image"
+msgstr "صورة خلفية الرأس"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Menu Shape Style"
+msgstr "تطبيق نمط شكل القائمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Shape Style"
+msgstr "نمط شكل القائمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Shape Background Color"
+msgstr "لون خلفية شكل القائمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Background Color"
+msgstr "لون الخلفية"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Background Color Opacity"
+msgstr "شفافية لون الخلفية"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "List View Density"
+msgstr "كثافة عرض القائمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Input Style"
+msgstr "نمط الإدخال"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "List/Tree view Sticky Header and Footer"
+msgstr "رأس وتذييل ثابتان في عرض القائمة/الشجرة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Show Attachments in List View"
+msgstr "إظهار المرفقات في عرض القائمة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Tab Styles"
+msgstr "أنماط التبويب"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Checkbox Styles"
+msgstr "أنماط خانة الاختيار"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Active"
+msgstr "نشط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Deactive"
+msgstr "غير نشط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Radio Styles"
+msgstr "أنماط الزر الدائري"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Popup Animation"
+msgstr "حركة النافذة المنبثقة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Separator Styles"
+msgstr "أنماط الفاصل"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Color Combinations"
+msgstr "تركيبات الألوان"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Set Your Own Drawer Colors"
+msgstr "تعيين ألوان درج التطبيقات الخاصة بك"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Text Color"
+msgstr "لون النص"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Background Image"
+msgstr "تطبيق صورة الخلفية"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Body Image"
+msgstr "صورة الجسم"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Setting"
+msgstr "إعداد الخط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Explore on"
+msgstr "استكشف على"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Add Google Font"
+msgstr "إضافة خط Google"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Max 6 font families can be added."
+msgstr "يمكن إضافة 6 عائلات خطوط كحد أقصى."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font already exists in the list."
+msgstr "الخط موجود بالفعل في القائمة."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Preview"
+msgstr "معاينة الخط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "This is a preview of your selected font."
+msgstr "هذه معاينة للخط المحدد."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Family"
+msgstr "عائلة الخط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Size"
+msgstr "حجم الخط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Set Your Own Colors"
+msgstr "تعيين ألوانك الخاصة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Primary Color"
+msgstr "اللون الأساسي"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Choose your loader"
+msgstr "اختر مؤشر التحميل"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Discard"
+msgstr "تجاهل"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Rounded"
+msgstr "مستدير"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Circle"
+msgstr "دائرة"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Square"
+msgstr "مربع"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Small"
+msgstr "صغير"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Medium"
+msgstr "متوسط"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Large"
+msgstr "كبير"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Fade"
+msgstr "تلاشي"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Vertical Flip"
+msgstr "قلب عمودي"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "BounceIn"
+msgstr "ارتداد للداخل"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Shrink"
+msgstr "تصغير"

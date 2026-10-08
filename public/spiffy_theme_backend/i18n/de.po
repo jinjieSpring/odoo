@@ -1559,3 +1559,339 @@ msgstr "Dies ist eine Vorschau Ihrer ausgewählten Schrift."
 #: model_terms:ir.ui.view,arch_db:spiffy_theme_backend.template_backend_config_data
 msgid "Vertical Flip"
 msgstr "Vertikal spiegeln"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Theme Settings"
+msgstr "Theme-Einstellungen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Colors"
+msgstr "Farben"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "App Drawer"
+msgstr "App-Drawer"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Settings"
+msgstr "Schrifteinstellungen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Loaders"
+msgstr "Ladeanimationen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Theme Style"
+msgstr "Theme-Stil"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Position"
+msgstr "Menüposition"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Background"
+msgstr "Hintergrund anwenden"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Header Background Image"
+msgstr "Header-Hintergrundbild"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Menu Shape Style"
+msgstr "Menüform-Stil anwenden"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Shape Style"
+msgstr "Menüform-Stil"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Shape Background Color"
+msgstr "Hintergrundfarbe der Menüform"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Background Color"
+msgstr "Hintergrundfarbe"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Background Color Opacity"
+msgstr "Deckkraft der Hintergrundfarbe"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "List View Density"
+msgstr "Listenansicht-Dichte"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Input Style"
+msgstr "Eingabestil"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "List/Tree view Sticky Header and Footer"
+msgstr "Fixierter Kopf- und Fußbereich in Listen-/Baumansicht"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Show Attachments in List View"
+msgstr "Anhänge in der Listenansicht anzeigen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Tab Styles"
+msgstr "Tab-Stile"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Checkbox Styles"
+msgstr "Kontrollkästchen-Stile"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Deactive"
+msgstr "Inaktiv"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Radio Styles"
+msgstr "Radio-Stile"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Popup Animation"
+msgstr "Popup-Animation"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Separator Styles"
+msgstr "Trennlinie-Stile"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Color Combinations"
+msgstr "Farbkombinationen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Set Your Own Drawer Colors"
+msgstr "Eigene App-Drawer-Farben festlegen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Text Color"
+msgstr "Textfarbe"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Background Image"
+msgstr "Hintergrundbild anwenden"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Body Image"
+msgstr "Body-Bild"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Setting"
+msgstr "Schrifteinstellung"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Explore on"
+msgstr "Entdecken auf"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Add Google Font"
+msgstr "Google-Schrift hinzufügen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Max 6 font families can be added."
+msgstr "Maximal 6 Schriftfamilien können hinzugefügt werden."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font already exists in the list."
+msgstr "Die Schrift ist bereits in der Liste vorhanden."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Preview"
+msgstr "Schriftvorschau"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "This is a preview of your selected font."
+msgstr "Dies ist eine Vorschau Ihrer ausgewählten Schrift."
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Family"
+msgstr "Schriftfamilie"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Size"
+msgstr "Schriftgröße"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Set Your Own Colors"
+msgstr "Eigene Farben festlegen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Primary Color"
+msgstr "Primärfarbe"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Choose your loader"
+msgstr "Ladeanimation auswählen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply"
+msgstr "Anwenden"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Discard"
+msgstr "Verwerfen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Reset Backend Settings"
+msgstr "Backend-Einstellungen zurücksetzen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Rounded"
+msgstr "Abgerundet"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Circle"
+msgstr "Kreis"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Square"
+msgstr "Quadrat"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Small"
+msgstr "Klein"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Medium"
+msgstr "Mittel"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Large"
+msgstr "Groß"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Fade"
+msgstr "Einblenden"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Vertical Flip"
+msgstr "Vertikal spiegeln"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "BounceIn"
+msgstr "Hineinspringen"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Shrink"
+msgstr "Verkleinern"

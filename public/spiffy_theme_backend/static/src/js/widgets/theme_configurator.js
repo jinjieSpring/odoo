@@ -5,6 +5,7 @@
 
 import { Component, onWillUnmount, useEffect, useRef, useState } from "@odoo/owl";
 import { rpc } from "@web/core/network/rpc";
+import { _t } from "@web/core/l10n/translation";
 
 const range = (n) => Array.from({ length: n }, (_, i) => i + 1);
 
@@ -52,23 +53,23 @@ export class ThemeConfigurator extends Component {
             { value: "top_menu_vertical_bg3", id: "top_menu_vertical_bg3", img: "top-menu-v2-bg-three.png" },
         ];
         this.shapeStyles = [
-            { value: "biz_shape_rounded", id: "shape_style_rounded", img: "shape-style-rounded.png", label: "Rounded" },
-            { value: "biz_shape_circle", id: "shape_style_standard", img: "shape-style-standard.png", label: "Circle" },
-            { value: "biz_shape_square", id: "shape_style_square", img: "shape-style-square.png", label: "Square" },
+            { value: "biz_shape_rounded", id: "shape_style_rounded", img: "shape-style-rounded.png", label: _t("Rounded") },
+            { value: "biz_shape_circle", id: "shape_style_standard", img: "shape-style-standard.png", label: _t("Circle") },
+            { value: "biz_shape_square", id: "shape_style_square", img: "shape-style-square.png", label: _t("Square") },
         ];
         this.listDensities = [
-            { value: "list_comfortable", id: "list_comfortable", img: "list_comfortable.png", title: "Comfortable" },
-            { value: "list_compact", id: "list_compact", img: "list_compact.png", title: "Compact" },
+            { value: "list_comfortable", id: "list_comfortable", img: "list_comfortable.png", title: _t("Comfortable") },
+            { value: "list_compact", id: "list_compact", img: "list_compact.png", title: _t("Compact") },
         ];
         this.inputStyles = [
-            { value: "input_borderless", id: "input_borderless", img: "input-style-borderless.png", title: "Borderless" },
-            { value: "input_bottom_border", id: "input_bottom_border", img: "input-style-bottom-border.png", title: "Border Bottom" },
-            { value: "input_bordered", id: "input_bordered", img: "input-style-bordered.png", title: "Bordered" },
+            { value: "input_borderless", id: "input_borderless", img: "input-style-borderless.png", title: _t("Borderless") },
+            { value: "input_bottom_border", id: "input_bottom_border", img: "input-style-bottom-border.png", title: _t("Border Bottom") },
+            { value: "input_bordered", id: "input_bordered", img: "input-style-bordered.png", title: _t("Bordered") },
         ];
         this.fontSizes = [
-            { value: "font_small", id: "font_size_1", cls: "font_small", label: "Small" },
-            { value: "font_medium", id: "font_size_2", cls: "font_medium", label: "Medium" },
-            { value: "font_large", id: "font_size_3", cls: "font_large", label: "Large" },
+            { value: "font_small", id: "font_size_1", cls: "font_small", label: _t("Small") },
+            { value: "font_medium", id: "font_size_2", cls: "font_medium", label: _t("Medium") },
+            { value: "font_large", id: "font_size_3", cls: "font_large", label: _t("Large") },
         ];
         this.colorPallets = range(17);
         this.drawerPallets = range(17);
@@ -82,10 +83,10 @@ export class ThemeConfigurator extends Component {
         this.checkboxStyles = range(4);
         this.radioStyles = range(4);
         this.popupStyles = [
-            { value: "popup_style_1", label: "Fade" },
-            { value: "popup_style_2", label: "Vertical Flip" },
-            { value: "popup_style_3", label: "BounceIn" },
-            { value: "popup_style_4", label: "Shrink" },
+            { value: "popup_style_1", label: _t("Fade") },
+            { value: "popup_style_2", label: _t("Vertical Flip") },
+            { value: "popup_style_3", label: _t("BounceIn") },
+            { value: "popup_style_4", label: _t("Shrink") },
         ];
         this.separatorStyles = range(4);
 
@@ -244,7 +245,7 @@ export class ThemeConfigurator extends Component {
             }
             this.state.selectedFontId = data.id;
         } catch (err) {
-            alert("Please enter a valid Google Fonts URL, e.g. https://fonts.google.com/specimen/Lato");
+            alert(_t("Please enter a valid Google Fonts URL, e.g. https://fonts.google.com/specimen/Lato"));
         }
     }
 

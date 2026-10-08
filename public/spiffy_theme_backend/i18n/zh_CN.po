@@ -1472,3 +1472,369 @@ msgstr "上一个"
 #: code:addons/spiffy_theme_backend/static/src/js/widgets/spiffyDocumentViewer.xml:0
 msgid "Next"
 msgstr "下一个"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Theme Settings"
+msgstr "主题设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "General Settings"
+msgstr "常规设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Colors"
+msgstr "颜色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "App Drawer"
+msgstr "应用抽屉"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Settings"
+msgstr "字体设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Loaders"
+msgstr "加载动画"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Theme Style"
+msgstr "主题样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Position"
+msgstr "菜单位置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Background"
+msgstr "应用背景"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Header Background Image"
+msgstr "页眉背景图片"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Menu Shape Style"
+msgstr "应用菜单形状样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Shape Style"
+msgstr "菜单形状样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Menu Shape Background Color"
+msgstr "菜单形状背景颜色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Background Color"
+msgstr "背景颜色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Background Color Opacity"
+msgstr "背景颜色不透明度"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "List View Density"
+msgstr "列表视图密度"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Input Style"
+msgstr "输入框样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "List/Tree view Sticky Header and Footer"
+msgstr "列表/树视图固定页眉和页脚"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Show Attachments in List View"
+msgstr "在列表视图中显示附件"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Tab Styles"
+msgstr "标签页样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Checkbox Styles"
+msgstr "复选框样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Active"
+msgstr "启用"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Deactive"
+msgstr "停用"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Radio Styles"
+msgstr "单选按钮样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Popup Animation"
+msgstr "弹窗动画"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Separator Styles"
+msgstr "分隔线样式"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Color Combinations"
+msgstr "颜色组合"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Set Your Own Drawer Colors"
+msgstr "设置自己的应用抽屉颜色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Text Color"
+msgstr "文本颜色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply Background Image"
+msgstr "应用背景图片"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Body Image"
+msgstr "主体图片"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Setting"
+msgstr "字体设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Explore on"
+msgstr "在此浏览"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Add Google Font"
+msgstr "添加 Google 字体"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Max 6 font families can be added."
+msgstr "最多可添加 6 个字体系列。"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font already exists in the list."
+msgstr "该字体已存在于列表中。"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Preview"
+msgstr "字体预览"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "This is a preview of your selected font."
+msgstr "这是所选字体的预览。"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Family"
+msgstr "字体系列"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Font Size"
+msgstr "字体大小"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Set Your Own Colors"
+msgstr "设置自己的颜色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Primary Color"
+msgstr "主色"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Choose your loader"
+msgstr "选择加载动画"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Apply"
+msgstr "应用"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Discard"
+msgstr "放弃"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/xml/theme_configurator.xml:0
+msgid "Reset Backend Settings"
+msgstr "重置后台设置"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Rounded"
+msgstr "圆角"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Circle"
+msgstr "圆形"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Square"
+msgstr "方形"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Comfortable"
+msgstr "宽松"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Compact"
+msgstr "紧凑"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Borderless"
+msgstr "无边框"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Border Bottom"
+msgstr "底边框"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Bordered"
+msgstr "有边框"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Small"
+msgstr "小"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Medium"
+msgstr "中"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Large"
+msgstr "大"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Fade"
+msgstr "淡入淡出"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Vertical Flip"
+msgstr "垂直翻转"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "BounceIn"
+msgstr "弹入"
+
+#. module: spiffy_theme_backend
+#. odoo-javascript
+#: code:addons/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js:0
+msgid "Shrink"
+msgstr "收缩"
