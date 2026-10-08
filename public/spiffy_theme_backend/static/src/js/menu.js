@@ -36,6 +36,7 @@ function sleep(ms) {
 
 var session_dict = { 'demo': 'demo' }
 var methods = {}
+var bookmarkOptionsOutsideCloseBound = false
 /**
  * Responsible for invoking native methods which called from JavaScript
  *
@@ -134,6 +135,17 @@ patch(NavBar.prototype, {
             }
             $('#magnifier').collapse("hide");
         });
+        // Bookmark rename/remove popup has no toggle of its own. Capture runs
+        // before handlers that stop the click, so a click anywhere else still closes it.
+        if (!bookmarkOptionsOutsideCloseBound) {
+            bookmarkOptionsOutsideCloseBound = true;
+            document.addEventListener("click", function (e) {
+                if (e.target.closest(".bookmark_options, .bookmark_rename_section")) {
+                    return;
+                }
+                $(".bookmark_list .bookmark_options, .bookmark_list .bookmark_rename_section").remove();
+            }, true);
+        }
         $(document).ready(function () {
             $(document).on('click', '.current_app_sections a[data-menu], .child_menus', function () {
                 $('.current_app_sections a[data-menu], .nav-item > p > a, .nav-item > a').removeClass('active');
@@ -587,20 +599,16 @@ patch(NavBar.prototype, {
             // $("body").addClass('font_family_' + rec.record_dict[0].font_family);
             $("body").addClass('font_family_' + rec.record_dict[0].google_font_family);
             var fontLinks = rec.font_dict;
-            
-            if (Array.isArray(fontLinks) && fontLinks.length > 0) {
-                fontLinks.forEach(link => {
-                    const fontName = link.name.replace(/\s+/g, "+");
-                    const font_url = `<link href="https://fonts.googleapis.com/css2?family=${fontName}&display=swap" rel="stylesheet" type="text/css">`;
-                    $("head").append(font_url);
-                    $('body').css('font-family', `'${link.name}', -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`);
-                    $('#fontExistsMsg').hide();
-                    $('#fontLimitMsg').hide();
-                });
+            // Keep fonts local. fonts.googleapis.com fails and can block rendering
+            // when the backend has no access to the public internet.
+            const systemFontStack = '-apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+            const selectedFont = Array.isArray(fontLinks) && fontLinks.length
+                ? fontLinks[fontLinks.length - 1]
+                : null;
+            if (selectedFont && selectedFont.name) {
+                $('body').css('font-family', `'${selectedFont.name}', ${systemFontStack}`);
             } else {
-                const rubikLink = `<link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet" type="text/css">`;
-                $("head").append(rubikLink);
-                $('body').css('font-family', `'Rubik', -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`);
+                $('body').css('font-family', systemFontStack);
             }
 
             $("html").attr('data-font-size', rec.record_dict[0].font_size)
