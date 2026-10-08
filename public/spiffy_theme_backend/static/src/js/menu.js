@@ -18,9 +18,11 @@ import { TodoSidebar } from "@spiffy_theme_backend/js/widgets/todo_sidebar";
 import { ThemeConfigurator } from "@spiffy_theme_backend/js/widgets/theme_configurator";
 import { SpiffyMenuGroup, spiffyMenuStore } from "@spiffy_theme_backend/js/widgets/menu_group";
 
-// Shared reactive theme state. The NavBar fills it from the backend config
-// and syncs the matching body classes through effects; the SwitchCompanyMenu
-// reads it to conditionally render its header buttons and the language list.
+// Shared reactive theme state. The NavBar fills it from the backend config;
+// the SwitchCompanyMenu reads it to conditionally render its header buttons
+// and the language list. Body classes are synced imperatively by the setter
+// helpers below: an OWL useEffect would only re-run when the component
+// re-renders, and the NavBar template never reads these values.
 export const spiffyThemeState = reactive({
     darkMode: false,
     sidebarPinned: false,
@@ -30,6 +32,16 @@ export const spiffyThemeState = reactive({
     languages: [],
     activeLang: null,
 });
+
+export function setDarkMode(value) {
+    spiffyThemeState.darkMode = Boolean(value);
+    document.body.classList.toggle("dark_mode", spiffyThemeState.darkMode);
+}
+
+export function setSidebarPinned(value) {
+    spiffyThemeState.sidebarPinned = Boolean(value);
+    document.body.classList.toggle("pinned", spiffyThemeState.sidebarPinned);
+}
 
 function findNames(memo, menu) {
     if (menu.actionID) {
@@ -136,32 +148,17 @@ patch(NavBar.prototype, {
         this.zoom = useState({ value: 100 });
         this.magnifier = useState({ open: false });
         this.fullscreen = useState({ active: false });
-        this.spiffyTheme = useState(spiffyThemeState);
         // Body-level classes and the zoom target cannot be bound from a
         // template; keep them in sync with the OWL state through effects.
+        // Note: an effect only re-runs when this component re-renders, so the
+        // dependency must be read by the NavBar template (as zoom.value is).
+        // darkMode / sidebarPinned / bookmarkPanel.show are not, so their
+        // body classes are synced imperatively at the write sites instead.
         useEffect(
             (open) => {
                 document.body.classList.toggle("backdrop", open);
             },
             () => [this.mobileMenu.open]
-        );
-        useEffect(
-            (show) => {
-                document.body.classList.toggle("bookmark_panel_show", show);
-            },
-            () => [this.bookmarkPanel.show]
-        );
-        useEffect(
-            (darkMode) => {
-                document.body.classList.toggle("dark_mode", darkMode);
-            },
-            () => [spiffyThemeState.darkMode]
-        );
-        useEffect(
-            (pinned) => {
-                document.body.classList.toggle("pinned", pinned);
-            },
-            () => [spiffyThemeState.sidebarPinned]
         );
         useEffect(
             (value) => {
@@ -288,6 +285,7 @@ patch(NavBar.prototype, {
     },
     _ToggleBookmarkPanel: function (ev) {
         this.bookmarkPanel.show = !this.bookmarkPanel.show;
+        document.body.classList.toggle("bookmark_panel_show", this.bookmarkPanel.show);
         rpc('/update/bookmark/panel/show', {
             'bookmark_panel': this.bookmarkPanel.show,
         })
@@ -319,7 +317,7 @@ patch(NavBar.prototype, {
 
     _getModeData: function () {
         rpc('/get/dark/mode/data').then((darkMode) => {
-            spiffyThemeState.darkMode = Boolean(darkMode);
+            setDarkMode(darkMode);
         })
     },
     addconfiguratorclass: function () {
@@ -411,11 +409,11 @@ patch(NavBar.prototype, {
                 addBodyClass("show_attachment");
             }
             if (rec.darkmode) {
-                spiffyThemeState.darkMode = true;
+                setDarkMode(true);
             }
             if (rec.bookmark_panel) {
-                // Synced to the body class by the bookmarkPanel effect.
                 this.bookmarkPanel.show = true;
+                document.body.classList.add("bookmark_panel_show");
             }
             if (rec.prevent_auto_save) {
                 addBodyClass(rec.prevent_auto_save);
@@ -426,7 +424,7 @@ patch(NavBar.prototype, {
             spiffyThemeState.showEditMode = Boolean(rec.show_edit_mode);
             spiffyThemeState.isAdmin = Boolean(rec.is_admin);
             if (rec.pinned_sidebar) {
-                spiffyThemeState.sidebarPinned = true;
+                setSidebarPinned(true);
             }
             if (record.list_view_sticky_header) {
                 addBodyClass("list_view_sticky_header");
@@ -646,14 +644,14 @@ patch(NavBar.prototype, {
         this._ChangeThemeMode(!spiffyThemeState.darkMode)
     },
     _ChangeThemeMode: function (darkmode) {
-        // The body class is synced by an effect and the theme variables are
+        // The body class is synced by the setter and the theme variables are
         // plain CSS under body.dark_mode; only the state and the persisted
         // user preference are handled here.
-        spiffyThemeState.darkMode = Boolean(darkmode);
+        setDarkMode(darkmode);
         rpc('/active/dark/mode', { 'dark_mode': darkmode ? 'on' : 'off' })
     },
     _ChangeSidebarBehaviour: function (ev) {
-        spiffyThemeState.sidebarPinned = !spiffyThemeState.sidebarPinned;
+        setSidebarPinned(!spiffyThemeState.sidebarPinned);
         rpc('/sidebar/behavior/update', {
             'sidebar_pinned': spiffyThemeState.sidebarPinned,
         })
