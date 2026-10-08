@@ -47,12 +47,12 @@
 				</div>
 				<div class="debug_activator">
 					<!-- <a t-attf-class="activate_debug {{isDebug ? 'toggle' : ''}}" title="Debug"> -->
-					<a t-attf-class="activate_debug {{env.debug ? 'toggle' : ''}}" title="Debug">
+					<a t-attf-class="activate_debug {{env.debug ? 'toggle' : ''}}" title="Debug" t-on-click="_DebugToggler">
 						<span class="ri ri-code-box-line" style="font-size: 18px;"/>
 					</a>
 				</div>
 				<div class="theme_selector list-unstyled ms-3">
-					<a class="theme-edit" title="Theme Setting">
+					<a class="theme-edit" title="Theme Setting" t-on-click="_openConfigModal">
 						<span aria-label="Themes Configuration" class="ri ri-paint-brush-line" />
 					</a>
 				</div>
@@ -62,18 +62,18 @@
 					</a>
 				</div> -->
 				<div class="vertical_sidemenu_behaviour d-none ms-3">
-					<a class="pin_sidebar" title="Pin Sidebar">
+					<a class="pin_sidebar" title="Pin Sidebar" t-on-click="_ChangeSidebarBehaviour">
 						<span class="ri ri-lock-unlock-line" style="font-size: 18px;"/>
 					</a>
 				</div>
 				<div class="header_to_do_list list-unstyled ms-3">
-					<a class="to_do_list" title="Notes">
+					<a class="to_do_list" title="Notes" t-on-click="_openToDoList">
 						<span aria-label="Notes" class="ri ri-sticky-note-line" />
 					</a>
 				</div>
 				<div class="dark_mode list-unstyled ms-3">
 					<div class="dark-light-mode-button-design">
-						<input id="dark_mod" type="checkbox" class="checkbox custom-control-input d-none" role="switch" />
+						<input id="dark_mod" type="checkbox" class="checkbox custom-control-input d-none" role="switch" t-on-click="_ChangeThemeModeCLicked"/>
 						<label for="dark_mod" class="label mb-0" title="Light/Dark Mode">
 							<i class='bulb-on ri ri-lightbulb-flash-fill'></i>
 						</label>

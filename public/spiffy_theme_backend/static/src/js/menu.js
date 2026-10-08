@@ -7,11 +7,12 @@ import { rpc } from "@web/core/network/rpc";
 import { renderToElement } from "@web/core/utils/render";
 import { ColorPallet } from "@spiffy_theme_backend/js/color_pallet";
 import { NavBar } from "@web/webclient/navbar/navbar";
+import { SwitchCompanyMenu } from "@web/webclient/switch_company_menu/switch_company_menu";
 import { patch } from "@web/core/utils/patch";
 import { session } from "@web/session";
 import { useService } from '@web/core/utils/hooks';
 import { loadCSS } from "@web/core/assets";
-import { onRendered } from "@odoo/owl";
+import { onRendered, onWillUnmount, useExternalListener } from "@odoo/owl";
 import { user } from "@web/core/user";
 
 // const websiteSystrayRegistry = registry.category('website_systray');
@@ -36,7 +37,62 @@ function sleep(ms) {
 
 var session_dict = { 'demo': 'demo' }
 var methods = {}
-var bookmarkOptionsOutsideCloseBound = false
+let spiffyNavbar = null;
+
+function eventOrigin(ev) {
+    const target = ev.target;
+    if (!target) {
+        return null;
+    }
+    return target.nodeType === 1 ? target : target.parentElement;
+}
+
+function closestAny(node, selector) {
+    let best = null;
+    for (const part of selector.split(",")) {
+        const match = node.closest(part.trim());
+        if (!match) {
+            continue;
+        }
+        if (!best || best.contains(match)) {
+            best = match;
+        }
+    }
+    return best;
+}
+
+function withCurrentTarget(ev, currentTarget) {
+    if (ev.currentTarget === currentTarget) {
+        return ev;
+    }
+    return new Proxy(ev, {
+        get(target, prop) {
+            if (prop === "currentTarget") {
+                return currentTarget;
+            }
+            const value = Reflect.get(target, prop, target);
+            return typeof value === "function" ? value.bind(target) : value;
+        },
+    });
+}
+
+// Dynamic menu nodes are inserted after render, and one click can match several
+// selectors. Keep the old document-delegation order on the navbar root.
+const SPIFFY_MENU_CLICK_ROUTES = [
+    ["body.top_menu_vertical .o_navbar_apps_menu a", "_ShowCurrentMenus"],
+    ["body.top_menu_vertical_mini .o_navbar_apps_menu .main_link", "_ShowCurrentMenusNew"],
+    ["body.top_menu_vertical_mini .o_navbar_apps_menu .parent-menu", "_ShowCurrent"],
+    [".o_navbar_apps_menu .spiffy-menu-group-list", "_SpiffyMenuGroupList"],
+    [".o_navbar_apps_menu .spiffy_main_app", "_SpiffyMenuGroup"],
+    [".o_navbar_apps_menu .parent-main-menu", "_ParentMainMenu"],
+    [".o_navbar_apps_menu .app_menu_group", "_onMenuGroupClick"],
+    [".o_navbar_apps_menu .submenu-link", "_SpiffyMainGroup"],
+    [".o_navbar_apps_menu .spiffy-submenu-group", "_SpiffySubMenuGroup"],
+    [".o_navbar_apps_menu .child_menus", "_childMenuClick"],
+    [".o_menu_sections .o_menu_entry_lvl_2, .o_menu_sections .o_nav_entry", "_childMenuClick"],
+    [".mobile-header-toggle #mobileMenuToggleBtn", "_mobileHeaderToggle"],
+    [".current_app_sections a[data-menu], .child_menus", "_markCurrentMenuActive"],
+];
 /**
  * Responsible for invoking native methods which called from JavaScript
  *
@@ -57,6 +113,18 @@ patch(NavBar.prototype, {
     async setup(parent, menuData) {
         super.setup();
         var self = this
+        spiffyNavbar = this;
+        onWillUnmount(() => {
+            if (spiffyNavbar === this) {
+                spiffyNavbar = null;
+            }
+        });
+        useExternalListener(document, "click", this._closeMagnifierOnOutsideClick);
+        useExternalListener(document, "click", this._closeBookmarkOptionsOnOutsideClick, { capture: true });
+        useExternalListener(document, "fullscreenchange", this._clearFullscreenButton);
+        useExternalListener(document, "webkitfullscreenchange", this._clearFullscreenButton);
+        useExternalListener(document, "mozfullscreenchange", this._clearFullscreenButton);
+        useExternalListener(document, "msfullscreenchange", this._clearFullscreenButton);
 
         // This function is added for the menu to fix layout issues caused by width rendering problems
         onRendered(() => {
@@ -66,44 +134,6 @@ patch(NavBar.prototype, {
         });
         self.menuService = useService("menu");
         this.currentCompany = user.activeCompany;
-        $(document).on('click', '.bookmark_section .dropdown-toggle', function (ev) { self._getCurrentPageName(ev) });
-        $(document).on('click', '.bookmark_section .add_bookmark', function (ev) { self._saveBookmarkPage(ev) });
-        $(document).on('contextmenu', '.bookmark_list .bookmark_tag', function (ev) { self._showbookmarkoptions(ev) });
-        $(document).on('click', '.magnifier_section .minus', function (ev) { self._magnifierZoomOut(ev) });
-        $(document).on('click', '.magnifier_section .plus', function (ev) { self._magnifierZoomIn(ev) });
-        $(document).on('click', '.magnifier_section .reset', function (ev) { self._magnifierZoomReset(ev) });
-        $(document).on('click', '.fullscreen_section > a.full_screen', function (ev) { self._FullScreenMode(ev) });
-        $(document).on("click", ".theme_selector a", function (ev) { self._openConfigModal(ev) })
-        $(document).on('click', '#dark_mod', function (ev) { self._ChangeThemeModeCLicked(ev) });
-        $(document).on('click', '.pin_sidebar', function (ev) { self._ChangeSidebarBehaviour(ev) });
-        // $(document).on('click', '.lang_selector', function(ev){self._GetLanguages(ev)});
-
-        $(document).on('click', 'body.top_menu_vertical .o_navbar_apps_menu a', function (ev) { self._ShowCurrentMenus(ev) });
-        $(document).on('click', 'body.top_menu_vertical_mini .o_navbar_apps_menu .main_link', function (ev) { self._ShowCurrentMenusNew(ev) });
-        $(document).on('click', 'body.top_menu_vertical_mini .o_navbar_apps_menu .parent-menu', function (ev) { self._ShowCurrent(ev) });
-
-        $(document).on('click', '.o_navbar_apps_menu .spiffy-menu-group-list', function (ev) { self._SpiffyMenuGroupList(ev) });
-        $(document).on('click', '.o_navbar_apps_menu .spiffy_main_app', function (ev) { self._SpiffyMenuGroup(ev) });
-        $(document).on('click', '.o_navbar_apps_menu .parent-main-menu', function (ev) { self._ParentMainMenu(ev) });
-        $(document).on('click', '.o_navbar_apps_menu .app_menu_group', function (ev) { self._onMenuGroupClick(ev) });
-        $(document).on('click', '.o_navbar_apps_menu .submenu-link', function (ev) { self._SpiffyMainGroup(ev) });
-        $(document).on('click', '.o_navbar_apps_menu .spiffy-submenu-group', function (ev) { self._SpiffySubMenuGroup(ev) });
-
-
-        $(document).on('click', '.o_navbar_apps_menu .child_menus', function (ev) { self._childMenuClick(ev) });
-        $(document).on('click', '.o_menu_sections .o_menu_entry_lvl_2, .o_menu_sections .o_nav_entry', function (ev) { self._childMenuClick(ev) });
-        $(document).on('click', '.search_bar', function (ev) { self._showSearchbarModal(ev) });
-        $(document).on('click', '.o_app_drawer a', function (ev) { self._OpenAppdrawer(ev) });
-        $(document).on('click', '.mobile-header-toggle #mobileMenuToggleBtn', function (ev) { self._mobileHeaderToggle(ev) });
-        $(document).on('click', '.o_menu_sections #mobileMenuclose', function (ev) { self._mobileHeaderClose(ev) });
-        $(document).on('click', '.fav_app_drawer .fav_app_drawer_btn', function (ev) { self._OpenFavAppdrawer(ev) });
-        $(document).on('click', '.header_menu_right_content_toggler .bookmark_panel_toggle', function (ev) { self._ToggleBookmarkPanel(ev) });
-        $(document).on('click', '.appdrawer_section .close_fav_app_btn', function (ev) { self._CloseAppdrawer(ev) });
-
-        $(document).on('click', '.debug_activator .activate_debug', function (ev) { self._DebugToggler(ev) });
-
-        $(document).on("click", ".header_to_do_list .to_do_list", function (ev) { self._openToDoList(ev) });
-        $(document).on("click", ".font-checkbox", function (ev) { self._onCheckboxChange(ev) });
 
         this._searchableMenus = {};
         var menu = this.menuService.getApps()
@@ -127,73 +157,68 @@ patch(NavBar.prototype, {
         await this._all_apps_menu_data()
         this._GetLanguages()
 
-        // close magnifier when clicked outside the magnifer div
-        $(document).on("click", function (e) {
-            const magnifier = document.getElementById('magnifier');
-            if (!magnifier || !magnifier.classList.contains('show') || e.target.closest('.magnifier_section')) {
-                return;
-            }
-            $('#magnifier').collapse("hide");
-        });
-        // Bookmark rename/remove popup has no toggle of its own. Capture runs
-        // before handlers that stop the click, so a click anywhere else still closes it.
-        if (!bookmarkOptionsOutsideCloseBound) {
-            bookmarkOptionsOutsideCloseBound = true;
-            document.addEventListener("click", function (e) {
-                if (e.target.closest(".bookmark_options, .bookmark_rename_section")) {
-                    return;
-                }
-                $(".bookmark_list .bookmark_options, .bookmark_list .bookmark_rename_section").remove();
-            }, true);
-        }
-        $(document).ready(function () {
-            $(document).on('click', '.current_app_sections a[data-menu], .child_menus', function () {
-                $('.current_app_sections a[data-menu], .nav-item > p > a, .nav-item > a').removeClass('active');
-                $(this).addClass('active');
-                $(this).parents('.nav-item').children('p, a').addClass('active');
-                $(this).parents('.collapse').addClass('show');
-            });
-        });
-
-        /* EVENTS FOR WINDOW FULLSCREEN WITH ESC BUTTON TRIGGER */
-        document.addEventListener("fullscreenchange", function () {
-            if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                var fullScreenBtn = $('.fullscreen_section .full_screen');
-                if ($(fullScreenBtn).hasClass('fullscreen-exit')) {
-                    $(fullScreenBtn).removeClass('fullscreen-exit')
-                }
-            }
-        });
-        document.addEventListener("mozfullscreenchange", function () {
-            if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                var fullScreenBtn = $('.fullscreen_section .full_screen');
-                if ($(fullScreenBtn).hasClass('fullscreen-exit')) {
-                    $(fullScreenBtn).removeClass('fullscreen-exit')
-                }
-            }
-        });
-        document.addEventListener("webkitfullscreenchange", function () {
-            if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                var fullScreenBtn = $('.fullscreen_section .full_screen');
-                if ($(fullScreenBtn).hasClass('fullscreen-exit')) {
-                    $(fullScreenBtn).removeClass('fullscreen-exit')
-                }
-            }
-        });
-        document.addEventListener("msfullscreenchange", function () {
-            if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                var fullScreenBtn = $('.fullscreen_section .full_screen');
-                if ($(fullScreenBtn).hasClass('fullscreen-exit')) {
-                    $(fullScreenBtn).removeClass('fullscreen-exit')
-                }
-            }
-        });
-
         var size = $(window).width();
         var upTo1200 = size <= 1023.98
 
         this.isIpad = upTo1200
         var currentapp = this.menuService.getCurrentApp();
+    },
+    onSpiffyMenuClick(ev) {
+        const origin = eventOrigin(ev);
+        if (!origin) {
+            return;
+        }
+        for (const [selector, method] of SPIFFY_MENU_CLICK_ROUTES) {
+            const match = closestAny(origin, selector);
+            if (!match) {
+                continue;
+            }
+            this[method](withCurrentTarget(ev, match));
+        }
+    },
+    onBookmarkContextMenu(ev) {
+        const origin = eventOrigin(ev);
+        const tag = origin && closestAny(origin, ".bookmark_tag");
+        if (!tag) {
+            return;
+        }
+        this._showbookmarkoptions(withCurrentTarget(ev, tag));
+    },
+    onDynamicDataClick(ev) {
+        const origin = eventOrigin(ev);
+        const checkbox = origin && closestAny(origin, ".font-checkbox");
+        if (!checkbox) {
+            return;
+        }
+        this._onCheckboxChange(withCurrentTarget(ev, checkbox));
+    },
+    _markCurrentMenuActive(ev) {
+        const current = ev.currentTarget;
+        $(".current_app_sections a[data-menu], .nav-item > p > a, .nav-item > a").removeClass("active");
+        $(current).addClass("active");
+        $(current).parents(".nav-item").children("p, a").addClass("active");
+        $(current).parents(".collapse").addClass("show");
+    },
+    _closeMagnifierOnOutsideClick(ev) {
+        const magnifier = document.getElementById("magnifier");
+        const origin = eventOrigin(ev);
+        if (!magnifier || !magnifier.classList.contains("show") || origin?.closest(".magnifier_section")) {
+            return;
+        }
+        $("#magnifier").collapse("hide");
+    },
+    _closeBookmarkOptionsOnOutsideClick(ev) {
+        const origin = eventOrigin(ev);
+        if (origin?.closest(".bookmark_options, .bookmark_rename_section")) {
+            return;
+        }
+        $(".bookmark_list .bookmark_options, .bookmark_list .bookmark_rename_section").remove();
+    },
+    _clearFullscreenButton() {
+        if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement) {
+            return;
+        }
+        $(".fullscreen_section .full_screen").removeClass("fullscreen-exit");
     },
     getsubMenuItemHref(payload) {
         return `/odoo/${payload.actionPath || "action-" + payload.actionID}`;
@@ -1571,6 +1596,24 @@ patch(NavBar.prototype, {
                 });
             });
         })
+    },
+});
+
+patch(SwitchCompanyMenu.prototype, {
+    _DebugToggler(ev) {
+        spiffyNavbar?._DebugToggler(ev);
+    },
+    _openConfigModal(ev) {
+        spiffyNavbar?._openConfigModal(ev);
+    },
+    _ChangeSidebarBehaviour(ev) {
+        spiffyNavbar?._ChangeSidebarBehaviour(ev);
+    },
+    _openToDoList(ev) {
+        spiffyNavbar?._openToDoList(ev);
+    },
+    _ChangeThemeModeCLicked(ev) {
+        spiffyNavbar?._ChangeThemeModeCLicked(ev);
     },
 });
 
