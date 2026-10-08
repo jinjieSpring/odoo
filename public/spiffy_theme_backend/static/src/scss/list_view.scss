@@ -356,6 +356,18 @@ body.o_web_client {
                     height: 35px
                 }
 
+                tr.o_spiffy_attachment_row {
+                    background: transparent !important;
+                    box-shadow: none !important;
+
+                    .o_spiffy_attachment_cell {
+                        height: auto !important;
+                        background: transparent !important;
+                        border: 0 !important;
+                        position: relative;
+                    }
+                }
+
                 @include media-breakpoint-down(lg) {
                     .biz_attachment_section {
                         flex-wrap: unset !important;

@@ -39,7 +39,6 @@ patch(ListRenderer.prototype, {
         // this.rpc = rpc;
         this.fileViewer = useFileViewer();
         this.action = useService("action");
-        this.showattachment = document.body.classList.contains("show_attachment");
         this.notificationService = useService("notification");
         this.attachmentState = useState({ byResId: {} });
         this._bizAttachmentTimer = null;
@@ -47,11 +46,14 @@ patch(ListRenderer.prototype, {
         this._bizAlive = true;
 
         onMounted(() => {
+            this._bizClassObserver = new MutationObserver(() => this._scheduleAttachmentLoad());
+            this._bizClassObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
             this._scheduleAttachmentLoad();
         });
 
         onWillUnmount(() => {
             this._bizAlive = false;
+            this._bizClassObserver?.disconnect();
             clearTimeout(this._bizAttachmentTimer);
         });
 
@@ -80,13 +82,37 @@ patch(ListRenderer.prototype, {
         });
     },
 
+    _attachmentsEnabled() {
+        return document.body.classList.contains("show_attachment") && this.props.archInfo?.editable != "bottom";
+    },
+
+    _visibleRecords(list = this.props.list) {
+        if (!list) {
+            return [];
+        }
+        if (!list.isGrouped) {
+            return list.records || [];
+        }
+        const records = [];
+        for (const group of list.groups || []) {
+            if (!group.isFolded) {
+                records.push(...this._visibleRecords(group.list));
+            }
+        }
+        return records;
+    },
+
     _attachmentRecordKey() {
-        const records = this.props.list.records || [];
-        return records.map((record) => record.resId).filter(Boolean).slice().sort().join(",");
+        return this._visibleRecords()
+            .map((record) => record.resId)
+            .filter((resId) => Number.isInteger(resId))
+            .slice()
+            .sort((a, b) => a - b)
+            .join(",");
     },
 
     _scheduleAttachmentLoad() {
-        if (!this.showattachment || this.props.archInfo.editable == "bottom" || this._bizAttachmentLoading) {
+        if (!this._attachmentsEnabled() || this._bizAttachmentLoading) {
             return;
         }
         if (this._attachmentRecordKey() === this._bizLastRecIdsKey) {
@@ -99,11 +125,13 @@ patch(ListRenderer.prototype, {
     },
 
     async _loadAttachments() {
-        if (!this._bizAlive || !this.showattachment || this.props.archInfo.editable == "bottom") {
+        if (!this._bizAlive || !this._attachmentsEnabled()) {
             return;
         }
-        const recIds = (this.props.list.records || []).map((record) => record.resId).filter(Boolean);
-        const recIdsKey = recIds.slice().sort().join(",");
+        const recIds = this._visibleRecords()
+            .map((record) => record.resId)
+            .filter((resId) => Number.isInteger(resId));
+        const recIdsKey = recIds.slice().sort((a, b) => a - b).join(",");
         if (recIdsKey === this._bizLastRecIdsKey || this._bizAttachmentLoading) {
             return;
         }
@@ -134,7 +162,7 @@ patch(ListRenderer.prototype, {
     },
 
     rowAttachments(record) {
-        if (!this.showattachment || !record?.resId || this.props.archInfo.editable == "bottom") {
+        if (!this._attachmentsEnabled() || !Number.isInteger(record?.resId)) {
             return [];
         }
         const list = this.attachmentState.byResId[String(record.resId)] || [];

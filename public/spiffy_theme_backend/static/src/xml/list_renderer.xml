@@ -9,23 +9,27 @@
         </xpath>
         <xpath expr="//tr[hasclass('o_data_row')]" position="after">
             <t t-set="attachments" t-value="rowAttachments(record)"/>
-            <div t-if="attachments.length" class="attachment_div new">
-                <section class="biz_attachment_section d-flex align-items-center position-absolute flex-nowrap overflow-auto" t-att-id="record.id">
-                    <t t-foreach="attachments" t-as="attachment" t-key="attachment.key">
-                        <div t-if="!attachment.counter" class="attachment_box border d-flex align-items-center mx-2" t-on-click.stop="() => this.onAttachmentBoxClick(attachment, record.resId)">
-                            <span class="o_image me-2" t-att-data-mimetype="attachment.attachment_mimetype"/>
-                            <div class="attachment-name text-nowrap">
-                                <span t-esc="attachment.attachment_name"/>
-                            </div>
-                        </div>
-                        <div t-else="" class="attachment_box border attachment_box_counter d-flex align-items-center px-2" t-on-click.stop="() => this.onAttachmentBoxClick(attachment, record.resId)">
-                            <div class="attachment-name text-nowrap">
-                                <span t-esc="attachment.label"/>
-                            </div>
-                        </div>
-                    </t>
-                </section>
-            </div>
+            <tr t-if="attachments.length" class="o_spiffy_attachment_row">
+                <td t-att-colspan="nbCols" class="o_spiffy_attachment_cell border-0 p-0">
+                    <div class="attachment_div new">
+                        <section class="biz_attachment_section d-flex align-items-center position-absolute flex-nowrap overflow-auto" t-att-id="record.id">
+                            <t t-foreach="attachments" t-as="attachment" t-key="attachment.key">
+                                <div t-if="!attachment.counter" class="attachment_box border d-flex align-items-center mx-2" t-on-click.stop="() => this.onAttachmentBoxClick(attachment, record.resId)">
+                                    <span class="o_image me-2" t-att-data-mimetype="attachment.attachment_mimetype"/>
+                                    <div class="attachment-name text-nowrap">
+                                        <span t-esc="attachment.attachment_name"/>
+                                    </div>
+                                </div>
+                                <div t-else="" class="attachment_box border attachment_box_counter d-flex align-items-center px-2" t-on-click.stop="() => this.onAttachmentBoxClick(attachment, record.resId)">
+                                    <div class="attachment-name text-nowrap">
+                                        <span t-esc="attachment.label"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </section>
+                    </div>
+                </td>
+            </tr>
         </xpath>
     </t>
 
