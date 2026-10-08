@@ -58,6 +58,7 @@
             '/spiffy_theme_backend/static/src/xml/todo_sidebar.xml',
             '/spiffy_theme_backend/static/src/xml/theme_configurator.xml',
             '/spiffy_theme_backend/static/src/xml/menu_group.xml',
+            '/spiffy_theme_backend/static/src/xml/column_filter_popover.xml',
             '/spiffy_theme_backend/static/src/js/calendar_dialog.js',
             '/spiffy_theme_backend/static/src/xml/calendar_dialog_template.xml',
             "/spiffy_theme_backend/static/src/xml/inherit_mobile_apps_funnel.xml",
@@ -112,6 +113,7 @@
             '/spiffy_theme_backend/static/src/js/widgets/todo_sidebar.js',
             '/spiffy_theme_backend/static/src/js/widgets/theme_configurator.js',
             '/spiffy_theme_backend/static/src/js/widgets/menu_group.js',
+            '/spiffy_theme_backend/static/src/js/widgets/column_filter_popover.js',
             "/spiffy_theme_backend/static/src/js/color_pallet.js",
 
             "/spiffy_theme_backend/static/src/js/menu.js",

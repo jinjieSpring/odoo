@@ -21,7 +21,7 @@
 						<button type="button" title="Chatter Bottom" class="chatter_position_bottom btn btn-primary ri ri-layout-bottom-line m-1" t-on-click.stop="() => this.updateChatterPosition('chatter_bottom')" />
 					</t>
 					<t t-if="env.config.viewType === 'list' || env.viewType === 'list'">
-						<button type="button" title="Expand/Collapse Groups" class="expand_groups_records btn btn-primary ri ri-menu-unfold-line m-1"/>
+						<button t-if="isGroupedList" type="button" title="Expand/Collapse Groups" class="expand_groups_records btn btn-primary ri ri-menu-unfold-line m-1" t-att-class="{ active: anyGroupExpanded }" t-on-click.stop="groupsExpand"/>
 					</t>
 				</ul>
 			</div>

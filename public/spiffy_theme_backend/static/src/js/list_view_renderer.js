@@ -23,7 +23,9 @@ import { _t } from "@web/core/l10n/translation";
 import { patch } from "@web/core/utils/patch";
 import { AttachmentUploadService } from "@mail/core/common/attachment_upload_service";
 import { onMounted, useState, useChildSubEnv, onPatched, onWillUnmount } from "@odoo/owl";
+import { usePopover } from "@web/core/popover/popover_hook";
 import { CalendarDialog } from "./calendar_dialog";
+import { ColumnFilterPopover } from "./widgets/column_filter_popover";
 const { DateTime } = luxon;
 
 // TODO add list view document here , old way will not work
@@ -59,26 +61,15 @@ patch(ListRenderer.prototype, {
 
         onPatched(() => {
             this._scheduleAttachmentLoad();
-            // Funcationality to manage the expand and collapse group on click
-            const expandGroup = $('.expand_groups_records');
-            if (!this.props.list?.isGrouped) {
-                expandGroup.addClass('d-none');
-            } else {
-                expandGroup.removeClass('d-none');
-                const groups = this.props.list.groups || [];
-                const anyExpanded = groups.some(group => !group.isFolded);
-                if (anyExpanded) {
-                    expandGroup.addClass('active');
-                } else {
-                    expandGroup.removeClass('active');
-                }
-                if (!expandGroup.hasClass('bound')) {
-                    expandGroup.addClass('bound');
-                    expandGroup.on('click', (ev) => {
-                        this.groupsExpand(ev);
-                    });
-                }
-            }
+        });
+        // The expand/collapse-all button lives in the Pager template and is
+        // driven by the Pager patch in pager.js.
+        this.columnFilterState = useState({ items: [], showSearchMore: false });
+        this.columnFilterPopover = usePopover(ColumnFilterPopover, {
+            position: "bottom-start",
+            onClose: () => {
+                this._columnFilterTarget = null;
+            },
         });
     },
 
@@ -217,302 +208,203 @@ patch(ListRenderer.prototype, {
         });
     },
 
-    groupsExpand(ev){
-        ev.stopPropagation();
-        const groups = this.props.list.groups;
-        groups.forEach((group) => {
-            group.toggle();
-        })
-        const expandGroup = $('.expand_groups_records');
-        const anyExpanded = this.props.list.groups.some(g => !g.isFolded);
-        if (anyExpanded) {  
-            expandGroup.addClass('active');
-        } else {
-            expandGroup.removeClass('active');
-        }
-    },
-
     async onColumnFilter(ev) {
-        const model = this.props.list.model.config.resModel;
-        const columnName = ev.currentTarget.dataset.column;
-        const ColumnString = ev.currentTarget.dataset.fieldname;
-        const fieldType = ev.currentTarget.dataset.fieldType;
         const input = ev.currentTarget;
-        const table = $('div.o_list_renderer table.o_list_table')
-        const el = table
-        if (!el) {
-            console.warn("Table element not found");
+        const columnName = input.dataset.column;
+        const fieldType = input.dataset.fieldType;
+        const model = this.props.list.model.config.resModel;
+        const isRelational = ['many2one', 'one2many', 'many2many'].includes(fieldType);
+
+        if (ev.type === "keydown") {
+            // Enter applies the typed value as a domain; other keys only
+            // live-search relational fields.
+            if (ev.key === "Enter") {
+                this.columnFilterPopover.close();
+                this._applyColumnFilterDomain(input, columnName, fieldType);
+            } else if (isRelational) {
+                await this._openRelationalFilter(input, model, columnName);
+            }
             return;
         }
 
-        if (!input.dataset.enterListenerAdded) {
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    const filterValue = input.value.trim();
-                    let domain;
+        if (isRelational) {
+            await this._openRelationalFilter(input, model, columnName);
+        } else if (fieldType === 'selection') {
+            await this._openSelectionFilter(input, model, columnName);
+        } else if (['datetime', 'date'].includes(fieldType)) {
+            this._openDateFilter(ev, input, columnName, fieldType);
+        }
+    },
 
-                    if (!filterValue) {
-                        // If input is empty, clear domain filter and clear input
-                        domain = [];
-                        input.value = '';  // clear input field
-                        const domainString = JSON.stringify(domain);
-                        this.env.searchModel.splitAndAddDomain(domainString);
-                        input.value = ''; 
-                        return;
-                    }
+    _applyColumnFilterDomain(input, columnName, fieldType) {
+        const filterValue = input.value.trim();
+        let domain;
 
-                    if (fieldType === 'char' || fieldType === 'text') {
-                        domain = [[columnName, 'ilike', filterValue]];
-                        input.value = ''; 
-                    } else if (fieldType === 'integer' || fieldType === 'float') {
-                        const number = parseFloat(filterValue);
-                        if (!isNaN(number)) {
-                            domain = [[columnName, '>=', number]];
-                            input.value = ''; 
-                        } else {
-                            alert("Invalid number input");
-                            return;
-                        }
-                    } else if (fieldType === 'monetary') {
-                        const number = parseFloat(filterValue);
-                        if (!isNaN(number)) {
-                            domain = [[columnName, '>=', number]];
-                            input.value = ''; 
-                        } else {
-                            alert("Invalid monetary input");
-                            return;
-                        }
-                    } else if (fieldType === 'boolean') {
-                        const boolValue = filterValue.toLowerCase();
-                        if (boolValue === 'true' || boolValue === 'false') {
-                            domain = [[columnName, '=', boolValue === 'true']];
-                            input.value = ''; 
-                        } else {
-                            alert("Enter true or false");
-                            return;
-                        }
-                    } else if (fieldType === 'many2one' || fieldType === 'one2many' || fieldType === 'many2many') {
-                        domain = [[columnName, 'ilike', filterValue]];
-                        input.value = ''; 
-                    } else if (fieldType === 'datetime' || fieldType === 'date') {
-                        // Try to parse date, and if invalid alert user
-                        const dateObj = new Date(filterValue);
-                        if (isNaN(dateObj.getTime())) {
-                            alert("Invalid date format. Please enter a valid date.");
-                            return;
-                        }
-                        // Format date as ISO string for domain
-                        const pad = (num) => num.toString().padStart(2, '0');
-                        const isoDate = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`;
-                        domain = [[columnName, '=', isoDate]];
-                        input.value = ''; 
-                    } else {
-                        domain = [[columnName, '=', filterValue]];
-                        input.value = ''; 
-                    }
-
-                    const domainString = JSON.stringify(domain);
-                    this.env.searchModel.splitAndAddDomain(domainString);
-                    input.value = ''; 
-                }
-            });
-
-            input.dataset.enterListenerAdded = "true";
+        if (!filterValue) {
+            input.value = '';
+            this.env.searchModel.splitAndAddDomain(JSON.stringify([]));
+            return;
         }
 
-        // Only run dropdown logic for relational fields
-        if (['many2one', 'one2many', 'many2many'].includes(fieldType)) {
-            // Remove any existing dropdown first
-            const existingDropdown = document.querySelector('.filter-dropdown');
-            if (existingDropdown) {
-                existingDropdown.remove();
+        if (fieldType === 'char' || fieldType === 'text') {
+            domain = [[columnName, 'ilike', filterValue]];
+        } else if (fieldType === 'integer' || fieldType === 'float') {
+            const number = parseFloat(filterValue);
+            if (isNaN(number)) {
+                alert("Invalid number input");
+                return;
             }
-
-            await rpc('/filter/relational/field/list', {
-                resModel: model,
-                resField: columnName,
-                searchTerm: input.value || '',
-            }).then(data => {
-                if (data.error) {
-                    console.error('Filter list error:', data.error);
-                    return;
-                }
-
-                // Create dropdown
-                const dropdown = document.createElement('div');
-                dropdown.classList.add('filter-dropdown');
-
-                // Set position near the input field
-                const rect = input.getBoundingClientRect();
-                dropdown.style.left = `${rect.left + window.pageXOffset}px`;
-                dropdown.style.top = `${rect.bottom + window.pageYOffset}px`;
-
-                const maxVisible = 6;
-                const recordsToShow = data.records.slice(0, maxVisible);
-
-                // Add records to dropdown
-                recordsToShow.forEach(rec => {
-                    const item = document.createElement('div');
-                    item.classList.add('relational_filter_data');
-                    item.textContent = rec.name || `Record ${rec.id}`;
-
-                    item.addEventListener('click', () => {
-                        input.value = rec.name;
-                        dropdown.remove();
-                        const domainString = `[["${columnName}", "=", ${rec.id}]]`;
-                        this.env.searchModel.splitAndAddDomain(domainString);
-                        input.value = ''; 
-                    });
-
-                    dropdown.appendChild(item);
-                });
-
-                // Add "Search More" button if needed
-                if (data.records.length > maxVisible) {
-                    const searchMore = document.createElement('div');
-                    searchMore.classList.add('search_more');
-                    searchMore.textContent = 'Search more...';
-
-                    const self = this;  // capture component context
-
-                    searchMore.addEventListener('click', () => {
-                        dropdown.remove();
-
-                        self.env.services.dialog.add(SelectCreateDialog, {
-                            resModel: data.related_model,
-                            title: `Select ${ColumnString}`,
-                            multiSelect: true,
-                            noCreate: true,
-                            onSelected: async (selectedRecords) => {
-                                if (selectedRecords && selectedRecords.length > 0) {
-                                    const RecordList = await rpc('/filter/relational/field/data', {
-                                        resModel: data.related_model,
-                                        resField: selectedRecords,
-                                    });
-                                    const recordIds = RecordList.map(r => r.id);
-                                    const domain = [[columnName, "in", recordIds]];
-
-                                    // Add the domain to the search model
-                                    self.env.searchModel.splitAndAddDomain(domain);
-                                } else {
-                                    alert("Please select at least one record.");
-                                }
-                            },
-                        });
-                    });
-
-
-                    dropdown.appendChild(searchMore);
-                }
-
-                document.body.appendChild(dropdown);
-
-                // Remove dropdown when clicking outside
-                const onClickOutside = (event) => {
-                    if (!dropdown.contains(event.target) && event.target !== input) {
-                        dropdown.remove();
-                        document.removeEventListener('click', onClickOutside);
-                    }
-                };
-                document.addEventListener('click', onClickOutside);
-            });
+            domain = [[columnName, '>=', number]];
+        } else if (fieldType === 'monetary') {
+            const number = parseFloat(filterValue);
+            if (isNaN(number)) {
+                alert("Invalid monetary input");
+                return;
+            }
+            domain = [[columnName, '>=', number]];
+        } else if (fieldType === 'boolean') {
+            const boolValue = filterValue.toLowerCase();
+            if (boolValue !== 'true' && boolValue !== 'false') {
+                alert("Enter true or false");
+                return;
+            }
+            domain = [[columnName, '=', boolValue === 'true']];
+        } else if (['many2one', 'one2many', 'many2many'].includes(fieldType)) {
+            domain = [[columnName, 'ilike', filterValue]];
+        } else if (fieldType === 'datetime' || fieldType === 'date') {
+            const dateObj = new Date(filterValue);
+            if (isNaN(dateObj.getTime())) {
+                alert("Invalid date format. Please enter a valid date.");
+                return;
+            }
+            const pad = (num) => num.toString().padStart(2, '0');
+            const isoDate = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`;
+            domain = [[columnName, '=', isoDate]];
+        } else {
+            domain = [[columnName, '=', filterValue]];
         }
 
-        if (fieldType === 'selection') {
-            const input = ev.currentTarget;
+        this.env.searchModel.splitAndAddDomain(JSON.stringify(domain));
+        input.value = '';
+    },
 
-            const data = await rpc('/selection/filter/list', {
-                resModel: model,
-                resField: columnName,
-            });
-
-            const existingDropdown = input.parentElement.querySelector('.filter-dropdown');
-            if (existingDropdown) existingDropdown.remove();
-
-            const dropdown = document.createElement('div');
-            dropdown.classList.add('filter-dropdown');
-
-            const rect = input.getBoundingClientRect();
-            dropdown.style.left = (rect.left + window.pageXOffset) + 'px';
-            dropdown.style.top = (rect.bottom + window.pageYOffset) + 'px';
-
-            data.records.forEach(item => {
-                const option = document.createElement('div');
-                option.textContent = item.display_name || item.label || item.name || item;
-                option.classList.add('selection-filter-dropdown');
-
-                option.addEventListener('click', () => {
-                    input.value = item.value || item;
-                    dropdown.remove();
-
-                    const domain = [[columnName, '=', item.value || item]];
-                    const domainString = JSON.stringify(domain);
-                    this.env.searchModel.splitAndAddDomain(domainString);
-                    input.value = ''; 
-                });
-
-                dropdown.appendChild(option);
-            });
-
-            document.body.appendChild(dropdown);
-
-            const onClickOutside = (event) => {
-                if (!dropdown.contains(event.target) && event.target !== input) {
-                    dropdown.remove();
-                    document.removeEventListener('click', onClickOutside);
-                }
-            };
-            document.addEventListener('click', onClickOutside);
+    async _openRelationalFilter(input, model, columnName) {
+        const data = await rpc('/filter/relational/field/list', {
+            resModel: model,
+            resField: columnName,
+            searchTerm: input.value || '',
+        });
+        if (data.error) {
+            console.error('Filter list error:', data.error);
+            return;
         }
-
-        if (['datetime', 'date'].includes(fieldType)) {
-            const inputEl = ev.currentTarget.closest(".input-group").querySelector("input");
-            let parsedValue = DateTime.now();
-
-            if (inputEl?.value) {
-                const dt = DateTime.fromFormat(inputEl.value, "yyyy-MM-dd");
-                if (dt.isValid) {
-                    parsedValue = dt;
-                }
-            }
-            const rect = inputEl.getBoundingClientRect();
-            let leftValue = rect.left
-            if (leftValue > "1440"){
-                leftValue = 1440;
-            }
-            const fieldType = ev.currentTarget.getAttribute("data-field-type");
-
-            this.dialog.add(CalendarDialog, {
-                close: () => this.dialog.closeAll(),
-                pickerProps: {
-                    type: fieldType,
-                    value: parsedValue,
-                    range: false,
-                    onSelect: (value) => {
-                        // Format value (Luxon → string)
-                        let formattedValue;
-                        formattedValue = value.toFormat("yyyy-MM-dd HH:mm:ss");
-
-                        if (inputEl) {
-                            inputEl.value = formattedValue;
-                            inputEl.dispatchEvent(new Event("input", { bubbles: true }));
-                        }
-                        const dateStr = inputEl?.value;
-                        const columnName = ev.target.getAttribute("data-column");
-                        inputEl.value = ""
-                        const domain = [[columnName, '>=', dateStr]];
-                        const domainString = JSON.stringify(domain);
-                        this.env.searchModel.splitAndAddDomain(domainString);
-                        this.dialog.closeAll();
-                    },
+        const maxVisible = 6;
+        this.columnFilterState.items = data.records.slice(0, maxVisible).map((rec) => ({
+            id: rec.id,
+            label: rec.name || `Record ${rec.id}`,
+            value: rec.id,
+        }));
+        this.columnFilterState.showSearchMore = data.records.length > maxVisible;
+        if (this._columnFilterTarget !== input || !this.columnFilterPopover.isOpen) {
+            this._columnFilterTarget = input;
+            this.columnFilterPopover.open(input, {
+                state: this.columnFilterState,
+                onSelect: (item) => {
+                    input.value = '';
+                    this.env.searchModel.splitAndAddDomain(JSON.stringify([[columnName, "=", item.value]]));
                 },
-                position: {
-                    top: rect.bottom + window.scrollY + 4,
-                    left: leftValue + window.scrollX,
-                }
+                onSearchMore: () => this._openRelationalSearchMore(data, columnName, input.dataset.fieldname),
             });
         }
     },
+
+    _openRelationalSearchMore(data, columnName, columnString) {
+        this.dialog.add(SelectCreateDialog, {
+            resModel: data.related_model,
+            title: `Select ${columnString}`,
+            multiSelect: true,
+            noCreate: true,
+            onSelected: async (selectedRecords) => {
+                if (selectedRecords && selectedRecords.length > 0) {
+                    const RecordList = await rpc('/filter/relational/field/data', {
+                        resModel: data.related_model,
+                        resField: selectedRecords,
+                    });
+                    const recordIds = RecordList.map(r => r.id);
+                    this.env.searchModel.splitAndAddDomain([[columnName, "in", recordIds]]);
+                } else {
+                    alert("Please select at least one record.");
+                }
+            },
+        });
+    },
+
+    async _openSelectionFilter(input, model, columnName) {
+        const data = await rpc('/selection/filter/list', {
+            resModel: model,
+            resField: columnName,
+        });
+        this.columnFilterState.items = data.records.map((item, index) => ({
+            id: `selection-${index}`,
+            label: item.display_name || item.label || item.name || item,
+            value: item.value || item,
+        }));
+        this.columnFilterState.showSearchMore = false;
+        if (this._columnFilterTarget !== input || !this.columnFilterPopover.isOpen) {
+            this._columnFilterTarget = input;
+            this.columnFilterPopover.open(input, {
+                state: this.columnFilterState,
+                onSelect: (item) => {
+                    input.value = '';
+                    this.env.searchModel.splitAndAddDomain(JSON.stringify([[columnName, "=", item.value]]));
+                },
+            });
+        }
+    },
+
+    _openDateFilter(ev, inputEl, columnName, fieldType) {
+        let parsedValue = DateTime.now();
+        if (inputEl?.value) {
+            const dt = DateTime.fromFormat(inputEl.value, "yyyy-MM-dd");
+            if (dt.isValid) {
+                parsedValue = dt;
+            }
+        }
+        const rect = inputEl.getBoundingClientRect();
+        let leftValue = rect.left
+        if (leftValue > "1440"){
+            leftValue = 1440;
+        }
+
+        this.dialog.add(CalendarDialog, {
+            close: () => this.dialog.closeAll(),
+            pickerProps: {
+                type: fieldType,
+                value: parsedValue,
+                range: false,
+                onSelect: (value) => {
+                    let formattedValue;
+                    formattedValue = value.toFormat("yyyy-MM-dd HH:mm:ss");
+
+                    if (inputEl) {
+                        inputEl.value = formattedValue;
+                        inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+                    }
+                    const dateStr = inputEl?.value;
+                    inputEl.value = ""
+                    const domain = [[columnName, '>=', dateStr]];
+                    const domainString = JSON.stringify(domain);
+                    this.env.searchModel.splitAndAddDomain(domainString);
+                    this.dialog.closeAll();
+                },
+            },
+            position: {
+                top: rect.bottom + window.scrollY + 4,
+                left: leftValue + window.scrollX,
+            }
+        });
+    },
+
 
     async onDomainFilterClick(ev) {
         const columnName = ev.currentTarget.dataset.column;

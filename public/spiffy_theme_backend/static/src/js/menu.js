@@ -12,7 +12,7 @@ import { patch } from "@web/core/utils/patch";
 import { session } from "@web/session";
 import { useService } from '@web/core/utils/hooks';
 import { loadCSS } from "@web/core/assets";
-import { onRendered, onWillUnmount, useExternalListener, useState } from "@odoo/owl";
+import { onRendered, onWillUnmount, useEffect, useExternalListener, useState } from "@odoo/owl";
 import { routerBus } from "@web/core/browser/router";
 import { user } from "@web/core/user";
 import { TodoSidebar } from "@spiffy_theme_backend/js/widgets/todo_sidebar";
@@ -88,8 +88,6 @@ function withCurrentTarget(ev, currentTarget) {
 const SPIFFY_MENU_CLICK_ROUTES = [
     [".o_navbar_apps_menu .child_menus", "_childMenuClick"],
     [".o_menu_sections .o_menu_entry_lvl_2, .o_menu_sections .o_nav_entry", "_childMenuClick"],
-    [".mobile-header-toggle #mobileMenuToggleBtn", "_mobileHeaderToggle"],
-    [".current_app_sections a[data-menu], .child_menus", "_markCurrentMenuActive"],
     [".appdrawer_section .app-box .o_app, .appdrawer_section .search_list_content a", "_ToggleDrawer"],
 ];
 /**
@@ -117,6 +115,22 @@ patch(NavBar.prototype, {
         spiffyNavbar = this;
         this.todoSidebarState = useState({ visible: false });
         this.configuratorState = useState({ visible: false });
+        this.mobileMenu = useState({ open: false });
+        this.bookmarkPanel = useState({ show: false });
+        // Body-level classes cannot be bound from a template; keep them in
+        // sync with the OWL state through effects.
+        useEffect(
+            (open) => {
+                document.body.classList.toggle("backdrop", open);
+            },
+            () => [this.mobileMenu.open]
+        );
+        useEffect(
+            (show) => {
+                document.body.classList.toggle("bookmark_panel_show", show);
+            },
+            () => [this.bookmarkPanel.show]
+        );
         this._onBookmarkRouteChange = () => {
             this._syncActiveBookmark();
             // Keep the active app highlight in SpiffyMenuGroup up to date.
@@ -193,13 +207,6 @@ patch(NavBar.prototype, {
         }
         this._showbookmarkoptions(withCurrentTarget(ev, tag));
     },
-    _markCurrentMenuActive(ev) {
-        const current = ev.currentTarget;
-        $(".current_app_sections a[data-menu], .nav-item > p > a, .nav-item > a").removeClass("active");
-        $(current).addClass("active");
-        $(current).parents(".nav-item").children("p, a").addClass("active");
-        $(current).parents(".collapse").addClass("show");
-    },
     _closeMagnifierOnOutsideClick(ev) {
         const magnifier = document.getElementById("magnifier");
         const origin = eventOrigin(ev);
@@ -234,63 +241,34 @@ patch(NavBar.prototype, {
         }
     },
 
-    _on_secondary_menu_click: function (menu_id, action_id) {
-        this._super.apply(this, arguments);
-        $('.o_menu_sections').removeClass('toggle');
-        $('body').removeClass('backdrop');
-    },
-
-    _mobileHeaderToggle: function (ev) {
-        var menu_brand = $('.o_main_navbar > a.o_menu_brand').clone()
-        $('.o_menu_sections > a.o_menu_brand').remove()
-        $('#mobileMenuclose').before(menu_brand)
-        $('.o_menu_sections').addClass('toggle');
-        $('body').addClass('backdrop');
-    },
     _mobileHeaderClose: function (ev) {
-        $('.o_menu_sections').removeClass('toggle');
-        $('body').removeClass('backdrop');
+        this.mobileMenu.open = false;
     },
+    // The drawer open/close state lives in this.drawer (apps_menu.js) and is
+    // bound to the templates with t-att-class.
     _OpenAppdrawer: function (ev) {
         this._AppdrawerIcons()
-
-        $('.o_main_navbar').toggleClass('appdrawer-toggle')
-        // $(ev.currentTarget).toggleClass('toggle')
-        $('.appdrawer_section').toggleClass('toggle')
-
-        if ($(".appdrawer_section").hasClass('toggle')) {
-            var size = $(window).width();
-            if (size > 992) {
-                setTimeout(() => $(".appdrawer_section input").focus(), 100);
-            }
-        } else {
+        this.drawer.open = !this.drawer.open;
+        if (!this.drawer.open) {
             this._resetAppDrawerSearch?.();
         }
     },
     _OpenFavAppdrawer: function (ev) {
-        this._OpenAppdrawer(ev)
-        $('.appdrawer_section').toggleClass('show_favourite_apps')
-        $('.apps-list').addClass('d-none')
-        $('.favourite_apps').removeClass('d-none')
+        if (!this.drawer.open) {
+            this._OpenAppdrawer(ev);
+        }
+        this.drawer.showFavorites = true;
     },
     _ToggleBookmarkPanel: function (ev) {
-        $('body').toggleClass('bookmark_panel_show')
-        if ($('body').hasClass('bookmark_panel_show')) {
-            var bookmark_panel = true
-        } else {
-            var bookmark_panel = false
-        }
+        this.bookmarkPanel.show = !this.bookmarkPanel.show;
         rpc('/update/bookmark/panel/show', {
-            'bookmark_panel': bookmark_panel,
+            'bookmark_panel': this.bookmarkPanel.show,
         })
     },
 
     _CloseAppdrawer: function (ev) {
-        $('.o_main_navbar').removeClass('appdrawer-toggle')
-        $('.appdrawer_section').removeClass('show_favourite_apps')
-        $('.apps-list').removeClass('d-none')
-        $('.favourite_apps').addClass('d-none')
-        $('.appdrawer_section').removeClass('toggle')
+        this.drawer.open = false;
+        this.drawer.showFavorites = false;
         this._resetAppDrawerSearch?.();
         spiffyMenuStore.closeAll();
     },
@@ -302,6 +280,7 @@ patch(NavBar.prototype, {
         // The mini-mode flyout overlays are driven by spiffyMenuStore.
         spiffyMenuStore.headerBg = false;
         if (menu) {
+            spiffyMenuStore.activeChildId = menu.id;
             this.onNavBarDropdownItemSelection(menu)
         }
         if (spiffyMenuStore.mini && ev.target.closest('.submenu-group.show')) {
@@ -413,7 +392,8 @@ patch(NavBar.prototype, {
                 addBodyClass(rec.darkmode);
             }
             if (rec.bookmark_panel) {
-                addBodyClass("bookmark_panel_show");
+                // Synced to the body class by the bookmarkPanel effect.
+                spiffyNavbar.bookmarkPanel.show = true;
             }
             if (rec.prevent_auto_save) {
                 addBodyClass(rec.prevent_auto_save);

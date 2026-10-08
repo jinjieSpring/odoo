@@ -7,7 +7,7 @@ import {fuzzyLookup} from "@web/core/utils/search";
 import { rpc } from "@web/core/network/rpc";
 import { NavBar } from "@web/webclient/navbar/navbar";
 import { patch } from "@web/core/utils/patch";
-import { useState } from "@odoo/owl";
+import { onPatched, useRef, useState } from "@odoo/owl";
 import { browser } from "@web/core/browser/browser";
 import body_color from "@spiffy_theme_backend/js/menu";
 import { _t } from "@web/core/l10n/translation";
@@ -125,6 +125,8 @@ patch(NavBar.prototype, {
 
         this._search_def = false;
         this.drawer = useState({
+            open: false,
+            showFavorites: false,
             query: "",
             searchedApps: [],
             menuResults: [],
@@ -133,6 +135,18 @@ patch(NavBar.prototype, {
             favoriteApps: [],
             showIsland: false,
             icons: {},
+        });
+        this.drawerSearchDesktop = useRef("drawerSearchDesktop");
+        this.drawerSearchMobile = useRef("drawerSearchMobile");
+        // Focus the search input when the drawer opens (desktop sizes only).
+        onPatched(() => {
+            if (this.drawer.open && !this._drawerWasOpen && window.innerWidth > 992) {
+                const input = this.drawerSearchDesktop.el?.offsetParent
+                    ? this.drawerSearchDesktop.el
+                    : this.drawerSearchMobile.el;
+                input?.focus();
+            }
+            this._drawerWasOpen = this.drawer.open;
         });
         this.state = useState({
             ...this.state,
@@ -149,24 +163,18 @@ patch(NavBar.prototype, {
         this._GetFavouriteApps();
     },
 
+    // Clicking an app or a search result inside the drawer closes it.
     _ToggleDrawer: function (ev) {
-        $('.o_main_navbar').toggleClass('appdrawer-toggle')
-        $('.appdrawer_section').toggleClass('toggle')
-        $('.o_app_drawer a').toggleClass('toggle')
-
-        // reset app drawer search details on drawer close
-        if (!$('.appdrawer_section').hasClass('toggle')) {
-            this._resetAppDrawerSearch();
-        }
+        this.drawer.open = false;
+        this._resetAppDrawerSearch();
     },
     _resetAppDrawerSearch() {
+        // The search inputs are controlled (t-att-value="drawer.query"), so
+        // resetting the state also clears the inputs.
         this.drawer.query = "";
         this.drawer.searchedApps = [];
         this.drawer.menuResults = [];
         this.drawer.activeResult = -1;
-        document.querySelectorAll(".appdrawer_section .app_menu_search").forEach((input) => {
-            input.value = "";
-        });
     },
     appIcon(app) {
         const records = this.drawer.icons && this.drawer.icons[app.id];

@@ -143,7 +143,7 @@
 			<div class="new_systray d-none">
 				<div class="o_app_drawer d-block d-lg-none">
 					<li class="list-unstyled">
-						<a class="appDrawerToggle me-3" accesskey="A" t-on-click="_OpenAppdrawer">
+						<a class="appDrawerToggle me-3" t-att-class="{ toggle: drawer.open }" accesskey="A" t-on-click="_OpenAppdrawer">
 							<span class="ri ri-apps-2-line"/>
 						</a>
 					</li>
@@ -182,10 +182,10 @@
 			<TodoSidebar state="todoSidebarState"/>
 		</xpath>
 		<xpath expr="//nav[hasclass('o_main_navbar')]" position="replace">
-			<nav class="o_main_navbar" t-on-dropdown-item-selected="onNavBarDropdownItemSelection" data-command-category="navbar">
+			<nav class="o_main_navbar" t-att-class="{ 'appdrawer-toggle': drawer.open }" t-on-dropdown-item-selected="onNavBarDropdownItemSelection" data-command-category="navbar">
 				<div class="o_app_drawer">
 					<li class="list-unstyled">
-						<a class="appDrawerToggle me-3" accesskey="A" t-on-click="_OpenAppdrawer">
+						<a class="appDrawerToggle me-3" t-att-class="{ toggle: drawer.open }" accesskey="A" t-on-click="_OpenAppdrawer">
 							<span class="ri ri-apps-2-line"/>
 						</a>
 					</li>
@@ -240,9 +240,12 @@
 	</t>
 
 	<t t-name="spiffy.Mobile.SectionsMenu" >
-		<div class="o_menu_sections d-none">
+		<div class="o_menu_sections d-none" t-att-class="{ toggle: mobileMenu.open }">
 			<a id="mobileMenuclose" class="menu-button" style="display: none;" t-on-click="_mobileHeaderClose">
 				<span class="ri ri-close-line align-middle"></span>
+			</a>
+			<a t-if="currentApp" class="o_menu_brand" t-att-href="getMenuItemHref(currentApp)" t-on-click.prevent="() => this.onNavBarDropdownItemSelection(currentApp)">
+				<t t-esc="currentApp.name"/>
 			</a>
 			<t t-foreach="sections" t-as="first_level_menu" t-key="first_level_menu.id">
 				<t t-if="!first_level_menu.childrenTree.length">
@@ -312,7 +315,7 @@
 				<SpiffyMenuGroup placement="'sidebar'"/>
 			</div>
 			<div class="o_navbar_apps_menu">
-				<div class="appdrawer_section">
+				<div class="appdrawer_section" t-att-class="{ toggle: drawer.open, show_favourite_apps: drawer.showFavorites }">
 					<div class="top_navbar_section mb-3 mb-md-5">
 						<a class="close_fav_app_btn d-none" t-on-click="_CloseAppdrawer">
 							<span class="ri ri-arrow-left-s-line"/>
@@ -325,15 +328,15 @@
 									<i class="ri ri-search-line"></i>
 								</span>
 							</div>
-							<input type="text" class="form-control app_menu_search" placeholder="Search" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
+							<input type="text" class="form-control app_menu_search" placeholder="Search" t-ref="drawerSearchDesktop" t-att-value="drawer.query" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
 						</div>
-						<div class="apps-list mt-3 mt-md-5">
+						<div class="apps-list mt-3 mt-md-5" t-att-class="{ 'd-none': drawer.showFavorites }">
 							<div class="spiffy-app-group" t-att-class="{ 'd-none': drawer.query }">
 								<SpiffyMenuGroup placement="'drawer'"/>
 							</div>
 							<t t-call="spiffy_theme_backend.AppDrawerQuery"/>
 						</div>
-						<div class="apps-list favourite_apps mt-3 mt-md-5 d-none">
+						<div class="apps-list favourite_apps mt-3 mt-md-5" t-att-class="{ 'd-none': !drawer.showFavorites }">
 							<div class="row m-0" t-att-class="{ 'd-none': drawer.query }">
 								<t t-foreach="menuService.getApps()" t-as="app" t-key="app.id">
 									<div class="app-box mb16">
@@ -367,7 +370,7 @@
 			<div class="o_navbar_apps_menu">
 				<!-- The dynamic menu app is loaded in this div -->
 				<div class="all-apps-menus"></div>
-				<div class="appdrawer_section">
+				<div class="appdrawer_section" t-att-class="{ toggle: drawer.open, show_favourite_apps: drawer.showFavorites }">
 					<div class="top_navbar_section mb-3 mb-md-5">
 						<a class="close_fav_app_btn d-none" t-on-click="_CloseAppdrawer">
 							<span class="ri ri-arrow-left-s-line"/>
@@ -380,9 +383,9 @@
 									<i class="ri ri-search-line"></i>
 								</span>
 							</div>
-							<input type="text" class="form-control app_menu_search" placeholder="Search" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
+							<input type="text" class="form-control app_menu_search" placeholder="Search" t-ref="drawerSearchMobile" t-att-value="drawer.query" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
 						</div>
-						<div class="apps-list mt-3 mt-md-5">
+						<div class="apps-list mt-3 mt-md-5" t-att-class="{ 'd-none': drawer.showFavorites }">
 							<!-- The dynamic menu app is loaded in this div -->
 							<div class="spiffy-app-group" t-att-class="{ 'd-none': drawer.query }"/>
 							<t t-call="spiffy_theme_backend.AppDrawerQuery"/>
@@ -393,24 +396,26 @@
 		</xpath>
 	</t>
 
+	<!-- Rendered inside the SpiffyMenuGroup component: store, hasActiveDescendant,
+	     getMenuItemHref and menuService come from that component's context. -->
 	<t t-name="AllmenuRecursive" >
 		<div class="nav-item">
 			<t t-if="menu.childrenTree.length">
 				<p class="bg-muted">
-					<a class="d-flex align-items-center w-100" data-bs-toggle="collapse" t-attf-data-bs-target="#child_menu_{{menu.id}}" t-att-data-menu-xmlid="menu.xmlid">
+					<a class="d-flex align-items-center w-100" t-att-class="{ active: hasActiveDescendant(menu) }" data-bs-toggle="collapse" t-attf-data-bs-target="#child_menu_{{menu.id}}" t-att-data-menu-xmlid="menu.xmlid">
 						<span><t t-esc="menu.name"/></span>
 						<span class="ri ri-arrow-right-s-line ms-auto"/>
 					</a>
 				</p>
 			</t>
 			<t t-else="">
-				<a t-att-data-menu="menu.id" t-attf-class="child_menus" t-att-href="getMenuItemHref(menu)" t-att-data-menu-xmlid="menu.xmlid" t-attf-data-action-id="{{menu.actionID ? menu.actionID : ''}}">
+				<a t-att-data-menu="menu.id" t-attf-class="child_menus" t-att-class="{ active: store.activeChildId === menu.id }" t-att-href="getMenuItemHref(menu)" t-att-data-menu-xmlid="menu.xmlid" t-attf-data-action-id="{{menu.actionID ? menu.actionID : ''}}">
 					<span class="app_name">
 						<t t-esc="menu.name" />
 					</span>
 				</a>
 			</t>
-			<div t-attf-id="child_menu_{{menu.id}}" class="collapse" >
+			<div t-attf-id="child_menu_{{menu.id}}" class="collapse" t-att-class="{ show: hasActiveDescendant(menu) }">
 				<div t-if="menu.childrenTree.length" class="show">
 					<t t-foreach="menu.children" t-as="menuid" t-key="menuid">
 						<t t-set="menu" t-value="menuService.getMenuAsTree(menuid)"/>

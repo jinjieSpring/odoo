@@ -17,6 +17,7 @@ export const spiffyMenuStore = reactive({
     openGroupId: null,
     expandedAppId: null,
     currentMenuId: null,
+    activeChildId: null,
     blur: false,
     headerBg: false,
     _loading: null,
@@ -149,6 +150,17 @@ export class SpiffyMenuGroup extends Component {
         if (this.store.vertical) {
             this.store.expandedAppId = menu.id;
         }
+    }
+
+    // Used by the AllmenuRecursive template to highlight the ancestors of the
+    // currently active child menu and keep their collapses open.
+    hasActiveDescendant(menu) {
+        const id = this.store.activeChildId;
+        if (!id) {
+            return false;
+        }
+        const walk = (node) => node.id === id || (node.childrenTree || []).some(walk);
+        return (menu.childrenTree || []).some(walk);
     }
 
     onOverlayClick() {

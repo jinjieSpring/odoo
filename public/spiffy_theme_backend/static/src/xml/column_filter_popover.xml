@@ -1,0 +1,13 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+    <t t-name="spiffy_theme_backend.ColumnFilterPopover">
+        <div class="filter-dropdown">
+            <t t-foreach="props.state.items" t-as="item" t-key="item.id">
+                <div class="relational_filter_data" t-on-click="() => this.select(item)" t-esc="item.label"/>
+            </t>
+            <div t-if="props.state.showSearchMore" class="search_more" t-on-click="searchMore">Search more...</div>
+        </div>
+    </t>
+</templates>

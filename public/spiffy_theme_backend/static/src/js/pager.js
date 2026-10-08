@@ -51,6 +51,28 @@ patch(Pager.prototype, {
         document.querySelectorAll(selector).forEach((el) => el.classList.toggle(className, enabled));
     },
 
+    // Expand/collapse-all button for grouped list views. The button lives in
+    // the Pager template; the list model root comes from the controller env.
+    get spiffyListRoot() {
+        return this.env.model?.root;
+    },
+    get isGroupedList() {
+        return Boolean(this.spiffyListRoot?.isGrouped);
+    },
+    get anyGroupExpanded() {
+        if (!this.isGroupedList) {
+            return false;
+        }
+        return (this.spiffyListRoot.groups || []).some((group) => !group.isFolded);
+    },
+    groupsExpand(ev) {
+        ev.stopPropagation();
+        if (!this.isGroupedList) {
+            return;
+        }
+        this.spiffyListRoot.groups.forEach((group) => group.toggle());
+    },
+
     async updateChatterPosition(position) {
         await rpc('/update/chatter/position', {
             'chatter_position': position
