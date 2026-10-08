@@ -7,7 +7,6 @@ import { KanbanRecord } from "@web/views/kanban/kanban_record";
 import { KanbanController } from "@web/views/kanban/kanban_controller";
 import { patch } from "@web/core/utils/patch";
 import { useService } from "@web/core/utils/hooks";
-import { renderToFragment } from "@web/core/utils/render";
 
 // Add modal functionality to KanbanController
 patch(KanbanController.prototype, {
@@ -42,67 +41,29 @@ patch(KanbanRecord.prototype, {
             return super.onGlobalClick(ev);
         }
 
-        // Shift+Click opens modal
+        // Shift+Click opens the record in a dialog and reloads the model on
+        // close. The record's own model reference avoids reaching into DOM
+        // internals (__owl__) to find the kanban model.
         if (ev.shiftKey) {
             ev.preventDefault();
             ev.stopPropagation();
-            
-            // Try action service first
-            if (this.env?.services?.action) {
-                const action = {
-                    type: "ir.actions.act_window",
-                    name: this.props.record.data.display_name || "Record Details",
-                    res_model: this.props.record.resModel,
-                    res_id: this.props.record.resId,
-                    views: [[false, "form"]],
-                    view_mode: "form",
-                    target: "new",
-                    context: {},
-                };
-                
-                this.env.services.action.doAction(action, {
-                    onClose: () => {
-                        document.querySelector('.o_kanban_view')
-                        ?.__owl__?.component?.model?.load();
-                        document.querySelectorAll(".o_action_manager > .o_view_controller.o_kanban_view > .o_control_panel .reload_view").forEach((button) => {
-                            button.click();
-                        });
-                    },
-                });
-            } else {
-                // Fallback: use XML template
-                this.createModalFromTemplate();
-            }
+            const model = this.props.record.model;
+            this.env.services.action.doAction({
+                type: "ir.actions.act_window",
+                name: this.props.record.data.display_name || "Record Details",
+                res_model: this.props.record.resModel,
+                res_id: this.props.record.resId,
+                views: [[false, "form"]],
+                view_mode: "form",
+                target: "new",
+                context: {},
+            }, {
+                onClose: () => model.load(),
+            });
             return;
         }
 
         // Normal click
         return super.onGlobalClick(ev);
-    },
-
-    createModalFromTemplate() {
-        const { resId, resModel, data } = this.props.record;
-        
-        // Render modal from XML template
-        const modalFragment = renderToFragment("kanban_modal_form.modal_template", {
-            resModel: resModel,
-            resId: resId,
-            displayName: data.display_name || 'Record Details',
-            formUrl: `/web#id=${resId}&model=${resModel}&view_type=form`
-        });
-        
-        document.body.appendChild(modalFragment);
-        
-        const modal = document.querySelector('.kanban-modal-container');
-        
-        const close = () => {
-            modal.remove();
-            document.querySelector('.o_kanban_view')?.__owl__?.component?.model?.load();
-        };
-        
-        modal.querySelector('.btn-close').onclick = close;
-        modal.querySelector('.btn-secondary').onclick = close;
-        modal.querySelector('.modal-backdrop').onclick = close;
-        document.addEventListener('keydown', (e) => e.key === 'Escape' && close(), { once: true });
     },
 });

@@ -78,7 +78,37 @@
 				</div>
 			</div>
 			<div class="float-end d-flex align-items-center header_menu_right_content flex-wrap">
-				<li class="bookmark_list list-unstyled" t-on-contextmenu="onBookmarkContextMenu"></li>
+				<li class="bookmark_list list-unstyled">
+					<div t-foreach="bookmarks.list" t-as="bookmark" t-key="bookmark.id" class="d-inline-block bookmark_div">
+						<a role="menuitem"
+							t-att-href="bookmark.url"
+							class="bookmark_tag btn-light btn demo_btn d-block o_app text-center"
+							t-att-class="{ active: bookmark.active }"
+							t-att-bookmark-id="bookmark.id"
+							t-att-bookmark-name="bookmark.name"
+							t-att-title="bookmark.name"
+							t-on-contextmenu.prevent="(ev) => this._showbookmarkoptions(bookmark, ev)"
+							t-esc="bookmark.title"/>
+						<div t-if="bookmarks.optionsFor === bookmark.id" class="bookmark_options py-2 px-3 d-flex flex-column shadow" t-att-bookmark_id="bookmark.id">
+							<a class="rename_bookmark d-block me-0 px-0 py-1" t-on-click.prevent.stop="() => this._startRenameBookmark(bookmark)">Rename</a>
+							<a class="remove_bookmark d-block me-0 px-0 py-1" t-on-click.prevent.stop="() => this._RemoveBookmark(bookmark.id)">Remove</a>
+						</div>
+						<div t-if="bookmarks.renamingFor === bookmark.id" class="bookmark_rename_section" t-att-bookmark_id="bookmark.id">
+							<p class="">Rename</p>
+							<div class="form-group">
+								<input type="text" class="form-control" name="bookmark_rename" id="bookmark_rename"
+									t-att-value="bookmarks.renameValue"
+									t-on-input="(ev) => this.bookmarks.renameValue = ev.target.value"
+									t-on-click.stop=""/>
+							</div>
+							<div class="dropdown-divider"></div>
+							<div class="d-flex">
+								<a class="btn btn-primary bookmark_rename" t-on-click.prevent.stop="() => this._UpdateBookmark(bookmark.id, this.bookmarks.renameValue)">Rename</a>
+								<a class="btn btn-secondary me-0 bookmark_rename_cancel" t-on-click.prevent.stop="() => this._cancelRenameBookmark()">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</li>
 
 				<li class="bookmark_section list-unstyled">
 					<div class="dropdown">
@@ -88,7 +118,9 @@
 						<div class="dropdown-menu bookmark_page_add">
 							<p class="">Add Bookmark</p>
 							<div class="form-group">
-								<input type="text" class="form-control" name="bookmark_page_name" id="bookmark_page_name" />
+								<input type="text" class="form-control" name="bookmark_page_name" id="bookmark_page_name"
+									t-att-value="bookmarks.newName"
+									t-on-input="(ev) => this.bookmarks.newName = ev.target.value" />
 							</div>
 							<div class="dropdown-divider"></div>
 							<div class="d-flex">
@@ -106,12 +138,12 @@
 
 				<li class="magnifier_section list-unstyled">
 					<div class="">
-						<button type="button" class="btn btn-light magnifier_btn demo_btn" data-bs-target="#magnifier" data-bs-toggle="collapse" title="Magnifier">
+						<button type="button" class="btn btn-light magnifier_btn demo_btn" title="Magnifier" t-on-click="_toggleMagnifier">
 							<span class="fa fa-search-plus" />
 						</button>
-						<div id="magnifier" class="collapse position-absolute bg-white zoom-style-box">
+						<div id="magnifier" class="collapse position-absolute bg-white zoom-style-box" t-att-class="{ show: magnifier.open }">
 							<div class="d-flex align-items-center">
-								<span class="zoom_value ps-2">100</span>
+								<span class="zoom_value ps-2" t-esc="zoom.value"/>
 								<span>%</span>
 								<div class="zoom-style d-flex align-items-center mx-2">
 									<a class="btn btn-small minus" t-on-click="_magnifierZoomOut">-</a>
@@ -128,7 +160,7 @@
 					</button>
 				</li>
 				<li class="fullscreen_section list-unstyled">
-					<a class="btn btn-light full_screen demo_btn" accesskey="F" title="FullScreen" t-on-click="_FullScreenMode">
+					<a class="btn btn-light full_screen demo_btn" accesskey="F" title="FullScreen" t-att-class="{ 'fullscreen-exit': fullscreen.active }" t-on-click="_FullScreenMode">
 						<span class="fa fa-expand" />
 					</a>
 				</li>

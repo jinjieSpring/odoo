@@ -4,7 +4,6 @@
 // Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
 
 import { rpc } from "@web/core/network/rpc";
-import { renderToElement } from "@web/core/utils/render";
 import { ColorPallet } from "@spiffy_theme_backend/js/color_pallet";
 import { NavBar } from "@web/webclient/navbar/navbar";
 import { SwitchCompanyMenu } from "@web/webclient/switch_company_menu/switch_company_menu";
@@ -12,15 +11,25 @@ import { patch } from "@web/core/utils/patch";
 import { session } from "@web/session";
 import { useService } from '@web/core/utils/hooks';
 import { loadCSS } from "@web/core/assets";
-import { onRendered, onWillUnmount, useEffect, useExternalListener, useState } from "@odoo/owl";
+import { onRendered, onWillUnmount, reactive, useEffect, useExternalListener, useState } from "@odoo/owl";
 import { routerBus } from "@web/core/browser/router";
 import { user } from "@web/core/user";
 import { TodoSidebar } from "@spiffy_theme_backend/js/widgets/todo_sidebar";
 import { ThemeConfigurator } from "@spiffy_theme_backend/js/widgets/theme_configurator";
 import { SpiffyMenuGroup, spiffyMenuStore } from "@spiffy_theme_backend/js/widgets/menu_group";
 
-// const websiteSystrayRegistry = registry.category('website_systray');
-// websiteSystrayRegistry.add("UserMenu", { Component: UserMenu }, { sequence: 14 });
+// Shared reactive theme state. The NavBar fills it from the backend config
+// and syncs the matching body classes through effects; the SwitchCompanyMenu
+// reads it to conditionally render its header buttons and the language list.
+export const spiffyThemeState = reactive({
+    darkMode: false,
+    sidebarPinned: false,
+    todoEnabled: true,
+    showEditMode: true,
+    isAdmin: true,
+    languages: [],
+    activeLang: null,
+});
 
 function findNames(memo, menu) {
     if (menu.actionID) {
@@ -117,8 +126,19 @@ patch(NavBar.prototype, {
         this.configuratorState = useState({ visible: false });
         this.mobileMenu = useState({ open: false });
         this.bookmarkPanel = useState({ show: false });
-        // Body-level classes cannot be bound from a template; keep them in
-        // sync with the OWL state through effects.
+        this.bookmarks = useState({
+            list: [],
+            newName: "",
+            optionsFor: null,
+            renamingFor: null,
+            renameValue: "",
+        });
+        this.zoom = useState({ value: 100 });
+        this.magnifier = useState({ open: false });
+        this.fullscreen = useState({ active: false });
+        this.spiffyTheme = useState(spiffyThemeState);
+        // Body-level classes and the zoom target cannot be bound from a
+        // template; keep them in sync with the OWL state through effects.
         useEffect(
             (open) => {
                 document.body.classList.toggle("backdrop", open);
@@ -130,6 +150,24 @@ patch(NavBar.prototype, {
                 document.body.classList.toggle("bookmark_panel_show", show);
             },
             () => [this.bookmarkPanel.show]
+        );
+        useEffect(
+            (darkMode) => {
+                document.body.classList.toggle("dark_mode", darkMode);
+            },
+            () => [spiffyThemeState.darkMode]
+        );
+        useEffect(
+            (pinned) => {
+                document.body.classList.toggle("pinned", pinned);
+            },
+            () => [spiffyThemeState.sidebarPinned]
+        );
+        useEffect(
+            (value) => {
+                this._applyZoom(value);
+            },
+            () => [this.zoom.value]
         );
         this._onBookmarkRouteChange = () => {
             this._syncActiveBookmark();
@@ -145,14 +183,14 @@ patch(NavBar.prototype, {
         });
         useExternalListener(document, "click", this._closeMagnifierOnOutsideClick);
         useExternalListener(document, "click", this._closeBookmarkOptionsOnOutsideClick, { capture: true });
-        useExternalListener(document, "fullscreenchange", this._clearFullscreenButton);
-        useExternalListener(document, "webkitfullscreenchange", this._clearFullscreenButton);
-        useExternalListener(document, "mozfullscreenchange", this._clearFullscreenButton);
-        useExternalListener(document, "msfullscreenchange", this._clearFullscreenButton);
+        useExternalListener(document, "fullscreenchange", this._syncFullscreenState);
+        useExternalListener(document, "webkitfullscreenchange", this._syncFullscreenState);
+        useExternalListener(document, "mozfullscreenchange", this._syncFullscreenState);
+        useExternalListener(document, "msfullscreenchange", this._syncFullscreenState);
 
         // This function is added for the menu to fix layout issues caused by width rendering problems
         onRendered(() => {
-            sleep(150).then(() => { 
+            sleep(150).then(() => {
                 self.adapt()
             });
         });
@@ -174,17 +212,18 @@ patch(NavBar.prototype, {
         // on reload add backend theme class
         this.addconfiguratorclass()
         // on reload add bookmark tags in menu
-        this.addbookmarktags()
+        this._loadBookmarks()
 
         // The app menu group data is loaded by the SpiffyMenuGroup component.
-        this._GetLanguages()
+        // The language list is loaded by the SwitchCompanyMenu patch.
 
-        var size = $(window).width();
+        var size = window.innerWidth;
         var upTo1200 = size <= 1023.98
 
         this.isIpad = upTo1200
         var currentapp = this.menuService.getCurrentApp();
         spiffyMenuStore.currentMenuId = currentapp?.id ?? null;
+        spiffyThemeState.activeLang = user.context.lang;
     },
     onSpiffyMenuClick(ev) {
         const origin = eventOrigin(ev);
@@ -199,46 +238,34 @@ patch(NavBar.prototype, {
             this[method](withCurrentTarget(ev, match));
         }
     },
-    onBookmarkContextMenu(ev) {
-        const origin = eventOrigin(ev);
-        const tag = origin && closestAny(origin, ".bookmark_tag");
-        if (!tag) {
-            return;
-        }
-        this._showbookmarkoptions(withCurrentTarget(ev, tag));
-    },
     _closeMagnifierOnOutsideClick(ev) {
-        const magnifier = document.getElementById("magnifier");
         const origin = eventOrigin(ev);
-        if (!magnifier || !magnifier.classList.contains("show") || origin?.closest(".magnifier_section")) {
+        if (!this.magnifier.open || origin?.closest(".magnifier_section")) {
             return;
         }
-        $("#magnifier").collapse("hide");
+        this.magnifier.open = false;
     },
     _closeBookmarkOptionsOnOutsideClick(ev) {
         const origin = eventOrigin(ev);
         if (origin?.closest(".bookmark_options, .bookmark_rename_section")) {
             return;
         }
-        $(".bookmark_list .bookmark_options, .bookmark_list .bookmark_rename_section").remove();
+        this.bookmarks.optionsFor = null;
+        this.bookmarks.renamingFor = null;
     },
-    _clearFullscreenButton() {
-        if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement) {
-            return;
-        }
-        $(".fullscreen_section .full_screen").removeClass("fullscreen-exit");
+    _syncFullscreenState() {
+        this.fullscreen.active = Boolean(
+            document.fullscreenElement ||
+            document.webkitIsFullScreen ||
+            document.mozFullScreen ||
+            document.msFullscreenElement
+        );
     },
     getsubMenuItemHref(payload) {
         return `/odoo/${payload.actionPath || "action-" + payload.actionID}`;
     },
     _DebugToggler: function (ev) {
-        $(ev.currentTarget).toggleClass('toggle');
-        if ($(ev.currentTarget).hasClass('toggle')) {
-            var current_href = window.location.href;
-            window.location.search = "?debug=1"
-        } else {
-            window.location.search = "?debug="
-        }
+        window.location.search = this.env.debug ? "?debug=" : "?debug=1";
     },
 
     _mobileHeaderClose: function (ev) {
@@ -276,7 +303,7 @@ patch(NavBar.prototype, {
 
     _childMenuClick: function (ev) {
         ev.preventDefault();
-        var menu = this.menuService.getMenu($(ev.target).data('menu'))
+        var menu = this.menuService.getMenu(ev.currentTarget.dataset.menu)
         // The mini-mode flyout overlays are driven by spiffyMenuStore.
         spiffyMenuStore.headerBg = false;
         if (menu) {
@@ -289,12 +316,10 @@ patch(NavBar.prototype, {
         }
     },
 
-    
+
     _getModeData: function () {
-        var self = this
-        rpc('/get/dark/mode/data').then(function (rec) {
-            var dark_mode = rec
-            self._ChangeThemeMode(dark_mode)
+        rpc('/get/dark/mode/data').then((darkMode) => {
+            spiffyThemeState.darkMode = Boolean(darkMode);
         })
     },
     addconfiguratorclass: function () {
@@ -317,10 +342,7 @@ patch(NavBar.prototype, {
         const setStyleAttr = (selector, style) => {
             document.querySelectorAll(selector).forEach((el) => el.setAttribute("style", style));
         };
-        const removeAll = (selector) => {
-            document.querySelectorAll(selector).forEach((el) => el.remove());
-        };
-        rpc('/get/model/record').then(function (rec) {
+        rpc('/get/model/record').then((rec) => {
             const record = rec.record_dict[0];
             addBodyClass(record.separator);
             addBodyClass(record.tab);
@@ -389,21 +411,22 @@ patch(NavBar.prototype, {
                 addBodyClass("show_attachment");
             }
             if (rec.darkmode) {
-                addBodyClass(rec.darkmode);
+                spiffyThemeState.darkMode = true;
             }
             if (rec.bookmark_panel) {
                 // Synced to the body class by the bookmarkPanel effect.
-                spiffyNavbar.bookmarkPanel.show = true;
+                this.bookmarkPanel.show = true;
             }
             if (rec.prevent_auto_save) {
                 addBodyClass(rec.prevent_auto_save);
             }
-            if (!rec.todo_list_enable) {
-                removeAll(".header_to_do_list");
-            }
+            // These flags drive t-if conditions in the SwitchCompanyMenu
+            // template instead of removing already-rendered elements.
+            spiffyThemeState.todoEnabled = Boolean(rec.todo_list_enable);
+            spiffyThemeState.showEditMode = Boolean(rec.show_edit_mode);
+            spiffyThemeState.isAdmin = Boolean(rec.is_admin);
             if (rec.pinned_sidebar) {
-                addBodyClass(rec.pinned_sidebar);
-                document.querySelectorAll("header .pin_sidebar").forEach((el) => el.classList.add("pinned"));
+                spiffyThemeState.sidebarPinned = true;
             }
             if (record.list_view_sticky_header) {
                 addBodyClass("list_view_sticky_header");
@@ -458,12 +481,6 @@ patch(NavBar.prototype, {
                 }
             }
 
-            if (!rec.show_edit_mode) {
-                removeAll(".theme_selector");
-            }
-            if (!rec.is_admin) {
-                removeAll(".debug_activator");
-            }
             var pallet_name = rec.record_dict[0].color_pallet
             var apply_color = new ColorPallet(this)
             if (rec.record_dict[0].use_custom_colors) {
@@ -483,34 +500,18 @@ patch(NavBar.prototype, {
             menu_shape_apply_color['menu_shape_color_pallet'](rec.record_dict[0])
 
             document.body.setAttribute("headerMode", "visible");
-            // $('.o_main_navbar').removeClass('d-none');
         })
     },
-    addbookmarktags: function() {
-        const self = this;
-        rpc('/get/bookmark/link', {}).then(function(rec) {
-            $('.bookmark_list').empty()
-            $.each(rec, function(key, value) {
-                let urlParams = value.url.endsWith('?') ? value.url.slice(0, -1) : value.url;
-
-                // var app_actionPath = `/odoo/${data.actionPath || "action-" + data.actionID}`;
-                // href="#id=${Id}&amp;menu_id=${menu_id}&amp;action=${actionId}&amp;model=${model}&amp;view_type=${view_type}&amp;"
-                var anchor_tag = `
-                    <div class="d-inline-block bookmark_div">
-                        <a role="menuitem"
-                            href="${value.url}"
-                            class="bookmark_tag btn-light btn demo_btn d-block o_app text-center"
-                            bookmark-id="${value.id}"
-                            bookmark-name="${value.name}"
-                            title="${value.name}">
-                            ${value.title}
-                        </a>
-                    </div>`;
-
-                $('.bookmark_list').append(anchor_tag);
-            })
-            self._syncActiveBookmark();
-        });
+    async _loadBookmarks() {
+        const rec = await rpc('/get/bookmark/link', {});
+        this.bookmarks.list = (rec || []).map((value) => ({
+            id: value.id,
+            name: value.name,
+            title: value.title,
+            url: value.url,
+            active: false,
+        }));
+        this._syncActiveBookmark();
     },
     _syncActiveBookmark() {
         const clean = (url) => (url || "").replace(/\?$/, "");
@@ -520,169 +521,120 @@ patch(NavBar.prototype, {
             clean(path + "?" + window.location.hash),
             clean(path + window.location.hash),
         ]);
-        document.querySelectorAll(".bookmark_list .bookmark_tag").forEach((tag) => {
-            tag.classList.toggle("active", here.has(clean(tag.getAttribute("href"))));
-        });
+        for (const bookmark of this.bookmarks.list) {
+            bookmark.active = here.has(clean(bookmark.url));
+        }
     },
     _getCurrentPageName: function () {
-        var breadcrumbs = $('.o_control_panel ol.breadcrumb li')
-        var bookmark_name = ""
-        $(breadcrumbs).each(function (index) {
-            if (index > 0) {
-                bookmark_name = bookmark_name + ' | ' + $(this).text()
-            } else {
-                bookmark_name = $(this).text()
-            }
-        });
-
-        $('input#bookmark_page_name').val(bookmark_name)
+        const items = document.querySelectorAll(".o_control_panel ol.breadcrumb li");
+        this.bookmarks.newName = [...items]
+            .map((li) => li.textContent.trim())
+            .filter(Boolean)
+            .join(" | ");
     },
-    _saveBookmarkPage: function () {
-        var self = this
+    _saveBookmarkPage: async function () {
         var pathname = window.location.pathname
         var hash = window.location.hash
         var url = pathname + '?' + hash
-        var name = $('input#bookmark_page_name').val()
-        var title = $('input#bookmark_page_name').val().substr(0, 2)
-        rpc('/add/bookmark/link', {
+        var name = this.bookmarks.newName
+        await rpc('/add/bookmark/link', {
             'name': name,
             'url': url,
-            'title': title,
-        }).then(function (rec) {
-            self.addbookmarktags()
+            'title': name.substr(0, 2),
         });
+        this.bookmarks.newName = "";
+        await this._loadBookmarks();
     },
-    _showbookmarkoptions: function (ev) {
-        var self = this
+    _showbookmarkoptions: function (bookmark, ev) {
         ev.preventDefault();
-        var bookmark_id = $(ev.target).attr('bookmark-id')
-        var bookmark_name = $(ev.target).attr('bookmark-name')
-        $('.bookmark_list .bookmark_options').remove()
-        $('.bookmark_list .bookmark_rename_section').remove()
-        var bookmark_options = $(renderToElement("BookmarkOptions", {
-            bookmark_id: bookmark_id,
-        }))
-        $(ev.target).parent().append(bookmark_options)
-        $('.bookmark_list .rename_bookmark').on("click", function (e) {
-            self._RenameBookmark(ev.target, bookmark_id, bookmark_name);
-        });
-
-        $('.bookmark_list .remove_bookmark').on("click", function (e) {
-            self._RemoveBookmark(bookmark_id);
-        });
-        ev.preventDefault();
+        this.bookmarks.renamingFor = null;
+        this.bookmarks.optionsFor = bookmark.id;
     },
-    _RenameBookmark: function (elem, bookmark_id, bookmark_name) {
-        var self = this
-        var bookmark_rename = $(renderToElement("BookmarkRename", {
-            bookmark_id: bookmark_id,
-            bookmark_name: bookmark_name,
-        }))
-        $(elem).parent().append(bookmark_rename)
-
-        $('.bookmark_list .bookmark_rename_cancel').on("click", function (e) {
-            $('.bookmark_list .bookmark_rename_section').remove()
-        });
-        $('.bookmark_list .bookmark_rename').on("click", function (e) {
-            var new_bookmark_name = $('input#bookmark_rename').val()
-            self._UpdateBookmark(bookmark_id, new_bookmark_name);
-        });
+    _startRenameBookmark: function (bookmark) {
+        this.bookmarks.optionsFor = null;
+        this.bookmarks.renamingFor = bookmark.id;
+        this.bookmarks.renameValue = bookmark.name;
     },
-    _RemoveBookmark: function (bookmark_id) {
-        var self = this
-        rpc('/remove/bookmark/link', {
+    _cancelRenameBookmark: function () {
+        this.bookmarks.renamingFor = null;
+    },
+    _RemoveBookmark: async function (bookmark_id) {
+        this.bookmarks.optionsFor = null;
+        await rpc('/remove/bookmark/link', {
             'bookmark_id': bookmark_id,
-        }).then(function (rec) {
-            self.addbookmarktags()
         });
+        await this._loadBookmarks();
     },
-    _UpdateBookmark: function (bookmark_id, bookmark_name) {
-        var self = this
-        var title = bookmark_name.substr(0, 2)
-        rpc('/update/bookmark/link', {
+    _UpdateBookmark: async function (bookmark_id, bookmark_name) {
+        await rpc('/update/bookmark/link', {
             'bookmark_id': bookmark_id,
             'bookmark_name': bookmark_name,
-            'bookmark_title': title,
-        }).then(function (rec) {
-            self.addbookmarktags()
+            'bookmark_title': bookmark_name.substr(0, 2),
         });
+        this.bookmarks.renamingFor = null;
+        await this._loadBookmarks();
+    },
+    // The zoom is applied to the action content, which lives outside the
+    // NavBar's OWL tree, so the effect above pushes the style onto it
+    // whenever the reactive zoom value changes.
+    _zoomTarget: function () {
+        const children = document.querySelectorAll(".o_content > div");
+        if (children.length > 1) {
+            return document.querySelector(".o_action_manager > .o_view_controller > .o_content");
+        }
+        return children[0];
+    },
+    _applyZoom: function (value) {
+        const target = this._zoomTarget();
+        if (!target) {
+            return;
+        }
+        if (value === 100) {
+            target.style.width = "";
+            target.style.transformOrigin = "";
+            target.style.transform = "";
+            return;
+        }
+        target.style.width = ((100 / value) * 100).toFixed(4) + "%";
+        target.style.transformOrigin = "left top";
+        target.style.transform = `scale(${value / 100})`;
+    },
+    _toggleMagnifier: function () {
+        this.magnifier.open = !this.magnifier.open;
     },
     _magnifierZoomOut: function () {
-        var current_zoom = parseInt($('.zoom_value').text())
-        var current_zoom = current_zoom - 10
-        if (current_zoom > 20) {
-            $('.zoom_value').text(current_zoom)
-            var scale_value = current_zoom / 100
-            var width_value = ((100 / current_zoom) * 100).toFixed(4)
-            if ($('.o_content > div').length > 1) {
-                var target = $('.o_action_manager > .o_view_controller > .o_content')
-            } else {
-                var target = $('.o_content > div')
-            }
-            $(target).css({
-                'width': width_value + '%',
-                'transform-origin': 'left top',
-                'transform': 'scale(' + scale_value + ')',
-            })
+        if (this.zoom.value - 10 > 20) {
+            this.zoom.value -= 10;
         }
     },
     _magnifierZoomIn: function () {
-        var current_zoom = parseInt($('.zoom_value').text())
-        var current_zoom = current_zoom + 10
-        if (current_zoom < 210) {
-            $('.zoom_value').text(current_zoom)
-            var scale_value = current_zoom / 100
-            var width_value = ((100 / current_zoom) * 100).toFixed(4)
-            if ($('.o_content > div').length > 1) {
-                var target = $('.o_action_manager > .o_view_controller > .o_content')
-            } else {
-                var target = $('.o_content > div')
-            }
-            $(target).css({
-                'width': width_value + '%',
-                'transform-origin': 'left top',
-                'transform': 'scale(' + scale_value + ')',
-            })
+        if (this.zoom.value + 10 < 210) {
+            this.zoom.value += 10;
         }
     },
     _magnifierZoomReset: function () {
-        $('.zoom_value').text('100')
-        if ($('.o_content > div').length > 1) {
-            var target = $('.o_action_manager > .o_view_controller > .o_content')
-        } else {
-            var target = $('.o_content > div')
-        }
-        $(target).css({
-            'width': '100%',
-            'transform-origin': 'left top',
-            'transform': 'scale(1)',
-        })
+        this.zoom.value = 100;
     },
     _FullScreenMode: function (ev) {
         var elem = document.documentElement;
-        if ($(ev.currentTarget).hasClass('fullscreen-exit')) {
+        if (this.fullscreen.active) {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
-                $(ev.currentTarget).removeClass('fullscreen-exit')
             } else if (document.webkitExitFullscreen) { /* Safari */
                 document.webkitExitFullscreen();
-                $(ev.currentTarget).removeClass('fullscreen-exit')
             } else if (document.msExitFullscreen) { /* IE11 */
                 document.msExitFullscreen();
-                $(ev.currentTarget).removeClass('fullscreen-exit')
             }
         } else {
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
-                $(ev.currentTarget).addClass('fullscreen-exit')
             } else if (elem.webkitRequestFullscreen) { /* Safari */
                 elem.webkitRequestFullscreen();
-                $(ev.currentTarget).addClass('fullscreen-exit')
             } else if (elem.msRequestFullscreen) { /* IE11 */
                 elem.msRequestFullscreen();
-                $(ev.currentTarget).addClass('fullscreen-exit')
             }
         }
+        // this.fullscreen.active is synced by the fullscreenchange listener.
     },
     // The configurator is the OWL component spiffy_theme_backend.ThemeConfigurator;
     // the NavBar only owns its visibility flag.
@@ -691,95 +643,20 @@ patch(NavBar.prototype, {
     },
 
     _ChangeThemeModeCLicked: function (ev) {
-        $('body').toggleClass('dark_mode')
-        if ($('body').hasClass('dark_mode')) {
-            var darkmode = true
-        } else {
-            var darkmode = false
-        }
-        this._ChangeThemeMode(darkmode)
+        this._ChangeThemeMode(!spiffyThemeState.darkMode)
     },
     _ChangeThemeMode: function (darkmode) {
-        if (darkmode) {
-            rpc('/active/dark/mode', { 'dark_mode': 'on' })
-                .then(function (data) {
-                    if (data) {
-                    }
-                })
-            $('body').addClass('dark_mode')
-            $(':root').css('--biz-theme-primary-color', 'var(--dark-theme-primary-color)');
-            $(':root').css('--biz-theme-primary-text-color', 'var(--dark-theme-primary-text-color)');
-            $(':root').css('--biz-theme-secondary-color', 'var(--dark-theme-secondary-color)');
-            $(':root').css('--biz-theme-secondary-text-color', 'var(--dark-theme-secondary-text-color)');
-            $(':root').css('--biz-theme-body-color', 'var(--dark-theme-body-color)');
-            $(':root').css('--biz-theme-body-text-color', 'var(--dark-theme-body-text-color)');
-            $(':root').css('--biz-theme-primary-rgba', 'var(--primary-rgba)');
-        }
-        else {
-            rpc('/active/dark/mode', { 'dark_mode': 'off' })
-                .then(function (data) {
-                    if (data) {
-                    }
-                })
-            $('body').removeClass('dark_mode')
-            $(':root').css('--biz-theme-primary-color', 'var(--light-theme-primary-color)');
-            $(':root').css('--biz-theme-primary-text-color', 'var(--light-theme-primary-text-color)');
-            $(':root').css('--biz-theme-secondary-color', 'var(--light-theme-secondary-color)');
-            $(':root').css('--biz-theme-secondary-text-color', 'var(--light-theme-secondary-text-color)');
-            $(':root').css('--biz-theme-body-color', 'var(--light-theme-body-color)');
-            $(':root').css('--biz-theme-body-text-color', 'var(--light-theme-body-text-color)');
-            $(':root').css('--biz-theme-primary-rgba', 'var(--primary-rgba)');
-        }
+        // The body class is synced by an effect and the theme variables are
+        // plain CSS under body.dark_mode; only the state and the persisted
+        // user preference are handled here.
+        spiffyThemeState.darkMode = Boolean(darkmode);
+        rpc('/active/dark/mode', { 'dark_mode': darkmode ? 'on' : 'off' })
     },
     _ChangeSidebarBehaviour: function (ev) {
-        $(ev.target).toggleClass('pinned')
-        $('body').toggleClass('pinned')
-        if ($(ev.target).hasClass('pinned')) {
-            var sidebar_pinned = true
-        } else {
-            var sidebar_pinned = false
-        }
+        spiffyThemeState.sidebarPinned = !spiffyThemeState.sidebarPinned;
         rpc('/sidebar/behavior/update', {
-            'sidebar_pinned': sidebar_pinned,
-        }).then(function (data) {
-            if (data) {
-            }
+            'sidebar_pinned': spiffyThemeState.sidebarPinned,
         })
-    },
-
-    _GetLanguages: function () {
-        var self = this
-        var session = session;
-        rpc('/get/active/lang').then(function (data) {
-            var lang_list = data
-            if (data && data.length > 1) {
-                $('.active_lang').empty()
-                $.each(lang_list, function (index, value) {
-                    var searchedlang = $(renderToElement("Searchedlang", {
-                        lang_name: value['lang_name'],
-                        lang_code: value['lang_code'],
-                        active_lang: user.context.lang
-                    }))
-                    $('.active_lang').append(searchedlang)
-                    $('.biz_lang_btn').unbind().on('click', function (ev) {
-                        var lang = $(ev.currentTarget)[0].lang
-                        self.LangSelect(lang)
-                    })
-                });
-                $('.o_user_lang').removeClass('d-none')
-            } else {
-                $('.o_user_lang').addClass('d-none')
-            }
-        })
-    },
-
-    LangSelect: function (lang) {
-        var self = this;
-        rpc('/change/active/lang', {
-            'lang': lang,
-        }).then(function (data) {
-            self.actionService.doAction("reload_context");
-        });
     },
 
     _menuInfo: function (key) {
@@ -807,7 +684,23 @@ patch(NavBar.prototype, {
     },
 });
 
+
 patch(SwitchCompanyMenu.prototype, {
+    setup() {
+        super.setup();
+        this.spiffyTheme = useState(spiffyThemeState);
+        this.actionService = useService("action");
+        this._loadSpiffyLanguages();
+    },
+    async _loadSpiffyLanguages() {
+        const langs = await rpc('/get/active/lang');
+        spiffyThemeState.languages = Array.isArray(langs) ? langs : [];
+        spiffyThemeState.activeLang = user.context.lang;
+    },
+    async _selectLanguage(lang) {
+        await rpc('/change/active/lang', { 'lang': lang });
+        this.actionService.doAction("reload_context");
+    },
     _DebugToggler(ev) {
         spiffyNavbar?._DebugToggler(ev);
     },
@@ -846,4 +739,3 @@ export default {
     session_dict: session_dict,
     methods: methods
 };
-

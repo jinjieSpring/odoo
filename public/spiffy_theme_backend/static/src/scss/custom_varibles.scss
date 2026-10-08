@@ -18,6 +18,29 @@
     --input-height: 40px;
 }
 
+// Active theme variables. Light values are the default; dark mode only
+// flips the body class (synced from OWL state), so the variable swap lives
+// here instead of being poked into inline styles from JavaScript.
+:root {
+    --biz-theme-primary-color: var(--light-theme-primary-color);
+    --biz-theme-primary-text-color: var(--light-theme-primary-text-color);
+    --biz-theme-secondary-color: var(--light-theme-secondary-color);
+    --biz-theme-secondary-text-color: var(--light-theme-secondary-text-color);
+    --biz-theme-body-color: var(--light-theme-body-color);
+    --biz-theme-body-text-color: var(--light-theme-body-text-color);
+    --biz-theme-primary-rgba: var(--primary-rgba);
+}
+
+body.dark_mode {
+    --biz-theme-primary-color: var(--dark-theme-primary-color);
+    --biz-theme-primary-text-color: var(--dark-theme-primary-text-color);
+    --biz-theme-secondary-color: var(--dark-theme-secondary-color);
+    --biz-theme-secondary-text-color: var(--dark-theme-secondary-text-color);
+    --biz-theme-body-color: var(--dark-theme-body-color);
+    --biz-theme-body-text-color: var(--dark-theme-body-text-color);
+    --biz-theme-primary-rgba: var(--primary-rgba);
+}
+
 html{
     &[data-theme-style="biz_theme_rounded"]{
         --border-radius-lg: 16px;

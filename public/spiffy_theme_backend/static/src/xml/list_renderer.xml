@@ -36,7 +36,7 @@
     <t t-inherit="web.ListRenderer" t-name="spiffy_split_view.ListRenderer" t-inherit-mode="extension">
         <xpath expr="//table[contains(@t-attf-class, 'o_list_table')]" position="before">
             <t t-if="!this.isX2Many">
-                <div t-att-data-js="filterRow" t-attf-class="filter_row d-none p-3 pb-0 column-gap-1 row-gap-2 align-items-center">
+                <div t-att-data-js="filterRow" t-attf-class="filter_row p-3 pb-0 column-gap-1 row-gap-2 align-items-center">
                     <td t-if="hasSelectors"></td>
                     <t t-foreach="columns" t-as="column" t-key="column.id">
                         <td t-if="column.type === 'field'">

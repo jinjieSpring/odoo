@@ -110,11 +110,16 @@ export class RightClickMenu extends Component {
     }
 
 
-    async _show({ x, y, resModel, resId, activeFieldValue }) {
+    async _show({ x, y, resModel, resId, activeFieldValue, model }) {
         const W = window.innerWidth;
         const H = window.innerHeight;
         const openAbove = y + 300 > H;
         const adjX = x + 214 > W ? Math.max(4, W - 214) : x;
+
+        // The list/kanban model of the view the record was right-clicked in.
+        // Kept as a plain property (not reactive state) so the model class
+        // instance is never wrapped in an OWL proxy.
+        this._contextModel = model || null;
 
         Object.assign(this.state, {
             visible: true,
@@ -365,22 +370,15 @@ export class RightClickMenu extends Component {
     }
 
     _reloadCurrentView() {
+        // Reload through the model captured when the menu was opened; no DOM
+        // probing needed.
+        if (this._contextModel) {
+            this._contextModel.load();
+            return;
+        }
         const reloadBtn = document.querySelector(".o_control_panel .reload_view");
         if (reloadBtn) {
             reloadBtn.click();
-            return;
-        }
-        for (const selector of [".o_list_view", ".o_kanban_view"]) {
-            const el = document.querySelector(selector);
-            const component = el?.__owl__?.component;
-            if (component?.model) {
-                component.model.load().then(() => {
-                    try {
-                        component.render(true);
-                    } catch (_) {}
-                });
-                return;
-            }
         }
     }
 }

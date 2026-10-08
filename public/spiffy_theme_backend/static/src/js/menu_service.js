@@ -81,16 +81,9 @@ function makeMenus(env, menusData, fetchLoadMenus) {
             if (!currentAppId) {
                 return;
             }
-            const menuSelector = `.o_navbar_apps_menu a.main_link[data-menu="${currentAppId}"]`;
-            document.querySelectorAll(`body:not(.top_menu_vertical_mini) ${menuSelector}`).forEach((el) => {
-                el.classList.add("active");
-            });
-            document.querySelectorAll("body.top_menu_vertical_mini .o_navbar_apps_menu a.main_link").forEach((el) => {
-                el.classList.remove("selected");
-            });
-            document.querySelectorAll(`body.top_menu_vertical_mini ${menuSelector}`).forEach((el) => {
-                el.classList.add("selected");
-            });
+            // The active/selected highlighting of menu links is handled
+            // reactively by the SpiffyMenuGroup component through
+            // spiffyMenuStore.currentMenuId; no DOM work needed here.
             return this.getMenu(currentAppId);
         },
         getMenuAsTree(menuID) {

@@ -307,24 +307,6 @@ patch(NavBar.prototype, {
         });
     },
 
-    get_user_data: function (ev) {
-        var self = this
-        var session = this.getSession();
-        var $avatar = $('.user_image img');
-        var avatar_src = session.url('/web/image', {
-            model:'res.users',
-            field: 'image_128',
-            id: session.uid,
-        });
-        var value = {
-            'avatar_src': avatar_src,
-            'user_id': session.uid,
-            'user_name': session.name,
-        }
-        $avatar.attr('src', avatar_src);
-        return value
-    },
-
     _menuInfo(key) {
         return this._drawersearchableMenus[key];
     },

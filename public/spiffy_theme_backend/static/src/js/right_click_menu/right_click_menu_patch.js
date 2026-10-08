@@ -51,6 +51,7 @@ patch(ListRenderer.prototype, {
             resModel: record.resModel,
             resId: record.resId,
             activeFieldValue,
+            model: this.props.list,
         });
     },
 });
@@ -97,6 +98,7 @@ patch(KanbanRecord.prototype, {
             resId: record.resId,
             activeFieldValue:
                 record.data.active !== undefined ? record.data.active : undefined,
+            model: record.model,
         });
     },
 });
@@ -144,6 +146,9 @@ patch(Many2OneField.prototype, {
             resId,
             // active field unknown for m2o without extra data
             activeFieldValue: undefined,
+            // The form record's model, so the view can be reloaded after
+            // duplicate/archive/delete.
+            model: this.props.record?.model,
         });
     },
 });

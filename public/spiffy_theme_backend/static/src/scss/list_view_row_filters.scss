@@ -1,6 +1,15 @@
 // Part of Bizople Solutions Pvt. Ltd.
 // Licensed under the Bizople Proprietary License v1.0.
 // Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
+
+// The filter row visibility is driven solely by the body class, which the
+// Pager patch keeps in sync with its reactive state.
+body.o_web_client:not(.show_filter_row) {
+    .filter_row {
+        display: none !important;
+    }
+}
+
 body.o_web_client.show_filter_row {
     .filter-dropdown {
         position: absolute;

@@ -45,7 +45,6 @@
             '/spiffy_theme_backend/static/src/xml/right_click_menu.xml',
             '/spiffy_theme_backend/static/src/xml/web_inherit.xml',
             '/spiffy_theme_backend/static/src/xml/menu.xml',
-            '/spiffy_theme_backend/static/src/xml/bookmark.xml',
             '/spiffy_theme_backend/static/src/xml/font_family.xml',
             '/spiffy_theme_backend/static/src/xml/spiffy_app_menu_group.xml',
             '/spiffy_theme_backend/static/src/xml/base.xml',
