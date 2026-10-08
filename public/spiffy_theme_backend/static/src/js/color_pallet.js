@@ -3,8 +3,6 @@
 // Licensed under the Bizople Proprietary License v1.0.
 // Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
 
-import { Widget } from "@web/views/widgets/widget";
-
 const COLOR_PALLETS = {
     pallet_1: ["#6B3F69", "#ffffff", "#1b1b1b", "#6B3f69b3"],
     pallet_2: ["#84994F", "#ffffff", "#1b1b1b", "#84994Fb3"],
@@ -25,8 +23,17 @@ const COLOR_PALLETS = {
     pallet_17: ["#0097a7", "#ffffff", "#1b1b1b", "#61ccd7"],
 };
 
+function setRootVars(vars) {
+    const root = document.documentElement;
+    for (const [name, value] of Object.entries(vars)) {
+        if (value != null && value !== false) {
+            root.style.setProperty(name, value);
+        }
+    }
+}
+
 function applyRootColors(primary, text, textRgba, primaryRgba) {
-    $(":root").css({
+    setRootVars({
         "--light-theme-primary-color": primary,
         "--light-theme-primary-text-color": text,
         "--primary-text-rgba": textRgba,
@@ -34,15 +41,14 @@ function applyRootColors(primary, text, textRgba, primaryRgba) {
     });
 }
 
-class ColorPallet extends Widget {
-    constructor(parent) {
-        super(parent);
+class ColorPallet {
+    constructor() {
         for (const [name, colors] of Object.entries(COLOR_PALLETS)) {
             this[name] = () => applyRootColors(...colors);
         }
     }
     custom_color_pallet(record_dict) {
-        $(":root").css({
+        setRootVars({
             "--light-theme-primary-color": record_dict.light_primary_bg_color,
             "--light-theme-primary-text-color": record_dict.light_primary_text_color,
             "--primary-rgba": record_dict.light_primary_bg_color + "b3",
@@ -53,12 +59,12 @@ class ColorPallet extends Widget {
         if (hex.length === 1) {
             hex = "0" + hex;
         }
-        $(":root").css({
+        setRootVars({
             "--menu-shape-bg-color": record_dict.menu_shape_bg_color + hex,
         });
     }
     custom_app_drawer_color_pallet(record_dict) {
-        $(":root").css({
+        setRootVars({
             "--app-drawer-custom-bg-color": record_dict.appdrawer_custom_bg_color,
             "--app-drawer-custom-text-color": record_dict.appdrawer_custom_text_color,
         });

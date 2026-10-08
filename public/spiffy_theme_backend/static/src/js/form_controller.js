@@ -13,17 +13,21 @@ patch(FormController.prototype, {
     setup(){
         super.setup();
         onMounted(() => {
-            $('div.o_attachment_preview').length > 0 ? $('body').addClass('hasAttachment') : $('body').removeClass('hasAttachment');
+            this._syncAttachmentClass();
         });
         onPatched(() => {
-            $('div.o_attachment_preview').length > 0 ? $('body').addClass('hasAttachment') : $('body').removeClass('hasAttachment');
+            this._syncAttachmentClass();
         });
+    },
+
+    _syncAttachmentClass() {
+        document.body.classList.toggle("hasAttachment", Boolean(document.querySelector("div.o_attachment_preview")));
     },
 
     async onPagerUpdate({ offset, resIds }) {
         const dirty = await this.model.root.isDirty();
         if (dirty) {
-            if ($('body').hasClass('prevent_auto_save')){
+            if (document.body.classList.contains("prevent_auto_save")){
                 return this.model.root.discard();
             } else {
                 return this.model.root.save({
@@ -40,7 +44,7 @@ patch(FormController.prototype, {
 
     async beforeLeave() {
         if (this.model.root.dirty) {
-            if ($('body').hasClass('prevent_auto_save')){
+            if (document.body.classList.contains("prevent_auto_save")){
                 return this.model.root.discard();
             } else {
                 return this.model.root.save({
@@ -74,7 +78,7 @@ patch(FormController.prototype, {
 
 patch(FormStatusIndicator.prototype, {
     get displayAutoSavePrevent() {
-        return Boolean($('body').hasClass('prevent_auto_save'));
+        return document.body.classList.contains("prevent_auto_save");
     },
     get prevent_auto_save_warning_msg() {
         return session.prevent_auto_save_warning_msg

@@ -585,43 +585,65 @@ patch(NavBar.prototype, {
         })
     },
     addconfiguratorclass: function () {
+        const addBodyClass = (name) => {
+            if (typeof name !== "string" || !name) {
+                return;
+            }
+            for (const part of name.split(/\s+/)) {
+                if (part) {
+                    document.body.classList.add(part);
+                }
+            }
+        };
+        const setHtmlAttr = (name, value) => {
+            if (value == null || value === false) {
+                return;
+            }
+            document.documentElement.setAttribute(name, value);
+        };
+        const setStyleAttr = (selector, style) => {
+            document.querySelectorAll(selector).forEach((el) => el.setAttribute("style", style));
+        };
+        const removeAll = (selector) => {
+            document.querySelectorAll(selector).forEach((el) => el.remove());
+        };
         rpc('/get/model/record').then(function (rec) {
-            $("body").addClass(rec.record_dict[0].separator);
-            $("body").addClass(rec.record_dict[0].tab);
-            $("body").addClass(rec.record_dict[0].checkbox);
-            $("body").addClass(rec.record_dict[0].button);
-            $("body").addClass(rec.record_dict[0].radio);
-            $("body").addClass(rec.record_dict[0].popup);
-            $("body").addClass(rec.record_dict[0].font_size);
-            $("body").addClass(rec.record_dict[0].login_page_style);
-            $("body").addClass(rec.record_dict[0].chatter_position);
-            $("body").addClass(rec.record_dict[0].list_view_density);
-            $("body").addClass(rec.record_dict[0].input_style);
+            const record = rec.record_dict[0];
+            addBodyClass(record.separator);
+            addBodyClass(record.tab);
+            addBodyClass(record.checkbox);
+            addBodyClass(record.button);
+            addBodyClass(record.radio);
+            addBodyClass(record.popup);
+            addBodyClass(record.font_size);
+            addBodyClass(record.login_page_style);
+            addBodyClass(record.chatter_position);
+            addBodyClass(record.list_view_density);
+            addBodyClass(record.input_style);
 
             // Load Font size file based on selected option
             if (rec.record_dict[0].font_size) {
                 loadCSS(`/spiffy_theme_backend/static/src/scss/font_sizes/${rec.record_dict[0].font_size}.css`);
             }
 
-            var size = $(window).width();
+            var size = document.documentElement.clientWidth;
             if (size <= 992) {
-                $("body").addClass('top_menu_horizontal');
-                $("html").attr('data-menu-position', 'top_menu_horizontal')
-                $("html").attr('data-view-type', 'mobile')
-                if (rec.record_dict[0].top_menu_position == 'top_menu_vertical_mini') {
-                    $("body").addClass('top_menu_vertical_mini_mobile');
+                addBodyClass("top_menu_horizontal");
+                setHtmlAttr("data-menu-position", "top_menu_horizontal");
+                setHtmlAttr("data-view-type", "mobile");
+                if (record.top_menu_position == "top_menu_vertical_mini") {
+                    addBodyClass("top_menu_vertical_mini_mobile");
                 }
             } else {
-                $("body").addClass(rec.record_dict[0].top_menu_position);
-                $("html").attr('data-menu-position', rec.record_dict[0].top_menu_position)
-                $("html").attr('data-view-type', 'desktop')
+                addBodyClass(record.top_menu_position);
+                setHtmlAttr("data-menu-position", record.top_menu_position);
+                setHtmlAttr("data-view-type", "desktop");
             }
 
-            $("body").addClass(rec.record_dict[0].theme_style);
-            $("body").addClass(rec.record_dict[0].shape_style);
-            $("body").addClass(rec.record_dict[0].loader_style);
-            // $("body").addClass('font_family_' + rec.record_dict[0].font_family);
-            $("body").addClass('font_family_' + rec.record_dict[0].google_font_family);
+            addBodyClass(record.theme_style);
+            addBodyClass(record.shape_style);
+            addBodyClass(record.loader_style);
+            addBodyClass("font_family_" + record.google_font_family);
             var fontLinks = rec.font_dict;
             // Keep fonts local. fonts.googleapis.com fails and can block rendering
             // when the backend has no access to the public internet.
@@ -630,52 +652,51 @@ patch(NavBar.prototype, {
                 ? fontLinks[fontLinks.length - 1]
                 : null;
             if (selectedFont && selectedFont.name) {
-                $('body').css('font-family', `'${selectedFont.name}', ${systemFontStack}`);
+                document.body.style.fontFamily = `'${selectedFont.name}', ${systemFontStack}`;
             } else {
-                $('body').css('font-family', systemFontStack);
+                document.body.style.fontFamily = systemFontStack;
             }
 
-            $("html").attr('data-font-size', rec.record_dict[0].font_size)
-            $("html").attr('data-theme-style', rec.record_dict[0].theme_style)
+            setHtmlAttr("data-font-size", record.font_size);
+            setHtmlAttr("data-theme-style", record.theme_style);
 
-            if (rec.record_dict[0].use_custom_drawer_color) {
-                $("body").addClass('custom_drawer_color');
+            if (record.use_custom_drawer_color) {
+                addBodyClass("custom_drawer_color");
             } else {
-                $("body").addClass(rec.record_dict[0].drawer_color_pallet);
+                addBodyClass(record.drawer_color_pallet);
             }
 
-            if (rec.record_dict[0].attachment_in_tree_view) {
-                $("body").addClass("show_attachment");
+            if (record.attachment_in_tree_view) {
+                addBodyClass("show_attachment");
             }
             if (rec.darkmode) {
-                $("body").addClass(rec.darkmode);
+                addBodyClass(rec.darkmode);
             }
             if (rec.bookmark_panel) {
-                $("body").addClass("bookmark_panel_show");
+                addBodyClass("bookmark_panel_show");
             }
             if (rec.prevent_auto_save) {
-                $("body").addClass(rec.prevent_auto_save);
+                addBodyClass(rec.prevent_auto_save);
             }
             if (!rec.todo_list_enable) {
-                // $("body").addClass(rec.todo_list_enable);
-                $('.header_to_do_list').remove()
+                removeAll(".header_to_do_list");
             }
             if (rec.pinned_sidebar) {
-                $("body").addClass(rec.pinned_sidebar);
-                $("header .pin_sidebar").addClass('pinned');
+                addBodyClass(rec.pinned_sidebar);
+                document.querySelectorAll("header .pin_sidebar").forEach((el) => el.classList.add("pinned"));
             }
-            if (rec.record_dict[0].list_view_sticky_header) {
-                $("body").addClass("list_view_sticky_header");
+            if (record.list_view_sticky_header) {
+                addBodyClass("list_view_sticky_header");
             }
-            if (rec.record_dict[0].apply_menu_shape_style) {
-                $("body").addClass("apply_menu_shape_style");
+            if (record.apply_menu_shape_style) {
+                addBodyClass("apply_menu_shape_style");
             }
-            if (rec.record_dict[0].vertical_background) {
-                $("body").addClass("vertical_background");
+            if (record.vertical_background) {
+                addBodyClass("vertical_background");
             }
-            if (rec.record_dict[0].apply_light_bg_img) {
-                if (rec.record_dict[0].light_bg_image) {
-                    $(".appdrawer_section").attr("style", "background-image: url('/web/image/backend.config/" + rec.record_dict[0].id + "/light_bg_image')");
+            if (record.apply_light_bg_img) {
+                if (record.light_bg_image) {
+                    setStyleAttr(".appdrawer_section", "background-image: url('/web/image/backend.config/" + record.id + "/light_bg_image')");
                 }
             }
 
@@ -711,17 +732,17 @@ patch(NavBar.prototype, {
                     const style = `background: linear-gradient(to bottom, rgba(27, 27, 27, 1) 0%, rgba(27, 27, 27, 0.7) 60%, rgba(27, 27, 27, 0) 100%), url('${imageUrl}') !important; background-size: cover !important; background-position: center !important;`;
 
                     requestAnimationFrame(()=>{
-                        $(".o_main_navbar").attr("style", style);
-                        $(".top_menu_vertical.top_menu_vertical_mini_mobile .o_main_navbar").attr("style", style);
+                        setStyleAttr(".o_main_navbar", style);
+                        setStyleAttr(".top_menu_vertical.top_menu_vertical_mini_mobile .o_main_navbar", style);
                     })
                 }
             }
 
             if (!rec.show_edit_mode) {
-                $('.theme_selector').remove()
+                removeAll(".theme_selector");
             }
             if (!rec.is_admin) {
-                $('.debug_activator').remove()
+                removeAll(".debug_activator");
             }
             var pallet_name = rec.record_dict[0].color_pallet
             var apply_color = new ColorPallet(this)
@@ -741,7 +762,7 @@ patch(NavBar.prototype, {
             var menu_shape_apply_color = new ColorPallet(this)
             menu_shape_apply_color['menu_shape_color_pallet'](rec.record_dict[0])
 
-            $('body').attr('headerMode', 'visible');
+            document.body.setAttribute("headerMode", "visible");
             // $('.o_main_navbar').removeClass('d-none');
         })
     },

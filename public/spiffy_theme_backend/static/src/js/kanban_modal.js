@@ -64,9 +64,9 @@ patch(KanbanRecord.prototype, {
                     onClose: () => {
                         document.querySelector('.o_kanban_view')
                         ?.__owl__?.component?.model?.load();
-                        if ($('.o_action_manager > .o_view_controller.o_kanban_view > .o_control_panel .reload_view').length) {
-                            $('.o_action_manager > .o_view_controller.o_kanban_view > .o_control_panel .reload_view').click()
-                        }
+                        document.querySelectorAll(".o_action_manager > .o_view_controller.o_kanban_view > .o_control_panel .reload_view").forEach((button) => {
+                            button.click();
+                        });
                     },
                 });
             } else {

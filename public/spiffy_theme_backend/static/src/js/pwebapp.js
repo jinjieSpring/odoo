@@ -17,19 +17,19 @@ rpc('/pwa/enabled',{}).then(function (enabled_pwa) {
 
         // Checks if should display install popup notification:
         if (isIos() && !isInStandaloneMode()) {
-            var iosPrompt = $(".ios-prompt");
-            iosPrompt.show();
-            $(iosPrompt).click(function() {
-                iosPrompt.hide();
+            document.querySelectorAll(".ios-prompt").forEach((iosPrompt) => {
+                iosPrompt.style.display = "block";
+                iosPrompt.addEventListener("click", () => {
+                    iosPrompt.style.display = "none";
+                });
             });
         }
 
         if ('serviceWorker' in navigator) {
             if(!navigator.onLine){
-                var app_offline = $('.pwa_offline');
-                if(app_offline){
-                    app_offline.show();
-                }
+                document.querySelectorAll(".pwa_offline").forEach((appOffline) => {
+                    appOffline.style.display = "block";
+                });
             }
             navigator.serviceWorker.register('/service_worker.js');
         }

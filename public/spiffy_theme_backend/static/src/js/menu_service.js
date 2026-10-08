@@ -81,15 +81,16 @@ function makeMenus(env, menusData, fetchLoadMenus) {
             if (!currentAppId) {
                 return;
             }
-            var target_tag = 'body:not(.top_menu_vertical_mini) .o_navbar_apps_menu a.main_link[data-menu='+currentAppId+']'
-            var target_tag_vertical_mini = 'body.top_menu_vertical_mini .o_navbar_apps_menu a.main_link[data-menu='+currentAppId+']'
-            $(target_tag).addClass('active');
-            $('body.top_menu_vertical_mini .o_navbar_apps_menu a.main_link').removeClass('selected')
-            $(target_tag_vertical_mini).addClass('selected');
-            if($(target_tag).hasClass('dropdown-btn')){
-                var ultag = $(target_tag).parent().find('.header-sub-menus')
-                // $(ultag).addClass('show');
-            }
+            const menuSelector = `.o_navbar_apps_menu a.main_link[data-menu="${currentAppId}"]`;
+            document.querySelectorAll(`body:not(.top_menu_vertical_mini) ${menuSelector}`).forEach((el) => {
+                el.classList.add("active");
+            });
+            document.querySelectorAll("body.top_menu_vertical_mini .o_navbar_apps_menu a.main_link").forEach((el) => {
+                el.classList.remove("selected");
+            });
+            document.querySelectorAll(`body.top_menu_vertical_mini ${menuSelector}`).forEach((el) => {
+                el.classList.add("selected");
+            });
             return this.getMenu(currentAppId);
         },
         getMenuAsTree(menuID) {

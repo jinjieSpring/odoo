@@ -14,6 +14,7 @@ patch(Pager.prototype, {
         this.isDialogOpen = document.body.classList.contains("modal-open");
         onWillDestroy(() => {
             this.isDialogOpen = false;
+            this._modalObserver?.disconnect();
         });
         onMounted(() => {
             setTimeout(() => {
@@ -35,47 +36,38 @@ patch(Pager.prototype, {
     },
 
     async _loadPreferences() {
-        var size = $(window).width();
         const chatterPosition = await rpc('/update/chatter/position', {});
-        if (chatterPosition === 'chatter_right') {
-            $("body").find('.chatter_position_right').addClass('active');
-            $("body").find('.chatter_position_bottom').removeClass('active');
-        } else {
-            $("body").find('.chatter_position_right').removeClass('active');
-            $("body").find('.chatter_position_bottom').addClass('active');
-        }
+        const rightActive = chatterPosition === "chatter_right";
+        this._setMatchedClass(".chatter_position_right", "active", rightActive);
+        this._setMatchedClass(".chatter_position_bottom", "active", !rightActive);
 
         const showFilter = await rpc('/update/filter/row', {});
-        if (showFilter === true) {
-            $("body").addClass("show_filter_row");
-            $(".filter_row").removeClass("d-none");
-            $(".show_filter_row").addClass("active");
-        } else {
-            $("body").removeClass("show_filter_row");
-            $(".filter_row").addClass("d-none");
-            $(".show_filter_row").removeClass("active");
-        }
+        document.body.classList.toggle("show_filter_row", showFilter === true);
+        this._setMatchedClass(".filter_row", "d-none", showFilter !== true);
+        this._setMatchedClass(".show_filter_row", "active", showFilter === true);
+    },
+
+    _setMatchedClass(selector, className, enabled) {
+        document.querySelectorAll(selector).forEach((el) => el.classList.toggle(className, enabled));
     },
 
     async updateChatterPosition(position) {
         await rpc('/update/chatter/position', {
             'chatter_position': position
-        }).then(function (rec) {
-
-        })
+        });
         this.chatter_position = position
 
         if (position === 'chatter_right') {
-            $("body").removeClass('chatter_bottom');
-            $("body").addClass(position);
-            $("body").find('.chatter_position_right').addClass('active')
-            $("body").find('.chatter_position_bottom').removeClass('active')
+            document.body.classList.remove("chatter_bottom");
+            document.body.classList.add(position);
+            this._setMatchedClass(".chatter_position_right", "active", true);
+            this._setMatchedClass(".chatter_position_bottom", "active", false);
         }
         else {
-            $("body").removeClass('chatter_right');
-            $("body").addClass(position);
-            $("body").find('.chatter_position_right').removeClass('active')
-            $("body").find('.chatter_position_bottom').addClass('active')
+            document.body.classList.remove("chatter_right");
+            document.body.classList.add(position);
+            this._setMatchedClass(".chatter_position_right", "active", false);
+            this._setMatchedClass(".chatter_position_bottom", "active", true);
         }
     },
 
@@ -93,19 +85,19 @@ patch(Pager.prototype, {
         }
     },
     async toggleFilterClass() {
-        const isActive = $("body").hasClass("show_filter_row");
+        const isActive = document.body.classList.contains("show_filter_row");
 
         if (isActive) {
-            $("body").removeClass("show_filter_row");
-            $(".show_filter_row").removeClass("active");
-            $(".filter_row").addClass("d-none");
+            document.body.classList.remove("show_filter_row");
+            this._setMatchedClass(".show_filter_row", "active", false);
+            this._setMatchedClass(".filter_row", "d-none", true);
             rpc('/update/filter/row', {
                 show_filter_row: false,
             });
         } else {
-            $("body").addClass("show_filter_row");
-            $(".show_filter_row").addClass("active");
-            $(".filter_row").removeClass("d-none");
+            document.body.classList.add("show_filter_row");
+            this._setMatchedClass(".show_filter_row", "active", true);
+            this._setMatchedClass(".filter_row", "d-none", false);
             rpc('/update/filter/row', {
                 show_filter_row: true,
             });
