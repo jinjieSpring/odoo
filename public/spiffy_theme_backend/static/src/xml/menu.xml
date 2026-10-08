@@ -21,15 +21,60 @@
 			</li>
 		</t>
 	</t>
+
+	<t t-name="spiffy_theme_backend.AppIcon">
+		<img t-if="icon.iconType == 'img'" t-attf-class="img img-fluid {{iconExtraClass or ''}}" t-att-src="icon.iconSrc"/>
+		<span t-else="" t-attf-class="{{icon.iconClass}} {{iconExtraClass or ''}}"/>
+	</t>
+
+	<t t-name="spiffy_theme_backend.AppDrawerQuery">
+		<div t-att-class="{ 'd-none': !drawer.query, 'd-flex': drawer.query }" class="flex-wrap searched_main_apps">
+			<t t-foreach="drawer.searchedApps" t-as="app" t-key="app.id">
+				<div class="app-box mb16">
+					<a role="menuitem" t-attf-href="#menu_id={{app.id}}" class="d-block o_app text-center" t-att-data-menu-id="app.id" t-att-data-menu-xmlid="app.xmlid" t-att-data-action-id="app.actionID">
+						<div class="app-image mb8">
+							<t t-set="icon" t-value="appIcon(app)"/>
+							<t t-set="iconExtraClass" t-value="''"/>
+							<t t-call="spiffy_theme_backend.AppIcon"/>
+						</div>
+						<div class="app-name">
+							<t t-esc="app.name"/>
+						</div>
+					</a>
+					<div class="fav_app_select d-none" t-on-click.stop="() => this.onToggleFavorite(app)">
+						<span class="ri ri-check-line" t-att-class="{ active: drawer.favoriteIds[app.id] }"/>
+					</div>
+				</div>
+			</t>
+		</div>
+		<div class="search_result">
+			<t t-foreach="drawer.menuResults" t-as="result" t-key="result.name">
+				<li t-att-class="{ navigate_active: result_index === drawer.activeResult }" class="search_list_content list-unstyled">
+					<a t-att-href="result.href" class="autoComplete_highlighted text-small text-muted mb-0" t-att-data-menu-id="result.id" t-att-data-action-id="result.actionID" t-esc="result.name" role="menuitem"/>
+				</li>
+			</t>
+		</div>
+	</t>
 	
 	<t t-inherit="web.NavBar" t-inherit-mode="extension" >
 		<xpath expr="//header[hasclass('o_navbar')]" position="attributes">
 			<attribute name="t-on-click">onSpiffyMenuClick</attribute>
 		</xpath>
 		<xpath expr="//nav[hasclass('o_main_navbar')]" position="before">
-			<div class="fav_app_island d-none">
+			<div class="fav_app_island" t-att-class="{ 'd-none': !drawer.showIsland }">
 				<span class="ri ri-apps-2-line fav_app_island_btn"/>
 				<div class="fav_apps d-flex alige-items-center justify-content-center">
+					<t t-foreach="drawer.favoriteApps" t-as="fav" t-key="fav.id">
+						<div class="app-box">
+							<a role="menuitem" t-att-href="fav.href" class="d-block o_app text-center" t-att-data-menu-id="fav.id" t-att-data-menu-xmlid="fav.xmlid" t-att-data-action-id="fav.actionID" t-att-title="fav.name">
+								<div class="app-image">
+									<t t-set="icon" t-value="fav"/>
+									<t t-set="iconExtraClass" t-value="'o_image_64_max'"/>
+									<t t-call="spiffy_theme_backend.AppIcon"/>
+								</div>
+							</a>
+						</div>
+					</t>
 				</div>
 			</div>
 			<div class="float-end d-flex align-items-center header_menu_right_content flex-wrap">
@@ -280,33 +325,34 @@
 									<i class="ri ri-search-line"></i>
 								</span>
 							</div>
-							<input type="text" id="app_menu_search" class="form-control" placeholder="Search"/>
+							<input type="text" class="form-control app_menu_search" placeholder="Search" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
 						</div>
 						<div class="apps-list mt-3 mt-md-5">
 							<!-- The dynamic menu app is loaded in this div -->
-							<div class="spiffy-app-group"></div>
-							<div id="searched_main_apps" class="d-none flex-wrap"></div>
-							<div id="search_result"></div>
+							<div class="spiffy-app-group" t-att-class="{ 'd-none': drawer.query }"/>
+							<t t-call="spiffy_theme_backend.AppDrawerQuery"/>
 						</div>
 						<div class="apps-list favourite_apps mt-3 mt-md-5 d-none">
-							<div class="row m-0">
+							<div class="row m-0" t-att-class="{ 'd-none': drawer.query }">
 								<t t-foreach="menuService.getApps()" t-as="app" t-key="app.id">
 									<div class="app-box mb16">
 										<a role="menuitem" t-attf-href="#menu_id={{app.id}}&amp;action={{app.actionID ? app.actionID : ''}}" class="d-block o_app text-center" t-att-data-menu-id="app.id" t-att-data-menu-xmlid="app.xmlID" t-att-data-action-id="app.actionID">
 											<div class="app-image mb8">
+												<t t-set="icon" t-value="appIcon(app)"/>
+												<t t-set="iconExtraClass" t-value="''"/>
+												<t t-call="spiffy_theme_backend.AppIcon"/>
 											</div>
 											<div class="app-name">
 												<t t-esc="app.name" />
 											</div>
 										</a>
-										<div class="fav_app_select d-none ">
-											<span class="ri ri-check-line"/>
+										<div class="fav_app_select d-none" t-on-click.stop="() => this.onToggleFavorite(app)">
+											<span class="ri ri-check-line" t-att-class="{ active: drawer.favoriteIds[app.id] }"/>
 										</div>
 									</div>
 								</t>
 							</div>
-							<div id="searched_main_apps" class="d-none flex-wrap"></div>
-							<div id="search_result"></div>
+							<t t-call="spiffy_theme_backend.AppDrawerQuery"/>
 						</div>
 					</div>
 				</div>
@@ -333,13 +379,12 @@
 									<i class="ri ri-search-line"></i>
 								</span>
 							</div>
-							<input type="text" id="app_menu_search" class="form-control" placeholder="Search"/>
+							<input type="text" class="form-control app_menu_search" placeholder="Search" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
 						</div>
 						<div class="apps-list mt-3 mt-md-5">
 							<!-- The dynamic menu app is loaded in this div -->
-							<div class="spiffy-app-group"></div>
-							<div id="searched_main_apps" class="d-none flex-wrap"></div>
-							<div id="search_result"></div>
+							<div class="spiffy-app-group" t-att-class="{ 'd-none': drawer.query }"/>
+							<t t-call="spiffy_theme_backend.AppDrawerQuery"/>
 						</div>
 					</div>
 				</div>

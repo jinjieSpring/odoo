@@ -13,6 +13,7 @@ import { session } from "@web/session";
 import { useService } from '@web/core/utils/hooks';
 import { loadCSS } from "@web/core/assets";
 import { onRendered, onWillUnmount, useExternalListener } from "@odoo/owl";
+import { routerBus } from "@web/core/browser/router";
 import { user } from "@web/core/user";
 
 // const websiteSystrayRegistry = registry.category('website_systray');
@@ -92,6 +93,7 @@ const SPIFFY_MENU_CLICK_ROUTES = [
     [".o_menu_sections .o_menu_entry_lvl_2, .o_menu_sections .o_nav_entry", "_childMenuClick"],
     [".mobile-header-toggle #mobileMenuToggleBtn", "_mobileHeaderToggle"],
     [".current_app_sections a[data-menu], .child_menus", "_markCurrentMenuActive"],
+    [".appdrawer_section .app-box .o_app, .appdrawer_section .search_list_content a", "_ToggleDrawer"],
 ];
 /**
  * Responsible for invoking native methods which called from JavaScript
@@ -114,7 +116,10 @@ patch(NavBar.prototype, {
         super.setup();
         var self = this
         spiffyNavbar = this;
+        this._onBookmarkRouteChange = () => this._syncActiveBookmark();
+        routerBus.addEventListener("ROUTE_CHANGE", this._onBookmarkRouteChange);
         onWillUnmount(() => {
+            routerBus.removeEventListener("ROUTE_CHANGE", this._onBookmarkRouteChange);
             if (spiffyNavbar === this) {
                 spiffyNavbar = null;
             }
@@ -263,10 +268,7 @@ patch(NavBar.prototype, {
                 setTimeout(() => $(".appdrawer_section input").focus(), 100);
             }
         } else {
-            $(".appdrawer_section input").val("");
-            $(".appdrawer_section #search_result").empty();
-            $('#searched_main_apps').empty().addClass('d-none').removeClass('d-flex');
-            $('.appdrawer_section .apps-list .row').removeClass('d-none');
+            this._resetAppDrawerSearch?.();
         }
         this._all_apps_menu_data()
     },
@@ -294,10 +296,7 @@ patch(NavBar.prototype, {
         $('.apps-list').removeClass('d-none')
         $('.favourite_apps').addClass('d-none')
         $('.appdrawer_section').removeClass('toggle')
-        $(".appdrawer_section input").val("");
-        $(".appdrawer_section #search_result").empty();
-        $('#searched_main_apps').empty().addClass('d-none').removeClass('d-flex');
-        $('.appdrawer_section .apps-list .row').removeClass('d-none');
+        this._resetAppDrawerSearch?.();
         var $target = $(ev.currentTarget).siblings('.submenu-group');
     
         if ($target.hasClass('active')) {
@@ -747,6 +746,7 @@ patch(NavBar.prototype, {
         })
     },
     addbookmarktags: function() {
+        const self = this;
         rpc('/get/bookmark/link', {}).then(function(rec) {
             $('.bookmark_list').empty()
             $.each(rec, function(key, value) {
@@ -768,6 +768,19 @@ patch(NavBar.prototype, {
 
                 $('.bookmark_list').append(anchor_tag);
             })
+            self._syncActiveBookmark();
+        });
+    },
+    _syncActiveBookmark() {
+        const clean = (url) => (url || "").replace(/\?$/, "");
+        const path = window.location.pathname;
+        const here = new Set([
+            clean(path + window.location.search + window.location.hash),
+            clean(path + "?" + window.location.hash),
+            clean(path + window.location.hash),
+        ]);
+        document.querySelectorAll(".bookmark_list .bookmark_tag").forEach((tag) => {
+            tag.classList.toggle("active", here.has(clean(tag.getAttribute("href"))));
         });
     },
     _getCurrentPageName: function () {

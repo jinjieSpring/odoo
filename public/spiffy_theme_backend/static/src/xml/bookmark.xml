@@ -10,7 +10,7 @@
 	</t>
 
 	<t t-name="BookmarkRename">
-		<div class="bookmark_rename_section px-3 py-2 shadow" t-att-bookmark_id="bookmark_id">
+		<div class="bookmark_rename_section" t-att-bookmark_id="bookmark_id">
 			<p class="">Rename</p>
 			<div class="form-group">
 				<input type="text" class="form-control" name="bookmark_rename" t-att-value="bookmark_name"

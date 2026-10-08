@@ -35,42 +35,28 @@ patch(ListRenderer.prototype, {
 
     setup() {
         super.setup();
-        var self = this
         this.dialog = useService("dialog");
         // this.rpc = rpc;
         this.fileViewer = useFileViewer();
         this.action = useService("action");
-        self.showattachment = false
-        if ($('body').hasClass('show_attachment')) {
-            self.showattachment = true
-        }
+        this.showattachment = document.body.classList.contains("show_attachment");
         this.notificationService = useService("notification");
+        this.attachmentState = useState({ byResId: {} });
         this._bizAttachmentTimer = null;
         this._bizLastRecIdsKey = null;
+        this._bizAlive = true;
 
-        onMounted(async () => {
-            if (self.showattachment) {
-                this._bizAttachmentClickHandler = (ev) => { self._loadattachmentviewer(ev); };
-                $(document).on('click', '.biz_attachment_section .attachment_box', this._bizAttachmentClickHandler);
-                await this._bizRenderAttachments();
-            }
+        onMounted(() => {
+            this._scheduleAttachmentLoad();
         });
 
         onWillUnmount(() => {
+            this._bizAlive = false;
             clearTimeout(this._bizAttachmentTimer);
-            if (this._bizAttachmentClickHandler) {
-                $(document).off('click', '.biz_attachment_section .attachment_box', this._bizAttachmentClickHandler);
-            }
         });
 
-        onPatched(async () => {
-            await Promise.resolve();
-            if (self.showattachment) {
-                clearTimeout(this._bizAttachmentTimer);
-                this._bizAttachmentTimer = setTimeout(() => {
-                    this._bizRenderAttachments();
-                }, 50);
-            }
+        onPatched(() => {
+            this._scheduleAttachmentLoad();
             // Funcationality to manage the expand and collapse group on click
             const expandGroup = $('.expand_groups_records');
             if (!this.props.list?.isGrouped) {
@@ -94,71 +80,113 @@ patch(ListRenderer.prototype, {
         });
     },
 
-    async _bizRenderAttachments() {
-        if (!this.showattachment) return;
-        if (this._bizAttachmentLoading) return;
+    _attachmentRecordKey() {
+        const records = this.props.list.records || [];
+        return records.map((record) => record.resId).filter(Boolean).slice().sort().join(",");
+    },
+
+    _scheduleAttachmentLoad() {
+        if (!this.showattachment || this.props.archInfo.editable == "bottom" || this._bizAttachmentLoading) {
+            return;
+        }
+        if (this._attachmentRecordKey() === this._bizLastRecIdsKey) {
+            return;
+        }
+        clearTimeout(this._bizAttachmentTimer);
+        this._bizAttachmentTimer = setTimeout(() => {
+            this._loadAttachments();
+        }, 50);
+    },
+
+    async _loadAttachments() {
+        if (!this._bizAlive || !this.showattachment || this.props.archInfo.editable == "bottom") {
+            return;
+        }
+        const recIds = (this.props.list.records || []).map((record) => record.resId).filter(Boolean);
+        const recIdsKey = recIds.slice().sort().join(",");
+        if (recIdsKey === this._bizLastRecIdsKey || this._bizAttachmentLoading) {
+            return;
+        }
         this._bizAttachmentLoading = true;
-
-        $('.attachment_div.new').remove();
-
-        if (this.props.archInfo.editable != 'bottom') {
-            const records = this.props.list.records;
-            const model = this.props.list.resModel;
-            const rec_ids = records.map(r => r.resId).filter(Boolean);
-            const recIdsKey = rec_ids.slice().sort().join(',');
-
-            // Only call server if visible records changed
-            if (recIdsKey !== this._bizLastRecIdsKey || !this.biz_attachment_data) {
-                this._bizLastRecIdsKey = recIdsKey;
-                this.biz_attachment_data = await rpc("/get/attachment/data", { model, rec_ids });
+        try {
+            const data = recIds.length
+                ? await rpc("/get/attachment/data", { model: this.props.list.resModel, rec_ids: recIds })
+                : [{}];
+            if (!this._bizAlive || recIdsKey !== this._attachmentRecordKey()) {
+                return;
             }
+            const raw = (data && data[0]) || {};
+            const byResId = {};
+            for (const [key, value] of Object.entries(raw)) {
+                if (Array.isArray(value)) {
+                    byResId[String(key)] = value;
+                }
+            }
+            this._bizLastRecIdsKey = recIdsKey;
+            this.biz_attachment_data = [byResId];
+            this.attachmentState.byResId = byResId;
+        } finally {
+            this._bizAttachmentLoading = false;
+            if (this._bizAlive && recIdsKey !== this._attachmentRecordKey()) {
+                this._scheduleAttachmentLoad();
+            }
+        }
+    },
 
-            if (this.biz_attachment_data) {
-                const attachment_data = this.biz_attachment_data[0];
-                $.each(attachment_data, (key, value) => {
-                    const $tr = $('tr.o_data_row[resid="' + key + '"]');
-                    const $attachment_section = $("<section>", {
-                        class: "biz_attachment_section d-flex align-items-center position-absolute flex-nowrap overflow-auto",
-                        id: $tr.attr('data-id'),
-                    });
+    rowAttachments(record) {
+        if (!this.showattachment || !record?.resId || this.props.archInfo.editable == "bottom") {
+            return [];
+        }
+        const list = this.attachmentState.byResId[String(record.resId)] || [];
+        const items = [];
+        list.forEach((attachment, index, arr) => {
+            if (index < 5) {
+                items.push({ ...attachment, counter: false, key: attachment.attachment_id });
+            } else if (index === 5) {
+                items.push({
+                    ...attachment,
+                    counter: true,
+                    label: "+" + (arr.length - 5),
+                    key: "more-" + attachment.attachment_id,
+                });
+            }
+        });
+        return items;
+    },
 
-                    value.every((attachment, index, arr) => {
-                        if (index < 5) {
-                            $attachment_section.append(
-                                $("<div>", {
-                                    class: "attachment_box border d-flex align-items-center mx-2",
-                                    "data-id": attachment.attachment_id,
-                                    "data-name": attachment.attachment_name,
-                                    "data-mimetype": attachment.attachment_mimetype,
-                                    "data-rec_id": key,
-                                }).append(
-                                    $("<span>", { class: "o_image me-2", "data-mimetype": attachment.attachment_mimetype }),
-                                    $("<div>", { class: "attachment-name text-nowrap" }).append($("<span>").html(attachment.attachment_name))
-                                )
-                            );
-                            return true;
-                        } else {
-                            $attachment_section.append(
-                                $("<div>", {
-                                    class: "attachment_box border attachment_box_counter d-flex align-items-center px-2",
-                                    "data-id": attachment.attachment_id,
-                                    "data-name": attachment.attachment_name,
-                                    "data-mimetype": attachment.attachment_mimetype,
-                                    "data-rec_id": key,
-                                }).append(
-                                    $("<div>", { class: "attachment-name text-nowrap" }).append($("<span>").html("+" + (arr.length - 5)))
-                                )
-                            );
-                            return false;
-                        }
-                    });
-
-                    $tr.after($("<div>", { class: "attachment_div new" }).append($attachment_section));
+    onAttachmentBoxClick(attachment, resId) {
+        const mimetype = attachment.attachment_mimetype || "";
+        if (!mimetype.match("(image|application/pdf|text|video)")) {
+            this.notificationService.add(_t("Preview for this file type can not be shown"), {
+                title: _t("File Format Not Supported"),
+                type: "danger",
+                sticky: false,
+            });
+            return;
+        }
+        const all = this.attachmentState.byResId[String(resId)] || [];
+        const attachments = [];
+        for (const item of all) {
+            if ((item.attachment_mimetype || "").match("(image|application/pdf|text|video)")) {
+                attachments.push({
+                    id: item.attachment_id,
+                    filename: item.attachment_name,
+                    name: item.attachment_name,
+                    url: "/web/content/" + item.attachment_id + "?download=true",
+                    type: item.attachment_mimetype,
+                    mimetype: item.attachment_mimetype,
+                    is_main: false,
                 });
             }
         }
-
-        this._bizAttachmentLoading = false;
+        const mainComponents = registry.category("main_components");
+        if (mainComponents.contains("spiffy_document")) {
+            mainComponents.remove("spiffy_document");
+        }
+        mainComponents.add("spiffy_document", {
+            Component: spiffyDocumentViewer,
+            props: { attachments, activeAttachmentID: attachment.attachment_id },
+        });
     },
 
     groupsExpand(ev){
@@ -486,52 +514,8 @@ patch(ListRenderer.prototype, {
     },
 
 
-    loadattachmentevents: function () {
-        var self = this
-        $('.biz_attachment_section .attachment_box').unbind().on('click', function(ev) {self._loadattachmentviewer(ev);})
-    },
-
-    close: function(){
-        registry.category("main_components").remove('spiffy_document');
-    },
-
-    _loadattachmentviewer(ev) {
-        var attachment_id = parseInt($(ev.currentTarget).data("id"));
-        var rec_id = parseInt($(ev.currentTarget).data("rec_id"));
-        var attachment_mimetype = $(ev.currentTarget).data("mimetype");
-        var mimetype_match = attachment_mimetype.match("(image|application/pdf|text|video)");
-        var attachment_data = this.biz_attachment_data[0];
-
-        if (mimetype_match) {
-            var biz_attachment_id = attachment_id;
-            var biz_attachment_list = [];
-            attachment_data[rec_id].forEach((attachment) => {
-                if (attachment.attachment_mimetype.match("(image|application/pdf|text|video)")) {
-                    biz_attachment_list.push({
-                        id: attachment.attachment_id,
-                        filename: attachment.attachment_name,
-                        name: attachment.attachment_name,
-                        url: "/web/content/" + attachment.attachment_id + "?download=true",
-                        type: attachment.attachment_mimetype,
-                        mimetype: attachment.attachment_mimetype,
-                        is_main: false,
-                    });
-                }
-            });
-            
-            registry.category("main_components").add('spiffy_document', {
-                Component: spiffyDocumentViewer,
-                props: { attachments: biz_attachment_list, activeAttachmentID: biz_attachment_id},
-            });
-
-            // await whenReady();
-        } else {
-            this.notificationService.add(_t("Preview for this file type can not be shown"), {
-                title: _t("File Format Not Supported"),
-                type: 'danger',
-                sticky: false
-            });
-        }
+    close() {
+        registry.category("main_components").remove("spiffy_document");
     },
 
 });

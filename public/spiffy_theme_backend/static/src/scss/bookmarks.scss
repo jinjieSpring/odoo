@@ -80,6 +80,39 @@ body.o_web_client {
                 @extend %biz-dropdown-box;
             }
 
+            .bookmark_rename_section {
+                min-width: 10rem;
+                width: max-content;
+                padding: 6px 12px;
+                border: none;
+                top: calc(100% + 10px);
+                right: 0;
+                background-color: var(--biz-theme-secondary-color);
+                color: var(--biz-theme-secondary-text-color);
+                border-radius: var(--border-radius-md);
+                box-shadow: var(--popover-box-shadow);
+
+                p {
+                    margin-bottom: 10px;
+                }
+
+                .form-group {
+                    margin-bottom: 10px;
+                }
+
+                .dropdown-divider {
+                    margin: 0 0 10px;
+                }
+
+                .d-flex {
+                    gap: 10px;
+                }
+
+                .form-control {
+                    width: 11rem;
+                }
+            }
+
             a.bookmark_tag {
                 width: 48px;
                 height: 40px;
@@ -87,9 +120,16 @@ body.o_web_client {
                 padding: 0 !important;
                 margin-bottom: 10px !important;
                 border-radius: var(--border-radius-md) 0px 0px var(--border-radius-md) !important;
-                background: var(--biz-theme-primary-rgba) !important;
-                border-color: var(--biz-theme-primary-rgba) !important;
-                color: #fff !important;
+                background-color: var(--biz-theme-primary-color) !important;
+                border-color: var(--biz-theme-primary-color) !important;
+                box-shadow: none !important;
+                color: var(--biz-theme-primary-text-color) !important;
+
+                &.active {
+                    background: var(--biz-theme-primary-rgba) !important;
+                    border-color: var(--biz-theme-primary-rgba) !important;
+                    color: #fff !important;
+                }
             }
 
             position: relative;

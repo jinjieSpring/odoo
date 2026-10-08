@@ -234,7 +234,7 @@ body.o_web_client {
                 }
             }
 
-            #app_menu_search {
+            .app_menu_search {
                 color: var(--app-drawer-custom-text-color) !important;
 
                 &::placeholder {
@@ -246,11 +246,11 @@ body.o_web_client {
         .o_main_navbar.appdrawer-toggle {
             .appdrawer_section {
                 .apps-list {
-                    #searched_main_apps {
+                    .searched_main_apps {
                         max-height: inherit;
                     }
 
-                    #search_result {
+                    .search_result {
                         .search_list_content {
                             a {
                                 color: var(--app-drawer-custom-text-color) !important;
@@ -321,7 +321,7 @@ body.o_web_client {
             }
         }
 
-        #app_menu_search {
+        .app_menu_search {
             background-color: transparent;
             border: none;
             color: inherit !important;
@@ -350,7 +350,7 @@ body.o_web_client {
         margin-top: 36px;
         height: inherit;
 
-        #search_result {
+        .search_result {
             .search_list_content {
                 a {
                     color: var(--biz-theme-primary-text-color) !important;
@@ -456,7 +456,7 @@ body.o_web_client {
     }
 
     &.show_favourite_apps {
-        #search_result {
+        .search_result {
             display: none;
         }
 
