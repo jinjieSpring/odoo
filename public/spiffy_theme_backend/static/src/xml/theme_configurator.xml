@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates xml:space="preserve">
+    <t t-name="spiffy_theme_backend.ThemeConfigurator">
+        <div class="dynamic_data" t-att-class="{ visible: props.state.visible }" t-on-change="onConfigChange">
+            <div class="row g-0 align-items-start h-100 theme-config-sidebar">
+                <button type="button" class="bg-transparent backend_configurator_close ri ri-close-line float-end m-0 w-auto  border-0"
+                    data-dismiss="modal" t-on-click="close">
+                </button>
+                <button type="button" class="bg-transparent reset_backend_configurator ri ri-refresh-line float-end m-0 w-auto  border-0"
+                    data-dismiss="modal" title="Reset Backend Settings" t-on-click="reset">
+                </button>
+                <ul class="nav flex-shrink-0 col-4 config-sidebar-tab-panel ">
+                    <div class="w-100">
+                        <h3 class="mb-2 py-3 ps-3">Theme Settings</h3>
+                    </div>
+                    <li class="nav-item mb-1">
+                        <a href="#general_settings" class="nav-link active" data-bs-toggle="tab">General Settings</a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a href="#theme_color_pallets" class="nav-link" data-bs-toggle="tab">Colors</a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a href="#app_drawer" class="nav-link" data-bs-toggle="tab">App Drawer</a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a href="#font_family" class="nav-link" data-bs-toggle="tab">Font Settings</a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a href="#theme_loaders_style" class="nav-link" data-bs-toggle="tab">Loaders</a>
+                    </li>
+                </ul>
+                <div class="tab-content flex-grow-1 col-8 d-flex flex-column justify-content-between h-100 config-sidebar-tab-content">
+                    <div id="general_settings" class="tab-pane active">
+                        <div>
+                            <h3 class="p-3">General Settings</h3>
+                        </div>
+                        <div class="container g-4">
+                            <h5 class="py-3 ">Theme Style</h5>
+                            <div class="row border-style pb4 theme-style-row">
+                                <t t-foreach="themeStyles" t-as="style" t-key="style.value">
+                                    <div class="col-md-4 mb-3" t-att-class="{ 'ps-md-0': !style_first }">
+                                        <div class="form_check_content">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-att-id="style.id"
+                                                    name="theme_style" t-att-value="style.value" data-field="theme_style"
+                                                    t-att-checked="state.config.theme_style === style.value" />
+                                                <label class="custom-control-label" t-att-for="style.id">
+                                                    <img class="img img-fluid" t-att-src="'/spiffy_theme_backend/static/src/image/' + style.img" t-att-alt="style.alt" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <h5 class="py-3 ">Menu Position</h5>
+                            <div class="row border-style pb4 menu-position-row">
+                                <t t-foreach="menuPositions" t-as="pos" t-key="pos.value">
+                                    <div class="col-md-6 mb-3 menu-position">
+                                        <div class="form_check_content">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input top_menu_style" t-att-id="pos.id"
+                                                    name="top_menu_position" t-att-value="pos.value" data-field="top_menu_position"
+                                                    t-att-checked="state.config.top_menu_position === pos.value" />
+                                                <label class="custom-control-label" t-att-for="pos.id">
+                                                    <img class="img img-fluid" t-att-src="'/spiffy_theme_backend/static/src/image/' + pos.img" t-att-alt="pos.alt" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                <div class="col-12 mb-3">
+                                    <div class="vertical-background d-flex" t-att-class="{ 'd-none': state.config.top_menu_position !== 'top_menu_vertical' }">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-switch p-0">
+                                                    <input type="checkbox" class="form-check-input" id="vertical_background"
+                                                        data-field="vertical_background"
+                                                        t-att-checked="state.config.vertical_background" />
+                                                    <label class="form-check-label" for="vertical_background"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h5 class="pt-3 pb-0 mb-0 ms-2">Apply Background</h5>
+                                    </div>
+                                    <div class="vertical-menu mt-4" t-att-class="{ 'd-none': !(state.config.top_menu_position === 'top_menu_vertical' &amp;&amp; state.config.vertical_background) }">
+                                        <div class="row menu-bg-image-content">
+                                            <div class="col-12 pb-3">
+                                                <div class="pb-3">
+                                                    <b>Header Background Image</b>
+                                                    <div class="custom-file mt-3">
+                                                        <input type="file" id="top_menu_custom_bg_vertical"
+                                                            data-file_types="jpg|jpeg|gif|png"
+                                                            class="custom_app_bg_img_menu listify-file-upload custom-file-input form-control"
+                                                            t-on-change="onMenuBgFileChange" />
+                                                        <label class="custom-file-label-mini-2" t-att-class="{ selected: state.menuBgFileName }" for="top_menu_custom_bg_vertical" t-esc="state.menuBgFileName"></label>
+                                                    </div>
+
+                                                    <div class="row border-style pb4 pt-2">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="form_check_content top-menu-custom-bg-vertical-mini-2">
+                                                                <div class="form-check">
+                                                                    <input type="radio" class="form-check-input" id="top_menu_vertical_bg4"
+                                                                        name="top_menu_bg_vertical" value="top_menu_vertical_bg4" data-field="top_menu_bg_vertical"
+                                                                        t-att-checked="state.config.top_menu_bg_vertical === 'top_menu_vertical_bg4'" />
+                                                                    <label class="custom-control-label ms-3" for="top_menu_vertical_bg4">
+                                                                        <img id="img_preview_vertical_mini_2" alt="your image" class="img img-fluid"
+                                                                            t-att-src="state.menuBgPreviewSrc" />
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <t t-foreach="verticalBgs" t-as="bg" t-key="bg.value">
+                                                            <div class="col-md-6 mb-3">
+                                                                <div class="form_check_content">
+                                                                    <div class="form-check">
+                                                                        <input type="radio" class="form-check-input" t-att-id="bg.id"
+                                                                            name="top_menu_bg_vertical" t-att-value="bg.value" data-field="top_menu_bg_vertical"
+                                                                            t-att-checked="state.config.top_menu_bg_vertical === bg.value" />
+                                                                        <label class="custom-control-label ms-3" t-att-for="bg.id">
+                                                                            <img class="img img-fluid" t-att-src="'/spiffy_theme_backend/static/src/image/' + bg.img" alt="Menu horizontal" />
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-style pb-3 row">
+                                <div class="d-flex">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-switch p-0">
+                                                <input type="checkbox" class="form-check-input" id="apply_menu_shape_style"
+                                                    data-field="apply_menu_shape_style"
+                                                    t-att-checked="state.config.apply_menu_shape_style" />
+                                                <label class="form-check-label" for="apply_menu_shape_style"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 class="pt-3 pb-0 mb-0 ms-2">Apply Menu Shape Style</h5>
+                                </div>
+                                <div class="apply_menu_shape" t-att-class="{ 'd-none': !state.config.apply_menu_shape_style }">
+                                    <h5 class="py-3">Menu Shape Style</h5>
+                                    <div class="row pb4 theme-style-row">
+                                        <t t-foreach="shapeStyles" t-as="style" t-key="style.value">
+                                            <div class="col-md-4 mb-3" t-att-class="{ 'ps-md-0': !style_first }">
+                                                <div class="form_check_content">
+                                                    <div class="form-check">
+                                                        <input type="radio" class="form-check-input" t-att-id="style.id"
+                                                            name="shape_style" t-att-value="style.value" data-field="shape_style"
+                                                            t-att-checked="state.config.shape_style === style.value" />
+                                                        <label class="custom-control-label" t-att-for="style.id">
+                                                            <img class="img img-fluid" t-att-src="'/spiffy_theme_backend/static/src/image/' + style.img" t-att-alt="style.label + ' Theme'" />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <p class="text-center mt-2 mb-0" t-esc="style.label"></p>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <h5 class="pb-3 ">Menu Shape Background Color</h5>
+                                    <div class="row pb4">
+                                        <div class="col-12">
+                                            <div class="custom_color_config">
+                                                <div class="pb-2 d-flex">
+                                                    <div class="w-50 pt-3">Background Color</div>
+                                                    <div class="background-color">
+                                                        <img class="img img-fluid" src="/spiffy_theme_backend/static/src/image/background-color.svg" alt="Background Color" />
+                                                        <input type="color" class="border border-dark" id="menu_shape_bg" name="Menu Shape Background Color"
+                                                            data-field="menu_shape_bg_color" t-att-value="state.config.menu_shape_bg_color"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slidecontainer col-12 mt-3 d-flex align-items-center">
+                                                <div class="text-nowrap me-2 w-50">Background Color Opacity</div>
+                                                <input type="range" min="0.1" max="1" step="0.1" t-att-value="state.config.menu_shape_bg_color_opacity"
+                                                    data-field="menu_shape_bg_color_opacity" class="slider" id="menu_shape_bg_color_opacity"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="py-3 ">List View Density</h5>
+                            <div class="row border-style pb4 list-density-row">
+                                <t t-foreach="listDensities" t-as="density" t-key="density.value">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !density_first }">
+                                        <div class="form_check_content h-100">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-att-id="density.id"
+                                                    name="list_view_density" t-att-value="density.value" data-field="list_view_density"
+                                                    t-att-checked="state.config.list_view_density === density.value" />
+                                                <label class="custom-control-label" t-att-for="density.id" t-att-title="density.title">
+                                                    <img class="img img-fluid" t-att-src="'/spiffy_theme_backend/static/src/image/' + density.img" t-att-alt="'List ' + density.title" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <h5 class="py-3 ">Input Style</h5>
+                            <div class="row border-style pb4 form-mode-row">
+                                <t t-foreach="inputStyles" t-as="inputStyle" t-key="inputStyle.value">
+                                    <div class="col-md-4 mb-3" t-att-class="{ 'ps-md-0': !inputStyle_first }">
+                                        <div class="form_check_content h-100">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-att-id="inputStyle.id"
+                                                    name="input_style" t-att-value="inputStyle.value" data-field="input_style"
+                                                    t-att-checked="state.config.input_style === inputStyle.value" />
+                                                <label class="custom-control-label" t-att-for="inputStyle.id" t-att-title="inputStyle.title">
+                                                    <img class="img img-fluid" t-att-src="'/spiffy_theme_backend/static/src/image/' + inputStyle.img" t-att-alt="inputStyle.title" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <h5 class="py-3 ">List/Tree view Sticky Header and Footer</h5>
+                            <div class="row border-style pb4 list-sticky-header-row">
+                                <div class="col-12 mb-3">
+                                    <div class="form-switch p-0 mb-3">
+                                        <input type="checkbox" class="form-check-input" id="list_view_sticky_header"
+                                            data-field="list_view_sticky_header"
+                                            t-att-checked="state.config.list_view_sticky_header" />
+                                        <label class="form-check-label" for="list_view_sticky_header"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="py-3 ">Show Attachments in List View</h5>
+                            <div class="row border-style pb4 show-attach-row">
+                                <div class="col-12 mb-3">
+                                    <div class="form-switch p-0 mb-3">
+                                        <input type="checkbox" class="form-check-input" id="attachment_in_tree_view"
+                                            data-field="attachment_in_tree_view"
+                                            t-att-checked="state.config.attachment_in_tree_view" />
+                                        <label class="form-check-label" for="attachment_in_tree_view"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="py-3">Tab Styles</h5>
+                            <div class="row border-style pb4 tab-style-row">
+                                <t t-foreach="tabStyles" t-as="tabStyle" t-key="tabStyle.value">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !tabStyle_first }">
+                                        <div class="form_check_content">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-att-id="tabStyle.value" name="tab"
+                                                    t-att-value="tabStyle.value" data-field="tab"
+                                                    t-att-checked="state.config.tab === tabStyle.value" />
+                                                <label class="custom-control-label" t-att-for="tabStyle.value">
+                                                    <div t-att-class="tabStyle.cls">
+                                                        <a class=" btn btn-custom demo_btn"></a>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <h5 class="py-3">Checkbox Styles</h5>
+                            <div class="row border-style pb4 checkbox-style-row">
+                                <div class="col-9 mb-3  ">
+                                    <div class="row mx-3 g-0 mb-2">
+                                        <div class="offset-2 col-5">
+                                            <h4 class="d-flex justify-content-center">Active</h4>
+                                        </div>
+                                        <div class="col-5">
+                                            <h4 class="d-flex justify-content-center">Deactive</h4>
+                                        </div>
+                                    </div>
+                                    <t t-foreach="checkboxStyles" t-as="i" t-key="i">
+                                        <div class="col-12 mb-3 me-0 custom-control custom-radio custom-control-inline  form-check box-shadow">
+                                            <div class="row ms-3 w-100">
+                                                <div class="col-3">
+                                                    <input type="radio" class="form-check-input" t-attf-id="checkbox_style_{{i}}"
+                                                        name="checkbox" t-attf-value="checkbox_style_{{i}}" data-field="checkbox"
+                                                        t-att-checked="state.config.checkbox === 'checkbox_style_' + i" />
+                                                    <label class="custom-control-label" t-attf-for="checkbox_style_{{i}}"></label>
+                                                </div>
+                                                <div class="col-5">
+                                                    <div t-attf-class="pt-1 biz-custom-checkbox{{i}} active"></div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div t-attf-class="pt-1 biz-custom-checkbox{{i}}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <h5 class="py-3">Radio Styles</h5>
+                            <div class="row border-style pb4 radio-style-row">
+                                <div class="col-9 mb-3">
+                                    <div class="row mx-3 g-0 mb-2">
+                                        <div class="offset-2 col-5">
+                                            <h4 class="d-flex justify-content-center">Active</h4>
+                                        </div>
+                                        <div class="col-5">
+                                            <h4 class="d-flex justify-content-center">Deactive</h4>
+                                        </div>
+                                    </div>
+                                    <t t-foreach="radioStyles" t-as="i" t-key="i">
+                                        <div class="col-12 mb-3 me-0 custom-control custom-radio custom-control-inline  form-check box-shadow">
+                                            <div class="row ms-3 w-100">
+                                                <div class="col-3">
+                                                    <input type="radio" class="form-check-input" t-attf-id="radio_style_{{i}}" name="radio"
+                                                        t-attf-value="radio_style_{{i}}" data-field="radio"
+                                                        t-att-checked="state.config.radio === 'radio_style_' + i" />
+                                                    <label class="custom-control-label" t-attf-for="radio_style_{{i}}"></label>
+                                                </div>
+                                                <div class="col-5">
+                                                    <div t-attf-class="pt-1 biz-custom-radio{{i}} active"></div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div t-attf-class="pt-1 biz-custom-radio{{i}}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <h5 class="py-3">Popup Animation</h5>
+                            <div class="row border-style pb4 popup-animate-style-row">
+                                <t t-foreach="popupStyles" t-as="popupStyle" t-key="popupStyle.value">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !popupStyle_first }">
+                                        <div class="form_check_content">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-att-id="popupStyle.value" name="popup"
+                                                    t-att-value="popupStyle.value" data-field="popup"
+                                                    t-att-checked="state.config.popup === popupStyle.value" />
+                                                <label class="custom-control-label" t-att-for="popupStyle.value">
+                                                    <span class="text-style-design" t-esc="popupStyle.label"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <h5 class="py-3">Separator Styles</h5>
+                            <div class="row border-style pb4 separator-styles-row">
+                                <t t-foreach="separatorStyles" t-as="i" t-key="i">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !separatorStyles_first }">
+                                        <div class="form_check_content">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-attf-id="separator_style_{{i}}" name="separator"
+                                                    t-attf-value="separator_style_{{i}}" data-field="separator"
+                                                    t-att-checked="state.config.separator === 'separator_style_' + i" />
+                                                <label class="custom-control-label flex-fill" t-attf-for="separator_style_{{i}}">
+                                                    <img class="img img-fluid" t-attf-src="/spiffy_theme_backend/static/src/image/theme-separator-style{{i}}.png" t-att-alt="'Separator ' + i" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="app_drawer" class="tab-pane">
+                        <div>
+                            <h3 class="mb-3 py-3 ps-3">App Drawer</h3>
+                        </div>
+                        <div class="container g-4">
+                            <h5 class="py-3">Color Combinations</h5>
+                            <div class="row pb4">
+                                <div class="col-12">
+                                    <div class="form-switch p-0 mb-3">
+                                        <input type="checkbox" class="form-check-input" id="use_custom_drawer_color"
+                                            data-field="use_custom_drawer_color"
+                                            t-att-checked="state.config.use_custom_drawer_color" />
+                                        <label class="form-check-label" for="use_custom_drawer_color">Set Your Own Drawer Colors</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="predefined_color_pallets border-bottom mb-3" t-att-class="{ 'd-none': state.config.use_custom_drawer_color }">
+                                <div class="row m-0">
+                                    <t t-foreach="drawerPallets" t-as="i" t-key="i">
+                                        <div class="col-md-6 mb-3 me-0">
+                                            <div class="form_check_content">
+                                                <div class="form-check">
+                                                    <input type="radio" class="form-check-input" t-attf-id="drawer_color_pallet_{{i}}"
+                                                        name="drawer_color_pallets" t-attf-value="drawer_pallet_{{i}}" data-field="drawer_color_pallet"
+                                                        t-att-checked="state.config.drawer_color_pallet === 'drawer_pallet_' + i" />
+                                                    <label class="custom-control-label" t-attf-for="drawer_color_pallet_{{i}}">
+                                                        <img style="" class="img img-fluid"
+                                                            t-attf-src="/spiffy_theme_backend/static/src/image/pallet_new_{{i}}.png" />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="custom_color_config border-bottom" t-att-class="{ 'd-none': !state.config.use_custom_drawer_color }">
+                                <div class="pb-2 d-flex">
+                                    <div class="w-50">Background Color</div>
+                                    <div class="background-color">
+                                        <img class="img img-fluid" src="/spiffy_theme_backend/static/src/image/background-color.svg" alt="Background Color" />
+                                        <input type="color" class=" border border-dark" id="custom_drawer_bg" name="Custom background"
+                                            data-field="appdrawer_custom_bg_color" t-att-value="state.config.appdrawer_custom_bg_color"/>
+                                    </div>
+                                </div>
+                                <div class="pb-2 d-flex">
+                                    <div class="w-50">Text Color</div>
+                                    <div class="background-color">
+                                        <img class="img img-fluid" src="/spiffy_theme_backend/static/src/image/background-color.svg" alt="Background Color" />
+                                        <input type="color" class=" border border-dark" id="custom_drawer_text" name="Custom text"
+                                            data-field="appdrawer_custom_text_color" t-att-value="state.config.appdrawer_custom_text_color"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="app-drawer-bg-image-option d-flex align-items-center form-check mb-3 mt-4 p-0">
+                                <div class="form-switch p-0">
+                                    <input type="checkbox" class="form-check-input" id="apply_light_bg" name="example"
+                                        data-field="apply_light_bg_img"
+                                        t-att-checked="state.config.apply_light_bg_img" />
+                                    <label class="form-check-label" for="apply_light_bg">Apply Background Image</label>
+                                </div>
+                            </div>
+
+                            <div class="row app-drawer-bg-image-content" t-att-class="{ 'd-none': !state.config.apply_light_bg_img }">
+                                <div class="col-12 pb-3">
+                                    <div class="pb-3">
+                                        <b>Body Image</b>
+                                    </div>
+                                    <div class="custom-file mb-3">
+                                        <input type="file" id="light_bg_image"
+                                            data-file_types="jpg|jpeg|gif|png"
+                                            class="app_bg_img_light listify-file-upload custom-file-input form-control"
+                                            t-on-change="onLightBgFileChange" />
+                                        <label class="custom-file-label" t-att-class="{ selected: state.lightBgFileName }" for="light_bg_image" t-esc="state.lightBgFileName"></label>
+                                        <img id="blah" alt="your image" class="img img-fluid mt-3"
+                                            t-att-src="state.lightBgPreviewSrc" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="font_family" class="tab-pane">
+                        <div>
+                            <h3 class="mb-3 py-3 ps-3">Font Setting</h3>
+                        </div>
+                        <div class="container g-4">
+                            <div class="google-font-family mb-3">
+                                <div class="font-setting mt-3">
+                                    <div class="top-title d-flex">
+                                        <h5 class="ms-1">Explore on
+                                        </h5>
+                                        <a href="https://fonts.google.com/" class="ms-1 google-font-link" target="_blank">https://fonts.google.com/</a>
+                                    </div>
+                                    <div class="d-flex gap-2 mb-3">
+                                        <input type="text" id="fontInput" t-ref="fontInput" class="form-control" placeholder="https://fonts.google.com/specimen/Lato"/>
+                                    </div>
+                                    <div class="add-google-font mb-3">
+                                        <div class="d-flex justify-content-center mb-3">
+                                            <button class="btn btn-primary p-2 ps-4 pe-4" id="addFontBtn" type="button"
+                                                t-att-disabled="state.fontLimitReached" t-on-click="addGoogleFont">Add Google Font
+                                            </button>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div id="fontLimitMsg" class="text-danger mb-2" t-attf-style="{{state.fontLimitReached ? '' : 'display:none;'}}">Max 6 font families can be added.</div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div id="fontExistsMsg" class="text-danger mb-3" t-attf-style="{{state.fontExists ? '' : 'display:none;'}}">Font already exists in the list.</div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-content">
+                                        <h5 class="title pb-3 mb-0">Font Preview</h5>
+                                        <div id="previewContent" t-att-style="previewFontStyle">
+                                            This is a preview of your selected font.
+                                        </div>
+                                    </div>
+                                    <h5 class="py-3">Font Family</h5>
+                                    <div class="row font-list border-style pb4">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form_check_content d-flex align-items-center">
+                                                <div class="form-check d-flex align-items-center w-100">
+                                                    <input type="radio" class="form-check-input font-checkbox"
+                                                        id="font_family_rubik"
+                                                        name="google_font_links_ids"
+                                                        t-att-checked="state.selectedFontId === null"
+                                                        t-on-change="() => this.selectFont(null)" />
+                                                    <label class="custom-control-label" for="font_family_rubik">
+                                                        <span class="text-style-design">
+                                                            Rubik
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <t t-foreach="state.fonts" t-as="font" t-key="font.id">
+                                            <div class="col-md-6 mb-3" t-att-id="'font_container_' + font.id">
+                                                <div class="form_check_content d-flex align-items-center">
+                                                    <div class="form-check d-flex align-items-center w-100">
+                                                        <input type="radio" class="form-check-input font-checkbox"
+                                                            t-att-id="'font_family_' + font.name.toLowerCase()"
+                                                            name="google_font_links_ids"
+                                                            t-att-value="font.id"
+                                                            t-att-checked="state.selectedFontId === font.id"
+                                                            t-on-change="() => this.selectFont(font.id)" />
+                                                        <label t-att-for="'font_family_' + font.name.toLowerCase()" class="custom-control-label">
+                                                            <span class="text-style-design">
+                                                                <t t-esc="font.name"/>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                    <button type="button"
+                                                        class="btn btn-sm text-danger delete-font"
+                                                        t-on-click="() => this.deleteFont(font)">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div class="row border-style pb-4">
+                                    <h5 class="py-3">Font Size</h5>
+                                    <t t-foreach="fontSizes" t-as="fontSize" t-key="fontSize.value">
+                                        <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !fontSize_first }">
+                                            <div class="form_check_content">
+                                                <div class="form-check">
+                                                    <input type="radio" class="form-check-input" t-att-id="fontSize.id" name="font_size"
+                                                        t-att-value="fontSize.value" data-field="font_size"
+                                                        t-att-checked="state.config.font_size === fontSize.value" />
+                                                    <label class="custom-control-label" t-att-for="fontSize.id">
+                                                        <span t-att-class="fontSize.cls + ' text-style-design'" t-esc="fontSize.label"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="theme_color_pallets" class="tab-pane">
+                        <div>
+                            <h3 class="mb-3 py-3 ps-3">Colors</h3>
+                        </div>
+                        <div class="container g-4">
+                            <div class="form-switch p-0 mb-3">
+                                <input type="checkbox" class="form-check-input" id="use_custom_color_config"
+                                    data-field="use_custom_colors"
+                                    t-att-checked="state.config.use_custom_colors" />
+                                <label class="form-check-label" for="use_custom_color_config">Set Your Own Colors</label>
+                            </div>
+                            <div class="predefined_color_pallets mb-3" t-att-class="{ 'd-none': state.config.use_custom_colors }">
+                                <div class="row m-0">
+                                    <t t-foreach="colorPallets" t-as="i" t-key="i">
+                                        <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !colorPallets_first }">
+                                            <div class="form_check_content">
+                                                <div class="form-check">
+                                                    <input type="radio" class="form-check-input" t-attf-id="color_pallet_{{i}}"
+                                                        name="color_pallets" t-attf-value="pallet_{{i}}" data-field="color_pallet"
+                                                        t-att-checked="state.config.color_pallet === 'pallet_' + i" />
+                                                    <label class="custom-control-label" t-attf-for="color_pallet_{{i}}">
+                                                        <img style="" class="img img-fluid"
+                                                            t-attf-src="/spiffy_theme_backend/static/src/image/pallet_new_{{i}}.png" />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            <!-- set custom colors -->
+                            <div class="custom_color_config" t-att-class="{ 'd-none': !state.config.use_custom_colors }">
+                                <!-- primary -->
+                                <div class="col-12 pb-3 ps-md-0">
+                                    <div class="pb-2 d-flex">
+                                        <div class="w-50 pt-3">Primary Color</div>
+                                        <div class="background-color">
+                                            <img class="img img-fluid" src="/spiffy_theme_backend/static/src/image/background-color.svg" alt="Background Color" />
+                                            <input type="color" class="primary_bg_color border border-dark" id="primary_bg" name="Primary background"
+                                                data-field="light_primary_bg_color" t-att-value="state.config.light_primary_bg_color"/>
+                                        </div>
+                                    </div>
+                                    <div class="pb-2 d-flex">
+                                        <div class="w-50 pt-3">Text Color</div>
+                                        <div class="background-color">
+                                            <img class="img img-fluid" src="/spiffy_theme_backend/static/src/image/background-color.svg" alt="Background Color" />
+                                            <input type="color" class="primary_text_color border border-dark" id="primary_text" name="Primary text"
+                                                data-field="light_primary_text_color" t-att-value="state.config.light_primary_text_color"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="theme_loaders_style" class="tab-pane">
+                        <div>
+                            <h3 class="mb-3 py-3 ps-3">Choose your loader</h3>
+                        </div>
+                        <div class="container g-4 loader_style mb-3 ps-3">
+                            <div class="row m-0">
+                                <t t-foreach="loaders" t-as="i" t-key="i">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !loaders_first }">
+                                        <div class="form_check_content">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" t-attf-id="loader_style_{{i}}" name="loader_style"
+                                                    t-attf-value="loader_style_{{i}}" data-field="loader_style"
+                                                    t-att-checked="state.config.loader_style === 'loader_style_' + i" />
+                                                <label class="custom-control-label" t-attf-for="loader_style_{{i}}">
+                                                    <img style="width: 50px;" class="img img-fluid"
+                                                        t-attf-src="/spiffy_theme_backend/static/src/image/loader_{{i}}.gif" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center py-3 discard_button_style">
+                        <a href="#" class="btn btn-primary selected_value border-0 m-0 btn-block w-50 mx-2" data-dismiss="modal" t-on-click.prevent="save">Apply</a>
+
+                        <a href="#" class="btn btn-primary backend_configurator_close border-0 m-0 btn-block w-50 mx-2" data-dismiss="modal" t-on-click.prevent="close">Discard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

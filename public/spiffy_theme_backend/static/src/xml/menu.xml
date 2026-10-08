@@ -139,7 +139,7 @@
 				</button>
 			</div>
 			<!-- SEARCH MODAL -->
-			<div class="dynamic_data" t-on-click="onDynamicDataClick"/>
+			<ThemeConfigurator state="configuratorState"/>
 			<div class="new_systray d-none">
 				<div class="o_app_drawer d-block d-lg-none">
 					<li class="list-unstyled">
@@ -179,7 +179,7 @@
 					</t>
 				</div>
 			</div>
-			<div class="navbar_to_do_list_data" />
+			<TodoSidebar state="todoSidebarState"/>
 		</xpath>
 		<xpath expr="//nav[hasclass('o_main_navbar')]" position="replace">
 			<nav class="o_main_navbar" t-on-dropdown-item-selected="onNavBarDropdownItemSelection" data-command-category="navbar">
@@ -309,7 +309,7 @@
 	<t t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension" >
 		<xpath expr="//Dropdown" position="replace">
 			<div class="o_navbar_apps_menu all-apps-menus">
-				<!-- The dynamic menu app is loaded in this div -->
+				<SpiffyMenuGroup placement="'sidebar'"/>
 			</div>
 			<div class="o_navbar_apps_menu">
 				<div class="appdrawer_section">
@@ -328,8 +328,9 @@
 							<input type="text" class="form-control app_menu_search" placeholder="Search" t-on-input="onAppDrawerSearchInput" t-on-keydown="onAppDrawerSearchKeydown"/>
 						</div>
 						<div class="apps-list mt-3 mt-md-5">
-							<!-- The dynamic menu app is loaded in this div -->
-							<div class="spiffy-app-group" t-att-class="{ 'd-none': drawer.query }"/>
+							<div class="spiffy-app-group" t-att-class="{ 'd-none': drawer.query }">
+								<SpiffyMenuGroup placement="'drawer'"/>
+							</div>
 							<t t-call="spiffy_theme_backend.AppDrawerQuery"/>
 						</div>
 						<div class="apps-list favourite_apps mt-3 mt-md-5 d-none">

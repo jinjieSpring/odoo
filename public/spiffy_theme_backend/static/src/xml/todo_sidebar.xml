@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates xml:space="preserve">
+    <t t-name="spiffy_theme_backend.TodoSidebar">
+        <div class="navbar_to_do_list_data" t-att-class="{ visible: props.state.visible }">
+            <div class="row g-0 align-items-start to-do-list-sidebar h-100">
+                <div class="to-do-sidebar-heading p-3 border-bottom d-flex">
+                    <h4 class="to-do-title d-flex m-0 align-items-center flex-fill">
+                        <span>Notes</span>
+                        <button type="button" id="close_to_do_sidebar" class="bg-transparent ms-auto border-0" t-on-click="close">
+                            <img src="/spiffy_theme_backend/static/src/image/close.png" class="img img-fluid" />
+                        </button>
+                    </h4>
+                </div>
+                <div class="to-do-sidebar-body position-relative">
+                    <button type="button" class="add-new-list-btn btn btn-primary rounded-circle" t-att-class="{ close: state.showForm }" t-on-click="toggleForm">
+                        <span class="ri ri-add-line"></span>
+                        <span class="text d-none">CLOSE</span>
+                    </button>
+                    <div class="add-list p-3 shadow-sm bg-white" t-att-class="{ 'd-none': !state.showForm }">
+                        <div class="mb-3 p-3 shadow-sm add-list-outer">
+                            <div class="note-colors-option d-flex">
+                                <t t-foreach="pallets" t-as="pallet" t-key="pallet">
+                                    <label t-attf-for="note_{{pallet}}" t-attf-class="flex-fill {{pallet}}">
+                                        <input class="d-none" type="radio" t-attf-id="note_{{pallet}}" name="noteColorPallet" t-att-value="pallet"
+                                            t-att-checked="state.formPallet === pallet"
+                                            t-on-change="() => this.state.formPallet = pallet"/>
+                                        <span class="pallet_detail"></span>
+                                    </label>
+                                </t>
+                            </div>
+                            <div class="note-title border-bottom border-primary">
+                                <input t-ref="titleInput" class="form-control note-title-input border-0" placeholder="Note Title..." aria-label="Take a Note..." aria-describedby="to-do-button"/>
+                            </div>
+                            <div class="note-description mt-3">
+                                <div t-ref="descInput" contenteditable="true" data-text="Note description..." class="form-control note-description-input border-0 border-bottom border-primary rounded-0"></div>
+                            </div>
+                            <div class="note-save-update mt-3 d-flex justify-content-end">
+                                <button t-if="!state.editingId" class="btn btn-link note-add" type="button" id="note-create" t-on-click="saveNote">Save</button>
+                                <button t-else="" class="btn btn-link note-add note-update" type="button" id="note-update" t-on-click="saveNote">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="users-to-do-list" t-ref="noteList" t-att-class="{ backdrop: state.showForm }">
+                        <t t-foreach="state.notes" t-as="note" t-key="note.id">
+                            <section t-attf-class="note_content #{note.note_color_pallet}" t-att-data-note-id="note.id">
+                                <div class="note_outer_content p-3 position-relative">
+                                    <div class="date-and-edit d-flex justify-content-end">
+                                        <div class="note-date">
+                                            <span t-esc="note.display_date"/>
+                                        </div>
+                                        <div class="note-options d-md-none ms-2">
+                                            <div class="btn-group">
+                                                <button class="btn dropdown-toggle p-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span class="ri ri-more-fill align-middle"/>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li class="edit-note-item note-edit">
+                                                        <a class="nav-item d-flex p-2" href="#" t-on-click.prevent="() => this.editNote(note)">
+                                                            <span class="ri ri-pencil-line align-middle"/>
+                                                            <span class="ps-2 edit-note-text">Edit Note</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="edit-note-item note-delete">
+                                                        <a class="nav-item d-flex p-2" href="#" t-on-click.prevent="() => this.deleteNote(note)">
+                                                            <span class="ri ri-delete-bin-line align-middle"/>
+                                                            <span class="ps-2 edit-note-text">Delete Note</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="note-details">
+                                        <div class="note-title">
+                                            <h2 t-esc="note.name"></h2>
+                                        </div>
+                                        <div class="note-description">
+                                            <span class="description-main" t-out="markup(note.description)"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

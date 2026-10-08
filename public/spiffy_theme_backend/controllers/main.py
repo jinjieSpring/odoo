@@ -155,6 +155,46 @@ class BackendConfigration(http.Controller):
 
         return response
 
+    @http.route(['/color/pallet/data/json/'], type='jsonrpc', auth='user')
+    def selected_pallet_data_json(self, **kw):
+        """JSON variant of /color/pallet/data/ for the OWL theme configurator."""
+        user = request.env.user
+        config_vals, _can_edit = self._get_effective_backend_config()
+        config_fonts = config_vals.google_font_links_ids.filtered(
+            lambda font: font.user_id == user and font.config_id == config_vals
+        )
+        field_names = [
+            'theme_style', 'top_menu_position', 'vertical_background',
+            'top_menu_bg_vertical', 'apply_menu_shape_style', 'shape_style',
+            'menu_shape_bg_color', 'menu_shape_bg_color_opacity',
+            'list_view_density', 'input_style', 'list_view_sticky_header',
+            'attachment_in_tree_view', 'tab', 'checkbox', 'radio', 'popup',
+            'separator', 'use_custom_colors', 'color_pallet',
+            'light_primary_bg_color', 'light_primary_text_color',
+            'use_custom_drawer_color', 'drawer_color_pallet',
+            'appdrawer_custom_bg_color', 'appdrawer_custom_text_color',
+            'apply_light_bg_img', 'font_size', 'loader_style',
+        ]
+        config = {}
+        for field_name in field_names:
+            config[field_name] = config_vals[field_name] if config_vals else False
+
+        def _b64(value):
+            return value.decode('utf-8') if value else False
+
+        return {
+            'config_id': config_vals.id if config_vals else False,
+            'config': config,
+            'light_bg_image': _b64(config_vals.light_bg_image) if config_vals else False,
+            'top_menu_custom_bg_vertical': _b64(config_vals.top_menu_custom_bg_vertical) if config_vals else False,
+            'fonts': [{
+                'id': font.id,
+                'name': font.name,
+                'url': font.url,
+                'is_selected': font.is_selected,
+            } for font in config_fonts],
+        }
+
     @http.route('/color/pallet/reset/', type='jsonrpc', auth='user')
     def reset_backend_theme_config(self):
         # get user config record (adjust model name to yours)
@@ -1022,6 +1062,33 @@ class BackendConfigration(http.Controller):
         return app_menu_dict
 
     # TO DO LIST CONTROLLERS
+    def _todo_note_dict(self, note, user):
+        user_tz_offset = user.tz_offset
+        user_tz_offset_time = datetime.datetime.strptime(
+            user_tz_offset, '%z').utcoffset()
+        today_date_with_offset = datetime.datetime.now() + user_tz_offset_time
+        note_create_date = note.write_date + user_tz_offset_time
+        if today_date_with_offset.strftime('%d-%b-%Y') == note_create_date.strftime('%d-%b-%Y'):
+            display_date = note_create_date.strftime('%I:%M %p')
+        else:
+            display_date = note_create_date.strftime('%d-%b-%Y')
+        return {
+            'id': note.id,
+            'name': note.name or '',
+            'description': note.description or '',
+            'note_color_pallet': note.note_color_pallet or '',
+            'display_date': display_date,
+        }
+
+    @http.route(['/show/user/todo/list/data'], type='jsonrpc', auth='user')
+    def show_user_todo_list_data(self, **kw):
+        user = request.env.user
+        notes = user.sudo().todo_list_ids
+        return {
+            'user_id': user.id,
+            'notes': [self._todo_note_dict(note, user) for note in notes],
+        }
+
     @http.route(['/show/user/todo/list/'], type='http', auth='public', sitemap=False)
     def show_user_todo_list(self, **kw):
         company = request.env.company
@@ -1077,20 +1144,7 @@ class BackendConfigration(http.Controller):
                     'note_color_pallet': note_pallet,
                 })
 
-            user_tz_offset = user.tz_offset
-            user_tz_offset_time = datetime.datetime.strptime(user_tz_offset, '%z').utcoffset()
-            today_date = datetime.datetime.now()
-            today_date_with_offset = datetime.datetime.now() + user_tz_offset_time
-
-            note_content = request.env['ir.ui.view']._render_template(
-                "spiffy_theme_backend.to_do_list_content_template", {
-                    'note': todo_record,
-                    'today_date': today_date_with_offset,
-                    'user_tz_offset_time': user_tz_offset_time,
-                }
-            )
-
-            return note_content
+            return self._todo_note_dict(todo_record, user)
 
     @http.route(['/delete/todo'], type='jsonrpc', auth='user')
     def delete_todo(self, **kw):

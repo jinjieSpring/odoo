@@ -1,0 +1,132 @@
+<!-- Part of Bizople Solutions Pvt. Ltd. -->
+<!-- Licensed under the Bizople Proprietary License v1.0. -->
+<!-- Copyright (C) 2026 Bizople Solutions Pvt. Ltd. -->
+<templates id="template" xml:space="preserve">
+	<t t-name="spiffy_theme_backend.SpiffyMenuGroup">
+		<t t-if="isActive">
+			<div class="row m-0 spiffy-app">
+				<div id="blur-overlay" class="spiffy-menu-group-list"
+					t-att-class="{ 'background-blur': store.blur }"
+					t-att-style="store.blur ? 'display: block;' : 'display: none;'"
+					t-on-click="onOverlayClick"/>
+				<t t-foreach="store.groups" t-as="result" t-key="result.id">
+					<div class="app-box col-1 mb16 spiffy-menu-group">
+						<div class="top-menu-vertical-mini"
+							t-att-class="{ 'header-background': store.headerBg }"
+							t-att-style="store.headerBg ? 'display: block;' : 'display: none;'"/>
+						<a
+							t-att-data-menu="result.id"
+							t-att-data-action-model="result.actionModel or ''"
+							t-att-data-action-id="result.actionID or ''"
+							t-att-data-menu-xmlid="result.xmlid"
+							class="app_menu_group text-center"
+							t-att-class="{ active: store.vertical and store.openGroupId === result.id }"
+							t-on-click.prevent="() => this.onGroupClick(result)">
+							<div class="group-app-icon app-image mb8">
+								<t t-if="result.use_group_icon">
+									<t t-if="result.group_icon_class_name">
+										<span t-att-class="'ri ' + result.group_icon_class_name" class="group_app_icon"></span>
+									</t>
+									<t t-elif="result.group_menu_icon">
+										<img class="img img-fluid group_app_icon" t-att-src="'/web/image/spiffy.app.group/' + result.id + '/group_menu_icon'" />
+									</t>
+									<t t-else="">
+										<span class="ri ri-apps-2-line group_app_icon"></span>
+									</t>
+								</t>
+								<t t-else="">
+									<t t-if="result.group_menu_icon">
+										<img class="img img-fluid group_app_icon" t-att-src="'/web/image/spiffy.app.group/' + result.id + '/group_menu_icon'" />
+									</t>
+									<t t-else="">
+										<span class="ri ri-apps-2-line group_app_icon"></span>
+									</t>
+								</t>
+							</div>
+							<div class="menu-name">
+								<t t-esc="result.name" />
+							</div>
+							<div class="app-group-count ms-auto">
+								<span class="group-count">
+									<t t-esc="result.group_menu_list_ids.length" />
+								</span>
+								<span class="ri ri-arrow-right-s-line ms-auto dropdown_icon" />
+							</div>
+						</a>
+						<div class="submenu-group spiffy-submenu-group" t-att-class="submenuGroupClasses(result)" id="submenu-group" t-on-click="onSubmenuGroupClick">
+							<div class="row app-group-popup">
+								<t t-foreach="menusInGroup(result)" t-as="menu" t-key="menu.id">
+									<div class="app-box col-2 spiffy-main-group">
+										<a role="menuitem"
+											t-att-href="getMenuItemHref(menu)"
+											t-att-data-menu="menu.id"
+											t-att-data-menu-xmlid="menu.xmlID"
+											t-att-data-action-id="menu.actionID or ''"
+											class="main_link o_app submenu-link spiffy_main_group"
+											t-att-class="{ active: isAppActive(menu) }"
+											t-on-click="(ev) => this.onTopAppClick(menu, ev)">
+											<div class="app-image mb8 menu-app-image">
+												<t t-call="spiffy_theme_backend.spiffy-menu-icon"/>
+											</div>
+											<div class="group-menu-name">
+												<t t-esc="menu.name" />
+											</div>
+											<t t-if="menu.children and menu.children.length > 0">
+												<span class="ri ri-arrow-right-s-line ms-auto dropdown_icon" />
+											</t>
+										</a>
+										<div class="header-sub-menus"
+											t-att-class="{ 'd-none': store.expandedAppId !== menu.id, show: store.expandedAppId === menu.id }"
+											t-on-click="() => this.onHeaderSubMenuClick(menu)">
+											<t t-set="parent_menu_id" t-value="menu.id" />
+											<t t-foreach="menu.children" t-as="menuid" t-key="menuid">
+												<t t-set="menu" t-value="menuService.getMenuAsTree(menuid)"/>
+												<t t-call="AllmenuRecursive">
+												</t>
+											</t>
+										</div>
+									</div>
+								</t>
+							</div>
+						</div>
+					</div>
+				</t>
+				<t t-foreach="ungroupedMenus" t-as="menu" t-key="menu.id">
+					<div class="col-1 app-box mb16">
+						<a role="menuitem"
+							t-att-href="getMenuItemHref(menu)"
+							class="d-block o_app spiffy_main_app text-center"
+							t-att-class="{ active: isAppActive(menu) }"
+							t-att-data-menu-id="menu.id"
+							t-att-data-menu-xmlid="menu.xmlID"
+							t-att-data-action-id="menu.actionID"
+							t-on-click="(ev) => this.onTopAppClick(menu, ev)">
+							<div class="app-image mb8">
+								<t t-call="spiffy_theme_backend.spiffy-menu-icon"/>
+							</div>
+							<div class="app-name">
+								<t t-esc="menu.name" />
+							</div>
+							<t t-if="menu.children and menu.children.length > 0">
+								<span class="ri ri-arrow-right-s-line ms-auto dropdown_icon" />
+							</t>
+						</a>
+						<div class="header-sub-menus"
+							t-att-class="{ 'd-none': store.expandedAppId !== menu.id, show: store.expandedAppId === menu.id }"
+							t-on-click="() => this.onHeaderSubMenuClick(menu)">
+							<t t-set="parent_menu_id" t-value="menu.id" />
+							<t t-foreach="menu.children" t-as="menuid" t-key="menuid">
+								<t t-set="menu" t-value="menuService.getMenuAsTree(menuid)"/>
+								<t t-call="AllmenuRecursive">
+								</t>
+							</t>
+						</div>
+						<div class="fav_app_select d-none ">
+							<span class="ri ri-check-line"/>
+						</div>
+					</div>
+				</t>
+			</div>
+		</t>
+	</t>
+</templates>
