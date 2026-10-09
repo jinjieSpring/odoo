@@ -254,7 +254,7 @@
                             <h5 class="py-3">Tab Styles</h5>
                             <div class="row border-style pb4 tab-style-row">
                                 <t t-foreach="tabStyles" t-as="tabStyle" t-key="tabStyle.value">
-                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !tabStyle_first }">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': tabStyle_index % 2 }">
                                         <div class="form_check_content">
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" t-att-id="tabStyle.value" name="tab"
@@ -338,7 +338,7 @@
                             <h5 class="py-3">Popup Animation</h5>
                             <div class="row border-style pb4 popup-animate-style-row">
                                 <t t-foreach="popupStyles" t-as="popupStyle" t-key="popupStyle.value">
-                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !popupStyle_first }">
+                                    <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': popupStyle_index % 2 }">
                                         <div class="form_check_content">
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" t-att-id="popupStyle.value" name="popup"
@@ -537,7 +537,7 @@
                                 <div class="row border-style pb-4">
                                     <h5 class="py-3">Font Size</h5>
                                     <t t-foreach="fontSizes" t-as="fontSize" t-key="fontSize.value">
-                                        <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': !fontSize_first }">
+                                        <div class="col-md-6 mb-3" t-att-class="{ 'ps-md-0': fontSize_index % 2 }">
                                             <div class="form_check_content">
                                                 <div class="form-check">
                                                     <input type="radio" class="form-check-input" t-att-id="fontSize.id" name="font_size"
