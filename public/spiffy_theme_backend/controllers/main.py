@@ -40,6 +40,24 @@ _logger = logging.getLogger(__name__)
 TRUSTED_DEVICE_COOKIE = 'td_id'
 TRUSTED_DEVICE_AGE = 90*86400 # 90 days expiration
 
+# Fields the web client applies as classes, attributes, or CSS variables.
+# Binary images are read with bin_size so the payload only says whether a
+# file is set; the browser loads the pixels from /web/image.
+_THEME_CONFIG_FIELDS = [
+    'separator', 'tab', 'checkbox', 'radio', 'popup', 'font_size',
+    'chatter_position', 'list_view_density', 'input_style',
+    'top_menu_position', 'theme_style', 'shape_style', 'loader_style',
+    'google_font_family', 'use_custom_drawer_color', 'drawer_color_pallet',
+    'attachment_in_tree_view', 'list_view_sticky_header',
+    'apply_menu_shape_style', 'vertical_background', 'apply_light_bg_img',
+    'top_menu_bg_vertical', 'color_pallet', 'use_custom_colors',
+    'light_primary_bg_color', 'light_primary_text_color',
+    'appdrawer_custom_bg_color', 'appdrawer_custom_text_color',
+    'menu_shape_bg_color', 'menu_shape_bg_color_opacity', 'show_filter_row',
+    'light_bg_image', 'vertical_mini_bg_image_one', 'vertical_mini_bg_image_two',
+    'vertical_mini_bg_image_three', 'top_menu_custom_bg_vertical',
+]
+
 class BackendConfigration(http.Controller):
 
     @http.route(['/color/pallet/'], type='jsonrpc', auth='public')
@@ -244,117 +262,105 @@ class BackendConfigration(http.Controller):
             })
         return {"status": "success"}
 
-    @http.route(['/get/model/record'], type='jsonrpc', auth='public')
-    def get_record_data(self, **kw):
-        company = request.env.company
-        user = request.env.user
-        admin_group_id = self.env.ref('base.group_system').id
-        is_admin = False
-        # if admin_group_id in user.group_ids.ids:
-        if user.has_group('base.group_system'):
-            is_admin = True
+    def _first_admin_backend_config(self):
+        """Earliest Settings user who already has a theme config."""
         admin_users = request.env['res.users'].sudo().search([
             ('group_ids', 'in', request.env.ref('base.group_system').id),
             ('backend_theme_config', '!=', False),
         ], order="id asc", limit=1)
-        admin_users_ids = admin_users.ids
-        admin_config = False
-        if admin_users:
-            admin_config = admin_users.backend_theme_config
-        show_edit_mode = True
-        for admin in admin_users:
-            if admin.backend_theme_config:
-                admin_config = admin.backend_theme_config
-                break
-            else:
-                continue
+        return admin_users, admin_users.backend_theme_config
 
+    def _resolve_backend_config(self):
+        """Config record the current user sees, plus edit flags.
+
+        Company-level themes reuse the first Settings user's config.
+        User-level themes prefer the user's own record.
+        """
+        company = request.env.company
+        user = request.env.user
+        is_admin = user.has_group('base.group_system')
+        admin_users, admin_config = self._first_admin_backend_config()
+        Config = request.env['backend.config'].sudo()
         if company.backend_theme_level == 'user_level':
+            show_edit_mode = True
             if user.backend_theme_config:
                 record_vals = user.backend_theme_config
             elif admin_config:
                 record_vals = admin_config
             else:
-                record_vals = request.env['backend.config'].sudo().search(
-                    [], order="id asc", limit=1)
+                record_vals = Config.search([], order="id asc", limit=1)
         else:
-            if not user.id in admin_users_ids:
-                show_edit_mode = False
-            if admin_config:
-                record_vals = admin_config
-            else:
-                record_vals = request.env['backend.config'].sudo().search(
-                    [], order="id asc", limit=1)
+            show_edit_mode = user.id in admin_users.ids
+            record_vals = admin_config or Config.search([], order="id asc", limit=1)
+        return record_vals, show_edit_mode, is_admin
 
-        prod_obj = request.env['backend.config'].sudo()
-        record_dict = record_vals.read(set(prod_obj._fields))
-        selected_links = request.env['google.font.family'].sudo().search([
-            ('config_id', '=', record_vals.id),
-            ('is_selected', '=', True)
+    def _favorite_apps_payload(self):
+        """Favorite apps with icon metadata, without icon binaries."""
+        apps = request.env.user.app_ids
+        if not apps:
+            return False
+        menu_ids = []
+        for app in apps:
+            if str(app.app_id).isdigit():
+                menu_ids.append(int(app.app_id))
+        menus = request.env['ir.ui.menu'].sudo().browse(menu_ids).exists()
+        rows = menus.with_context(bin_size=True).read([
+            'use_icon', 'icon_class_name', 'icon_img', 'web_icon', 'web_icon_data',
         ])
-        font_links = selected_links.read(['id', 'name', 'url', 'is_selected'])
+        by_id = {row['id']: row for row in rows}
+        app_list = []
+        for app in apps:
+            if not str(app.app_id).isdigit():
+                continue
+            row = by_id.get(int(app.app_id))
+            if not row:
+                continue
+            app_list.append({
+                'name': app.name,
+                'app_id': app.app_id,
+                'app_xmlid': app.app_xmlid,
+                'app_actionid': app.app_actionid,
+                'line_id': app.id,
+                'use_icon': row['use_icon'],
+                'icon_class_name': row['icon_class_name'],
+                'icon_img': bool(row['icon_img']),
+                'web_icon': row['web_icon'],
+                'has_web_icon_data': bool(row['web_icon_data']),
+            })
+        if not app_list:
+            return False
+        return {'app_list': app_list}
 
-        if user.dark_mode:
-            darkmode = "dark_mode"
-        else:
-            darkmode = False
-        if user.vertical_sidebar_pinned:
-            pinned_sidebar = "pinned"
-        else:
-            pinned_sidebar = False
+    @http.route(['/get/model/record'], type='jsonrpc', auth='public')
+    def get_record_data(self, **kw):
+        company = request.env.company
+        user = request.env.user
+        record_vals, show_edit_mode, is_admin = self._resolve_backend_config()
+        record_dict = record_vals.with_context(bin_size=True).read(_THEME_CONFIG_FIELDS)
+        font_links = []
+        if record_vals:
+            font_links = request.env['google.font.family'].sudo().search([
+                ('config_id', '=', record_vals.id),
+                ('is_selected', '=', True),
+            ]).read(['id', 'name', 'url', 'is_selected'])
 
-        
-        if company.prevent_auto_save:
-            prevent_auto_save = "prevent_auto_save"
-        else:
-            prevent_auto_save = False
-
-        if user.enable_todo_list:
-            todo_list_enable = "enable_todo_list"
-        else:
-            todo_list_enable = False
-
-        record_val = {
+        return {
             'record_dict': record_dict,
-            'darkmode': darkmode,
+            'darkmode': "dark_mode" if user.dark_mode else False,
             'bookmark_panel': user.bookmark_panel,
-            'pinned_sidebar': pinned_sidebar,
+            'pinned_sidebar': "pinned" if user.vertical_sidebar_pinned else False,
             'show_edit_mode': show_edit_mode,
             'is_admin': is_admin,
-            'todo_list_enable': todo_list_enable,
-            'prevent_auto_save': prevent_auto_save,
+            'todo_list_enable': "enable_todo_list" if user.enable_todo_list else False,
+            'prevent_auto_save': "prevent_auto_save" if company.prevent_auto_save else False,
             'font_dict': font_links,
+            'bookmarks': user.bookmark_ids.sudo().read(['id', 'name', 'title', 'url']),
+            'favorite_apps': self._favorite_apps_payload(),
         }
-        return record_val
 
     @http.route(['/get-favorite-apps'], type='jsonrpc', auth='public')
     def get_favorite_apps(self, **kw):
-        user_id = request.env.user
-        app_list = []
-        if user_id.app_ids:
-            for app in user_id.app_ids:
-                irmenu = request.env['ir.ui.menu'].sudo().search(
-                    [('id', '=', app.app_id)])
-                if irmenu:
-                    app_dict = {
-                        'name': app.name,
-                        'app_id': app.app_id,
-                        'app_xmlid': app.app_xmlid,
-                        'app_actionid': app.app_actionid,
-                        'line_id': app.id,
-                        'use_icon': irmenu.use_icon,
-                        'icon_class_name': irmenu.icon_class_name,
-                        'icon_img': irmenu.icon_img,
-                        'web_icon': irmenu.web_icon,
-                        'web_icon_data': irmenu.web_icon_data,
-                    }
-                    app_list.append(app_dict)
-            record_val = {
-                'app_list': app_list,
-            }
-            return record_val
-        else:
-            return False
+        return self._favorite_apps_payload()
 
     @http.route(['/update-user-fav-apps'], type='jsonrpc', auth='user')
     def update_favorite_apps(self, **kw):
@@ -799,10 +805,7 @@ class BackendConfigration(http.Controller):
 
     @http.route(['/get/bookmark/link'], type='jsonrpc', auth='public')
     def get_bookmark_link(self, **kw):
-        obj = request.env['bookmark.link']
-        user = request.env.user
-        record_dict = user.bookmark_ids.sudo().read(set(obj._fields))
-        return record_dict
+        return request.env.user.bookmark_ids.sudo().read(['id', 'name', 'title', 'url'])
 
     @http.route(['/update/chatter/position'], type='jsonrpc', auth='user')
     def update_chatter_position(self, **kw):
@@ -1287,30 +1290,16 @@ class BackendConfigration(http.Controller):
 
     def _get_effective_backend_config(self):
         """Resolve the backend.config the current user is allowed to edit.
-        Mirrors the exact resolution used by selected_pallet_data (the
-        controller that renders the Font Settings panel), so the config id
-        the browser sends back always matches what this check computes."""
-        company = request.env.company
+
+        The record matches ``_resolve_backend_config``. A user may edit their
+        own user-level config, and a Settings user may edit the shared one.
+        """
         user = request.env.user
         is_admin = user.has_group('base.group_system')
-        admin_users = request.env['res.users'].sudo().search([
-            ('group_ids', 'in', request.env.ref('base.user_admin').id),
-            ('backend_theme_config', '!=', False),
-        ], order="id asc", limit=1)
-        admin_config = admin_users.backend_theme_config if admin_users else False
-
-        if company.backend_theme_level == 'user_level':
-            if user.backend_theme_config:
-                return user.backend_theme_config, True
-            elif admin_config:
-                return admin_config, is_admin
-            else:
-                return request.env['backend.config'].sudo().search([], order="id asc", limit=1), is_admin
-        else:
-            if admin_config:
-                return admin_config, is_admin
-            else:
-                return request.env['backend.config'].sudo().search([], order="id asc", limit=1), is_admin
+        record_vals, _show_edit_mode, _is_admin = self._resolve_backend_config()
+        if request.env.company.backend_theme_level == 'user_level' and user.backend_theme_config:
+            return record_vals, True
+        return record_vals, is_admin
 
     @http.route('/update_single_font_selection', type='jsonrpc', auth='user')
     def update_single_font_selection(self, font_id, backend_config_id):

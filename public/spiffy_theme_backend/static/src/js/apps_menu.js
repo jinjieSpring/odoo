@@ -9,7 +9,8 @@ import { NavBar } from "@web/webclient/navbar/navbar";
 import { patch } from "@web/core/utils/patch";
 import { onPatched, useRef, useState } from "@odoo/owl";
 import { browser } from "@web/core/browser/browser";
-import body_color from "@spiffy_theme_backend/js/menu";
+import body_color, { loadThemeRecord } from "@spiffy_theme_backend/js/menu";
+import { spiffyMenuStore } from "@spiffy_theme_backend/js/widgets/menu_group";
 import { _t } from "@web/core/l10n/translation";
 
 function AppDrawerfindNames(memo, menu) {
@@ -113,8 +114,8 @@ function iconFromFavorite(value) {
     if (webIconExt === "svg") {
         return { iconType: "img", iconSrc: webSvgSrc };
     }
-    if (webIconExt !== "false" && value.web_icon_data) {
-        return { iconType: "img", iconSrc: "data:image/png;base64," + value.web_icon_data };
+    if (webIconExt !== "false" && (value.has_web_icon_data || value.web_icon_data)) {
+        return { iconType: "img", iconSrc: "/web/image/ir.ui.menu/" + value.app_id + "/web_icon_data" };
     }
     return { iconType: "class", iconClass: "ri ri-apps-2-line" };
 }
@@ -234,7 +235,7 @@ patch(NavBar.prototype, {
             await rpc("/update-user-fav-apps", { app_name: app.name, app_id: app.id });
         }
         this.favappsdata = null;
-        await this._GetFavouriteApps();
+        await this._GetFavouriteApps(true);
     },
     _applyDrawerSearch() {
         const query = this.drawer.query || "";
@@ -293,17 +294,26 @@ patch(NavBar.prototype, {
         this.drawer.showIsland = favoriteApps.length > 0;
     },
 
-    _GetFavouriteApps() {
-        if (this.favappsdata) {
+    _GetFavouriteApps(force) {
+        if (!force && this.favappsdata) {
             this._applyFavoriteData(this.favappsdata);
             return Promise.resolve(this.favappsdata);
         }
-        return rpc("/get-favorite-apps", {}).then((rec) => {
-            if (rec) {
-                this.favappsdata = rec;
-                this._applyFavoriteData(rec);
+        // The first read rides on the navbar bootstrap call. Later refreshes
+        // (after starring an app) hit the favorite endpoint on its own.
+        // A newer request wins if the bootstrap response arrives late.
+        const requestId = (this._favoriteRequestId || 0) + 1;
+        this._favoriteRequestId = requestId;
+        const source = force
+            ? rpc("/get-favorite-apps", {})
+            : loadThemeRecord().then((rec) => rec.favorite_apps);
+        return source.then((rec) => {
+            if (this._favoriteRequestId !== requestId) {
+                return this.favappsdata;
             }
-            return rec;
+            this.favappsdata = rec || { app_list: [] };
+            this._applyFavoriteData(this.favappsdata);
+            return this.favappsdata;
         });
     },
 
@@ -336,13 +346,9 @@ patch(NavBar.prototype, {
             this._applyAppdrawerIcons(this._iconData)
             return
         }
-        if (!this._iconDataPromise) {
-            var rec_ids = this.menuService.getApps().map(app => app.id)
-            this._iconDataPromise = rpc('/get/irmenu/icondata', {
-                'menu_ids': rec_ids,
-            })
-        }
-        this._iconDataPromise.then(function(rec) {
+        // SpiffyMenuGroup already loads this payload. Reuse that promise
+        // instead of requesting /get/irmenu/icondata a second time.
+        spiffyMenuStore.load(this.menuService).then(function(rec) {
             self._iconData = rec
             self._applyAppdrawerIcons(rec)
         })

@@ -10,7 +10,7 @@
 				<t t-if="env.config.viewType === 'list' || env.viewType === 'list'">
 					<button type="button" title="Toggle Filter Row" 
 							class="btn btn-primary ri ri-search-eye-line m-1 show_filter_row"
-							t-att-class="{ active: spiffyPager.showFilterRow }"
+							t-att-class="{ active: themeState.showFilterRow }"
 							t-on-click.stop="() => this.toggleFilterClass()" />
 				</t>	
 				<!-- <button class="btn btn-primary ri ri-equalizer-line" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/> -->
@@ -19,8 +19,8 @@
 					<button type="button" title="Refresh" class="reload_view btn btn-primary ri ri-refresh-line m-1" t-on-click.stop="() => this.navigate(0)" />
 					<!-- Chatter position only makes sense on form views -->
 					<t t-if="env.config?.viewType === 'form' or env.viewType === 'form'">
-						<button type="button" title="Chatter Right" class="chatter_position_right btn btn-primary ri ri-layout-right-line m-1" t-att-class="{ active: spiffyPager.chatterPosition === 'chatter_right' }" t-on-click.stop="() => this.updateChatterPosition('chatter_right')" />
-						<button type="button" title="Chatter Bottom" class="chatter_position_bottom btn btn-primary ri ri-layout-bottom-line m-1" t-att-class="{ active: spiffyPager.chatterPosition === 'chatter_bottom' }" t-on-click.stop="() => this.updateChatterPosition('chatter_bottom')" />
+						<button type="button" title="Chatter Right" class="chatter_position_right btn btn-primary ri ri-layout-right-line m-1" t-att-class="{ active: themeState.chatterPosition === 'chatter_right' }" t-on-click.stop="() => this.updateChatterPosition('chatter_right')" />
+						<button type="button" title="Chatter Bottom" class="chatter_position_bottom btn btn-primary ri ri-layout-bottom-line m-1" t-att-class="{ active: themeState.chatterPosition === 'chatter_bottom' }" t-on-click.stop="() => this.updateChatterPosition('chatter_bottom')" />
 					</t>
 					<t t-if="env.config.viewType === 'list' || env.viewType === 'list'">
 						<button t-if="isGroupedList" type="button" title="Expand/Collapse Groups" class="expand_groups_records btn btn-primary ri ri-menu-unfold-line m-1" t-att-class="{ active: anyGroupExpanded }" t-on-click.stop="groupsExpand"/>

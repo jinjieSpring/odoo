@@ -7,6 +7,7 @@ import { Pager } from "@web/core/pager/pager";
 import { patch } from "@web/core/utils/patch";
 import { rpc } from "@web/core/network/rpc";
 import { onWillDestroy, onMounted, useState } from "@odoo/owl";
+import { setChatterPosition, setShowFilterRow, spiffyThemeState } from "@spiffy_theme_backend/js/menu";
 
 patch(Pager.prototype, {
     setup() {
@@ -16,14 +17,14 @@ patch(Pager.prototype, {
         // they are synced from this state, never queried back.
         this.spiffyPager = useState({
             dialogOpen: document.body.classList.contains("modal-open"),
-            chatterPosition: "chatter_bottom",
-            showFilterRow: false,
         });
+        // Chatter position and the filter row are filled by the navbar
+        // bootstrap call. Reading the shared state avoids a request per pager.
+        this.themeState = useState(spiffyThemeState);
         onWillDestroy(() => {
             this._modalObserver?.disconnect();
         });
         onMounted(() => {
-            this._loadPreferences();
             const observer = new MutationObserver(() => {
                 this.spiffyPager.dialogOpen = document.body.classList.contains("modal-open");
             });
@@ -33,17 +34,6 @@ patch(Pager.prototype, {
             });
             this._modalObserver = observer;
         });
-    },
-
-    async _loadPreferences() {
-        const chatterPosition = await rpc('/update/chatter/position', {});
-        this.spiffyPager.chatterPosition = chatterPosition === "chatter_right"
-            ? "chatter_right"
-            : "chatter_bottom";
-
-        const showFilter = await rpc('/update/filter/row', {});
-        this.spiffyPager.showFilterRow = showFilter === true;
-        document.body.classList.toggle("show_filter_row", this.spiffyPager.showFilterRow);
     },
 
     // Expand/collapse-all button for grouped list views. The button lives in
@@ -69,19 +59,16 @@ patch(Pager.prototype, {
     },
 
     async updateChatterPosition(position) {
+        setChatterPosition(position);
         await rpc('/update/chatter/position', {
             'chatter_position': position
         });
-        this.spiffyPager.chatterPosition = position;
-        document.body.classList.remove("chatter_bottom", "chatter_right");
-        document.body.classList.add(position);
     },
 
     async toggleFilterClass() {
-        this.spiffyPager.showFilterRow = !this.spiffyPager.showFilterRow;
-        document.body.classList.toggle("show_filter_row", this.spiffyPager.showFilterRow);
+        setShowFilterRow(!this.themeState.showFilterRow);
         rpc('/update/filter/row', {
-            show_filter_row: this.spiffyPager.showFilterRow,
+            show_filter_row: this.themeState.showFilterRow,
         });
     },
 

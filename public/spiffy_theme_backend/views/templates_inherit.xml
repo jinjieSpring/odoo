@@ -6,11 +6,13 @@
     <template id="biz_responsive_web_layout_template" inherit_id="web.layout" name="Bizople Responsive Web Layout">
         <xpath expr="//meta[last()]" position="after">
             <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-            <link rel="stylesheet" type="text/css" href="/spiffy_theme_backend/static/src/font/RemixIcon/remixicon.css" />
         </xpath>
     </template>
 
     <template id="biz_webclient_bootstrap_inherit" inherit_id="web.webclient_bootstrap" name="webclient bootstrap inherit">
+        <xpath expr="//t[@t-set='head_web']" position="inside">
+            <link rel="stylesheet" type="text/css" href="/spiffy_theme_backend/static/src/font/RemixIcon/remixicon.css" />
+        </xpath>
         <xpath expr="//t[@t-set='head_web']" position="before">
             <t t-set="html_data" t-value="{'class': ('o_enterprise' if request.env['ir.module.module'].sudo().search([('name', '=', 'web_enterprise'), ('state', '=', 'installed')], limit=1) else 'o_community') + ' spiffy_theme_backend'}"/>
         </xpath>

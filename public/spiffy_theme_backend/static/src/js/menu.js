@@ -10,7 +10,6 @@ import { SwitchCompanyMenu } from "@web/webclient/switch_company_menu/switch_com
 import { patch } from "@web/core/utils/patch";
 import { session } from "@web/session";
 import { useService } from '@web/core/utils/hooks';
-import { loadCSS } from "@web/core/assets";
 import { onRendered, onWillUnmount, reactive, useEffect, useExternalListener, useState } from "@odoo/owl";
 import { routerBus } from "@web/core/browser/router";
 import { user } from "@web/core/user";
@@ -31,6 +30,8 @@ export const spiffyThemeState = reactive({
     isAdmin: true,
     languages: [],
     activeLang: null,
+    chatterPosition: "chatter_right",
+    showFilterRow: false,
 });
 
 export function setDarkMode(value) {
@@ -41,6 +42,32 @@ export function setDarkMode(value) {
 export function setSidebarPinned(value) {
     spiffyThemeState.sidebarPinned = Boolean(value);
     document.body.classList.toggle("pinned", spiffyThemeState.sidebarPinned);
+}
+
+export function setChatterPosition(value) {
+    const position = value === "chatter_right" ? "chatter_right" : "chatter_bottom";
+    spiffyThemeState.chatterPosition = position;
+    document.body.classList.remove("chatter_right", "chatter_bottom");
+    document.body.classList.add(position);
+}
+
+export function setShowFilterRow(value) {
+    spiffyThemeState.showFilterRow = Boolean(value);
+    document.body.classList.toggle("show_filter_row", spiffyThemeState.showFilterRow);
+}
+
+// One bootstrap call shared by the navbar, the app drawer, and the pager.
+// Dark mode, bookmarks, favorites, chatter position, and the filter row all
+// come back on this response.
+let themeRecordPromise = null;
+export function loadThemeRecord() {
+    if (!themeRecordPromise) {
+        themeRecordPromise = rpc("/get/model/record").catch((error) => {
+            themeRecordPromise = null;
+            throw error;
+        });
+    }
+    return themeRecordPromise;
 }
 
 function findNames(memo, menu) {
@@ -213,12 +240,8 @@ patch(NavBar.prototype, {
 
         this._search_def = false;
 
-        // on reload get mode color
-        this._getModeData();
-        // on reload add backend theme class
+        // Theme classes, bookmarks, and favorites share one backend call.
         this.addconfiguratorclass()
-        // on reload add bookmark tags in menu
-        this._loadBookmarks()
 
         // The app menu group data is loaded by the SpiffyMenuGroup component.
         // The language list is loaded by the SwitchCompanyMenu patch.
@@ -324,11 +347,6 @@ patch(NavBar.prototype, {
     },
 
 
-    _getModeData: function () {
-        rpc('/get/dark/mode/data').then((darkMode) => {
-            setDarkMode(darkMode);
-        })
-    },
     addconfiguratorclass: function () {
         const addBodyClass = (name) => {
             if (typeof name !== "string" || !name) {
@@ -349,8 +367,28 @@ patch(NavBar.prototype, {
         const setStyleAttr = (selector, style) => {
             document.querySelectorAll(selector).forEach((el) => el.setAttribute("style", style));
         };
-        rpc('/get/model/record').then((rec) => {
+        loadThemeRecord().then((rec) => {
+            this._applyBookmarks(rec.bookmarks);
+            if (rec.darkmode) {
+                setDarkMode(true);
+            }
+            if (rec.bookmark_panel) {
+                this.bookmarkPanel.show = true;
+                document.body.classList.add("bookmark_panel_show");
+            }
+            if (rec.prevent_auto_save) {
+                addBodyClass(rec.prevent_auto_save);
+            }
+            spiffyThemeState.todoEnabled = Boolean(rec.todo_list_enable);
+            spiffyThemeState.showEditMode = Boolean(rec.show_edit_mode);
+            spiffyThemeState.isAdmin = Boolean(rec.is_admin);
+            if (rec.pinned_sidebar) {
+                setSidebarPinned(true);
+            }
             const record = rec.record_dict[0];
+            if (!record) {
+                return;
+            }
             addBodyClass(record.separator);
             addBodyClass(record.tab);
             addBodyClass(record.checkbox);
@@ -359,14 +397,10 @@ patch(NavBar.prototype, {
             addBodyClass(record.popup);
             addBodyClass(record.font_size);
             addBodyClass(record.login_page_style);
-            addBodyClass(record.chatter_position);
+            setChatterPosition(record.chatter_position);
+            setShowFilterRow(record.show_filter_row);
             addBodyClass(record.list_view_density);
             addBodyClass(record.input_style);
-
-            // Load Font size file based on selected option
-            if (rec.record_dict[0].font_size) {
-                loadCSS(`/spiffy_theme_backend/static/src/scss/font_sizes/${rec.record_dict[0].font_size}.css`);
-            }
 
             var size = document.documentElement.clientWidth;
             if (size <= 992) {
@@ -421,24 +455,6 @@ patch(NavBar.prototype, {
 
             if (record.attachment_in_tree_view) {
                 addBodyClass("show_attachment");
-            }
-            if (rec.darkmode) {
-                setDarkMode(true);
-            }
-            if (rec.bookmark_panel) {
-                this.bookmarkPanel.show = true;
-                document.body.classList.add("bookmark_panel_show");
-            }
-            if (rec.prevent_auto_save) {
-                addBodyClass(rec.prevent_auto_save);
-            }
-            // These flags drive t-if conditions in the SwitchCompanyMenu
-            // template instead of removing already-rendered elements.
-            spiffyThemeState.todoEnabled = Boolean(rec.todo_list_enable);
-            spiffyThemeState.showEditMode = Boolean(rec.show_edit_mode);
-            spiffyThemeState.isAdmin = Boolean(rec.is_admin);
-            if (rec.pinned_sidebar) {
-                setSidebarPinned(true);
             }
             if (record.list_view_sticky_header) {
                 addBodyClass("list_view_sticky_header");
@@ -514,8 +530,7 @@ patch(NavBar.prototype, {
             document.body.setAttribute("headerMode", "visible");
         })
     },
-    async _loadBookmarks() {
-        const rec = await rpc('/get/bookmark/link', {});
+    _applyBookmarks(rec) {
         this.bookmarks.list = (rec || []).map((value) => ({
             id: value.id,
             name: value.name,
@@ -524,6 +539,10 @@ patch(NavBar.prototype, {
             active: false,
         }));
         this._syncActiveBookmark();
+    },
+    async _loadBookmarks() {
+        const rec = await rpc('/get/bookmark/link', {});
+        this._applyBookmarks(rec);
     },
     _syncActiveBookmark() {
         const clean = (url) => (url || "").replace(/\?$/, "");

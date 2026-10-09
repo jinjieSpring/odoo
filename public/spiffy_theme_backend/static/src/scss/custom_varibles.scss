@@ -2,6 +2,10 @@
 // Licensed under the Bizople Proprietary License v1.0.
 // Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
 :root{
+    font-size: 14px;
+    --spiffy-font-size-sm: 13px;
+    --spiffy-font-size-md: 14px;
+    --spiffy-font-size-lg: 16px;
     --light-theme-secondary-color: #ffffff;
     --light-theme-secondary-text-color: #1b1b1b;
     --light-theme-body-color: #eff3f9;
@@ -42,6 +46,18 @@ body.dark_mode {
 }
 
 html{
+    &[data-font-size="font_small"]{
+        font-size: 12px;
+        --spiffy-font-size-sm: 11px;
+        --spiffy-font-size-md: 12px;
+        --spiffy-font-size-lg: 14px;
+    }
+    &[data-font-size="font_large"]{
+        font-size: 18px;
+        --spiffy-font-size-sm: 17px;
+        --spiffy-font-size-md: 18px;
+        --spiffy-font-size-lg: 20px;
+    }
     &[data-theme-style="biz_theme_rounded"]{
         --border-radius-lg: 16px;
         --border-radius-md: 10px;

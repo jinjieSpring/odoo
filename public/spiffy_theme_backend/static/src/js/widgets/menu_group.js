@@ -45,6 +45,7 @@ export const spiffyMenuStore = reactive({
             this.groups = rec.spiffy_app_group || [];
             this.menus = apps;
             this.loaded = true;
+            return rec;
         })().catch((error) => {
             this._loading = null;
             throw error;

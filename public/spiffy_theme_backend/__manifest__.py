@@ -133,12 +133,6 @@
             "/spiffy_theme_backend/static/src/js/menu_service.js",
             "/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu.js",
             "/spiffy_theme_backend/static/src/js/right_click_menu/right_click_menu_patch.js",
-            ('include', 'backend.webclientmulti'),
-        ],
-        'backend.webclientmulti': [
-            '/web/static/lib/jquery/jquery.js',
-            '/spiffy_theme_backend/static/src/js/jquery-ui/jquery-ui.min.js',
-            ('include', 'web_editor.wysiwyg_iframe_editor_assets'),
         ],
         'web.assets_frontend': [
             '/spiffy_theme_backend/static/src/scss/loginpage.scss',
