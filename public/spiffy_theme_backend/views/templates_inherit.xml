@@ -14,7 +14,7 @@
             <link rel="stylesheet" type="text/css" href="/spiffy_theme_backend/static/src/font/RemixIcon/remixicon.css" />
         </xpath>
         <xpath expr="//t[@t-set='head_web']" position="before">
-            <t t-set="html_data" t-value="{'class': ('o_enterprise' if request.env['ir.module.module'].sudo().search([('name', '=', 'web_enterprise'), ('state', '=', 'installed')], limit=1) else 'o_community') + ' spiffy_theme_backend'}"/>
+            <t t-set="html_data" t-value="{'class': ('o_enterprise' if 'web_enterprise' in request.env.registry._init_modules else 'o_community') + ' spiffy_theme_backend'}"/>
         </xpath>
         <!-- Fix the issue where the PWA icon is not displayed on iPhone devices. -->
         <xpath expr="//meta[@name='viewport']" position="after">

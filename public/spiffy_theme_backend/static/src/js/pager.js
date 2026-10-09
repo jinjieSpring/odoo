@@ -6,8 +6,8 @@
 import { Pager } from "@web/core/pager/pager";
 import { patch } from "@web/core/utils/patch";
 import { rpc } from "@web/core/network/rpc";
-import { onWillDestroy, onMounted, useState } from "@odoo/owl";
-import { setChatterPosition, setShowFilterRow, spiffyThemeState } from "@spiffy_theme_backend/js/menu";
+import { onWillDestroy, useState } from "@odoo/owl";
+import { bindDialogOpenWatcher, setChatterPosition, setShowFilterRow, spiffyThemeState } from "@spiffy_theme_backend/js/menu";
 
 patch(Pager.prototype, {
     setup() {
@@ -15,24 +15,12 @@ patch(Pager.prototype, {
         // Reactive state driving the spiffy buttons in the Pager template.
         // The matching body classes are global theme flags consumed by SCSS;
         // they are synced from this state, never queried back.
-        this.spiffyPager = useState({
-            dialogOpen: document.body.classList.contains("modal-open"),
-        });
-        // Chatter position and the filter row are filled by the navbar
-        // bootstrap call. Reading the shared state avoids a request per pager.
+        // Chatter position, the filter row, and whether a dialog is open are
+        // shared. One body observer serves every pager.
         this.themeState = useState(spiffyThemeState);
+        const unwatchDialog = bindDialogOpenWatcher();
         onWillDestroy(() => {
-            this._modalObserver?.disconnect();
-        });
-        onMounted(() => {
-            const observer = new MutationObserver(() => {
-                this.spiffyPager.dialogOpen = document.body.classList.contains("modal-open");
-            });
-            observer.observe(document.body, {
-                attributes: true,
-                attributeFilter: ['class'],
-            });
-            this._modalObserver = observer;
+            unwatchDialog();
         });
     },
 

@@ -4,10 +4,9 @@
 # Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
 
 import datetime
+import time
 from odoo import http, fields,_,SUPERUSER_ID
 from odoo.http import request
-from odoo.addons.web.controllers.dataset import DataSet as primary_colorDataset
-from ast import literal_eval
 from odoo.addons.web.controllers.webmanifest import WebManifest as SpiffyWebManifest
 from odoo.exceptions import AccessError,AccessDenied
 from odoo.models import check_method_name
@@ -30,7 +29,7 @@ import xlsxwriter
 import werkzeug.exceptions
 from werkzeug.urls import url_parse
 from odoo.http import content_disposition, request
-from odoo.tools.safe_eval import safe_eval, time
+from odoo.tools.safe_eval import safe_eval
 from odoo.addons.web.controllers.export import ExcelExport
 from odoo.exceptions import UserError
 
@@ -39,6 +38,11 @@ _logger = logging.getLogger(__name__)
 
 TRUSTED_DEVICE_COOKIE = 'td_id'
 TRUSTED_DEVICE_AGE = 90*86400 # 90 days expiration
+
+# (dbname, model) -> (monotonic, report dicts). Reports rarely change.
+_RIGHT_CLICK_REPORT_CACHE = {}
+_RIGHT_CLICK_REPORT_TTL = 300
+_RIGHT_CLICK_REPORT_CACHE_LIMIT = 128
 
 # Fields the web client applies as classes, attributes, or CSS variables.
 # Binary images are read with bin_size so the payload only says whether a
@@ -398,29 +402,31 @@ class BackendConfigration(http.Controller):
 
     @http.route(['/get/appsearch/data'], type='jsonrpc', auth='public')
     def get_appsearch_data(self, menuOption=None, **kw):
-        menu_items = []
-        menu_records = request.env['ir.ui.menu'].search(
-            [('name', 'ilike', kw.get('searchvals'))], order='id asc')
+        domain = [('name', 'ilike', kw.get('searchvals') or ''), ('child_id', '=', False)]
         if menuOption:
-            for record in menu_records:
-                if record.parent_path:
-                    parent_record = record.parent_path.split('/')
-                    parent_record_id = parent_record[0]
-                    if parent_record_id == menuOption:
-                        if not record.child_id:
-                            menu_items.append({
-                                'name': record.complete_name,
-                                'menu_id': record.id
-                            })
-        else:
-            for record in menu_records:
-                if not record.child_id:
-                    menu_items.append({
-                        'name': record.complete_name,
-                        'menu_id': record.id,
-                        'previous_menu_id': record.parent_id.id,
-                        'action_id': record.action.id if record.action else None,
-                    })
+            if not str(menuOption).isdigit():
+                return []
+            domain.append(('parent_path', '=like', '%s/%%' % int(menuOption)))
+        rows = request.env['ir.ui.menu'].search_read(
+            domain, ['complete_name', 'parent_id', 'action'], order='id asc',
+        )
+        if menuOption:
+            return [{'name': row['complete_name'], 'menu_id': row['id']} for row in rows]
+        menu_items = []
+        for row in rows:
+            action = row.get('action') or ''
+            action_id = None
+            if ',' in action:
+                action_part = action.split(',', 1)[1]
+                if action_part.isdigit():
+                    action_id = int(action_part)
+            parent = row.get('parent_id')
+            menu_items.append({
+                'name': row['complete_name'],
+                'menu_id': row['id'],
+                'previous_menu_id': parent[0] if parent else False,
+                'action_id': action_id,
+            })
         return menu_items
 
     @http.route(['/get/tab/title/'], type='jsonrpc', auth='public')
@@ -1382,25 +1388,8 @@ class BackendConfigration(http.Controller):
         if active_field_value is not None:
             is_active = active_field_value
 
-        # PDF reports for this model (for "Report Preview")
-        reports = []
-        has_report = False
-        try:
-            report_records = request.env['ir.actions.report'].sudo().search_read(
-                [
-                    ('model', '=', res_model),
-                    ('report_type', '=', 'qweb-pdf'),
-                    ('binding_model_id', '!=', False),
-                ],
-                fields=['id', 'name', 'report_name'],
-                order='id asc',
-                limit=20,
-            )
-            if report_records:
-                has_report = True
-                reports = report_records
-        except Exception:
-            pass
+        reports = self._right_click_reports(res_model)
+        has_report = bool(reports)
 
         return {
             'enabled': True,
@@ -1411,16 +1400,31 @@ class BackendConfigration(http.Controller):
             'reports': reports,
         }
 
+    def _right_click_reports(self, res_model):
+        """PDF reports bound to a model, reused across right-clicks."""
+        key = (request.env.cr.dbname, res_model)
+        now = time.monotonic()
+        cached = _RIGHT_CLICK_REPORT_CACHE.get(key)
+        if cached and now - cached[0] < _RIGHT_CLICK_REPORT_TTL:
+            return cached[1]
+        try:
+            reports = request.env['ir.actions.report'].sudo().search_read(
+                [
+                    ('model', '=', res_model),
+                    ('report_type', '=', 'qweb-pdf'),
+                    ('binding_model_id', '!=', False),
+                ],
+                fields=['id', 'name', 'report_name'],
+                order='id asc',
+                limit=20,
+            )
+        except Exception:
+            reports = []
+        if len(_RIGHT_CLICK_REPORT_CACHE) >= _RIGHT_CLICK_REPORT_CACHE_LIMIT:
+            _RIGHT_CLICK_REPORT_CACHE.clear()
+        _RIGHT_CLICK_REPORT_CACHE[key] = (now, reports)
+        return reports
 
-class Dataset(primary_colorDataset):
-    @http.route(['/web/dataset/call_kw', '/web/dataset/call_kw/<path:path>'], type='jsonrpc', auth="user")
-    def call_kw(self, model, method, args, kwargs, path=None):
-        if type(args) == str:
-            args = literal_eval(args)
-        if type(kwargs) == str:
-            kwargs = literal_eval(kwargs)
-        res = super(Dataset, self).call_kw(model,method,args,kwargs,path)
-        return res
 
 class WebManifest(SpiffyWebManifest):
     def _icon_path(self):

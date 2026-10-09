@@ -10,7 +10,7 @@ import { SwitchCompanyMenu } from "@web/webclient/switch_company_menu/switch_com
 import { patch } from "@web/core/utils/patch";
 import { session } from "@web/session";
 import { useService } from '@web/core/utils/hooks';
-import { onRendered, onWillUnmount, reactive, useEffect, useExternalListener, useState } from "@odoo/owl";
+import { onMounted, onWillUnmount, reactive, useEffect, useExternalListener, useState } from "@odoo/owl";
 import { routerBus } from "@web/core/browser/router";
 import { user } from "@web/core/user";
 import { TodoSidebar } from "@spiffy_theme_backend/js/widgets/todo_sidebar";
@@ -32,6 +32,8 @@ export const spiffyThemeState = reactive({
     activeLang: null,
     chatterPosition: "chatter_right",
     showFilterRow: false,
+    showAttachment: false,
+    dialogOpen: false,
 });
 
 export function setDarkMode(value) {
@@ -60,6 +62,31 @@ export function setShowFilterRow(value) {
 // Dark mode, bookmarks, favorites, chatter position, and the filter row all
 // come back on this response.
 let themeRecordPromise = null;
+let dialogObserver = null;
+let dialogWatchers = 0;
+
+export function bindDialogOpenWatcher() {
+    spiffyThemeState.dialogOpen = document.body.classList.contains("modal-open");
+    if (!dialogObserver) {
+        dialogObserver = new MutationObserver(() => {
+            const open = document.body.classList.contains("modal-open");
+            if (spiffyThemeState.dialogOpen !== open) {
+                spiffyThemeState.dialogOpen = open;
+            }
+        });
+        dialogObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    }
+    dialogWatchers += 1;
+    return () => {
+        dialogWatchers -= 1;
+        if (dialogWatchers <= 0 && dialogObserver) {
+            dialogObserver.disconnect();
+            dialogObserver = null;
+            dialogWatchers = 0;
+        }
+    };
+}
+
 export function loadThemeRecord() {
     if (!themeRecordPromise) {
         themeRecordPromise = rpc("/get/model/record").catch((error) => {
@@ -68,23 +95,6 @@ export function loadThemeRecord() {
         });
     }
     return themeRecordPromise;
-}
-
-function findNames(memo, menu) {
-    if (menu.actionID) {
-        memo[menu.name.trim()] = menu;
-    }
-    if (menu.childrenTree) {
-        const innerMemo = menu.childrenTree.reduce(findNames, {});
-        for (const innerKey in innerMemo) {
-            memo[menu.name.trim() + " / " + innerKey] = innerMemo[innerKey];
-        }
-    }
-    return memo;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 var session_dict = { 'demo': 'demo' }
@@ -221,24 +231,13 @@ patch(NavBar.prototype, {
         useExternalListener(document, "mozfullscreenchange", this._syncFullscreenState);
         useExternalListener(document, "msfullscreenchange", this._syncFullscreenState);
 
-        // This function is added for the menu to fix layout issues caused by width rendering problems
-        onRendered(() => {
-            sleep(150).then(() => {
-                self.adapt()
-            });
+        // Widths are wrong during the first paint. Adapt once after layout,
+        // instead of delaying every later navbar render.
+        onMounted(() => {
+            requestAnimationFrame(() => this.adapt());
         });
         self.menuService = useService("menu");
         this.currentCompany = user.activeCompany;
-
-        this._searchableMenus = {};
-        var menu = this.menuService.getApps()
-        for (const menu of this.menuService.getApps()) {
-            Object.assign(
-                this._searchableMenus,[this.menuService.getMenuAsTree(menu.id)].reduce(findNames,{}),
-            );
-        }
-
-        this._search_def = false;
 
         // Theme classes, bookmarks, and favorites share one backend call.
         this.addconfiguratorclass()
@@ -453,7 +452,8 @@ patch(NavBar.prototype, {
                 addBodyClass(record.drawer_color_pallet);
             }
 
-            if (record.attachment_in_tree_view) {
+            spiffyThemeState.showAttachment = Boolean(record.attachment_in_tree_view);
+            if (spiffyThemeState.showAttachment) {
                 addBodyClass("show_attachment");
             }
             if (record.list_view_sticky_header) {

@@ -22,7 +22,8 @@ import { rpc } from "@web/core/network/rpc";
 import { _t } from "@web/core/l10n/translation";
 import { patch } from "@web/core/utils/patch";
 import { AttachmentUploadService } from "@mail/core/common/attachment_upload_service";
-import { onMounted, useState, useChildSubEnv, onPatched, onWillUnmount } from "@odoo/owl";
+import { useState, useChildSubEnv, onPatched, onWillUnmount, useEffect } from "@odoo/owl";
+import { spiffyThemeState } from "@spiffy_theme_backend/js/menu";
 import { usePopover } from "@web/core/popover/popover_hook";
 import { CalendarDialog } from "./calendar_dialog";
 import { ColumnFilterPopover } from "./widgets/column_filter_popover";
@@ -47,15 +48,15 @@ patch(ListRenderer.prototype, {
         this._bizLastRecIdsKey = null;
         this._bizAlive = true;
 
-        onMounted(() => {
-            this._bizClassObserver = new MutationObserver(() => this._scheduleAttachmentLoad());
-            this._bizClassObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-            this._scheduleAttachmentLoad();
-        });
+        useEffect(
+            () => {
+                this._scheduleAttachmentLoad();
+            },
+            () => [spiffyThemeState.showAttachment]
+        );
 
         onWillUnmount(() => {
             this._bizAlive = false;
-            this._bizClassObserver?.disconnect();
             clearTimeout(this._bizAttachmentTimer);
         });
 
@@ -74,7 +75,7 @@ patch(ListRenderer.prototype, {
     },
 
     _attachmentsEnabled() {
-        return document.body.classList.contains("show_attachment") && this.props.archInfo?.editable != "bottom";
+        return spiffyThemeState.showAttachment && this.props.archInfo?.editable != "bottom";
     },
 
     _visibleRecords(list = this.props.list) {

@@ -14,7 +14,7 @@
 							t-on-click.stop="() => this.toggleFilterClass()" />
 				</t>	
 				<!-- <button class="btn btn-primary ri ri-equalizer-line" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/> -->
-				<button t-if="!spiffyPager.dialogOpen" class="btn btn-primary ri ri-equalizer-line" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
+				<button t-if="!themeState.dialogOpen" class="btn btn-primary ri ri-equalizer-line" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"/>
 				<ul class="dropdown-menu p-2 shadow-lg" aria-labelledby="dropdownMenuButton" style="background-color: #dfdfdf; !important">
 					<button type="button" title="Refresh" class="reload_view btn btn-primary ri ri-refresh-line m-1" t-on-click.stop="() => this.navigate(0)" />
 					<!-- Chatter position only makes sense on form views -->

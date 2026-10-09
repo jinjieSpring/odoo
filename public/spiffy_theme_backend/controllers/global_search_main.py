@@ -3,6 +3,8 @@
 # Licensed under the Bizople Proprietary License v1.0.
 # Copyright (C) 2026 Bizople Solutions Pvt. Ltd.
 
+import time
+
 from odoo import http
 from odoo.http import request
 
@@ -23,17 +25,47 @@ _SKIP_MODELS = {
 # (dbname, uid, lang, menu write stamp, groups) -> [(model, label), ...]
 _SEARCH_TARGET_CACHE = {}
 _SEARCH_TARGET_CACHE_LIMIT = 64
+# dbname -> (monotonic, menu write stamp). Avoids a menu query on every keystroke.
+_MENU_STAMP_CACHE = {}
+_MENU_STAMP_TTL = 60
+# (dbname, uid) -> model names that recently returned rows, most recent first.
+_HOT_MODELS = {}
+_HOT_MODEL_LIMIT = 16
+# A keystroke searches recent hits first, then stops after this many models
+# or this much time once it already has rows.
+_MAX_MODELS_PER_SEARCH = 30
+_SEARCH_BUDGET_SEC = 0.2
 
 
 class SpiffySpaceSearch(http.Controller):
 
-    def _search_targets(self):
-        """Models behind menus the user can open, with a stored name field."""
-        env = request.env
+    def _menu_stamp(self, env):
+        now = time.monotonic()
+        cached = _MENU_STAMP_CACHE.get(env.cr.dbname)
+        if cached and now - cached[0] < _MENU_STAMP_TTL:
+            return cached[1]
         menu_stamp = env['ir.ui.menu'].sudo().search_read(
             [], ['write_date'], order='write_date desc', limit=1,
         )
         stamp = menu_stamp[0]['write_date'] if menu_stamp else False
+        _MENU_STAMP_CACHE[env.cr.dbname] = (now, stamp)
+        return stamp
+
+    def _ordered_targets(self, targets):
+        hot = _HOT_MODELS.get((request.env.cr.dbname, request.env.uid), ())
+        rank = {name: index for index, name in enumerate(hot)}
+        return sorted(targets, key=lambda item: rank.get(item[0], len(rank)))
+
+    def _remember_hit(self, model_name):
+        key = (request.env.cr.dbname, request.env.uid)
+        hot = [name for name in _HOT_MODELS.get(key, ()) if name != model_name]
+        hot.insert(0, model_name)
+        _HOT_MODELS[key] = tuple(hot[:_HOT_MODEL_LIMIT])
+
+    def _search_targets(self):
+        """Models behind menus the user can open, with a stored name field."""
+        env = request.env
+        stamp = self._menu_stamp(env)
         groups = tuple(sorted(env.user.group_ids.ids))
         key = (env.cr.dbname, env.uid, env.lang, stamp, groups)
         cached = _SEARCH_TARGET_CACHE.get(key)
@@ -93,13 +125,20 @@ class SpiffySpaceSearch(http.Controller):
             return []
 
         results = []
-        for model_name, model_label in self._search_targets():
-            if len(results) >= 10:
+        started = time.monotonic()
+        scanned = 0
+        for model_name, model_label in self._ordered_targets(self._search_targets()):
+            if len(results) >= 10 or scanned >= _MAX_MODELS_PER_SEARCH:
                 break
+            if scanned >= 8 and results and (time.monotonic() - started) >= _SEARCH_BUDGET_SEC:
+                break
+            scanned += 1
             try:
                 pairs = request.env[model_name].name_search(search, operator='ilike', limit=3)
             except Exception:
                 continue
+            if pairs:
+                self._remember_hit(model_name)
             for rec_id, display_name in pairs:
                 results.append({
                     'model': model_name,
