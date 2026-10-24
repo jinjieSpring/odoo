@@ -344,7 +344,9 @@ export class PosOrder extends PosOrderAccounting {
                     line,
                     related_lines
                 );
-                related_lines.forEach((line) => line.setUnitPrice(price));
+                related_lines
+                    .filter((line) => line.price_type === "original")
+                    .forEach((line) => line.setUnitPrice(price));
             } else {
                 const newPrice = line.product_id.product_tmpl_id.getPrice(
                     pricelist,
@@ -606,12 +608,6 @@ export class PosOrder extends PosOrderAccounting {
 
     isToInvoice() {
         return this.to_invoice;
-    }
-
-    get hasCabaTax() {
-        return this.getOrderlines().some((line) =>
-            (line.tax_ids || []).some((tax) => tax && tax.tax_exigibility === "on_payment")
-        );
     }
 
     /* ---- Partner --- */
