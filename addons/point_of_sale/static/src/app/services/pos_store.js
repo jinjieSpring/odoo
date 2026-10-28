@@ -266,8 +266,13 @@ export class PosStore extends WithLazyGetterTrap {
         return [
             {
                 timeout: 300000, // 5 minutes
-                action: () =>
-                    this.router.state.current !== "PaymentScreen" && this.navigate("SaverScreen"),
+                action: () => {
+                    if (this.router.state.current === "PaymentScreen") {
+                        return false;
+                    }
+                    this.resetCashier();
+                    return this.navigate("SaverScreen");
+                },
             },
             {
                 timeout: 120000, // 2 minutes
@@ -2422,6 +2427,9 @@ export class PosStore extends WithLazyGetterTrap {
                         await this.data.searchRead("product.product", [
                             ["product_tmpl_id", "=", record.evalContext.id],
                         ]);
+                        if (this.selectedCategory?.id && !this.productsToDisplay.length) {
+                            this.setSelectedCategory(0);
+                        }
                         this.action.doAction({
                             type: "ir.actions.act_window_close",
                         });

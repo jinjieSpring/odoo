@@ -169,6 +169,8 @@ export class PaymentStripe extends PaymentInterface {
         const collectPaymentMethod = await this.terminal.collectPaymentMethod(clientSecret, {
             config_override: {
                 enable_customer_cancellation: true,
+                // Odoo does not record a tip chosen on the reader, so Stripe would charge it unseen
+                skip_tipping: true,
             },
         });
         if (collectPaymentMethod.error) {
@@ -187,8 +189,11 @@ export class PaymentStripe extends PaymentInterface {
                 return false;
             } else if (processPayment.paymentIntent) {
                 line.setPaymentStatus("waitingCapture");
-                line.uiState.stripeCardPresentNetwork =
-                    processPayment.paymentIntent.charges?.data[0]?.payment_method_details?.card_present?.network;
+                const paymentMethodDetails =
+                    processPayment.paymentIntent.charges?.data[0]?.payment_method_details;
+                line.uiState.stripeCardPresentNetwork = paymentMethodDetails?.card_present?.network;
+                line.uiState.stripeOvercaptureSupported =
+                    paymentMethodDetails?.card_present?.overcapture_supported;
 
                 const [captured_card_type, captured_transaction_id] =
                     this._getCapturedCardAndTransactionId(processPayment);
