@@ -221,6 +221,10 @@ TAX_EXEMPTION_MAPPING = {
     'VATEX-FR-F': 'VATEX-FR-F - Second-hand sales',
     'VATEX-FR-I': 'VATEX-FR-I - Sales of works of art',
     'VATEX-FR-J': 'VATEX-FR-J - Sales of antiques',
+    'DL8.46.1': 'Certain financial services',
+    'DL8.46.2': 'Supply of residential units (lease or sale)',
+    'DL8.46.3': 'Bare land',
+    'DL8.46.4': 'Local passenger transport',
 }
 
 # -------------------------------------------------------------------------
@@ -393,11 +397,22 @@ class AccountEdiCommon(models.AbstractModel):
 
     @api.model
     def _vat_is_equal(self, partner_vat, other_vat, country=False):
+        """
+        Compare the VAT against a partner's stored VAT:
+        - country-specific normalization where needed, which should stay consistent
+            with `_get_country_specific_vat_variants`,
+        - country prefixes are ignored, as the VAT may be stored with or without one
+            (ISO code or VAT-specific prefix, e.g. EL for Greece).
+        """
         partner_vat = partner_vat.replace(' ', '').upper()
         vat_to_compare = other_vat.replace(' ', '').replace('.', '').upper()
         if country and country.code == 'CH':
             partner_vat = re.sub(r"(TVA|IVA|MWST)?$", "", partner_vat.replace('.', '').replace('-', ''))
             vat_to_compare = re.sub(r"(TVA|IVA|MWST)?$", "", vat_to_compare.replace('-', ''))
+        if country:
+            for prefix in {country.code, *{'GB': ('XI',), 'GR': ('EL',), 'JP': ('T',)}.get(country.code, ())}:
+                partner_vat = partner_vat.removeprefix(prefix)
+                vat_to_compare = vat_to_compare.removeprefix(prefix)
         return partner_vat == vat_to_compare
 
     # -------------------------------------------------------------------------
@@ -571,6 +586,18 @@ class AccountEdiCommon(models.AbstractModel):
     # -------------------------------------------------------------------------
     # Import invoice
     # -------------------------------------------------------------------------
+
+    def _import_fix_line_price_unit_quantity_discount(self, quantity, discount, price_unit, line_total_amount, currency):
+        """ Recompute the quantity, discount and price unit so the line subtotal matches the line total amount
+        (LineExtensionAmount in UBL, LineTotalAmount in CII).
+        """
+        # TODO remove when France enforce stricter rules
+        current_line_subtotal = (1 - discount / 100) * (quantity * price_unit)
+        if not currency.is_zero((line_total_amount or 0.0) - current_line_subtotal):
+            quantity = quantity or 1
+            discount = 0
+            price_unit = (line_total_amount or 0.0) / quantity
+        return quantity, discount, price_unit
 
     def _import_invoice_ubl_cii(self, invoice, file_data, new=False):
         invoice.ensure_one()
@@ -1286,9 +1313,11 @@ class AccountEdiCommon(models.AbstractModel):
 
     def _check_customer_vat_match(self, customer, vat, collected_values):
         """
-        Compare the VAT from an EDI document against a partner's stored VAT,
-        with country-specific normalization where needed.
-        Should stay consistent with `_get_country_specific_vat_variants`.
+        Compare the VAT from an EDI document against a partner's stored VAT:
+        - country-specific normalization where needed, which should stay consistent
+          with `_get_country_specific_vat_variants`,
+        - country prefixes are ignored, as the VAT may be stored with or without one
+          (ISO code or VAT-specific prefix, e.g. EL for Greece).
         """
         country = self._import_retrieve_country(collected_values) or customer.country_id
         return self._vat_is_equal(customer.vat, vat, country)
@@ -1300,23 +1329,27 @@ class AccountEdiCommon(models.AbstractModel):
 
         name = customer_values.get('name')
         vat = customer_values.get('vat')
-        if not name or not vat:
+        if not name:
             return
 
         vat_mismatch = False
         if customer:
-            if not customer.vat:
+            if vat:
                 country = self._import_retrieve_country(collected_values)
-                customer.vat, _country_code = self.env['res.partner']._run_vat_checks(country, vat, validation='setnull')
+                if not customer.vat:
+                    customer.vat, _country_code = self.env['res.partner']._run_vat_checks(country, vat, validation='setnull')
+                    return
+                country_mismatch = bool(country and customer.country_id and customer.country_id != country)
+                if not country_mismatch and self._check_customer_vat_match(customer, vat, collected_values):
+                    return
+                vat_mismatch = True
+            else:
                 return
-            if self._check_customer_vat_match(customer, vat, collected_values):
-                return
-            vat_mismatch = True
 
         partner_create_values = self._import_prepare_missing_customer_create_values(collected_values)
         customer = self.env['res.partner'].create(partner_create_values)
         if vat_mismatch:
-            logs.append(_("Could not retrieve a partner corresponding to '%s' with the same VAT. A new partner was created.", name))
+            logs.append(_("Could not retrieve a partner corresponding to '%s' with the same VAT and country. A new partner was created.", name))
         else:
             logs.append(_("Could not retrieve a partner corresponding to '%s'. A new partner was created.", name))
         customer_values['customer'] = customer
@@ -1597,7 +1630,7 @@ class AccountEdiCommon(models.AbstractModel):
 
         if base_amount := allowance_charge.get('base_amount'):
             price_unit = base_amount * charge_indicator_sign * file_document_sign
-            quantity = multiplier_factor_numeric / 100
+            quantity = multiplier_factor_numeric / 100 if multiplier_factor_numeric is not None else 1
         else:
             price_unit = amount * charge_indicator_sign * file_document_sign
             quantity = 1
@@ -1608,7 +1641,9 @@ class AccountEdiCommon(models.AbstractModel):
             'price_unit': price_unit,
             'tax_ids': tax_values.get('tax') if tax_values else None,
         }
-        base_line_kwargs['_create_values']['name'] = reason
+        base_line_kwargs['_create_values']['name'] = reason or (
+            self.env._('Charge') if charge_indicator_sign == 1 else self.env._('Discount')
+        )
         return base_line_kwargs
 
     def _import_invoice_line_get_product_base_line_kwargs(self, collected_values):

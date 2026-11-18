@@ -19,23 +19,31 @@ import {
     waitStoreFetch,
 } from "@mail/../tests/mail_test_helpers";
 import { mailDataHelpers } from "@mail/../tests/mock_server/mail_mock_server";
+import { DISCUSS_SIDEBAR_COMPACT_LS } from "@mail/core/public_web/discuss_app_model";
 import {
     CROSS_TAB_CLIENT_MESSAGE,
     CROSS_TAB_HOST_MESSAGE,
+    CROSS_TAB_INIT_TIMEOUT,
 } from "@mail/discuss/call/common/rtc_service";
 
 import {
     advanceTime,
+    after,
+    animationFrame,
     beforeEach,
     describe,
     expect,
+    freezeTime,
     getFixture,
     hover,
     manuallyDispatchProgrammaticEvent,
     mockSendBeacon,
     mockUserAgent,
+    mockWorker,
+    press,
     queryFirst,
     test,
+    waitFor,
     waitUntil,
 } from "@odoo/hoot";
 import {
@@ -336,6 +344,29 @@ test("Click on inset card should replace the inset and active stream together", 
     await contains("video[type='camera']:not(.o-inset)");
 });
 
+test("Inset card removed while being dragged", async () => {
+    mockGetMedia();
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    const env = await start();
+    const rtc = env.services["discuss.rtc"];
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await click("[title='More']");
+    await click("[title='Share Screen']");
+    await click("[title='Turn camera on']");
+    await contains("video[type='camera'].o-inset");
+    await manuallyDispatchProgrammaticEvent(
+        queryFirst(".o-discuss-CallParticipantCard.o-inset"),
+        "mousedown"
+    );
+    await rtc.toggleVideo("screen", false);
+    await contains("video[type='camera']:not(.o-inset)");
+    await contains(".o-discuss-CallParticipantCard.o-inset", { count: 0 });
+    await manuallyDispatchProgrammaticEvent(document, "mousemove", { clientX: 10, clientY: 10 });
+    await manuallyDispatchProgrammaticEvent(document, "mouseup");
+});
+
 test("join/leave sounds are only played on main tab", async () => {
     const pyEnv = await startServer();
     const channelId = pyEnv["discuss.channel"].create({ name: "General" });
@@ -552,6 +583,35 @@ test("show call participants in discuss sidebar", async () => {
             ".o-mail-DiscussSidebarChannel:contains('General') ~ .o-mail-DiscussSidebarCallParticipants:contains(Mitchell Admin)",
         ],
     });
+});
+
+test("Compact sidebar call participants panel closes when the mouse leaves it", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    pyEnv["discuss.channel.rtc.session"].create({
+        channel_member_id: pyEnv["discuss.channel.member"].create({
+            channel_id: channelId,
+            partner_id: pyEnv["res.partner"].create({ name: "Alice" }),
+        }),
+        channel_id: channelId,
+    });
+    browser.localStorage.setItem(DISCUSS_SIDEBAR_COMPACT_LS, true);
+    await start();
+    await openDiscuss(channelId);
+    await contains(".o-mail-DiscussSidebar .o-mail-DiscussSidebarCallParticipants");
+    await hover(".o-mail-DiscussSidebar .o-mail-DiscussSidebarCallParticipants");
+    await contains(
+        ".o-mail-DiscussSidebar-floatingMenu .o-mail-DiscussSidebarCallParticipants-name:text('Alice')"
+    );
+    await hover(
+        ".o-mail-DiscussSidebar-floatingMenu .o-mail-DiscussSidebarCallParticipants-name:text('Alice')"
+    );
+    await advanceTime(500);
+    await contains(
+        ".o-mail-DiscussSidebar-floatingMenu .o-mail-DiscussSidebarCallParticipants-name:text('Alice')"
+    );
+    await hover(".o-mail-DiscussContent");
+    await contains(".o-mail-DiscussSidebar-floatingMenu", { count: 0 });
 });
 
 test("Sort call participants in side bar by name", async () => {
@@ -805,6 +865,174 @@ test("Cross tab calls: opening the fullscreen URL of the hosted call does not le
     await waitForSteps([]);
 });
 
+test("Cross tab calls: opening the fullscreen URL waits for the host tab to answer", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({
+        default_display_mode: "video_full_screen",
+        name: "Meeting",
+    });
+    const sessionId = pyEnv["discuss.channel.rtc.session"].create({
+        channel_member_id: pyEnv["discuss.channel.member"].search([
+            ["channel_id", "=", channelId],
+        ])[0],
+        channel_id: channelId,
+    });
+    onRpc("/mail/rtc/channel/join_call", () => asyncStep("join_call"));
+    const broadcastChannel = new BroadcastChannel("call_sync_state");
+    broadcastChannel.onmessage = (event) => {
+        if (event.data.type === CROSS_TAB_CLIENT_MESSAGE.INIT) {
+            asyncStep("init");
+        }
+        if (event.data.type === CROSS_TAB_CLIENT_MESSAGE.LEAVE) {
+            asyncStep("leave");
+        }
+    };
+    redirect("?fullscreen=1");
+    freezeTime();
+    const env = await start();
+    await waitForSteps(["init"]);
+    await openDiscuss(channelId);
+    await advanceTime(CROSS_TAB_INIT_TIMEOUT / 2);
+    expect(env.services["mail.store"].discuss.hasRestoredThread).toBe(true);
+    broadcastChannel.postMessage({
+        type: CROSS_TAB_HOST_MESSAGE.UPDATE_REMOTE,
+        hostedChannelId: channelId,
+        hostedSessionId: sessionId,
+        changes: { [sessionId]: { is_deaf: false, is_muted: false } },
+    });
+    await contains(".o-mail-Meeting.o-fullscreen .o-discuss-Call");
+    await waitForSteps([]);
+});
+
+test("Cross tab calls: opening the fullscreen URL joins when no tab hosts the call", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({
+        default_display_mode: "video_full_screen",
+        name: "Meeting",
+    });
+    pyEnv["discuss.channel.rtc.session"].create({
+        channel_member_id: pyEnv["discuss.channel.member"].search([
+            ["channel_id", "=", channelId],
+        ])[0],
+        channel_id: channelId,
+    });
+    onRpc("/mail/rtc/channel/join_call", () => asyncStep("join_call"));
+    redirect("?fullscreen=1");
+    await start();
+    await openDiscuss(channelId);
+    await advanceTime(CROSS_TAB_INIT_TIMEOUT);
+    await waitForSteps(["join_call"]);
+});
+
+test("Cross tab calls: rejecting an invitation to another channel keeps the hosted call", async () => {
+    const pyEnv = await startServer();
+    const [hostedChannelId, invitingChannelId] = pyEnv["discuss.channel"].create([
+        { name: "General" },
+        { name: "Sales" },
+    ]);
+    const hostedSessionId = pyEnv["discuss.channel.rtc.session"].create({
+        channel_member_id: pyEnv["discuss.channel.member"].search([
+            ["channel_id", "=", hostedChannelId],
+        ])[0],
+        channel_id: hostedChannelId,
+    });
+    const invitingMemberId = pyEnv["discuss.channel.member"].create({
+        channel_id: invitingChannelId,
+        partner_id: pyEnv["res.partner"].create({ name: "Bob" }),
+    });
+    const invitingSessionId = pyEnv["discuss.channel.rtc.session"].create({
+        channel_member_id: invitingMemberId,
+        channel_id: invitingChannelId,
+    });
+    pyEnv["discuss.channel.member"].write(
+        pyEnv["discuss.channel.member"].search([
+            ["channel_id", "=", invitingChannelId],
+            ["partner_id", "=", serverState.partnerId],
+        ]),
+        { rtc_inviting_session_id: invitingSessionId }
+    );
+    onRpc("/mail/rtc/channel/leave_call", async (request) => {
+        const { params } = await request.json();
+        asyncStep(`leave_call:${params.channel_id}`);
+    });
+    const broadcastChannel = new BroadcastChannel("call_sync_state");
+    broadcastChannel.onmessage = (event) => asyncStep(event.data.type);
+    await start();
+    await openDiscuss(hostedChannelId);
+    broadcastChannel.postMessage({
+        type: CROSS_TAB_HOST_MESSAGE.UPDATE_REMOTE,
+        hostedChannelId,
+        hostedSessionId,
+        changes: { [hostedSessionId]: { is_deaf: false, is_muted: false } },
+    });
+    await contains("[title='Mute']");
+    await click(".o-discuss-CallInvitation button[title='Reject']");
+    await contains(".o-discuss-CallInvitation", { count: 0 });
+    await click("[title='Mute']");
+    await waitForSteps([
+        CROSS_TAB_CLIENT_MESSAGE.INIT,
+        `leave_call:${invitingChannelId}`,
+        CROSS_TAB_CLIENT_MESSAGE.REQUEST_ACTION,
+    ]);
+});
+
+test("Cross tab calls: the host tab keeps its call when another tab closes the call", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    const env = await start();
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await contains("[title='Disconnect']");
+    const broadcastChannel = new BroadcastChannel("call_sync_state");
+    broadcastChannel.onmessage = (event) => {
+        if (event.data.type === CROSS_TAB_HOST_MESSAGE.PIP_CHANGE) {
+            asyncStep("pip_change");
+        }
+    };
+    broadcastChannel.postMessage({
+        type: CROSS_TAB_HOST_MESSAGE.CLOSE,
+        hostedSessionId: env.services["mail.store"].rtc.localSession.id,
+    });
+    broadcastChannel.postMessage({ type: CROSS_TAB_CLIENT_MESSAGE.INIT });
+    await waitForSteps(["pip_change"]);
+    await contains("[title='Disconnect']");
+});
+
+test("can start the call again after failing to join it", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    let isJoinFailing = true;
+    onRpc("/mail/rtc/channel/join_call", () => {
+        if (isJoinFailing) {
+            isJoinFailing = false;
+            throw new Error("join_call failed");
+        }
+    });
+    await start();
+    await openDiscuss(channelId);
+    expect.errors(1);
+    await click("[title='Start Call']");
+    await expect.waitForErrors(["RPC_ERROR: join_call failed"]);
+    await click("[title='Start Call']");
+    await contains(".o-discuss-Call");
+});
+
+test("disconnecting ends the call even when leaving it fails", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    onRpc("/mail/rtc/channel/leave_call", () => {
+        throw new Error("leave_call failed");
+    });
+    await start();
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await contains(".o-discuss-Call");
+    expect.errors(1);
+    await click(".o-discuss-CallActionList [title='Disconnect']");
+    await expect.waitForErrors(["RPC_ERROR: leave_call failed"]);
+    await contains("[title='Join the Call']");
+});
+
 test("automatically cancel incoming call after some time", async () => {
     const pyEnv = await startServer();
     const channelId = pyEnv["discuss.channel"].create({ name: "General" });
@@ -877,9 +1105,53 @@ test("shows warning on infinite mirror effect (screen-sharing then fullscreen)",
     await contains("button:contains('Resume stream') i.fa-play-circle-o");
 });
 
+test("stream paused on infinite mirror effect leaves other cards clickable and resumes at once", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    await start();
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await click("[title='More']");
+    await click("[title='Share Screen']");
+    await contains("video[type='screen']");
+    await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
+    await click("button[title='Fullscreen']");
+    await contains("button:contains('Stream paused')");
+    await contains(".o-discuss-CallParticipantCard:not(.pe-none) img[alt='Avatar']");
+    await hover(queryFirst("button:contains('Stream paused')"));
+    await click("button:contains('Resume stream')");
+    await animationFrame();
+    expect("video[type='screen']").toHaveCount(1);
+});
+
+test("pausing the user's own screen keeps other participants' screens visible", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    const channelMemberId = pyEnv["discuss.channel.member"].create({
+        channel_id: channelId,
+        partner_id: pyEnv["res.partner"].create({ name: "Bob" }),
+    });
+    const env = await start();
+    const network = await makeMockRtcNetwork({ env, channelId });
+    const bobRemote = network.makeMockRemote(channelMemberId);
+    await openDiscuss(channelId);
+    await click("[title='Join Call']");
+    await bobRemote.updateConnectionState("connected");
+    await bobRemote.updateUpload("screen", createVideoStream().getVideoTracks()[0]);
+    await contains(".o-discuss-CallParticipantCard[title='Bob'] video");
+    await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
+    await click("[title='More']");
+    await click("[title='Share Screen']");
+    await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
+    await click("button[title='Fullscreen']");
+    await contains(".o-discuss-CallInfiniteMirroringWarning");
+    await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
+    await click("[title='Show sidebar']");
+    await contains(".o-discuss-CallParticipantCard[title='Bob']:not(.pe-none) video");
+});
+
 test("single 'join' (without camera) button when last call was audio-only", async () => {
     const pyEnv = await startServer();
-    onRpc("/mail/rtc/session/notify_call_members", () => true);
     const alfredPartnerId = pyEnv["res.partner"].create({ name: "Alfred" });
     const channelId = pyEnv["discuss.channel"].create({
         channel_type: "chat",
@@ -905,7 +1177,6 @@ test("single 'join' (without camera) button when last call was audio-only", asyn
 
 test("single 'join' (with camera) button when last call had camera on", async () => {
     const pyEnv = await startServer();
-    onRpc("/mail/rtc/session/notify_call_members", () => true);
     const alfredPartnerId = pyEnv["res.partner"].create({ name: "Alfred" });
     const channelId = pyEnv["discuss.channel"].create({
         channel_type: "chat",
@@ -1002,6 +1273,27 @@ test("Shows warning badge on mic/camera on non-granted permission in meeting con
     await contains("button[title='Turn camera on'].o-tag-WARNING_BADGE", { count: 0 });
     await click("button[title='Disconnect']");
     await waitNotifications(["discuss.channel.rtc.session/ended"]);
+});
+
+test("mute and deafen hotkeys are ignored when not in a call", async () => {
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    pyEnv["discuss.channel.rtc.session"].create({
+        channel_member_id: pyEnv["discuss.channel.member"].create({
+            channel_id: channelId,
+            partner_id: pyEnv["res.partner"].create({ name: "Alfred" }),
+        }),
+        channel_id: channelId,
+    });
+    await start();
+    await openDiscuss(channelId);
+    await contains(".o-discuss-CallParticipantCard[title='Alfred']");
+    await contains(".o-mail-Composer-input:focus");
+    queryFirst(".o-mail-Composer-input").blur();
+    await press(["shift", "d"]);
+    await press(["shift", "m"]);
+    await click(".o-discuss-Call:not(.o-selfInCall) button[title='Join Call']");
+    await contains(".o-discuss-Call.o-selfInCall");
 });
 
 test("should not show context menu on participant card when not in a call", async () => {
@@ -1116,6 +1408,83 @@ test("all streams are properly closed when requesting new ones and tuning the fe
     await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
     await click("[title='Stop Sharing Screen']");
     expect(screenStream.getTracks()[0].readyState).toBe("ended");
+});
+
+/** Makes screen shares carry an audio track, returned in the order of the shares. */
+function mockScreenShareWithAudio() {
+    const screenAudioTracks = [];
+    patchWithCleanup(browser.navigator.mediaDevices, {
+        getDisplayMedia() {
+            const audioContext = new AudioContext();
+            after(() => audioContext.close());
+            const stream = createVideoStream();
+            stream.addTrack(audioContext.createMediaStreamDestination().stream.getAudioTracks()[0]);
+            screenAudioTracks.push(stream.getAudioTracks()[0]);
+            return stream;
+        },
+    });
+    return screenAudioTracks;
+}
+
+test("turning the microphone on keeps sharing the screen audio", async () => {
+    let hasMicrophone = false;
+    patchWithCleanup(browser.navigator.mediaDevices, {
+        getUserMedia(constraints) {
+            if (constraints.audio && !hasMicrophone) {
+                throw new Error("Requested device not found");
+            }
+            return super.getUserMedia(constraints);
+        },
+    });
+    const screenAudioTracks = mockScreenShareWithAudio();
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    await start();
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await contains("[title='Unmute']");
+    await click("[title='More']");
+    await click("[title='Share Screen']");
+    await contains("video");
+    await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
+    hasMicrophone = true;
+    await click("[title='Unmute']");
+    await contains("[title='Mute']");
+    expect(screenAudioTracks[0].readyState).toBe("live");
+});
+
+test("stopping the screen share sends the microphone alone", async () => {
+    mockScreenShareWithAudio();
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    const env = await start();
+    const rtc = env.services["discuss.rtc"];
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await contains("[title='Mute']");
+    await click("[title='More']");
+    await click("[title='Share Screen']");
+    await contains("video");
+    await triggerEvents(".o-discuss-Call-mainCards", ["mousemove"]); // show overlay
+    await click("[title='More']");
+    await click("[title='Stop Sharing Screen']");
+    expect(rtc.state.audioTrack).toBe(rtc.state.micAudioTrack);
+});
+
+test("losing the microphone keeps sharing the screen audio", async () => {
+    const screenAudioTracks = mockScreenShareWithAudio();
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    const env = await start();
+    const rtc = env.services["discuss.rtc"];
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await contains("[title='Mute']");
+    await click("[title='More']");
+    await click("[title='Share Screen']");
+    await contains("video");
+    rtc.state.micAudioTrack.dispatchEvent(new Event("ended"));
+    await waitUntil(() => rtc.state.audioTrack === screenAudioTracks[0]);
 });
 
 test("Show connecting state on cards", async () => {
@@ -1352,4 +1721,48 @@ test("show warning when blur hardware acceleration is not available", async () =
     expect(".o-discuss-CallDropdown-content:has(:text('Performance Warning:'))").toBeVisible();
     await click("[title='Dismiss warning']");
     await contains(".o-discuss-BlurPerformanceWarning-button", { count: 0 });
+});
+
+test("camera turns on without blur when the blur model fails", async () => {
+    patchWithCleanup(browser.navigator.mediaDevices, {
+        getUserMedia(constraints) {
+            if (!constraints.video) {
+                return super.getUserMedia(constraints);
+            }
+            const canvas = document.createElement("canvas");
+            const stream = canvas.captureStream();
+            canvas.getContext("2d").fillRect(0, 0, 1, 1);
+            return stream;
+        },
+    });
+    mockWorker((worker) => {
+        const workerSide = worker._messageChannel.port2;
+        workerSide.addEventListener("message", ({ data }) => {
+            if (worker.url.endsWith("tick_worker.js") && data.command === "start") {
+                workerSide.postMessage({ command: "tick" });
+            }
+        });
+    });
+    patchWithCleanup(window.SelfieSegmentation.prototype, {
+        close() {
+            asyncStep("blur model closed");
+            return super.close();
+        },
+        async send() {
+            throw new Error("Blur model unavailable");
+        },
+    });
+    patchWithCleanup(console, {
+        warn: (error) => asyncStep(`warn: ${error.message}`),
+    });
+    localStorage.setItem("mail_user_setting_use_blur", "true");
+    const pyEnv = await startServer();
+    const channelId = pyEnv["discuss.channel"].create({ name: "General" });
+    await start();
+    await openDiscuss(channelId);
+    await click("[title='Start Call']");
+    await click("button[title='Turn camera on']");
+    await waitFor(".o_notification:has(:text('Background blur could not be loaded'))");
+    await waitFor("button[title='Stop camera']");
+    await waitForSteps(["warn: Blur model unavailable", "blur model closed"]);
 });

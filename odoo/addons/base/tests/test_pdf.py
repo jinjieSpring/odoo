@@ -3,7 +3,7 @@
 
 from odoo.tests.common import TransactionCase
 from odoo.tools import pdf
-from odoo.tools.misc import file_open
+from odoo.tools.misc import file_open, mute_logger
 from odoo.tools.pdf import reshape_text
 import io
 
@@ -72,6 +72,33 @@ class TestPdf(TransactionCase):
             pdf_reader = pdf.OdooPdfFileReader(file, strict=False)
             attachments = list(pdf_reader.getAttachments())
         self.assertEqual(len(attachments), 2)
+
+    def test_odoo_pdf_file_reader_object_is_indirect_reference(self):
+        # macOS Preview can write `/Info 5 0 R` in the catalog, with `5 0 obj 4 0 R endobj`
+        objects = {
+            1: b"<< /Type /Catalog /Pages 2 0 R /Info 5 0 R >>",
+            2: b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+            3: b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] >>",
+            4: b"<< /Producer (macOS Quartz PDFContext, AppendMode 1.1) >>",
+            5: b"4 0 R",
+        }
+        data = bytearray(b"%PDF-1.4\n")
+        offsets = {}
+        for number, body in objects.items():
+            offsets[number] = len(data)
+            data += b"%d 0 obj\n%s\nendobj\n" % (number, body)
+        xref = len(data)
+        data += b"xref\n0 6\n0000000000 65535 f \n"
+        data += b"".join(b"%010d 00000 n \n" % offsets[n] for n in range(1, 6))
+        data += b"trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n" % xref
+
+        reader = pdf.OdooPdfFileReader(io.BytesIO(bytes(data)), strict=False)
+        pdf_writer = pdf.PdfFileWriter()
+        pdf_writer.cloneReaderDocumentRoot(reader)
+        self.assertEqual(pdf_writer._root_object['/Info']['/Producer'], 'macOS Quartz PDFContext, AppendMode 1.1')
+        out = io.BytesIO()
+        pdf_writer.write(out)
+        self.assertEqual(pdf.OdooPdfFileReader(out, strict=False).getNumPages(), 1)
 
     def test_merge_pdf(self):
         self.assertEqual(self.minimal_pdf_reader.getNumPages(), 1)
@@ -149,3 +176,15 @@ class TestPdf(TransactionCase):
         """
         processed_text = reshape_text("الأتعاب (1000) درهم (نقدا)")
         self.assertEqual(processed_text, "(ﺍﺪﻘﻧ) ﻢﻫﺭﺩ (1000) ﺏﺎﻌﺗﻵﺍ")
+
+    @mute_logger('odoo.tools.pdf')
+    def test_convert_to_pdfa_without_outlines(self):
+        """
+        Test converting a PDF without outlines dictionary to PDF/A.
+        """
+        pdf_writer = pdf.OdooPdfFileWriter()
+        pdf_writer.cloneReaderDocumentRoot(self.minimal_pdf_reader)
+        self.assertNotIn('/Outlines', pdf_writer._root_object)
+
+        pdf_writer.convert_to_pdfa()
+        self.assertTrue(pdf_writer.is_pdfa)

@@ -7,13 +7,14 @@
 # "Dylan Kiss (dyki)" <dyki@odoo.com>, 2025, 2026.
 # Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
 # "Cécile Collart (cco)" <cco@odoo.com>, 2026.
+# "Jonathan Quique (jqu)" <jqu@odoo.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-12 17:37+0000\n"
-"PO-Revision-Date: 2026-10-20 09:36+0000\n"
-"Last-Translator: \"Cécile Collart (cco)\" <cco@odoo.com>\n"
+"POT-Creation-Date: 2026-10-24 17:38+0000\n"
+"PO-Revision-Date: 2026-11-12 16:33+0000\n"
+"Last-Translator: \"Jonathan Quique (jqu)\" <jqu@odoo.com>\n"
 "Language-Team: French <https://translate.odoo.com/projects/odoo-19/"
 "pos_self_order/fr/>\n"
 "Language: fr\n"
@@ -105,15 +106,16 @@ msgstr ""
 "                        <t t-else=\"\">Bonour,</t>\n"
 "                    </div>\n"
 "                    <br/>\n"
-"                    <div>Votre commande <t t-out=\"object.tracking_number\">"
-"...</t>, d'un montant de <t t-out=\"format_amount"
-"(object.amount_total,object.currency_id)\">$xx.xx</t> a été confirmée. <span "
-"t-if=\"object.preset_time or client.street\">Elle sera prête</span> <span t-"
-"if=\"object.preset_time\">à <t t-out=\"format_time(time=object.preset_time, "
-"tz=tz, time_format='short', lang_code=lg)\">12:00 pm</t></span> <span t-"
-"if=\"client.street\">, <t t-out=\"street\">street</t>, <t t-out=\"state\">"
-"state</t>, <t t-out=\"client.zip or ''\">zip</t>, <t t-out=\"city\">city</t>"
-", <t t-out=\"country\">country</t></span></div>\n"
+"                    <div>Votre commande <t t-"
+"out=\"object.tracking_number\">...</t>, d'un montant de <t t-"
+"out=\"format_amount(object.amount_total,object.currency_id)\">$xx.xx</t> a "
+"été confirmée. <span t-if=\"object.preset_time or client.street\">Elle sera "
+"prête</span> <span t-if=\"object.preset_time\">à <t t-"
+"out=\"format_time(time=object.preset_time, tz=tz, time_format='short', "
+"lang_code=lg)\">12:00 pm</t></span> <span t-if=\"client.street\">, <t t-"
+"out=\"street\">street</t>, <t t-out=\"state\">state</t>, <t t-"
+"out=\"client.zip or ''\">zip</t>, <t t-out=\"city\">city</t>, <t t-"
+"out=\"country\">country</t></span></div>\n"
 "                    <br/>\n"
 "                    <div>Cordialement,</div>\n"
 "                    <br/>\n"
@@ -163,12 +165,12 @@ msgstr ""
 "                        <t t-else=\"\">Bonjour,</t>\n"
 "                    </div>\n"
 "                    <br/>\n"
-"                    <div>Votre commande <t t-out=\"object.tracking_number\">"
-"...</t> d'un montant de <t t-out=\"format_amount"
-"(object.amount_total,object.currency_id)\">$xx.xx</t> a été confirmée. <span "
-"t-if=\"object.preset_time\">Elle sera prête à <t t-out=\"format_time"
-"(time=object.preset_time, tz=tz, time_format='short', lang_code=lg)\">12:00 "
-"pm</t></span></div>\n"
+"                    <div>Votre commande <t t-"
+"out=\"object.tracking_number\">...</t> d'un montant de <t t-"
+"out=\"format_amount(object.amount_total,object.currency_id)\">$xx.xx</t> a "
+"été confirmée. <span t-if=\"object.preset_time\">Elle sera prête à <t t-"
+"out=\"format_time(time=object.preset_time, tz=tz, time_format='short', "
+"lang_code=lg)\">12:00 pm</t></span></div>\n"
 "                    <br/>\n"
 "                    <div>Cordialement,</div>\n"
 "                    <br/>\n"
@@ -795,8 +797,33 @@ msgstr "Connexion Internet perdue"
 #. module: pos_self_order
 #. odoo-python
 #: code:addons/pos_self_order/models/pos_order.py:0
+msgid "Invalid combo line"
+msgstr ""
+
+#. module: pos_self_order
+#. odoo-python
+#: code:addons/pos_self_order/models/pos_order.py:0
 msgid "Invalid preset"
 msgstr "Préréglage invalide"
+
+#. module: pos_self_order
+#. odoo-python
+#: code:addons/pos_self_order/models/pos_order.py:0
+msgid "Invalid product attribute"
+msgstr ""
+
+#. module: pos_self_order
+#. odoo-python
+#: code:addons/pos_self_order/controllers/orders.py:0
+#: code:addons/pos_self_order/models/pos_order.py:0
+msgid "Invalid product configuration"
+msgstr ""
+
+#. module: pos_self_order
+#. odoo-python
+#: code:addons/pos_self_order/models/pos_order.py:0
+msgid "Invalid quantity"
+msgstr ""
 
 #. module: pos_self_order
 #. odoo-javascript
@@ -1172,6 +1199,18 @@ msgid "Points of Sale"
 msgstr "Points de vente"
 
 #. module: pos_self_order
+#. odoo-python
+#: code:addons/pos_self_order/models/pos_order.py:0
+msgid "Preset is not available in self-ordering"
+msgstr ""
+
+#. module: pos_self_order
+#. odoo-python
+#: code:addons/pos_self_order/models/pos_order.py:0
+msgid "Preset is not available in this configuration"
+msgstr ""
+
+#. module: pos_self_order
 #: model:ir.model.fields,field_description:pos_self_order.field_pos_self_order_custom_link__link_html
 msgid "Preview"
 msgstr "Aperçu"
@@ -1233,7 +1272,8 @@ msgstr "Codes QR"
 #. odoo-python
 #: code:addons/pos_self_order/models/res_config_settings.py:0
 msgid "QR codes can only be generated in mobile or consultation mode."
-msgstr "Les codes QR ne peuvent être générés qu'en mode mobile ou consultation."
+msgstr ""
+"Les codes QR ne peuvent être générés qu'en mode mobile ou consultation."
 
 #. module: pos_self_order
 #: model:ir.model.fields.selection,name:pos_self_order.selection__pos_config__self_ordering_mode__consultation
@@ -1331,12 +1371,6 @@ msgstr "Sélectionnez un pays"
 
 #. module: pos_self_order
 #. odoo-javascript
-#: code:addons/pos_self_order/static/src/app/components/slots_popup/slots_popup.xml:0
-msgid "Select a hour"
-msgstr "Sélectionner une heure"
-
-#. module: pos_self_order
-#. odoo-javascript
 #: code:addons/pos_self_order/static/src/app/components/preset_info_popup/preset_info_popup.xml:0
 msgid "Select a state"
 msgstr "Sélectionnez un état"
@@ -1346,6 +1380,12 @@ msgstr "Sélectionnez un état"
 #: code:addons/pos_self_order/static/src/app/components/popup_table/popup_table.xml:0
 msgid "Select a table"
 msgstr "Sélectionner une table"
+
+#. module: pos_self_order
+#. odoo-javascript
+#: code:addons/pos_self_order/static/src/app/components/slots_popup/slots_popup.xml:0
+msgid "Select an hour"
+msgstr ""
 
 #. module: pos_self_order
 #: model:ir.model.fields,help:pos_self_order.field_pos_self_order_custom_link__pos_config_ids
@@ -1584,6 +1624,14 @@ msgstr "Le modèle d’e-mail avec xmlid %s a été supprimé."
 
 #. module: pos_self_order
 #. odoo-python
+#: code:addons/pos_self_order/models/pos_order.py:0
+msgid ""
+"The order ID isn't linked to the order UUID. This is a sign of a tampered "
+"payload."
+msgstr ""
+
+#. module: pos_self_order
+#. odoo-python
 #: code:addons/pos_self_order/models/res_config_settings.py:0
 msgid "The user must be a POS user"
 msgstr "L'utilisateur doit être un utilisateur PdV"
@@ -1760,7 +1808,7 @@ msgstr "Votre numéro de commande"
 #: model:mail.template,subject:pos_self_order.delivery_email_template
 #: model:mail.template,subject:pos_self_order.takeout_email_template
 msgid "Your {{ object.config_id.name }} receipt"
-msgstr "Votre {{ object.config_id.name }} reçu"
+msgstr "Votre reçu {{ object.config_id.name }}"
 
 #. module: pos_self_order
 #. odoo-javascript
@@ -1842,6 +1890,9 @@ msgstr "par unité supplémentaire"
 #: code:addons/pos_self_order/static/src/app/pages/combo_page/combo_page.xml:0
 msgid "x"
 msgstr "x"
+
+#~ msgid "Select a hour"
+#~ msgstr "Sélectionner une heure"
 
 #~ msgid ""
 #~ "<div style=\"margin: 0; padding: 0; font-size: 14px;\">\n"

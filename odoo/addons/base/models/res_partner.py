@@ -884,7 +884,7 @@ class ResPartner(models.Model):
             for partner in self:
                 for bank in partner.bank_ids:
                     if bank.acc_holder_name == partner.name:
-                        bank.acc_holder_name = vals['name']
+                        bank.sudo().acc_holder_name = vals['name']
 
         # filter to keep only really updated values -> field synchronize goes through
         # partner tree and we should avoid infinite loops in case same value is
@@ -919,6 +919,14 @@ class ResPartner(models.Model):
             if internal_users := partner.user_ids.filtered(lambda u: u._is_internal() and u != self.env.user):
                 internal_users.check_access('write')
             updated = {fname: fvalue for fname, fvalue in vals.items() if partner[fname] != pre_values.get(fname)}
+            if (
+                'parent_id' in updated and pre_values['parent_id']
+                and partner.commercial_partner_id not in (partner, pre_values['parent_id'].commercial_partner_id)
+            ):
+                # synced values still come from the previous commercial entity
+                commercial = partner.commercial_partner_id
+                if stale := [fname for fname in partner._synced_commercial_fields() if partner[fname] and not commercial[fname]]:
+                    super(ResPartner, partner).write(dict.fromkeys(stale, False))
             if updated:
                 partner._fields_sync(updated)
         return result
@@ -1047,7 +1055,7 @@ class ResPartner(models.Model):
             if partner.env.context.get("formatted_display_name"):
                 name = partner.name or ''
                 if partner.parent_id or partner.company_name:
-                    name = (f"{partner.company_name or partner.parent_id.name} \t "
+                    name = (f"{partner.company_name or partner.sudo().parent_id.name} \t "
                             f"--{partner.name or type_description.get(partner.type, '')}--")
 
                 if partner.env.context.get('show_email') and partner.email:

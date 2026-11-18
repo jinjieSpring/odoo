@@ -242,6 +242,11 @@ patch(PosStore.prototype, {
             })
         );
         order._code_activated_coupon_ids = [["unlink", ...toUnlink]];
+
+        if (order.relinkRewardLines) {
+            order.relinkRewardLines = false;
+            order._relinkRewardLinesWithoutCoupon();
+        }
     },
     async activateCode(code) {
         const order = this.getOrder();
@@ -360,6 +365,8 @@ patch(PosStore.prototype, {
                 )
             );
             order._restoreCodeActivatedCoupons();
+            // The point changes are only known after `updatePrograms`.
+            order.relinkRewardLines = true;
         });
     },
     async applyDiscount(percent, order = this.getOrder()) {
@@ -384,21 +391,23 @@ patch(PosStore.prototype, {
                     .filter((p) => ["gift_card", "ewallet"].includes(p.program_type))
             ),
         ];
-        let selectedProgram = null;
-        if (linkedPrograms.length > 1) {
-            selectedProgram = await makeAwaitable(this.dialog, SelectionPopup, {
-                title: _t("Select program"),
-                list: linkedPrograms.map((program) => ({
-                    id: program.id,
-                    item: program,
-                    label: program.name,
-                })),
-            });
-            if (!selectedProgram) {
-                return;
+        let selectedProgram = opt.eWalletGiftCardProgram || null;
+        if (!selectedProgram) {
+            if (linkedPrograms.length > 1) {
+                selectedProgram = await makeAwaitable(this.dialog, SelectionPopup, {
+                    title: _t("Select program"),
+                    list: linkedPrograms.map((program) => ({
+                        id: program.id,
+                        item: program,
+                        label: program.name,
+                    })),
+                });
+                if (!selectedProgram) {
+                    return;
+                }
+            } else if (linkedPrograms.length === 1) {
+                selectedProgram = linkedPrograms[0];
             }
-        } else if (linkedPrograms.length === 1) {
-            selectedProgram = linkedPrograms[0];
         }
 
         if (selectedProgram) {
@@ -779,6 +788,9 @@ patch(PosStore.prototype, {
             return agg;
         }, {});
         for (const line of rewardLines) {
+            if (!line.coupon_id) {
+                continue;
+            }
             const reward = line.reward_id;
             const couponId = line.coupon_id.id;
             if (!couponData[couponId]) {

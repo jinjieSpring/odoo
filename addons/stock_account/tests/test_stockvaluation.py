@@ -49,6 +49,56 @@ class TestStockValuation(TestStockValuationCommon):
         with self.assertRaises(UserError):
             self._close()
 
+    def test_manual_valuation_entry_without_product(self):
+        manual_variation_account = self.env['account.account'].create({
+            'name': 'Manual Stock Variation',
+            'code': 'XMANVAR',
+            'account_type': 'expense',
+        })
+        manual_valuation_account = self.env['account.account'].create({
+            'name': 'Manual Stock Valuation',
+            'code': 'XMANVAL',
+            'account_type': 'asset_current',
+            'account_stock_variation_id': manual_variation_account.id,
+        })
+        manual_category = self.category_standard.copy({
+            'name': 'Manual Stock Valuation Category',
+            'property_stock_valuation_account_id': manual_valuation_account.id,
+        })
+        self.product_standard.copy({
+            'name': 'Unused Manual Stock Valuation Product',
+            'categ_id': manual_category.id,
+        })
+
+        move = self.env['account.move'].create({
+            'journal_id': self.company.account_stock_journal_id.id,
+            'date': Date.today(),
+            'line_ids': [
+                Command.create({
+                    'name': 'Manual stock valuation balance',
+                    'account_id': manual_valuation_account.id,
+                    'debit': 30,
+                }),
+                Command.create({
+                    'name': 'Manual stock valuation counterpart',
+                    'account_id': self.account_expense.id,
+                    'credit': 30,
+                }),
+            ],
+        })
+        move._post()
+
+        closing_move = self._close()
+        valuation_aml = closing_move.line_ids.filtered(lambda l: l.account_id == manual_valuation_account)
+        variation_aml = closing_move.line_ids.filtered(lambda l: l.account_id == manual_variation_account)
+        self.assertRecordValues(
+            valuation_aml + variation_aml,
+            [
+                {'account_id': manual_valuation_account.id, 'debit': 0, 'credit': 30},
+                {'account_id': manual_variation_account.id, 'debit': 30, 'credit': 0},
+            ],
+        )
+
     def test_fifo_perpetual_1(self):
         product = self.product_fifo
 
@@ -1736,6 +1786,51 @@ class TestStockValuation(TestStockValuationCommon):
         self.assertAlmostEqual(product.qty_available, 19)
 
         self.assertAlmostEqual(product.standard_price, 12.6315789)
+
+    def test_fifo_total_value_at_date(self):
+        """ Ensure that a move with a location not valued but having a
+        stock.move.line in a valued location will compute the same way
+        the valuation today and at date
+        """
+        product = self.product_fifo
+
+        location_not_valued = self.env['stock.location'].create({
+            'name': 'not valued', 'usage': 'internal', 'company_id': False,
+        })
+        location_valued = self.env['stock.location'].create({
+            'name': 'valued', 'usage': 'internal', 'company_id': self.company.id,
+        })
+
+        with freeze_time('2024-01-01 10:00:00'):
+            self._make_in_move(product, 10, 10)
+        before_transfer = Datetime.to_string(Datetime.from_string('2024-01-01 10:00:00') + timedelta(minutes=30))
+
+        with freeze_time('2024-01-01 11:00:00'):
+            transfer = self.env['stock.move'].create({
+                'product_id': product.id,
+                'product_uom_qty': 1,
+                'product_uom': self.uom.id,
+                'location_id': location_not_valued.id,
+                'location_dest_id': self.stock_location.id,
+                'company_id': self.company.id,
+            })
+            transfer._action_confirm()
+            transfer.move_line_ids.unlink()
+            transfer.move_line_ids = [Command.create({
+                'product_id': product.id,
+                'product_uom_id': self.uom.id,
+                'quantity': 1,
+                'location_id': location_valued.id,
+                'location_dest_id': self.stock_location.id,
+            })]
+            transfer.picked = True
+            transfer._action_done()
+
+        self.assertFalse(transfer.is_in)
+        self.assertFalse(transfer.is_out)
+
+        self.assertEqual(product.total_value, 100.0)
+        self.assertEqual(product.with_context(to_date=before_transfer).total_value, 100.0)
 
     def test_fifo_sublocation_valuation_1(self):
         """ Set the main stock as a view location. Receive 2 units of a
@@ -3963,3 +4058,46 @@ class TestStockValuation(TestStockValuationCommon):
                 'avg_cost': 10
             }],
         )
+
+    def test_avco_valuation_multicompany(self):
+        """
+        Test that changing values manually for an AVCO product in different companies results
+        in the correct total value when the product is viewed in a single or multi-company context.
+        """
+        product_avco = self.product_avco
+        now = Datetime.now()
+
+        c1 = self.env.company
+        c2 = self.env['res.company'].create({'name': 'Test Company'})
+        c1_stock_loc = self.warehouse.lot_stock_id
+        c2_stock_loc = self.env['stock.warehouse'].search([('company_id', '=', c2.id)], limit=1).lot_stock_id
+        product_company1 = product_avco.with_context(allowed_company_ids=[c1.id])
+        product_company2 = product_avco.with_context(allowed_company_ids=[c2.id])
+
+        # Change cost manually and create stock move for each company
+        with freeze_time(now + timedelta(minutes=1)):
+            product_company1.standard_price = 10
+        with freeze_time(now + timedelta(minutes=2)):
+            self._make_in_move(product_company1, 2.0, company=c1, location_id=self.supplier_location.id, location_dest_id=c1_stock_loc.id)
+        with freeze_time(now + timedelta(minutes=3)):
+            product_company2.standard_price = 50
+        with freeze_time(now + timedelta(minutes=4)):
+            self._make_in_move(product_company2, 1.0, company=c2, location_id=self.supplier_location.id, location_dest_id=c2_stock_loc.id)
+
+        self.assertRecordValues(product_company1, [{
+            'total_value': 20,
+            'qty_available': 2,
+            'avg_cost': 10,
+        }])
+        self.assertRecordValues(product_company2, [{
+            'total_value': 50,
+            'qty_available': 1,
+            'avg_cost': 50,
+        }])
+        product_companies = product_avco.with_context(allowed_company_ids=[c1.id, c2.id])
+        product_companies.invalidate_recordset(fnames=['total_value'])
+        self.assertRecordValues(product_companies, [{
+            'total_value': 70,  # sum of both total_values
+            'qty_available': 3,
+            'avg_cost': 23.33,
+        }])

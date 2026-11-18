@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-03 17:36+0000\n"
+"POT-Creation-Date: 2026-11-06 17:38+0000\n"
 "PO-Revision-Date: 2026-09-14 10:34+0000\n"
 "Last-Translator: Nedžad Beus <nedzad.beus@implex.si>\n"
 "Language-Team: Slovenian <https://translate.odoo.com/projects/odoo-19/"
@@ -78,6 +78,7 @@ msgstr "Vstavljena gotovina:"
 #. module: pos_glory_cash
 #. odoo-javascript
 #: code:addons/pos_glory_cash/static/src/app/components/cancel_dialog.xml:0
+#: code:addons/pos_glory_cash/static/src/app/components/glory_error_dialog.xml:0
 msgid "Cash machine error"
 msgstr "Napaka gotovinskega avtomata"
 
@@ -102,6 +103,7 @@ msgstr "Izdano vračilo: %s"
 #. module: pos_glory_cash
 #. odoo-javascript
 #: code:addons/pos_glory_cash/static/src/app/components/cancel_dialog.xml:0
+#: code:addons/pos_glory_cash/static/src/app/components/glory_error_dialog.xml:0
 msgid "Close"
 msgstr "Zaključi"
 
@@ -170,9 +172,21 @@ msgstr "Napaka"
 
 #. module: pos_glory_cash
 #. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/components/glory_error_dialog.xml:0
+msgid "Error code:"
+msgstr ""
+
+#. module: pos_glory_cash
+#. odoo-javascript
 #: code:addons/pos_glory_cash/static/src/utils/constants.js:0
 msgid "Failed to authenticate"
 msgstr "Preverjanje pristnosti ni uspelo"
+
+#. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
+msgid "Failed to cancel cash machine transaction: %s."
+msgstr ""
 
 #. module: pos_glory_cash
 #. odoo-javascript
@@ -212,6 +226,12 @@ msgid "Glory Settings"
 msgstr "Nastavitve Glory"
 
 #. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/components/glory_error_dialog.xml:0
+msgid "Glory error animation."
+msgstr ""
+
+#. module: pos_glory_cash
 #: model:ir.model.fields,field_description:pos_glory_cash.field_pos_payment_method__id
 msgid "ID"
 msgstr "ID"
@@ -247,9 +267,23 @@ msgid "Please configure the IP address before opening the admin page"
 msgstr "Prosimo, konfigurirajte naslov IP, preden odprete skrbniško stran"
 
 #. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
+msgid ""
+"Please remove the cash from the exit of the cash machine before starting a "
+"transaction."
+msgstr ""
+
+#. module: pos_glory_cash
 #: model:ir.model,name:pos_glory_cash.model_pos_payment_method
 msgid "Point of Sale Payment Methods"
 msgstr "Načini plačila prodajne točke"
+
+#. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/components/glory_error_dialog.xml:0
+msgid "Reset"
+msgstr "Obnovi"
 
 #. module: pos_glory_cash
 #. odoo-javascript
@@ -283,6 +317,12 @@ msgstr "Začetno plačilo"
 
 #. module: pos_glory_cash
 #. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/components/glory_error_dialog.xml:0
+msgid "The Glory machine is in an unknown error state."
+msgstr ""
+
+#. module: pos_glory_cash
+#. odoo-javascript
 #: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
 msgid "The cash machine has an error, please consult its display for details."
 msgstr "Naprava za gotovino ima napako, za podrobnosti preverite njen zaslon."
@@ -292,6 +332,14 @@ msgstr "Naprava za gotovino ima napako, za podrobnosti preverite njen zaslon."
 #: code:addons/pos_glory_cash/static/src/app/screens/payment_screen/payment_lines/payment_lines.xml:0
 msgid "The cash machine has run out of the following coins/bills:"
 msgstr "V blagajni je zmanjkalo naslednjih kovancev/bankovcev:"
+
+#. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
+msgid ""
+"The cash machine is busy counting its inventory, please wait a few seconds "
+"and retry."
+msgstr ""
 
 #. module: pos_glory_cash
 #. odoo-javascript
@@ -325,9 +373,25 @@ msgstr "Blagajno uporablja drug POS."
 
 #. module: pos_glory_cash
 #. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
+msgid ""
+"The cash machine is not ready to start a transaction. Check all the covers "
+"are closed and then try again."
+msgstr ""
+
+#. module: pos_glory_cash
+#. odoo-javascript
 #: code:addons/pos_glory_cash/static/src/app/screens/payment_screen/payment_lines/payment_lines.xml:0
 msgid "The cash machine is running low on the following coins/bills:"
 msgstr "V blagajni primanjkuje naslednjih kovancev/bankovcev:"
+
+#. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
+msgid ""
+"The cash machine is unable to return the inserted cash, please refund the "
+"client %s via another method."
+msgstr ""
 
 #. module: pos_glory_cash
 #. odoo-javascript
@@ -354,8 +418,19 @@ msgstr "Plačilo ni uspelo iz neznanega razloga: %s"
 #. module: pos_glory_cash
 #. odoo-javascript
 #: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
-msgid "There is insufficient cash in the machine to give change."
-msgstr "V napravi ni dovolj gotovine za vračilo drobiža."
+msgid ""
+"There is an error with the bill or coin device. The machine will now be "
+"reset and the contents verified. Once this is complete, the amount that must "
+"be returned to the customer will be displayed."
+msgstr ""
+
+#. module: pos_glory_cash
+#. odoo-javascript
+#: code:addons/pos_glory_cash/static/src/app/payment_glory.js:0
+msgid ""
+"There is insufficient cash in the machine to give change. You will need to "
+"refund %s via another method."
+msgstr ""
 
 #. module: pos_glory_cash
 #. odoo-javascript
@@ -415,11 +490,11 @@ msgstr "Čakanje na vstavljanje gotovine"
 msgid "Waiting for inventory"
 msgstr "Čakanje na zalogo"
 
+#~ msgid "There is insufficient cash in the machine to give change."
+#~ msgstr "V napravi ni dovolj gotovine za vračilo drobiža."
+
 #~ msgid "Discard"
 #~ msgstr "Opusti"
 
 #~ msgid "Download logs"
 #~ msgstr "Prenesi dnevnike"
-
-#~ msgid "Reset"
-#~ msgstr "Obnovi"

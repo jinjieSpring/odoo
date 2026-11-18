@@ -1673,7 +1673,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
         if order_sudo.amount_total and not tx_sudo:
             return request.redirect(self._get_shop_path())
 
-        if not order_sudo.amount_total and not tx_sudo and order_sudo.state != 'sale':
+        if not order_sudo.amount_total and order_sudo.state != 'sale':
             order_sudo._check_cart_is_ready_to_be_paid()
             # Only confirm the order if it wasn't already confirmed.
             order_sudo._validate_order()
@@ -1913,9 +1913,9 @@ class WebsiteSale(payment_portal.PaymentPortal):
             'currency': order.currency_id.name,
             'items': self.order_lines_2_google_api(order.order_line),
         }
-        delivery_line = order.order_line.filtered('is_delivery')
-        if delivery_line:
-            tracking_cart_dict['shipping'] = delivery_line.price_unit
+        delivery_lines = order.order_line.filtered('is_delivery')
+        if delivery_lines:
+            tracking_cart_dict['shipping'] = sum(delivery_lines.mapped('price_unit'))
         return tracking_cart_dict
 
     # --------------------------------------------------------------------------

@@ -9,6 +9,7 @@ import {
     queryAllAttributes,
     queryAllTexts,
     queryFirst,
+    resize,
     setInputFiles,
     waitFor,
 } from "@odoo/hoot-dom";
@@ -82,6 +83,7 @@ import { FileUploader } from "@web/views/fields/file_handler";
 
 const fieldsRegistry = registry.category("fields");
 const widgetsRegistry = registry.category("view_widgets");
+const oldXXL = 1534;
 
 class Partner extends models.Model {
     name = fields.Char({ translate: true });
@@ -339,6 +341,7 @@ test(`button box rendering on big screen`, async () => {
         btnString += `<button class="oe_stat_button" id="btn${i}">My Button ${i}</button>`;
     }
 
+    await resize({ width: oldXXL });
     await mountView({
         resModel: "partner",
         type: "form",
@@ -354,6 +357,10 @@ test(`button box rendering on big screen`, async () => {
     for (const btn of buttonBox.children) {
         expect(btn).toHaveRect({ top: buttonBoxRect.top });
     }
+
+    await resize({ width: oldXXL - 2 });
+    await animationFrame();
+    expect(`.o-form-buttonbox > button`).toHaveCount(6);
 });
 
 test(`button box rendering invisible`, async () => {
@@ -6183,6 +6190,40 @@ test("empty required fields in an existing record are highlighted", async () => 
     expect(queryAllTexts`.o_column_sortable div span`).toEqual(["Name"]);
 });
 
+test("empty required field is cleared when switching to another record", async () => {
+    Partner._fields.foo = fields.Char({ required: true });
+    Partner._records[0].name = "info@example.com";
+    Partner._records[2].foo = false;
+    Partner._records[2].name = false;
+
+    await mountView({
+        resModel: "partner",
+        type: "form",
+        arch: `
+            <form>
+                <field name="foo"/>
+                <field name="name" widget="email" required="1"/>
+            </form>
+        `,
+        resIds: [1, 4],
+        resId: 1,
+    });
+    expect(".o_field_widget[name=foo] input").toHaveValue("yop");
+    expect(".o_field_widget[name=name] input").toHaveValue("info@example.com");
+    expect(".o_field_invalid").toHaveCount(0);
+
+    await contains(".o_pager_next").click();
+    expect(".o_field_widget[name=foo] input").toHaveValue("");
+    expect(".o_field_widget[name=foo]").toHaveClass("o_field_invalid");
+    expect(".o_field_widget[name=name] input").toHaveValue("");
+    expect(".o_field_widget[name=name]").toHaveClass("o_field_invalid");
+
+    await contains(".o_pager_previous").click();
+    expect(".o_field_widget[name=foo] input").toHaveValue("yop");
+    expect(".o_field_widget[name=name] input").toHaveValue("info@example.com");
+    expect(".o_field_invalid").toHaveCount(0);
+});
+
 test(`display a dialog if onchange result is a warning`, async () => {
     Partner._onChanges = { foo: true };
 
@@ -7969,6 +8010,7 @@ test(`correct amount of buttons`, async () => {
         </button>
     `);
 
+    await resize({ width: oldXXL - 2 });
     const formView = await mountView({
         resModel: "partner",
         type: "form",

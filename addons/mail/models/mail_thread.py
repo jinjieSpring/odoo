@@ -3783,7 +3783,7 @@ class MailThread(models.AbstractModel):
         if not mail_body:
             _logger.warning('QWeb template %s not found or is empty when sending notification emails. Sending without layouting.', template_xmlid)
             mail_body = message.body
-        return mail_body
+        return self.env['mail.render.mixin']._replace_local_links(mail_body, self.get_base_url())
 
     def _notify_by_email_get_base_mail_values(self, message, recipients_data, additional_values=None):
         """ Return model-specific and message-related values to be used when
@@ -4979,7 +4979,12 @@ class MailThread(models.AbstractModel):
                     last_div_element = (
                         children[-1] if children[-1].tag in ["div", "p"] else tree
                     )
-                    last_div_element.text = (last_div_element.text or '') + (' ' if last_div_element.text else '')
+                    if len(last_div_element):
+                        last_child = last_div_element[-1]
+                        if last_child.tail and not last_child.tail.endswith(" "):
+                            last_child.tail += " "
+                    elif last_div_element.text and not last_div_element.text.endswith(" "):
+                        last_div_element.text += " "
                     etree.SubElement(last_div_element, "span", attrib={"class": "o-mail-Message-edited"})
                     msg_values["body"] = (
                         # markup: it is considered safe, as coming from html.fragment_fromstring
